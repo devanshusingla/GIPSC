@@ -2,6 +2,9 @@ import sys
 sys.path.append('../')
 import ply.lex as lex
 
+if (len(sys.argv)==1):
+    print("Please provide test file path")
+
 """
     Most of the tokens are taken from 
     the original go token file at 
@@ -34,7 +37,7 @@ reserved = {
 ## Tokens other than reserved
 tokens = [
     'COMMENT',
-    'IDENT', 'INT', 'FLOAT', 'IMAG', 'CHAR', 'STRING',
+    'IDENT', 'INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING',
     'ADD', 'SUB', 'MUL', 'QUO', 'REM',
     'AND', 'OR', 'XOR', 'SHL', 'SHR', 'AND_NOT',
     'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN',
@@ -104,10 +107,60 @@ t_RBRACE = r'\}'
 t_SEMICOLON = r';'
 t_COLON = r':'
 
+
+## Adding some other regex rules in the order they should 
+## be checked (Hopefully :))
+
+#change rune and decide order
+t_RUNE = r'\'.|\n\''
+
+#need to print comments as tokens?
+def t_COMMENT(t):
+    r'//.* | /\*(.|\n)*?\*/'
+    t.lexer.lineno += t.value.count('\n')
+
+def t_STRING(t):
+    r'\"(.|\n)*?\"|\`(.|\n)*?\`'
+    t.lexer.lineno += t.value.count('\n')
+    return t
+
+def t_IDENT(t):
+    r'[A-Za-z_][A-Za-z_0-9]*'
+    if t.value in list(reserved.keys()):
+        t.type = reserved[t.value]
+    return t
+
+def t_IMAG(t):
+    r'([0-9]+(\.?)[0-9]*(((e|E)(\+|-)?[0-9]+)?)|([0-9]*(\.?)[0-9]+(((e|E)(\+|-)?[0-9]+)?)))i'
+    return t 
+
+def t_FLOAT(t):
+    r'[0-9]+\.[0-9]*(((e/E)(\+|-)?[0-9]+)?)|[0-9]*\.[0-9]+(((e/E)(\+|-)?[0-9]+)?)|[0-9]+(((e/E)(\+|-)?[0-9]+))'
+    return t 
+
+def t_INT(t):
+    r'0(x|X)[0-9a-fA-F]+|[0-7]+|[1-9][0-9]*'
+    return t
+
+def t_NEWLINE(t):
+    r'\n+'
+    t.lexer.lineno += t.value.count('\n')
+
+def t_error(t):
+    print("Not valid taken: '%s'" % t.value[0])
+    t.lexer.skip(1)
+
+## Importing from a test file
+data_file = open(sys.argv[1]) 
+data = ""
+
+for line in data_file:
+    data += line
+
 #test
-data = "\t+"
-lex.lex()
-lex.input(data)
+lexer = lex.lex()
+lexer.input(data)
+
 while 1:
     tok = lex.token()
     if not tok: 
