@@ -40,6 +40,9 @@ import copy
 import os
 import inspect
 
+# Assumed length of tab
+TABLENGTH = 4
+
 # This tuple contains acceptable string types
 StringTypes = (str, bytes)
 
@@ -56,7 +59,7 @@ class LexError(Exception):
 # Token class.  This class is used to represent the tokens produced.
 class LexToken(object):
     def __repr__(self):
-        return f'LexToken({self.type},{self.value!r},{self.lineno},{self.lexpos})'
+        return f'LexToken({self.type},{self.value!r},{self.lineno},{self.lexcol},{self.lexpos})'
 
 # This object is a stand-in for a logging object created by the
 # logging module.
@@ -118,6 +121,7 @@ class Lexer:
         self.lexliterals = ''         # Literal characters that can be passed through
         self.lexmodule = None         # Module
         self.lineno = 1               # Current line number
+        self.lexcol = 1               # Column number of current token
 
     def clone(self, object=None):
         c = copy.copy(self)
@@ -152,6 +156,7 @@ class Lexer:
     def input(self, s):
         self.lexdata = s
         self.lexpos = 0
+        self.lexcol = 1
         self.lexlen = len(s)
 
     # ------------------------------------------------------------
@@ -203,12 +208,22 @@ class Lexer:
         # Make local copies of frequently referenced attributes
         lexpos    = self.lexpos
         lexlen    = self.lexlen
+        lexcol    = self.lexcol
         lexignore = self.lexignore
         lexdata   = self.lexdata
 
         while lexpos < lexlen:
             # This code provides some short-circuit code for whitespace, tabs, and other ignored characters
             if lexdata[lexpos] in lexignore:
+                if lexdata[lexpos] == '\n':
+                    lexcol = 1
+                    self.lineno += 1
+                elif lexdata[lexpos] == '\t':
+                    lexcol += TABLENGTH
+                    # lexcol -= (lexcol%TABLENGTH)
+                else:
+                    lexcol += 1
+                
                 lexpos += 1
                 continue
 
@@ -223,6 +238,10 @@ class Lexer:
                 tok.value = m.group()
                 tok.lineno = self.lineno
                 tok.lexpos = lexpos
+                tok.lexcol = lexcol
+
+                lexcol += len(m.group())
+                self.lexcol = lexcol
 
                 i = m.lastindex
                 func, tok.type = lexindexfunc[i]
@@ -243,6 +262,7 @@ class Lexer:
                 tok.lexer = self      # Set additional attributes useful in token rules
                 self.lexmatch = m
                 self.lexpos = lexpos
+                self.lexcol = lexcol
                 newtok = func(tok)
                 del tok.lexer
                 del self.lexmatch
