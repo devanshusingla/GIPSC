@@ -1,6 +1,7 @@
-import sys
-sys.path.append('../')
-import ply.lex as lex
+import sys, os
+PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
+sys.path.append(PLY_PATH)
+import lex
 
 if (len(sys.argv)==1):
     print("Please provide test file path")
@@ -26,7 +27,7 @@ reserved = {
     'range' : 'RANGE',
     'var' : 'VAR',
     'case' : 'CASE',
-    'switch' : 'SWICTH',
+    'switch' : 'SWITCH',
     'continue': 'CONTINUE',
     'goto' :  'GOTO',
     'map' : 'MAP',
@@ -51,7 +52,7 @@ tokens = [
 
 ## Simple regex statements
 
-t_ignore  = ' \t'
+t_ignore  = ' \t\n'
 t_ADD = r'\+'
 t_SUB = r'-'
 t_MUL = r'\*'
@@ -142,9 +143,9 @@ def t_INT(t):
     r'0(x|X)[0-9a-fA-F]+|[0-7]+|[1-9][0-9]*'
     return t
 
-def t_NEWLINE(t):
-    r'\n+'
-    t.lexer.lineno += t.value.count('\n')
+# def t_NEWLINE(t):
+#     r'\n+'
+#     t.lexer.lineno += t.value.count('\n')
 
 def t_error(t):
     print("Not valid taken: '%s'" % t.value[0])
@@ -161,19 +162,11 @@ for line in data_file:
 lexer = lex.lex()
 lexer.input(data)
 
+# for key, value in lexer.__dict__.items():
+#     print(key,' : ',value)
+
 while 1:
     tok = lex.token()
     if not tok: 
         break
     print(tok)
-
-
-
-
-
-
-
-
-
-
-
