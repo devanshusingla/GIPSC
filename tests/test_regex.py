@@ -23,6 +23,8 @@ test_dict = {
 }
 
 def get_regex():
+    """Get dictionary of regexes from lexer module
+    """
     import lexer
     dict = lexer.__dict__
     for inst in dict:

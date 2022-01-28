@@ -115,7 +115,7 @@ def t_COMMENT(t):
     t.lexer.lineno += t.value.count('\n')
 
 def t_STRING(t):
-    r'(\"(.|\n)*?\")|(\`(.|\n)*?\`)'
+    r'(\"(.*?)[^\\\n]\")|\"\"|(\`(.|\n)*?\`)'
     t.lexer.lineno += t.value.count('\n')
     return t
 
@@ -163,12 +163,9 @@ if __name__ == '__main__':
     lexer = lex.lex()
     lexer.input(data)
 
-    # for key, value in lexer.__dict__.items():
-    #     print(key,' : ',value)
-
-    print("Token\tLine#\tColumn#\tLexeme")
+    print(f"Token\t\tLine#\tColumn#\tLexeme")
     while 1:
         tok = lex.token()
         if not tok: 
             break
-        print(f"{tok.type}\t{tok.lineno}\t{tok.lexcol}\t{tok.value!r}")
+        print(f"{tok.type:<10}\t{tok.lineno:^7}\t{tok.lexcol:^7}\t{tok.value!r}")
