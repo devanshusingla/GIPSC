@@ -32,7 +32,8 @@ reserved = {
     'goto' :  'GOTO',
     'map' : 'MAP',
     'const' : 'CONST',
-    'for' : 'FOR'
+    'for' : 'FOR',
+    'package': 'PACKAGE'
 }
 
 ## Tokens other than reserved
@@ -165,8 +166,9 @@ lexer.input(data)
 # for key, value in lexer.__dict__.items():
 #     print(key,' : ',value)
 
+print("Token\tLine#\tColumn#\tLexeme")
 while 1:
     tok = lex.token()
     if not tok: 
         break
-    print(tok)
+    print(f"{tok.type}\t{tok.lineno}\t{tok.lexcol}\t{tok.value!r}")
