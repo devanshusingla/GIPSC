@@ -106,5 +106,5 @@ if __name__ == "__main__":
     get_data()
     get_regex()
     check_testcases()
-    test_dict['failed'] = test_dict['total'] - test_dict["passed"]
+    test_dict['failed'] = test_dict['total'] - test_dict['passed']
     print(f"{CYAN}Passed: {GREEN}{test_dict['passed']}/{test_dict['total']} {CYAN}Failed: {RED}{test_dict['failed']}/{test_dict['total']}{RESET}")

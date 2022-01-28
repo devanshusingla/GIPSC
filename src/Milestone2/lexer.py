@@ -130,7 +130,7 @@ def t_IMAG(t):
     return t 
 
 def t_FLOAT(t):
-    r'[0-9]+\.[0-9]*(((e/E)(\+|-)?[0-9]+)?)|[0-9]*\.[0-9]+(((e/E)(\+|-)?[0-9]+)?)|[0-9]+(((e/E)(\+|-)?[0-9]+))'
+    r'[0-9]+\.[0-9]*(((e|E)(\+|-)?[0-9]+)?)|[0-9]*\.[0-9]+(((e|E)(\+|-)?[0-9]+)?)|[0-9]+(((e|E)(\+|-)?[0-9]+))'
     return t 
 
 def t_INT(t):
@@ -142,7 +142,7 @@ def t_INT(t):
 #     t.lexer.lineno += t.value.count('\n')
 
 def t_error(t):
-    print("Not valid taken: '%s'" % t.value[0])
+    print("Not valid token: '%s'" % t.value[0])
     t.lexer.skip(1)
 
 #test
