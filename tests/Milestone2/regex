@@ -1,18 +1,43 @@
 RUNE:
-- 'x'
+- "'x'"
+- "'\n'"
 
 COMMENT:
-- // sdjkncsdkzc
-- // vds // fsvsdnk
-
+- "// sdjkncsdkzc"
+- "// vds // fsvsdnk"
 
 STRING:
+- ""hello world""
 
 IDENT:
+- "ThisIsAnIdentifier"
+- "int"
+- "__main__"
+- "_"
+! "func()"
+! "123rty"
+! "A12#$"
+! "(}"
 
 IMAG:
+- "24i"
+- "-36.124i"
+- "-23e78i"
+! "34iad"
 
 FLOAT:
-! 1.2ee45
+- "324.12304"
+- "-24.2435"
+! "--09"
+- "12.4e30"
+! "1.2ee45"
 
 INT:
+- "1344153151"
+! "!24"
+- "-4215"
+! "134.34135"
+- "000000"
+- "-00"
+! "$1"
+- "0x24"

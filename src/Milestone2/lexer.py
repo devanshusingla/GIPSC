@@ -1,10 +1,4 @@
 import sys, os
-PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
-sys.path.append(PLY_PATH)
-import lex
-
-if (len(sys.argv)==1):
-    print("Please provide test file path")
 
 """
     Most of the tokens are taken from 
@@ -50,7 +44,6 @@ tokens = [
     'LPAREN', 'LBRACK', 'LBRACE', 'COMMA', 'PERIOD',
     'RPAREN', 'RBRACK', 'RBRACE', 'SEMICOLON', 'COLON'
 ] + list(reserved.values())
-
 ## Simple regex statements
 
 t_ignore  = ' \t\n'
@@ -114,15 +107,15 @@ t_COLON = r':'
 ## be checked (Hopefully :))
 
 #change rune and decide order
-t_RUNE = r'\'.|\n\''
+t_RUNE = r'\'(.|\\n)\''
 
 #need to print comments as tokens?
 def t_COMMENT(t):
-    r'//.* | /\*(.|\n)*?\*/'
+    r'(//.*)|(/\*(.|\n)*?\*/)'
     t.lexer.lineno += t.value.count('\n')
 
 def t_STRING(t):
-    r'\"(.|\n)*?\"|\`(.|\n)*?\`'
+    r'(\"(.|\n)*?\")|(\`(.|\n)*?\`)'
     t.lexer.lineno += t.value.count('\n')
     return t
 
@@ -152,23 +145,30 @@ def t_error(t):
     print("Not valid taken: '%s'" % t.value[0])
     t.lexer.skip(1)
 
-## Importing from a test file
-data_file = open(sys.argv[1]) 
-data = ""
-
-for line in data_file:
-    data += line
-
 #test
-lexer = lex.lex()
-lexer.input(data)
+if __name__ == '__main__':
+    if (len(sys.argv)==1):
+        print("Please provide test file path")
 
-# for key, value in lexer.__dict__.items():
-#     print(key,' : ',value)
+    PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
+    sys.path.append(PLY_PATH)
+    import lex
 
-print("Token\tLine#\tColumn#\tLexeme")
-while 1:
-    tok = lex.token()
-    if not tok: 
-        break
-    print(f"{tok.type}\t{tok.lineno}\t{tok.lexcol}\t{tok.value!r}")
+    ## Importing from a test file
+    data_file = open(sys.argv[1]) 
+    data = ""
+
+    for line in data_file:
+        data += line
+    lexer = lex.lex()
+    lexer.input(data)
+
+    # for key, value in lexer.__dict__.items():
+    #     print(key,' : ',value)
+
+    print("Token\tLine#\tColumn#\tLexeme")
+    while 1:
+        tok = lex.token()
+        if not tok: 
+            break
+        print(f"{tok.type}\t{tok.lineno}\t{tok.lexcol}\t{tok.value!r}")
