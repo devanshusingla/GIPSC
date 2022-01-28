@@ -1,6 +1,13 @@
 import os
+import sys
 import re
 from inspect import isfunction
+
+# Paths to Lexer and Regex Testcases
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+path_to_testcases = os.path.join(PROJECT_ROOT, "tests/Milestone2/regex")
+dir_to_lexer = os.path.join(PROJECT_ROOT, 'src/Milestone2/')
+sys.path.append(dir_to_lexer)
 
 RED   = "\033[1;31m"  
 GREEN = "\033[0;32m"
@@ -9,7 +16,6 @@ RESET = "\033[0;0m"
 
 VERBOSE = False
 
-path_to_testcases = "tests/Milestone2/regex"
 regex = {}
 test_dict = {
     'total' : 0,
@@ -17,7 +23,7 @@ test_dict = {
 }
 
 def get_regex():
-    import src.Milestone2.lexer as lexer
+    import lexer
     dict = lexer.__dict__
     for inst in dict:
         if isfunction(dict[inst]):
@@ -97,8 +103,6 @@ def check_testcases():
             line = f.readline()
             
 if __name__ == "__main__":
-    import sys
-    sys.path.append(os.getcwd())
     get_data()
     get_regex()
     check_testcases()
