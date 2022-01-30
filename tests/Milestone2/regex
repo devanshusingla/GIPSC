@@ -1,23 +1,4 @@
 RUNE:
-<<<<<<< HEAD
-- 'x'
-
-COMMENT:
-- // sdjkncsdkzc
-- // vds // fsvsdnk
-
-
-STRING:
-
-IDENT:
-
-IMAG:
-
-FLOAT:
-! 1.2ee45
-
-INT:
-=======
 - "'x'"
 - "'\n'"
 
@@ -93,4 +74,3 @@ INT:
 ! "6__34"
 ! "17_"
 - "0o45"
->>>>>>> sarthak-2
