@@ -7,7 +7,6 @@ import (
 )
 
 func getString(length int) string {
-	rand.Seed(time.Now().UnixNano())
 	b := make([]byte, length)
 	rand.Read(b)
 	return fmt.Sprintf("%x", b)[:length]
@@ -20,6 +19,7 @@ func main() {
 	fmt.Println("After declaration..")
 	fmt.Println("Length of Map: ", len(s2i_mp))
 	fmt.Println("Length of Slice: ", len(i2s_sl), "Capacity of Slice: ", cap(i2s_sl))
+	rand.Seed(time.Now().UnixNano())
 	for i := 0; i < n; i++{
 		i2s_sl[i] = getString(((i+2)*(i+1))/2)
 		s2i_mp[i2s_sl[i]] = ((i+2)*(i+1))/2
@@ -37,4 +37,10 @@ func main() {
 	}
 	fmt.Println("\nAfter deleting key-value pairs from map..")
 	fmt.Println("Length of Map: ", len(s2i_mp))
+	fmt.Println(`
+		Hello, 
+		This is a raw string,
+		\n\t these don't work
+		F
+	`)
 }
