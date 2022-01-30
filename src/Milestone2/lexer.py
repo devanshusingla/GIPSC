@@ -107,7 +107,7 @@ t_COLON = r':'
 ## be checked (Hopefully :))
 
 #change rune and decide order
-t_RUNE = r'\'(.|\\n)\''
+t_RUNE = r'\'([^\n\']|\\([abfnrtv\'\"]|[0-7]{3}|x[0-9a-f]{2}|u([0-9a-cA-CefEF][0-9a-fA-F]|[dD][0-7])[0-9a-fA-F]{2}|U00(0[0-9a-fA-F]|10)[0-9a-fA-F]{4}))\''
 
 #need to print comments as tokens?
 def t_COMMENT(t):
