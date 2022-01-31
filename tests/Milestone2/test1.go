@@ -1,15 +1,4 @@
 package main
-<<<<<<< HEAD
-import "fmt"
-
-func main(){
-
-
-
-    var a int = 10
-    
-    a++
-=======
 import (
     "fmt"
     "math/rand"
@@ -75,5 +64,4 @@ func main(){
     for i := 1; i<=n; i++ {
         fmt.Println(" Subtree Sum for ", i, " = ",graph[i].sub_tree_sum)
     }
->>>>>>> sarthak-2
 }

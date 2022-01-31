@@ -92,9 +92,9 @@ def check_testcases():
                     expected_result = True
                 elif line[0] == '!':
                     expected_result = False
-                else:
-                    print("Invalid character in test file!")
-                    exit(0)
+                # else:
+                #     print("Invalid character in test file!")
+                #     exit(0)
                 
                 tc_id += 1
                 if not current_token:

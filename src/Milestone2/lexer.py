@@ -134,7 +134,7 @@ def t_FLOAT(t):
     return t 
 
 def t_INT(t):
-    r'0(x|X)[0-9a-fA-F]+|[0-7]+|[1-9][0-9]*'
+    r'0(x|X)(_?)([0-9a-fA-F]+(_?))+[0-9a-fA-F]|0(o|O)(_?)([0-7]+(_?))+[0-7]|0(b|B)(_?)([0|1]+(_?))+[0|1]|[1-9]((_?)[0-9]+)*|([0-7]+(_?))+[0-7]'
     return t
 
 # def t_NEWLINE(t):
@@ -146,20 +146,6 @@ def t_error(t):
     t.lexer.skip(1)
 
 #test
-<<<<<<< HEAD
-lexer = lex.lex()
-lexer.input(data)
-
-# for key, value in lexer.__dict__.items():
-#     print(key,' : ',value)
-
-print("Token\tLine#\tColumn#\tLexeme")
-while 1:
-    tok = lex.token()
-    if not tok: 
-        break
-    print(f"{tok.type}\t{tok.lineno}\t{tok.lexcol}\t{tok.value!r}")
-=======
 if __name__ == '__main__':
     if (len(sys.argv)==1):
         print("Please provide test file path")
@@ -183,4 +169,3 @@ if __name__ == '__main__':
         if not tok: 
             break
         print(f"{tok.type:<10}\t{tok.lineno:^7}\t{tok.lexcol:^7}\t{tok.value!r}")
->>>>>>> sarthak-2
