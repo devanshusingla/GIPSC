@@ -127,7 +127,7 @@ float_lit = d_float + r"|" + h_float
 ## be checked (Hopefully :))
 
 #change rune and decide order
-t_RUNE = r'\'([^\n\']|\\([abfnrtv\'\"]|[0-7]{3}|x[0-9a-f]{2}|u([0-9a-cA-CefEF][0-9a-fA-F]|[dD][0-7])[0-9a-fA-F]{2}|U00(0[0-9a-fA-F]|10)[0-9a-fA-F]{4}))\''
+t_RUNE = r'\'([^\n\'\\]|\\([abfnrtv\'\"]|[0-7]{3}|x[0-9a-f]{2}|u([0-9a-cA-CefEF][0-9a-fA-F]|[dD][0-7])[0-9a-fA-F]{2}|U00(0[0-9a-fA-F]|10)[0-9a-fA-F]{4}))\''
 
 #need to print comments as tokens?
 def t_COMMENT(t):
@@ -135,7 +135,7 @@ def t_COMMENT(t):
     t.lexer.lineno += t.value.count('\n')
 
 def t_STRING(t):
-    r'(\"(.*?)[^\\\n\"]\")|\"\"|(\`([^\`]|\n)*?\`)'
+    r'(\"((([^\n\"\\]|\\([abfrtvn\']|[0-7]{3}|x[0-9a-f]{2}|u([0-9a-cA-CefEF][0-9a-fA-F]|[dD][0-7])[0-9a-fA-F]{2}|U00(0[0-9a-fA-F]|10)[0-9a-fA-F]{4})))*)\")|(\`(([^\`]|\n)*?)\`)'
     t.lexer.lineno += t.value.count('\n')
     return t
 

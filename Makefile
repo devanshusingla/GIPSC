@@ -1,2 +1,2 @@
 test:
-	python tests/test_regex.py
+	python3 tests/Milestone2/test_regex.py
