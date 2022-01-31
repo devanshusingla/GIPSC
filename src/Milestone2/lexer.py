@@ -1,5 +1,10 @@
 import sys, os
 
+PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
+sys.path.append(PLY_PATH)
+import lex
+from lex import TOKEN
+
 """
     Most of the tokens are taken from 
     the original go token file at 
@@ -149,10 +154,6 @@ def t_error(t):
 if __name__ == '__main__':
     if (len(sys.argv)==1):
         print("Please provide test file path")
-
-    PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
-    sys.path.append(PLY_PATH)
-    import lex
 
     ## Importing from a test file
     data_file = open(sys.argv[1]) 

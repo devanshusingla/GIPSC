@@ -30,7 +30,10 @@ def get_regex():
     for inst in dict:
         if isfunction(dict[inst]):
             if inst.startswith("t_") and not inst.endswith("error"):
-                regex[inst[2:]] = dict[inst].__doc__
+                if 'regex' in dict[inst].__dict__:
+                    regex[inst[2:]] = dict[inst].__dict__['regex']
+                else:
+                    regex[inst[2:]] = dict[inst].__doc__
         elif isinstance(dict[inst],str):
             regex[inst[2:]] = dict[inst]
 
