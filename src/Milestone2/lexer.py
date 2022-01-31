@@ -135,12 +135,12 @@ def t_COMMENT(t):
     t.lexer.lineno += t.value.count('\n')
 
 def t_STRING(t):
-    r'(\"(.*?)[^\\\n]\")|\"\"|(\`(.|\n)*?\`)'
+    r'(\"(.*?)[^\\\n\"]\")|\"\"|(\`(.|\n)*?\`)'
     t.lexer.lineno += t.value.count('\n')
     return t
 
 def t_IDENT(t):
-    r'[A-Za-z_][A-Za-z_0-9]*'
+    r'([A-Za-z_]|[^\x00-\x7F])([A-Za-z_0-9]|[^\x00-\x7F])*'
     if t.value in list(reserved.keys()):
         t.type = reserved[t.value]
     return t
