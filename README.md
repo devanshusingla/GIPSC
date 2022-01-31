@@ -3,5 +3,5 @@
 ## To test regex for tokens
 - From project root directory, use 
 ```python
-python tests/test_regex.py 
+python3 tests/test_regex.py 
 ```
