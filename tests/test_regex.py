@@ -30,7 +30,10 @@ def get_regex():
     for inst in dict:
         if isfunction(dict[inst]):
             if inst.startswith("t_") and not inst.endswith("error"):
-                regex[inst[2:]] = dict[inst].__doc__
+                if 'regex' in dict[inst].__dict__:
+                    regex[inst[2:]] = dict[inst].__dict__['regex']
+                else:
+                    regex[inst[2:]] = dict[inst].__doc__
         elif isinstance(dict[inst],str):
             regex[inst[2:]] = dict[inst]
 
@@ -67,6 +70,8 @@ def validate(test_case, result, pattern, token, tc_id):
 def check_testcases():
     current_token = None
     pattern = None
+    expected_result = None
+    last_line = ""
     tc_id = 0
     with open(path_to_testcases, 'r') as f:
         line = f.readline().strip("\n")
@@ -87,20 +92,40 @@ def check_testcases():
                     print(f"{CYAN}Testcases for {current_token} - {regex[current_token]}{RESET}")
             else:
                 # Get Expected Result
-                expected_result = None
+                
                 if(line[0] == '-'):
                     expected_result = True
+                    if line[-1] != '"':
+                        last_line = line[3:]
+                        line = f.readline()
+                        continue
                 elif line[0] == '!':
                     expected_result = False
-                # else:
-                #     print("Invalid character in test file!")
-                #     exit(0)
+                    if line[-1] != '"':
+                        last_line = line[3:]
+                        line = f.readline()
+                        continue
+                else:
+                    if len(last_line):
+                        if line[-1] != '"':
+                            last_line += "\n" + line
+                            line = f.readline()
+                            continue
+                        else:
+                            last_line += "\n" + line[:-1]
+                    else:
+                        print("Invalid character in test file!")
+                        exit(0)
                 
                 tc_id += 1
                 if not current_token:
                     print("Invalid Regex Testcases file at: ", path_to_testcases)
                     exit(0)
-                validate(line[3:-1], expected_result, pattern, current_token, tc_id)
+                case = line[3:-1]
+                if len(last_line):
+                    case = last_line
+                validate(case, expected_result, pattern, current_token, tc_id)
+                last_line = ""
 
             line = f.readline()
             

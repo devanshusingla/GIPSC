@@ -115,12 +115,13 @@ d_digits = d_digit + r"((_?)(" + d_digit + r")+)*"
 h_digits = h_digit + r"((_?)(" + h_digit + r")+)*"
 
 d_exponent = r"(e|E)(\+|-)?" + d_digits
-d_float = d_digits + r"." + r"(" + d_digits +r")?("+ d_exponent + r")?|" + r"(" + d_digits + r")(" + d_exponent + r")|.(" + d_digits + r")(" + d_exponent +r")?"
-h_mantissa = r"(_?)(" + h_digits + r").(" + h_digits + r"?)| (_?)" + h_digits + r"| ." + h_digits
-h_exponent  = r"(p|P)(\+|-)?" + d_digits
-h_float = r"0(x|X)" + h_mantissa + h_exponent
+d_float = d_digits + r"\." + r"(" + d_digits +r")?("+ d_exponent + r")?|" + r"(" + d_digits + r")(" + d_exponent + r")|\.(" + d_digits + r")(" + d_exponent +r")?"
+h_mantissa = r"(_?)(" + h_digits + r")\.(" + h_digits + r"?)|(_?)(" + h_digits + r")|\.(" + h_digits + r")"
+h_exponent  = r"(p|P)(\+|-)?(" + d_digits + r")"
+h_float = r"0(x|X)(" + h_mantissa + r")(" + h_exponent + r")"
 
-float_lit = d_float+  r"|"+ h_float
+
+float_lit = d_float + r"|" + h_float
 
 ## Adding some other regex rules in the order they should 
 ## be checked (Hopefully :))
@@ -144,7 +145,8 @@ def t_IDENT(t):
         t.type = reserved[t.value]
     return t
 
-imaginary = float_lit + r"i"
+int_lit = r"0(x|X)(_?)([0-9a-fA-F]+(_?))+[0-9a-fA-F]|0(o|O)(_?)([0-7]+(_?))+[0-7]|0(b|B)(_?)([0|1]+(_?))+[0|1]|[1-9]((_?)[0-9]+)*|([0-7]+(_?))+[0-7]"
+imaginary = r"(" + d_digits + r"|" + int_lit + r"|" + float_lit + r")i"
 
 @TOKEN(imaginary)
 def t_IMAG(t):
@@ -157,10 +159,6 @@ def t_FLOAT(t):
 def t_INT(t):
     r'0(x|X)(_?)([0-9a-fA-F]+(_?))+[0-9a-fA-F]|0(o|O)(_?)([0-7]+(_?))+[0-7]|0(b|B)(_?)([0|1]+(_?))+[0|1]|[1-9]((_?)[0-9]+)*|([0-7]+(_?))+[0-7]'
     return t
-
-# def t_NEWLINE(t):
-#     r'\n+'
-#     t.lexer.lineno += t.value.count('\n')
 
 def t_error(t):
     print("Not valid token: '%s'" % t.value[0])
