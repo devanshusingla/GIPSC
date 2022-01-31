@@ -135,7 +135,7 @@ def t_COMMENT(t):
     t.lexer.lineno += t.value.count('\n')
 
 def t_STRING(t):
-    r'(\"(.*?)[^\\\n\"]\")|\"\"|(\`(.|\n)*?\`)'
+    r'(\"(.*?)[^\\\n\"]\")|\"\"|(\`([^\`]|\n)*?\`)'
     t.lexer.lineno += t.value.count('\n')
     return t
 
