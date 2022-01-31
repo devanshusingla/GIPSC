@@ -1,4 +1,9 @@
 import sys, os
+PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
+sys.path.append(PLY_PATH)
+# import lex
+from lex import TOKEN
+
 
 PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
 sys.path.append(PLY_PATH)
@@ -108,11 +113,26 @@ t_SEMICOLON = r';'
 t_COLON = r':'
 
 
+d_digit = r"[0-9]"
+h_digit = r"[0-9a-fA-F]"
+
+d_digits = d_digit + r"((_?)(" + d_digit + r")+)*"
+h_digits = h_digit + r"((_?)(" + h_digit + r")+)*"
+
+d_exponent = r"(e|E)(\+|-)?" + d_digits
+d_float = d_digits + r"\." + r"(" + d_digits +r")?("+ d_exponent + r")?|" + r"(" + d_digits + r")(" + d_exponent + r")|\.(" + d_digits + r")(" + d_exponent +r")?"
+h_mantissa = r"(_?)(" + h_digits + r")\.(" + h_digits + r"?)|(_?)(" + h_digits + r")|\.(" + h_digits + r")"
+h_exponent  = r"(p|P)(\+|-)?(" + d_digits + r")"
+h_float = r"0(x|X)(" + h_mantissa + r")(" + h_exponent + r")"
+
+
+float_lit = d_float + r"|" + h_float
+
 ## Adding some other regex rules in the order they should 
 ## be checked (Hopefully :))
 
 #change rune and decide order
-t_RUNE = r'\'([^\n\']|\\([abfnrtv\'\"]|[0-7]{3}|x[0-9a-f]{2}|u([0-9a-cA-CefEF][0-9a-fA-F]|[dD][0-7])[0-9a-fA-F]{2}|U00(0[0-9a-fA-F]|10)[0-9a-fA-F]{4}))\''
+t_RUNE = r'\'([^\n\'\\]|\\([abfnrtv\'\"]|[0-7]{3}|x[0-9a-f]{2}|u([0-9a-cA-CefEF][0-9a-fA-F]|[dD][0-7])[0-9a-fA-F]{2}|U00(0[0-9a-fA-F]|10)[0-9a-fA-F]{4}))\''
 
 #need to print comments as tokens?
 def t_COMMENT(t):
@@ -120,31 +140,30 @@ def t_COMMENT(t):
     t.lexer.lineno += t.value.count('\n')
 
 def t_STRING(t):
-    r'(\"(.*?)[^\\\n]\")|\"\"|(\`(.|\n)*?\`)'
+    r'(\"((([^\n\"\\]|\\([abfrtvn\']|[0-7]{3}|x[0-9a-f]{2}|u([0-9a-cA-CefEF][0-9a-fA-F]|[dD][0-7])[0-9a-fA-F]{2}|U00(0[0-9a-fA-F]|10)[0-9a-fA-F]{4})))*)\")|(\`(([^\`]|\n)*?)\`)'
     t.lexer.lineno += t.value.count('\n')
     return t
 
 def t_IDENT(t):
-    r'[A-Za-z_][A-Za-z_0-9]*'
+    r'([A-Za-z_]|[^\x00-\x7F])([A-Za-z_0-9]|[^\x00-\x7F])*'
     if t.value in list(reserved.keys()):
         t.type = reserved[t.value]
     return t
 
+int_lit = r"0(x|X)(_?)([0-9a-fA-F]+(_?))+[0-9a-fA-F]|0(o|O)(_?)([0-7]+(_?))+[0-7]|0(b|B)(_?)([0|1]+(_?))+[0|1]|[1-9]((_?)[0-9]+)*|([0-7]+(_?))+[0-7]"
+imaginary = r"(" + d_digits + r"|" + int_lit + r"|" + float_lit + r")i"
+
+@TOKEN(imaginary)
 def t_IMAG(t):
-    r'([0-9]+(\.?)[0-9]*(((e|E)(\+|-)?[0-9]+)?)|([0-9]*(\.?)[0-9]+(((e|E)(\+|-)?[0-9]+)?)))i'
     return t 
 
+@TOKEN(float_lit) 
 def t_FLOAT(t):
-    r'[0-9]+\.[0-9]*(((e|E)(\+|-)?[0-9]+)?)|[0-9]*\.[0-9]+(((e|E)(\+|-)?[0-9]+)?)|[0-9]+(((e|E)(\+|-)?[0-9]+))'
     return t 
 
 def t_INT(t):
-    r'0(x|X)[0-9a-fA-F]+|[0-7]+|[1-9][0-9]*'
+    r'0(x|X)(_?)([0-9a-fA-F]+(_?))+[0-9a-fA-F]|0(o|O)(_?)([0-7]+(_?))+[0-7]|0(b|B)(_?)([0|1]+(_?))+[0|1]|[1-9]((_?)[0-9]+)*|([0-7]+(_?))+[0-7]'
     return t
-
-# def t_NEWLINE(t):
-#     r'\n+'
-#     t.lexer.lineno += t.value.count('\n')
 
 def t_error(t):
     print("Not valid token: '%s'" % t.value[0])
@@ -154,6 +173,8 @@ def t_error(t):
 if __name__ == '__main__':
     if (len(sys.argv)==1):
         print("Please provide test file path")
+
+    import lex
 
     ## Importing from a test file
     data_file = open(sys.argv[1]) 

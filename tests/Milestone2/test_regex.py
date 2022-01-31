@@ -4,7 +4,7 @@ import re
 from inspect import isfunction
 
 # Paths to Lexer and Regex Testcases
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 path_to_testcases = os.path.join(PROJECT_ROOT, "tests/Milestone2/regex")
 dir_to_lexer = os.path.join(PROJECT_ROOT, 'src/Milestone2/')
 sys.path.append(dir_to_lexer)
