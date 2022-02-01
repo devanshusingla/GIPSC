@@ -13,10 +13,7 @@ func main(){
 	var c3 complex128 = 0o123i
 
 	fmt.Printf("Adding complex numbers %T, %T and %T\n", c1, c2, c3)
-<<<<<<< HEAD
 	
-=======
->>>>>>> yatharth
 	var sum = complex128(c1) + c2 + c3
 	fmt.Printf("Sum: %T\n", sum)
 }
