@@ -7,6 +7,11 @@
 ```python
 python3 tests/Milestone2/test_regex.py 
 ```
+or 
+
+```python
+make test
+```
 ## To test source code for any program
 
 - Run
