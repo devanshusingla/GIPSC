@@ -1,13 +1,6 @@
 import sys, os
 PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
 sys.path.append(PLY_PATH)
-# import lex
-from lex import TOKEN
-
-
-PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
-sys.path.append(PLY_PATH)
-import lex
 from lex import TOKEN
 
 """
@@ -162,7 +155,7 @@ def t_FLOAT(t):
     return t 
 
 def t_INT(t):
-    r'0(x|X)(_?)([0-9a-fA-F]+(_?))+[0-9a-fA-F]|0(o|O)(_?)([0-7]+(_?))+[0-7]|0(b|B)(_?)([0|1]+(_?))+[0|1]|[1-9]((_?)[0-9]+)*|([0-7]+(_?))+[0-7]'
+    r'0(x|X)[0-9a-fA-F]((_?)[0-9a-fA-F]+)*|0(o|O)[0-7]((_?)[0-7]+)*|0(b|B)[0-1]((_?)[0|1]+)*|[1-9]((_?)[0-9]+)*|[0-7]((_?)[0-7]+)*'
     return t
 
 def t_error(t):
