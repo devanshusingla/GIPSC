@@ -1,0 +1,12 @@
+0 : {'LPAREN': 4, 'IDENT': 5}
+1 : {'$end': 0, 'ADD': 6}
+2 : {'ADD': -2, '$end': -2, 'RPAREN': -2, 'MUL': 7}
+3 : {'MUL': -4, 'ADD': -4, '$end': -4, 'RPAREN': -4}
+4 : {'LPAREN': 4, 'IDENT': 5}
+5 : {'MUL': -6, 'ADD': -6, '$end': -6, 'RPAREN': -6}
+6 : {'LPAREN': 4, 'IDENT': 5}
+7 : {'LPAREN': 4, 'IDENT': 5}
+8 : {'RPAREN': 11, 'ADD': 6}
+9 : {'ADD': -1, '$end': -1, 'RPAREN': -1, 'MUL': 7}
+10 : {'MUL': -3, 'ADD': -3, '$end': -3, 'RPAREN': -3}
+11 : {'MUL': -5, 'ADD': -5, '$end': -5, 'RPAREN': -5}

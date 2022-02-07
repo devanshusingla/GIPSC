@@ -1,0 +1,25 @@
+digraph G {
+0 -> 4 [ label="LPAREN" ];
+0 -> 5 [ label="IDENT" ];
+1 -> 0 [ label="$end" ];
+1 -> 6 [ label="ADD" ];
+2 -> 7 [ label="MUL" ];
+4 -> 4 [ label="LPAREN" ];
+4 -> 5 [ label="IDENT" ];
+6 -> 4 [ label="LPAREN" ];
+6 -> 5 [ label="IDENT" ];
+7 -> 4 [ label="LPAREN" ];
+7 -> 5 [ label="IDENT" ];
+8 -> 11 [ label="RPAREN" ];
+8 -> 6 [ label="ADD" ];
+9 -> 7 [ label="MUL" ];
+0 -> 1 [ label="varE" ];
+0 -> 2 [ label="varT" ];
+0 -> 3 [ label="varF" ];
+4 -> 8 [ label="varE" ];
+4 -> 2 [ label="varT" ];
+4 -> 3 [ label="varF" ];
+6 -> 9 [ label="varT" ];
+6 -> 3 [ label="varF" ];
+7 -> 10 [ label="varF" ];
+}
