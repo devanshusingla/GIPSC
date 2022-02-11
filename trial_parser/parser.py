@@ -1,6 +1,8 @@
 import ply.yacc as yacc
+import ply.lex as lex
 import lexer
-import pprint
+from lexer import *
+import sys
 
 tokens=lexer.tokens
 
@@ -25,6 +27,9 @@ def p_varF(p):
 def p_error(p):
     print("Print Syntax Error", p)
 
+## Build lexer
+lexer = lex.lex()
+
 parser=yacc.yacc()
 
 with open("action.txt", "w") as f:
@@ -34,3 +39,11 @@ with open("action.txt", "w") as f:
 with open("goto.txt", "w") as f:
     for key, val in parser.goto.items():
         f.writelines(f'{key} : {val}\n')
+
+## Trying to handle input
+
+with open(sys.argv[1], 'r') as f:
+    input_str = f.read()
+
+out = parser.parse(input_str, lexer = lexer)
+# print(out)

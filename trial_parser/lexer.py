@@ -9,8 +9,6 @@ from ply.lex import TOKEN
     https://go.dev/src/go/token/token.go
 """
 
-
-
 ## Tokens other than reserved
 tokens = [
     'IDENT',
