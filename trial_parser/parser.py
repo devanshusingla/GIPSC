@@ -48,7 +48,6 @@ def p_ImportDecl(p):
                | IMPORT LPAREN ImportMult RPAREN
     """
 
-
 def p_ImportMult(p):
     """
     ImportMult : ImportMult ImportOne 
@@ -116,6 +115,7 @@ def p_IdentifierOth(p):
     """
     
 #Type
+
 def p_Type(p):
     """
     Type : TypeName 
@@ -123,6 +123,7 @@ def p_Type(p):
          | LPAREN Type RPAREN
     """
 
+#extra
 def p_TypeName(p):
     """
     TypeName : INT
@@ -132,6 +133,7 @@ def p_TypeName(p):
              | TYPE IDENT
     """
 
+# function type remaining
 def p_TypeLit(p):
     """
     TypeLit : ArrayType
@@ -139,7 +141,6 @@ def p_TypeLit(p):
             | PointerType
             | SliceType
             | MapType
-            | FunctionType
     """
 
 #array type
@@ -164,6 +165,7 @@ def p_StructType(p):
     StructType : STRUCT LBRACE FieldDeclMult RBACE 
     """
 
+#extra
 def p_FieldDeclMult(p):
     """
     FieldDeclMult : FieldDeclMult FieldDecl
@@ -176,9 +178,32 @@ def FieldDecl(p):
     """
 
 # pointer type
+
 def p_PointerType(p):
     """
     PointerType : MUL BaseType
+    """
+    
+def p_BaseType(p):
+    """
+    BaseType : Type
+    """
+
+#slice type
+def p_SliceType(p):
+    """
+    SliceType : LBRACK RBRACK ElementType
+    """
+
+#map type
+def p_MapType(p):
+    """
+    MapType : MAP LBRACK KeyType RBRACK ElementType
+    """
+    
+def p_KeyType(p):
+    """
+    KeyType : Type
     """
 
 ## Expression related grammar
@@ -229,9 +254,24 @@ def p_AddOp(p):
 
 def p_MulOp(p):
     """
-    MulOp : 
+    MulOp : MUL
+          | QUO
+          | REM
+          | SHL
+          | SHR
+          | AND
+          | AND_NOT
     """
     
+def p_UnaryOp(p):
+    """
+    UnaryOp : ADD
+            | SUB
+            | NOT
+            | XOR
+            | MUL
+            | AND
+    """
 
 def p_ExprOth(p):
     """
@@ -239,21 +279,191 @@ def p_ExprOth(p):
             | 
     """
 
-def p_ExprMult(p):
+## Operands and Literals
+
+def p_Operand(p):
     """
-    ExprMult : ExprMult 
+    Operand : Lit 
+            | OperandName
+            | LPAREN Expr RPAREN
     """
+
+def p_Lit(p):
+    """
+    Lit : BasicLit
+        | CompositeLit
+    """    
+    
+def p_BasicLit(p):
+    """
+    BasicLit : INT
+             | FLOAT
+             | IMAG
+             | RUNE
+             | STRING
+    """
+
+def p_CompositeLit(p):
+    """
+    CompositeLit : StructType LiteralValue
+                 | ArrayType LiteralValue
+                 | SliceType LiteralValue
+                 | MapType LiteralValue
+                 | TypeName LiteralValue
+    """
+
+def p_LiteralValue(p):
+    """
+    LiteralValue : LBRACE ElementList COMMA RBRACE 
+                 | LBRACE ElementList RBRACE
+                 | LBRACE RBRACE
+    """
+
+def p_ElementList(p):
+    """
+    ElementList : KeyedElem 
+                | ElementList COMMA KeyedElement
+    """
+
+def p_KeyedElement(p):
+    """
+    KeyedElement : Element
+                 | Key COLON Element
+    """
+
+def p_Key(p):
+    """
+    Key : IDENT
+        | Expr
+        | LiteralValue
+    """
+
+def p_Element(p):
+    """
+    Element : Expr
+            | LiteralValue
+    """
+
+def p_OperandName(p):
+    """
+    OperandName : IDENT
+    """
+
+# def p_FunctionLit(p):
+#     """
+#     FunctionLit : FUNC Signature 
+#     """
+
+## Primary Expressions
+
+def p_PrimaryExpr(p):
+    """
+    PrimaryExpr : Operand
+                | Conversion
+                | PrimaryExpr Selector
+                | PrimaryExpr Slice
+                | PrimaryExpr Arguments
+    """
+
+def p_Conversion(p):
+    """
+    Conversion : Type LPAREN Expr RPAREN
+               | Type LPAREN Expr COMMA RPAREN
+    """
+
+def p_Selector(p):
+    """
+    Selector : PERIOD IDENT
+    """
+
+def p_Slice(p):
+    """
+    Slice : LBRACK Expr COLON Expr RBRACK
+          | LBRACK COLON Expr RBRACK
+          | LBRACK Expr COLON RBRACK
+          | LBRACK COLON RBRACK
+          | LBRACK COLON Expr COLON Expr RBRACK
+          | LBRACK Expr COLON Expr COLON Expr RBRACK
+    """
+
+def p_Arguments(p):
+    """
+    Arguments : LPAREN RPAREN
+              | LPAREN ExpressionList RPAREN
+              | LPAREN ExpressionList COMMA RPAREN
+              | LPAREN Type RPAREN
+              | LPAREN Type COMMA RPAREN
+              | LPAREN Type COMMA ExpressionList RPAREN 
+              | LPAREN Type COMMA ExpressionList COMMA RPAREN 
+              | LPAREN Type COMMA ExpressionList RPAREN  
+    """
+
+## Type declarations
+
+def p_TypeDecl(p):
+    """
+    TypeDecl : TYPE TypeSpec
+             | TYPE LPAREN TypeSpecMult RPAREN
+    """
+
+#typespecmult
+def p_TypeSpecMult(p):
+    """
+    TypeSpecMult : TypeSpecMult TypeSpec 
+                 | 
+    """
+
+#typespec
+def p_TypeSpec(p):
+    """
+    TypeSpec : AliasDecl
+             | Typedef
+    """
+
+#aliasdecl
+def p_AliasDecl(p):
+    """
+    AliasDecl : IDENT ASSIGN Type
+    """
+    
+#typedef
+def p_TypeDef(p):
+    """
+    Typedef : IDENT Type
+    """
+
+## Variable declarations
 
 def p_VarDecl(p):
     """
-    VarDecl : 
+    VarDecl : VAR VarSpec
+            | VAR LPAREN VarMult RPAREN
     """
+
+def p_VarMult(p):
+    """
+    VarMult : VarMult VarSpec
+            | 
+    """
+
+def p_VarSpec(p):
+    """
+    VarSpec : IdentifierList Type ASSIGN ExpressionList
+            | IdentifierList ASSIGN ExpressionList
+            | IdentifierList Type
+    """
+
+def p_ShortVarDecl(p):
+    """
+    ShortVarDecl : IdentifierList DEFINE ExpressionList
+    """
+
+## Function Declarations
 
 def p_FuncDecl(p):
     """
     FuncDecl : 
     """
-
 
 def p_error(p):
     print("Print Syntax Error", p)
