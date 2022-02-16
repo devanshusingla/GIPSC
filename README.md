@@ -5,7 +5,7 @@
 ### To run the parser on a source file
 - From project root directory, use
 ```bash
-./bin/parser src/Milestone3/test.go
+./bin/parser tests/Milestone3/test1.go
 ```
 
 ## [Milestone2](src/Milestone2)

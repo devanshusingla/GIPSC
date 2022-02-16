@@ -2479,4 +2479,4 @@ def yacc(*, debug=yaccdebug, module=None, start=None,
     parser = LRParser(lr, pinfo.error_func)
 
     parse = parser.parse
-    return parser
+    return parser, grammar
