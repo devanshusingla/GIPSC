@@ -1,4 +1,4 @@
-0 : {'SourceFile': 1, 'PackageStat': 2}
+0 : {'SourceFile': 1, 'PackageClause': 2}
 1 : {}
 2 : {}
 3 : {'PackageName': 5}
