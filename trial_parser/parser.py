@@ -19,7 +19,7 @@ precedence = (
 
 def p_SourceFile(p):
     """
-    SourceFile : PackageStat ImportDeclMult TopLevelDeclMult
+    SourceFile : PackageStat SEMICOLON ImportDeclMult TopLevelDeclMult
     """
 
 ## Package related grammar
@@ -38,25 +38,25 @@ def p_PackageName(p):
 
 def p_ImportDeclMult(p):
     """
-    ImportDeclMult : ImportDeclMult ImportDecl
+    ImportDeclMult : ImportDeclMult ImportDecl SEMICOLON
                    |  
     """
 
 def p_ImportDecl(p):
     """
-    ImportDecl : IMPORT ImportOne
-               | IMPORT LPAREN ImportMult RPAREN
+    ImportDecl : IMPORT ImportSpec
+               | IMPORT LPAREN ImportSpecMult RPAREN
     """
 
 def p_ImportMult(p):
     """
-    ImportMult : ImportMult ImportOne 
+    ImportSpecMult : ImportSpecMult ImportSpec SEMICOLON 
                |
     """    
 
-def p_ImportOne(p):
+def p_ImportSpec(p):
     """
-    ImportOne : PERIOD ImportPath
+    ImportSpec : PERIOD ImportPath
               | IDENT ImportPath
               | ImportPath 
     """
@@ -70,7 +70,7 @@ def p_ImportPath(p):
 
 def p_TopLevelDeclMult(p):
     """
-    TopLevelDeclMult : TopLevelDeclMult TopLevelDecl
+    TopLevelDeclMult : TopLevelDeclMult TopLevelDecl SEMICOLON
                      |
     """
 
@@ -95,7 +95,7 @@ def p_ConstDecl(p):
     
 def p_ConstSpecMult(p):
     """
-    ConstSpecMult : ConstSpecMult ConstSpec
+    ConstSpecMult : ConstSpecMult ConstSpec SEMICOLON
                   | 
     """
 
@@ -135,6 +135,7 @@ def p_QualifiedIdent(p):
     """
 
 # function type remaining
+# Added function type
 def p_TypeLit(p):
     """
     TypeLit : ArrayType
@@ -142,6 +143,7 @@ def p_TypeLit(p):
             | PointerType
             | SliceType
             | MapType
+            | FunctionType
     """
 
 #array type
@@ -169,7 +171,7 @@ def p_StructType(p):
 #extra
 def p_FieldDeclMult(p):
     """
-    FieldDeclMult : FieldDeclMult FieldDecl
+    FieldDeclMult : FieldDeclMult FieldDecl SEMICOLON
                   | 
     """
 
@@ -218,6 +220,12 @@ def p_MapType(p):
 def p_KeyType(p):
     """
     KeyType : Type
+    """
+
+# Function Type
+def p_FunctionType(p):
+    """
+    FunctionType : FUNC Signature 
     """
 
 ## Expression related grammar
@@ -306,6 +314,7 @@ def p_Lit(p):
     """
     Lit : BasicLit
         | CompositeLit
+        | FunctionLit
     """    
     
 def p_BasicLit(p):
@@ -363,10 +372,10 @@ def p_OperandName(p):
     OperandName : IDENT
     """
 
-# def p_FunctionLit(p):
-#     """
-#     FunctionLit : FUNC Signature 
-#     """
+def p_FunctionLit(p):
+    """
+    FunctionLit : FUNC Signature FunctionBody
+    """
 
 ## Primary Expressions
 
@@ -422,7 +431,7 @@ def p_TypeDecl(p):
 #typespecmult
 def p_TypeSpecMult(p):
     """
-    TypeSpecMult : TypeSpecMult TypeSpec 
+    TypeSpecMult : TypeSpecMult TypeSpec SEMICOLON
                  | 
     """
 
@@ -455,7 +464,7 @@ def p_VarDecl(p):
 
 def p_VarMult(p):
     """
-    VarMult : VarMult VarSpec
+    VarMult : VarMult VarSpec SEMICOLON
             | 
     """
 
@@ -489,54 +498,6 @@ def p_FunctionBody(p):
     FunctionBody : Block
     """
 
-def p_Block(p):
-    """
-    Block : LBRACE StatementList RBRACE
-    """
-
-## Statements
-
-def p_StatementList(p):
-    """
-    StatementList : StatementList Statement SEMICOLON 
-                  | 
-    """
-
-def p_Statement(p):
-    """
-    Statement : 
-    """
-# def p_Statement(p):
-#     """
-#     Statement : Decl
-#               | LabeledStmt
-#               | SimpleStmt
-#               | GoStmt
-#               | ReturnStmt
-#               | BreakStmt
-#               | ContinueStmt
-#               | GotoStmt
-#               | FallthroughStmt
-#               | Block
-#               | IfStmt
-#               | SwitchStmt
-#               | SelectStmt
-#               | ForStmt
-#               | DeferStmt
-#     """
-
-# def p_LabeledStmt(p):
-#     """
-#     LabeledStmt : Label COLON Statement
-#     """
-
-# def p_Label(p):
-#     """
-#     Label : IDENT
-#     """
-
-## Signatures
-
 def p_Signature(p):
     """
     Signature : Parameters Result
@@ -568,6 +529,295 @@ def p_Result(p):
            | Type
     """
 
+## Statements ---------------------------------------
+
+def p_StatementList(p):
+    """
+    StatementList : StatementList Statement SEMICOLON 
+                  | 
+    """
+
+def p_Statement(p):
+    """
+    Statement : Decl
+              | LabeledStmt
+              | SimpleStmt
+              | GotoStmt
+              | ReturnStmt
+              | BreakStmt
+              | ContinueStmt
+              | FallthroughStmt
+              | Block
+              | IfStmt
+              | SwitchStmt
+              | ForStmt
+    """
+
+## Labeled Statements-----------------------------------
+def p_LabeledStmt(p):
+    """
+    LabeledStmt : Label COLON Statement
+    """
+
+def p_Label(p):
+    """
+    Label : IDENT
+    """
+## -----------------------------------------------------
+
+## Simple Statements -----------------------------------
+def p_SimpleStmt(p):
+    """
+    SimpleStmt :  EmptyStmt
+                | ExpressionStmt
+                | IncDecStmt
+                | Assignment
+                | ShortVarDecl
+    """
+
+def p_EmptyStmt(p):
+    """
+    EmptyStmt : 
+    """
+
+def p_ExpressionStmt(p):
+    """
+    ExpressionStmt : Expr
+    """
+
+def p_IncDecStmt(p):
+    """
+    IncDecStmt :  Expr INC
+                | Expr DEC
+    """
+
+## Assignment Statements --------------------------
+def p_Assignment(p):
+    """
+    Assignment : ExpressionList assign_op ExpressionList
+    """
+
+def p_assign_op(p):
+    """
+    assign_op : add_op_assign 
+              | mul_op_assign
+              | ASSIGN
+    """
+
+def p_add_op_assign(p):
+    """
+    add_op_assign : ADD_ASSIGN
+                    | SUB_ASSIGN
+                    | OR_ASSIGN
+                    | XOR_ASSIGN
+    """
+
+def p_mul_op_assign(p):
+    """
+    mul_op_assign : MUL_ASSIGN
+                    | QUO_ASSIGN
+                    | REM_ASSIGN
+                    | AND_ASSIGN
+                    | SHL_ASSIGN
+                    | SHR_ASSIGN
+                    | AND_NOT_ASSIGN
+    """
+## ------------------------------------------------
+## ------------------------------------------------
+
+def p_ReturnStmt(p):
+    """
+    ReturnStmt : RETURN ExpressionList
+                | RETURN
+    """
+
+def p_BreakStmt(p):
+    """
+    BreakStmt : BREAK Label
+                | BREAK
+    """
+
+def p_ContinueStmt(p):
+    """
+    ContinueStmt :  CONTINUE Label
+                    | CONTINUE
+    """
+
+def p_GotoStmt(p):
+    """
+    GotoStmt :  GOTO Label
+    """
+
+def p_FallthroughStmt(p):
+    """
+    FallthroughStmt : FALLTHROUGH
+    """
+
+def p_Block(p):
+    """
+    Block : LBRACE StatementList RBRACE
+    """
+
+## If Else Block -----------------------------------
+def p_IfStmt(p):
+    """
+    IfStmt : IF SimpleStmtOpt Expr Block else_stmt
+    """
+
+def p_else_stmt(p):
+    """
+    else_stmt : ELSE IfStmt
+                | ELSE Block
+                |
+    """
+
+def p_SimpleStmtOpt(p):
+    """
+    SimpleStmtOpt : SimpleStmt SEMICOLON 
+                    |
+    """
+## --------------------------------------------------
+
+
+## Switch Stmt --------------------------------------
+def p_SwitchStmt(p):
+    """
+    SwitchStmt :  ExprSwitchStmt
+                 | TypeSwitchStmt
+    """
+
+## ExprSwitchStmt -----------------------------------
+def p_ExprSwitchStmt(p):
+    """
+    ExprSwitchStmt : SWITCH SimpleStmtOpt ExprOpt LBRACE ExprCaseClauseMult RBRACE
+    """
+
+def p_ExprOpt(p):
+    """
+    ExprOpt : Expr
+              |
+    """
+
+def p_ExprCaseClauseMult(p):
+    """
+    ExprCaseClauseMult : ExprCaseClauseMult ExprCaseClause
+                         |
+    """
+
+def p_ExprCaseClause(p):
+    """
+    ExprCaseClause : ExprSwitchCase COLON StatementList
+    """
+
+def p_ExprSwitchCase(p):
+    """
+    ExprSwitchCase : CASE ExpressionList
+                     | DEFAULT
+    """
+## -------------------------------------------------
+
+## TypeSwitchStmt ----------------------------------
+def p_TypeSwitchStmt(p):
+    """
+    TypeSwitchStmt : SWITCH SimpleStmtOpt TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
+    """
+
+def p_TypeSwitchGuard(p):
+    """
+    TypeSwitchGuard : ShortVarDeclOpt PrimaryExpr PERIOD LPAREN TYPE RPAREN
+    """
+
+def p_ShortVarDeclOpt(p):
+    """
+    ShortVarDeclOpt :   IDENT DEFINE
+                        |
+    """
+def p_TypeCaseClauseMult(p):
+    """
+    TypeCaseClauseMult : TypeCaseClauseMult TypeCaseClause
+                        |
+    """
+
+def p_TypeCaseClause(p):
+    """
+    TypeCaseClause : TypeSwitchCase COLON StatementList
+    """
+
+def p_TypeSwitchCase(p):
+    """
+    TypeSwitchCase : CASE TypeList 
+                     | DEFAULT
+    """
+
+def p_TypeList(p):
+    """
+    TypeList : Type TypeOth
+    """
+
+def p_TypeOth(p):
+    """
+    TypeOth :  COMMA Type TypeOth
+                |
+    """
+## -------------------------------------------------
+
+
+## --------------------------------------------------
+
+
+
+## For Stmt -----------------------------------------
+def p_ForStmt(p):
+    """
+    ForStmt : FOR Condition Block
+            | FOR ForClause Block
+            | FOR RangeClause Block
+    """
+
+def p_Condition(p):
+    """
+    Condition : Expr
+    """
+
+## For Clause -------------------------------------
+def p_ForClause(p):
+    """
+    ForClause : InitStmtOpt SEMICOLON ConditionOpt SEMICOLON PostStmtOpt
+    """
+
+def p_InitStmtOpt(p):
+    """
+    InitStmtOpt :   SimpleStmt
+                    |
+    """
+
+def p_ConditionOpt(p):
+    """
+    ConditionOpt :   Condition
+                    |
+    """
+
+def p_PostStmtOpt(p):
+    """
+    PostStmtOpt :   SimpleStmt
+                    |
+    """
+## --------------------------------------------------
+
+def p_RangeClause(p):
+    """
+    RangeClause : RangeList RANGE Expr
+    """
+
+def p_RangeList(p):
+    """
+    RangeList : ExpressionList ASSIGN 
+                | IdentifierList DEFINE
+                | 
+    """
+
+## --------------------------------------------------
+## --------------------------------------------------
 
 def p_error(p):
     print("Print Syntax Error", p)
@@ -589,6 +839,5 @@ with open("goto.txt", "w") as f:
 
 with open(sys.argv[1], 'r') as f:
     input_str = f.read()
-
 out = parser.parse(input_str, lexer = lexer)
-# print(out)
+print(out)

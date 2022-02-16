@@ -1,10 +1,13 @@
-package main
+package main;
 
-import "fmt"
+import "fmt";
 
 type Random struct {
-    a,b int
-    d float32
-}
+    a,b int;
+    d float32;
+};
 
-var A [6]int
+func main() {
+    var a int = 20;
+    fmt.Println(a);
+};

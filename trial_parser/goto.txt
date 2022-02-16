@@ -1,159 +1,159 @@
 0 : {'SourceFile': 1, 'PackageStat': 2}
 1 : {}
-2 : {'ImportDeclMult': 4}
+2 : {}
 3 : {'PackageName': 5}
-4 : {'TopLevelDeclMult': 7, 'ImportDecl': 8}
+4 : {'ImportDeclMult': 7}
 5 : {}
 6 : {}
-7 : {'TopLevelDecl': 10, 'Decl': 11, 'FuncDecl': 12, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15}
-8 : {}
-9 : {'ImportOne': 20, 'ImportPath': 23}
-10 : {}
+7 : {'TopLevelDeclMult': 8, 'ImportDecl': 9}
+8 : {'TopLevelDecl': 11, 'Decl': 12, 'FuncDecl': 13, 'ConstDecl': 14, 'VarDecl': 15, 'TypeDecl': 16}
+9 : {}
+10 : {'ImportSpec': 22, 'ImportPath': 25}
 11 : {}
 12 : {}
 13 : {}
 14 : {}
 15 : {}
-16 : {'FunctionName': 26}
-17 : {'ConstSpec': 28, 'IdentifierList': 30}
-18 : {'VarSpec': 32, 'IdentifierList': 34}
-19 : {'TypeSpec': 35, 'AliasDecl': 37, 'Typedef': 38}
-20 : {}
-21 : {'ImportMult': 40}
-22 : {'ImportPath': 41}
-23 : {}
-24 : {'ImportPath': 42}
+16 : {}
+17 : {'FunctionName': 29}
+18 : {'ConstSpec': 31, 'IdentifierList': 33}
+19 : {'VarSpec': 35, 'IdentifierList': 37}
+20 : {'TypeSpec': 38, 'AliasDecl': 40, 'Typedef': 41}
+21 : {}
+22 : {}
+23 : {'ImportSpecMult': 43}
+24 : {'ImportPath': 44}
 25 : {}
-26 : {'Signature': 43, 'Parameters': 44}
+26 : {'ImportPath': 45}
 27 : {}
 28 : {}
-29 : {'ConstSpecMult': 46}
-30 : {'Type': 47, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-31 : {'IdentifierOth': 62}
-32 : {}
-33 : {'VarMult': 63}
-34 : {'Type': 64, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
+29 : {'Signature': 46, 'Parameters': 47}
+30 : {}
+31 : {}
+32 : {'ConstSpecMult': 49}
+33 : {'Type': 50, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+34 : {'IdentifierOth': 67}
 35 : {}
-36 : {'TypeSpecMult': 66}
-37 : {}
+36 : {'VarMult': 68}
+37 : {'Type': 69, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
 38 : {}
-39 : {'Type': 68, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-40 : {'ImportOne': 70, 'ImportPath': 23}
+39 : {'TypeSpecMult': 71}
+40 : {}
 41 : {}
-42 : {}
-43 : {'FunctionBody': 71, 'Block': 72}
-44 : {'Parameters': 74, 'Result': 75, 'Type': 76, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-45 : {'ParameterList': 79, 'ParameterDecl': 80, 'Type': 81, 'IdentifierList': 82, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-46 : {'ConstSpec': 85, 'IdentifierList': 30}
-47 : {}
-48 : {}
-49 : {}
-50 : {'Type': 87, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
+42 : {'Type': 73, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+43 : {'ImportSpec': 75, 'ImportPath': 25}
+44 : {}
+45 : {}
+46 : {'FunctionBody': 76, 'Block': 77}
+47 : {'Parameters': 79, 'Result': 80, 'Type': 81, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+48 : {'ParameterList': 84, 'ParameterDecl': 85, 'Type': 86, 'IdentifierList': 87, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+49 : {'ConstSpec': 90, 'IdentifierList': 33}
+50 : {}
 51 : {}
 52 : {}
-53 : {}
+53 : {'Type': 92, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
 54 : {}
 55 : {}
 56 : {}
 57 : {}
-58 : {'ArrayLength': 89, 'Expr': 91, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
+58 : {}
 59 : {}
-60 : {'BaseType': 121, 'Type': 122, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
+60 : {}
 61 : {}
-62 : {}
-63 : {'VarSpec': 126, 'IdentifierList': 34}
-64 : {}
-65 : {'ExpressionList': 128, 'Expr': 129, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-66 : {'TypeSpec': 131, 'AliasDecl': 37, 'Typedef': 38}
-67 : {'Type': 132, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-68 : {}
+62 : {'ArrayLength': 94, 'Expr': 96, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+63 : {}
+64 : {'BaseType': 128, 'Type': 129, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+65 : {}
+66 : {'Signature': 131, 'Parameters': 47}
+67 : {}
+68 : {'VarSpec': 134, 'IdentifierList': 37}
 69 : {}
-70 : {}
-71 : {}
-72 : {}
-73 : {'StatementList': 133}
+70 : {'ExpressionList': 136, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+71 : {'TypeSpec': 139, 'AliasDecl': 40, 'Typedef': 41}
+72 : {'Type': 140, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+73 : {}
 74 : {}
 75 : {}
 76 : {}
-77 : {'ParameterList': 79, 'Type': 134, 'ParameterDecl': 80, 'TypeName': 48, 'TypeLit': 49, 'IdentifierList': 82, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-78 : {}
+77 : {}
+78 : {'StatementList': 142}
 79 : {}
 80 : {}
 81 : {}
-82 : {'Type': 138, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-83 : {'IdentifierOth': 62}
+82 : {'ParameterList': 84, 'Type': 143, 'ParameterDecl': 85, 'TypeName': 51, 'TypeLit': 52, 'IdentifierList': 87, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+83 : {}
 84 : {}
 85 : {}
-86 : {'Type': 106, 'ExpressionList': 139, 'Expr': 129, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-87 : {}
-88 : {}
+86 : {}
+87 : {'Type': 147, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+88 : {'IdentifierOth': 67}
 89 : {}
-90 : {'ElementType': 143, 'Type': 144, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-91 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
+90 : {}
+91 : {'Type': 111, 'ExpressionList': 149, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 92 : {}
-93 : {'Selector': 168, 'Slice': 169, 'Arguments': 170}
-94 : {'UnaryOp': 94, 'UnaryExpr': 174, 'PrimaryExpr': 93, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-95 : {}
-96 : {}
+93 : {}
+94 : {}
+95 : {'ElementType': 153, 'Type': 154, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+96 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
 97 : {}
-98 : {}
-99 : {}
+98 : {'Selector': 178, 'Slice': 179, 'Arguments': 180}
+99 : {'UnaryOp': 99, 'UnaryExpr': 184, 'PrimaryExpr': 98, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 100 : {}
-101 : {'BaseType': 121, 'Type': 122, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
+101 : {}
 102 : {}
 103 : {}
 104 : {}
-105 : {'Expr': 176, 'Type': 177, 'UnaryExpr': 92, 'TypeName': 110, 'TypeLit': 49, 'PrimaryExpr': 93, 'UnaryOp': 94, 'QualifiedIdent': 52, 'ArrayType': 179, 'StructType': 180, 'PointerType': 55, 'SliceType': 181, 'MapType': 182, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'BasicLit': 107, 'CompositeLit': 108}
-106 : {}
+105 : {}
+106 : {'BaseType': 128, 'Type': 129, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
 107 : {}
 108 : {}
 109 : {}
-110 : {'LiteralValue': 184}
+110 : {'Expr': 186, 'Type': 187, 'UnaryExpr': 97, 'TypeName': 116, 'TypeLit': 52, 'PrimaryExpr': 98, 'UnaryOp': 99, 'QualifiedIdent': 55, 'ArrayType': 189, 'StructType': 190, 'PointerType': 58, 'SliceType': 191, 'MapType': 192, 'FunctionType': 61, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114}
 111 : {}
 112 : {}
 113 : {}
 114 : {}
 115 : {}
-116 : {'LiteralValue': 186}
-117 : {'LiteralValue': 187}
-118 : {'LiteralValue': 188}
-119 : {'LiteralValue': 189}
-120 : {'FieldDeclMult': 190}
+116 : {'LiteralValue': 195}
+117 : {}
+118 : {}
+119 : {}
+120 : {}
 121 : {}
-122 : {}
-123 : {'KeyType': 191, 'Type': 192, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-124 : {}
-125 : {}
-126 : {}
-127 : {'Type': 106, 'ExpressionList': 194, 'Expr': 129, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
+122 : {'LiteralValue': 197}
+123 : {'LiteralValue': 198}
+124 : {'LiteralValue': 199}
+125 : {'LiteralValue': 200}
+126 : {'Signature': 201, 'Parameters': 47}
+127 : {'FieldDeclMult': 202}
 128 : {}
-129 : {'ExprOth': 195, 'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
-130 : {}
+129 : {}
+130 : {'KeyType': 203, 'Type': 204, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
 131 : {}
 132 : {}
-133 : {'Statement': 197}
+133 : {}
 134 : {}
-135 : {'IdentifierOth': 62}
+135 : {'Type': 111, 'ExpressionList': 207, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 136 : {}
-137 : {'ParameterDecl': 199, 'Type': 81, 'IdentifierList': 82, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
+137 : {'ExprOth': 208, 'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
 138 : {}
 139 : {}
 140 : {}
 141 : {}
-142 : {'ElementType': 200, 'Type': 144, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
+142 : {'Statement': 211, 'Decl': 212, 'LabeledStmt': 213, 'SimpleStmt': 214, 'GotoStmt': 215, 'ReturnStmt': 216, 'BreakStmt': 217, 'ContinueStmt': 218, 'FallthroughStmt': 219, 'Block': 220, 'IfStmt': 221, 'SwitchStmt': 222, 'ForStmt': 223, 'ConstDecl': 14, 'VarDecl': 15, 'TypeDecl': 16, 'Label': 224, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'ExpressionList': 232, 'Expr': 237, 'ExprSwitchStmt': 238, 'TypeSwitchStmt': 239, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 143 : {}
-144 : {}
-145 : {'Expr': 201, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-146 : {}
+144 : {'IdentifierOth': 67}
+145 : {}
+146 : {'ParameterDecl': 245, 'Type': 86, 'IdentifierList': 87, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
 147 : {}
 148 : {}
 149 : {}
 150 : {}
 151 : {}
-152 : {}
+152 : {'ElementType': 246, 'Type': 154, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
 153 : {}
 154 : {}
-155 : {}
+155 : {'Expr': 247, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 156 : {}
 157 : {}
 158 : {}
@@ -170,100 +170,246 @@
 169 : {}
 170 : {}
 171 : {}
-172 : {'Expr': 203, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-173 : {'ExpressionList': 206, 'Type': 207, 'Expr': 129, 'TypeName': 110, 'TypeLit': 49, 'UnaryExpr': 92, 'QualifiedIdent': 52, 'ArrayType': 179, 'StructType': 180, 'PointerType': 55, 'SliceType': 181, 'MapType': 182, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'BasicLit': 107, 'CompositeLit': 108}
+172 : {}
+173 : {}
 174 : {}
-175 : {'Type': 177, 'Expr': 176, 'TypeName': 110, 'TypeLit': 49, 'UnaryExpr': 92, 'QualifiedIdent': 52, 'ArrayType': 179, 'StructType': 180, 'PointerType': 55, 'SliceType': 181, 'MapType': 182, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'BasicLit': 107, 'CompositeLit': 108}
-176 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
+175 : {}
+176 : {}
 177 : {}
 178 : {}
-179 : {'LiteralValue': 187}
-180 : {'LiteralValue': 186}
-181 : {'LiteralValue': 188}
-182 : {'LiteralValue': 189}
-183 : {'Type': 106, 'Expr': 210, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
+179 : {}
+180 : {}
+181 : {}
+182 : {'Expr': 249, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+183 : {'ExpressionList': 252, 'Type': 253, 'Expr': 137, 'TypeName': 116, 'TypeLit': 52, 'UnaryExpr': 97, 'QualifiedIdent': 55, 'ArrayType': 189, 'StructType': 190, 'PointerType': 58, 'SliceType': 191, 'MapType': 192, 'FunctionType': 61, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114}
 184 : {}
-185 : {'ElementList': 211, 'KeyedElement': 213, 'Element': 214, 'Key': 215, 'Expr': 216, 'LiteralValue': 217, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-186 : {}
+185 : {'Type': 187, 'Expr': 186, 'TypeName': 116, 'TypeLit': 52, 'UnaryExpr': 97, 'QualifiedIdent': 55, 'ArrayType': 189, 'StructType': 190, 'PointerType': 58, 'SliceType': 191, 'MapType': 192, 'FunctionType': 61, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114}
+186 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
 187 : {}
 188 : {}
-189 : {}
-190 : {'FieldDecl': 220, 'IdentifierList': 221, 'EmbeddedField': 222, 'TypeName': 224, 'QualifiedIdent': 52}
-191 : {}
-192 : {}
-193 : {}
-194 : {}
+189 : {'LiteralValue': 198}
+190 : {'LiteralValue': 197}
+191 : {'LiteralValue': 199}
+192 : {'LiteralValue': 200}
+193 : {'Signature': 256, 'Parameters': 47}
+194 : {'Type': 111, 'Expr': 257, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 195 : {}
-196 : {}
+196 : {'ElementList': 258, 'KeyedElement': 260, 'Element': 261, 'Key': 262, 'Expr': 263, 'LiteralValue': 264, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 197 : {}
 198 : {}
 199 : {}
 200 : {}
-201 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
-202 : {}
-203 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
-204 : {'Expr': 229, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
+201 : {'FunctionBody': 266, 'Block': 77}
+202 : {'FieldDecl': 268, 'IdentifierList': 269, 'EmbeddedField': 270, 'TypeName': 272, 'QualifiedIdent': 55}
+203 : {}
+204 : {}
 205 : {}
 206 : {}
 207 : {}
-208 : {'BaseType': 121, 'Type': 122, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
+208 : {}
 209 : {}
-210 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
+210 : {}
 211 : {}
 212 : {}
 213 : {}
 214 : {}
 215 : {}
-216 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
+216 : {}
 217 : {}
 218 : {}
 219 : {}
 220 : {}
-221 : {'Type': 240, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-222 : {'Tag': 241}
-223 : {'TypeName': 243, 'QualifiedIdent': 52}
+221 : {}
+222 : {}
+223 : {}
 224 : {}
-225 : {'ElementType': 244, 'Type': 144, 'TypeName': 48, 'TypeLit': 49, 'QualifiedIdent': 52, 'ArrayType': 53, 'StructType': 54, 'PointerType': 55, 'SliceType': 56, 'MapType': 57}
-226 : {'Expr': 245, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
+225 : {}
+226 : {}
 227 : {}
-228 : {'Expr': 246, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-229 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
-230 : {}
-231 : {}
-232 : {}
-233 : {}
-234 : {'Type': 106, 'ExpressionList': 252, 'Expr': 129, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
+228 : {}
+229 : {}
+230 : {'Label': 277}
+231 : {'ExpressionList': 279, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+232 : {'assign_op': 280, 'add_op_assign': 281, 'mul_op_assign': 282}
+233 : {'Label': 295}
+234 : {'Label': 296}
 235 : {}
-236 : {}
-237 : {'KeyedElement': 255, 'Element': 214, 'Key': 215, 'Expr': 216, 'LiteralValue': 217, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
+236 : {'SimpleStmtOpt': 297, 'Expr': 237, 'SimpleStmt': 298, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'ExpressionList': 232, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+237 : {'BinOp': 155, 'ExprOth': 208, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
 238 : {}
-239 : {'Element': 256, 'Expr': 257, 'LiteralValue': 258, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-240 : {'Tag': 259}
-241 : {}
+239 : {}
+240 : {'Condition': 302, 'ForClause': 303, 'RangeClause': 304, 'Expr': 305, 'InitStmtOpt': 306, 'RangeList': 307, 'UnaryExpr': 97, 'SimpleStmt': 308, 'ExpressionList': 309, 'IdentifierList': 310, 'PrimaryExpr': 98, 'UnaryOp': 99, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+241 : {'IdentifierOth': 67}
 242 : {}
-243 : {}
+243 : {'SimpleStmtOpt': 312, 'SimpleStmt': 298, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'Expr': 237, 'ExpressionList': 232, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 244 : {}
-245 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
-246 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
-247 : {}
-248 : {'Expr': 262, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
-249 : {}
-250 : {}
+245 : {}
+246 : {}
+247 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+248 : {}
+249 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+250 : {'Expr': 314, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 251 : {}
 252 : {}
 253 : {}
-254 : {}
+254 : {'BaseType': 128, 'Type': 129, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
 255 : {}
-256 : {}
-257 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
+256 : {'FunctionBody': 266, 'Block': 77}
+257 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
 258 : {}
 259 : {}
-260 : {'Expr': 265, 'UnaryExpr': 92, 'PrimaryExpr': 93, 'UnaryOp': 94, 'Operand': 95, 'Conversion': 96, 'Lit': 103, 'OperandName': 104, 'Type': 106, 'BasicLit': 107, 'CompositeLit': 108, 'TypeName': 110, 'TypeLit': 49, 'StructType': 116, 'ArrayType': 117, 'SliceType': 118, 'MapType': 119, 'QualifiedIdent': 52, 'PointerType': 55}
+260 : {}
 261 : {}
-262 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
-263 : {}
+262 : {}
+263 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
 264 : {}
-265 : {'BinOp': 145, 'RelOp': 148, 'AddOp': 149, 'MulOp': 150}
+265 : {}
 266 : {}
 267 : {}
 268 : {}
+269 : {'Type': 326, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+270 : {'Tag': 327}
+271 : {'TypeName': 329, 'QualifiedIdent': 55}
+272 : {}
+273 : {'ElementType': 330, 'Type': 154, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+274 : {'Expr': 331, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+275 : {}
+276 : {'Label': 224, 'Statement': 332, 'Decl': 212, 'LabeledStmt': 213, 'SimpleStmt': 214, 'GotoStmt': 215, 'ReturnStmt': 216, 'BreakStmt': 217, 'ContinueStmt': 218, 'FallthroughStmt': 219, 'Block': 220, 'IfStmt': 221, 'SwitchStmt': 222, 'ForStmt': 223, 'ConstDecl': 14, 'VarDecl': 15, 'TypeDecl': 16, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'ExpressionList': 232, 'Expr': 237, 'ExprSwitchStmt': 238, 'TypeSwitchStmt': 239, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+277 : {}
+278 : {}
+279 : {}
+280 : {'ExpressionList': 333, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+281 : {}
+282 : {}
+283 : {}
+284 : {}
+285 : {}
+286 : {}
+287 : {}
+288 : {}
+289 : {}
+290 : {}
+291 : {}
+292 : {}
+293 : {}
+294 : {}
+295 : {}
+296 : {}
+297 : {'Expr': 334, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+298 : {}
+299 : {'IdentifierOth': 67}
+300 : {}
+301 : {}
+302 : {'Block': 336}
+303 : {'Block': 337}
+304 : {'Block': 338}
+305 : {'BinOp': 155, 'ExprOth': 208, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+306 : {}
+307 : {}
+308 : {}
+309 : {'assign_op': 280, 'add_op_assign': 281, 'mul_op_assign': 282}
+310 : {}
+311 : {'ExpressionList': 343, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+312 : {'ExprOpt': 344, 'TypeSwitchGuard': 345, 'Expr': 346, 'ShortVarDeclOpt': 347, 'PrimaryExpr': 98, 'UnaryExpr': 97, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+313 : {'Expr': 349, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+314 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+315 : {}
+316 : {}
+317 : {}
+318 : {}
+319 : {'Type': 111, 'ExpressionList': 355, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+320 : {}
+321 : {}
+322 : {'KeyedElement': 358, 'Element': 261, 'Key': 262, 'Expr': 263, 'LiteralValue': 264, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+323 : {}
+324 : {'Element': 359, 'Expr': 360, 'LiteralValue': 361, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+325 : {}
+326 : {'Tag': 362}
+327 : {}
+328 : {}
+329 : {}
+330 : {}
+331 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+332 : {}
+333 : {}
+334 : {'Block': 363, 'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+335 : {}
+336 : {}
+337 : {}
+338 : {}
+339 : {'ConditionOpt': 364, 'Condition': 365, 'Expr': 366, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+340 : {'Expr': 367, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+341 : {}
+342 : {'ExpressionList': 343, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+343 : {}
+344 : {}
+345 : {}
+346 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+347 : {'PrimaryExpr': 370, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+348 : {}
+349 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+350 : {}
+351 : {'Expr': 374, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+352 : {}
+353 : {}
+354 : {}
+355 : {}
+356 : {}
+357 : {}
+358 : {}
+359 : {}
+360 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+361 : {}
+362 : {}
+363 : {'else_stmt': 377}
+364 : {}
+365 : {}
+366 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+367 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+368 : {'ExprCaseClauseMult': 380}
+369 : {'TypeCaseClauseMult': 381}
+370 : {'Selector': 178, 'Slice': 179, 'Arguments': 180}
+371 : {}
+372 : {'Expr': 383, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+373 : {}
+374 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+375 : {}
+376 : {}
+377 : {}
+378 : {'IfStmt': 386, 'Block': 387}
+379 : {'PostStmtOpt': 388, 'SimpleStmt': 389, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'Expr': 237, 'ExpressionList': 232, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+380 : {'ExprCaseClause': 391, 'ExprSwitchCase': 392}
+381 : {'TypeCaseClause': 396, 'TypeSwitchCase': 397}
+382 : {}
+383 : {'BinOp': 155, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
+384 : {}
+385 : {}
+386 : {}
+387 : {}
+388 : {}
+389 : {}
+390 : {}
+391 : {}
+392 : {}
+393 : {'ExpressionList': 403, 'Expr': 137, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+394 : {}
+395 : {}
+396 : {}
+397 : {}
+398 : {'TypeList': 405, 'Type': 406, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+399 : {}
+400 : {}
+401 : {}
+402 : {'StatementList': 408}
+403 : {}
+404 : {'StatementList': 409}
+405 : {}
+406 : {'TypeOth': 410}
+407 : {}
+408 : {'Statement': 211, 'Decl': 212, 'LabeledStmt': 213, 'SimpleStmt': 214, 'GotoStmt': 215, 'ReturnStmt': 216, 'BreakStmt': 217, 'ContinueStmt': 218, 'FallthroughStmt': 219, 'Block': 220, 'IfStmt': 221, 'SwitchStmt': 222, 'ForStmt': 223, 'ConstDecl': 14, 'VarDecl': 15, 'TypeDecl': 16, 'Label': 224, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'ExpressionList': 232, 'Expr': 237, 'ExprSwitchStmt': 238, 'TypeSwitchStmt': 239, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+409 : {'Statement': 211, 'Decl': 212, 'LabeledStmt': 213, 'SimpleStmt': 214, 'GotoStmt': 215, 'ReturnStmt': 216, 'BreakStmt': 217, 'ContinueStmt': 218, 'FallthroughStmt': 219, 'Block': 220, 'IfStmt': 221, 'SwitchStmt': 222, 'ForStmt': 223, 'ConstDecl': 14, 'VarDecl': 15, 'TypeDecl': 16, 'Label': 224, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'ExpressionList': 232, 'Expr': 237, 'ExprSwitchStmt': 238, 'TypeSwitchStmt': 239, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+410 : {}
+411 : {'Type': 413, 'TypeName': 51, 'TypeLit': 52, 'QualifiedIdent': 55, 'ArrayType': 56, 'StructType': 57, 'PointerType': 58, 'SliceType': 59, 'MapType': 60, 'FunctionType': 61}
+412 : {}
+413 : {'TypeOth': 414}
+414 : {}

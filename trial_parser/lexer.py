@@ -41,7 +41,7 @@ tokens = [
     'AND', 'OR', 'XOR', 'SHL', 'SHR', 'AND_NOT',
     'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN',
     'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'SHL_ASSIGN', 'SHR_ASSIGN', 'AND_NOT_ASSIGN',
-    'LAND', 'LOR', 'ARROW', 'INC', 'DEC',
+    'LAND', 'LOR', 'INC', 'DEC',
     'EQL', 'LSS', 'GTR', 'ASSIGN', 'NOT',
     'NEQ', 'LEQ', 'GEQ', 'DEFINE',
     'LPAREN', 'LBRACK', 'LBRACE', 'COMMA', 'PERIOD',
@@ -78,7 +78,6 @@ t_AND_NOT_ASSIGN = r'&\^='
 
 t_LAND = r'&&'
 t_LOR = r'\|\|'
-# t_ARROW = r'<-'
 t_INC = r'\+\+'
 t_DEC = r'--'
 
