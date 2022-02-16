@@ -1,235 +1,269 @@
 0 : {'PACKAGE': 3}
 1 : {'$end': 0}
-2 : {'IMPORT': -5, 'CONST': -5, 'VAR': -5, 'TYPE': -5, '$end': -5}
+2 : {'IMPORT': -5, 'FUNC': -5, 'CONST': -5, 'VAR': -5, 'TYPE': -5, '$end': -5}
 3 : {'IDENT': 6}
-4 : {'CONST': -15, 'VAR': -15, 'TYPE': -15, '$end': -15, 'IMPORT': 9}
-5 : {'IMPORT': -2, 'CONST': -2, 'VAR': -2, 'TYPE': -2, '$end': -2}
-6 : {'IMPORT': -3, 'CONST': -3, 'VAR': -3, 'TYPE': -3, '$end': -3}
-7 : {'$end': -1, 'CONST': 16, 'VAR': 17, 'TYPE': 18}
-8 : {'IMPORT': -4, 'CONST': -4, 'VAR': -4, 'TYPE': -4, '$end': -4}
-9 : {'LPAREN': 20, 'PERIOD': 21, 'IDENT': 23, 'STRING': 24}
-10 : {'CONST': -14, 'VAR': -14, 'TYPE': -14, '$end': -14}
-11 : {'CONST': -16, 'VAR': -16, 'TYPE': -16, '$end': -16}
-12 : {'CONST': -17, 'VAR': -17, 'TYPE': -17, '$end': -17}
-13 : {'CONST': -18, 'VAR': -18, 'TYPE': -18, '$end': -18}
-14 : {'CONST': -19, 'VAR': -19, 'TYPE': -19, '$end': -19}
-15 : {'CONST': -20, 'VAR': -20, 'TYPE': -20, '$end': -20}
-16 : {'LPAREN': 26, 'IDENT': 28}
-17 : {'LPAREN': 30, 'IDENT': 28}
-18 : {'LPAREN': 33, 'IDENT': 36}
-19 : {'IMPORT': -6, 'CONST': -6, 'VAR': -6, 'TYPE': -6, '$end': -6}
-20 : {'RPAREN': -9, 'PERIOD': -9, 'IDENT': -9, 'STRING': -9}
-21 : {'STRING': 24}
-22 : {'IMPORT': -12, 'CONST': -12, 'VAR': -12, 'TYPE': -12, '$end': -12, 'RPAREN': -12, 'PERIOD': -12, 'IDENT': -12, 'STRING': -12}
-23 : {'STRING': 24}
-24 : {'IMPORT': -13, 'CONST': -13, 'VAR': -13, 'TYPE': -13, '$end': -13, 'RPAREN': -13, 'PERIOD': -13, 'IDENT': -13, 'STRING': -13}
-25 : {'CONST': -21, 'VAR': -21, 'TYPE': -21, '$end': -21}
-26 : {'RPAREN': -24, 'IDENT': -24}
-27 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-28 : {'COMMA': -28, 'LPAREN': -28, 'INT': -28, 'FLOAT': -28, 'STRING': -28, 'TYPE': -28, 'LBRACK': -28, 'STRUCT': -28, 'MUL': -28, 'MAP': -28, 'ASSIGN': -28}
-29 : {'CONST': -145, 'VAR': -145, 'TYPE': -145, '$end': -145}
-30 : {'RPAREN': -148, 'IDENT': -148}
-31 : {'ASSIGN': 61, 'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-32 : {'CONST': -137, 'VAR': -137, 'TYPE': -137, '$end': -137}
-33 : {'RPAREN': -140, 'IDENT': -140}
-34 : {'CONST': -141, 'VAR': -141, 'TYPE': -141, '$end': -141, 'RPAREN': -141, 'IDENT': -141}
-35 : {'CONST': -142, 'VAR': -142, 'TYPE': -142, '$end': -142, 'RPAREN': -142, 'IDENT': -142}
-36 : {'ASSIGN': 63, 'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-37 : {'RPAREN': 65, 'PERIOD': 21, 'IDENT': 23, 'STRING': 24}
-38 : {'IMPORT': -10, 'CONST': -10, 'VAR': -10, 'TYPE': -10, '$end': -10, 'RPAREN': -10, 'PERIOD': -10, 'IDENT': -10, 'STRING': -10}
-39 : {'IMPORT': -11, 'CONST': -11, 'VAR': -11, 'TYPE': -11, '$end': -11, 'RPAREN': -11, 'PERIOD': -11, 'IDENT': -11, 'STRING': -11}
-40 : {'RPAREN': 67, 'IDENT': 28}
-41 : {'ASSIGN': 69}
-42 : {'ASSIGN': -29, 'CONST': -29, 'VAR': -29, 'TYPE': -29, '$end': -29, 'RPAREN': -29, 'IDENT': -29, 'LBRACE': -29, 'LPAREN': -29, 'RBRACK': -29, 'COMMA': -29, 'RBRACE': -29}
-43 : {'ASSIGN': -30, 'CONST': -30, 'VAR': -30, 'TYPE': -30, '$end': -30, 'RPAREN': -30, 'IDENT': -30, 'LPAREN': -30, 'LBRACE': -30, 'RBRACK': -30, 'COMMA': -30, 'RBRACE': -30}
-44 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-45 : {'ASSIGN': -32, 'CONST': -32, 'VAR': -32, 'TYPE': -32, '$end': -32, 'RPAREN': -32, 'IDENT': -32, 'LBRACE': -32, 'LPAREN': -32, 'RBRACK': -32, 'COMMA': -32, 'RBRACE': -32}
-46 : {'ASSIGN': -33, 'CONST': -33, 'VAR': -33, 'TYPE': -33, '$end': -33, 'RPAREN': -33, 'IDENT': -33, 'LBRACE': -33, 'LPAREN': -33, 'RBRACK': -33, 'COMMA': -33, 'RBRACE': -33}
-47 : {'ASSIGN': -34, 'CONST': -34, 'VAR': -34, 'TYPE': -34, '$end': -34, 'RPAREN': -34, 'IDENT': -34, 'LBRACE': -34, 'LPAREN': -34, 'RBRACK': -34, 'COMMA': -34, 'RBRACE': -34}
-48 : {'IDENT': 71}
-49 : {'ASSIGN': -36, 'CONST': -36, 'VAR': -36, 'TYPE': -36, '$end': -36, 'RPAREN': -36, 'IDENT': -36, 'LBRACE': -36, 'LPAREN': -36, 'RBRACK': -36, 'COMMA': -36, 'RBRACE': -36}
-50 : {'ASSIGN': -37, 'CONST': -37, 'VAR': -37, 'TYPE': -37, '$end': -37, 'RPAREN': -37, 'IDENT': -37, 'LBRACE': -37, 'LPAREN': -37, 'RBRACK': -37, 'COMMA': -37, 'RBRACE': -37}
-51 : {'ASSIGN': -38, 'CONST': -38, 'VAR': -38, 'TYPE': -38, '$end': -38, 'RPAREN': -38, 'IDENT': -38, 'LPAREN': -38, 'LBRACE': -38, 'RBRACK': -38, 'COMMA': -38, 'RBRACE': -38}
-52 : {'ASSIGN': -39, 'CONST': -39, 'VAR': -39, 'TYPE': -39, '$end': -39, 'RPAREN': -39, 'IDENT': -39, 'LBRACE': -39, 'LPAREN': -39, 'RBRACK': -39, 'COMMA': -39, 'RBRACE': -39}
-53 : {'ASSIGN': -40, 'CONST': -40, 'VAR': -40, 'TYPE': -40, '$end': -40, 'RPAREN': -40, 'IDENT': -40, 'LBRACE': -40, 'LPAREN': -40, 'RBRACK': -40, 'COMMA': -40, 'RBRACE': -40}
-54 : {'RBRACK': 73, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-55 : {'LBRACE': 103}
-56 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-57 : {'LBRACK': 106}
-58 : {'LPAREN': -26, 'INT': -26, 'FLOAT': -26, 'STRING': -26, 'TYPE': -26, 'LBRACK': -26, 'STRUCT': -26, 'MUL': -26, 'MAP': -26, 'ASSIGN': -26, 'COMMA': 107}
-59 : {'RPAREN': 108, 'IDENT': 28}
-60 : {'ASSIGN': 110, 'CONST': -151, 'VAR': -151, 'TYPE': -151, '$end': -151, 'RPAREN': -151, 'IDENT': -151}
-61 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-62 : {'RPAREN': 113, 'IDENT': 36}
-63 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-64 : {'CONST': -144, 'VAR': -144, 'TYPE': -144, '$end': -144, 'RPAREN': -144, 'IDENT': -144}
-65 : {'IMPORT': -7, 'CONST': -7, 'VAR': -7, 'TYPE': -7, '$end': -7}
-66 : {'RPAREN': -8, 'PERIOD': -8, 'IDENT': -8, 'STRING': -8}
-67 : {'CONST': -22, 'VAR': -22, 'TYPE': -22, '$end': -22}
-68 : {'RPAREN': -23, 'IDENT': -23}
-69 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-70 : {'RPAREN': 117}
-71 : {'ASSIGN': -35, 'CONST': -35, 'VAR': -35, 'TYPE': -35, '$end': -35, 'RPAREN': -35, 'IDENT': -35, 'LBRACE': -35, 'LPAREN': -35, 'RBRACK': -35, 'COMMA': -35, 'RBRACE': -35}
-72 : {'RBRACK': 118}
-73 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-74 : {'RBRACK': -42, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-75 : {'LOR': -54, 'LAND': -54, 'EQL': -54, 'NEQ': -54, 'LSS': -54, 'LEQ': -54, 'GTR': -54, 'GEQ': -54, 'ADD': -54, 'SUB': -54, 'OR': -54, 'XOR': -54, 'MUL': -54, 'QUO': -54, 'REM': -54, 'SHL': -54, 'SHR': -54, 'AND': -54, 'AND_NOT': -54, 'RBRACK': -54, 'COMMA': -54, 'CONST': -54, 'VAR': -54, 'TYPE': -54, '$end': -54, 'RPAREN': -54, 'IDENT': -54, 'COLON': -54, 'RBRACE': -54}
-76 : {'LOR': -56, 'LAND': -56, 'EQL': -56, 'NEQ': -56, 'LSS': -56, 'LEQ': -56, 'GTR': -56, 'GEQ': -56, 'ADD': -56, 'SUB': -56, 'OR': -56, 'XOR': -56, 'MUL': -56, 'QUO': -56, 'REM': -56, 'SHL': -56, 'SHR': -56, 'AND': -56, 'AND_NOT': -56, 'RBRACK': -56, 'COMMA': -56, 'CONST': -56, 'VAR': -56, 'TYPE': -56, '$end': -56, 'RPAREN': -56, 'IDENT': -56, 'COLON': -56, 'RBRACE': -56, 'PERIOD': 147, 'LBRACK': 148, 'LPAREN': 149}
-77 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-78 : {'PERIOD': -116, 'LBRACK': -116, 'LPAREN': -116, 'LOR': -116, 'LAND': -116, 'EQL': -116, 'NEQ': -116, 'LSS': -116, 'LEQ': -116, 'GTR': -116, 'GEQ': -116, 'ADD': -116, 'SUB': -116, 'OR': -116, 'XOR': -116, 'MUL': -116, 'QUO': -116, 'REM': -116, 'SHL': -116, 'SHR': -116, 'AND': -116, 'AND_NOT': -116, 'RBRACK': -116, 'COMMA': -116, 'CONST': -116, 'VAR': -116, 'TYPE': -116, '$end': -116, 'RPAREN': -116, 'IDENT': -116, 'COLON': -116, 'RBRACE': -116}
-79 : {'PERIOD': -117, 'LBRACK': -117, 'LPAREN': -117, 'LOR': -117, 'LAND': -117, 'EQL': -117, 'NEQ': -117, 'LSS': -117, 'LEQ': -117, 'GTR': -117, 'GEQ': -117, 'ADD': -117, 'SUB': -117, 'OR': -117, 'XOR': -117, 'MUL': -117, 'QUO': -117, 'REM': -117, 'SHL': -117, 'SHR': -117, 'AND': -117, 'AND_NOT': -117, 'RBRACK': -117, 'COMMA': -117, 'CONST': -117, 'VAR': -117, 'TYPE': -117, '$end': -117, 'RPAREN': -117, 'IDENT': -117, 'COLON': -117, 'RBRACE': -117}
-80 : {'ADD': -80, 'SUB': -80, 'NOT': -80, 'XOR': -80, 'MUL': -80, 'AND': -80, 'LPAREN': -80, 'IDENT': -80, 'INT': -80, 'FLOAT': -80, 'IMAG': -80, 'RUNE': -80, 'STRING': -80, 'TYPE': -80, 'STRUCT': -80, 'LBRACK': -80, 'MAP': -80}
-81 : {'ADD': -81, 'SUB': -81, 'NOT': -81, 'XOR': -81, 'MUL': -81, 'AND': -81, 'LPAREN': -81, 'IDENT': -81, 'INT': -81, 'FLOAT': -81, 'IMAG': -81, 'RUNE': -81, 'STRING': -81, 'TYPE': -81, 'STRUCT': -81, 'LBRACK': -81, 'MAP': -81}
-82 : {'ADD': -82, 'SUB': -82, 'NOT': -82, 'XOR': -82, 'MUL': -82, 'AND': -82, 'LPAREN': -82, 'IDENT': -82, 'INT': -82, 'FLOAT': -82, 'IMAG': -82, 'RUNE': -82, 'STRING': -82, 'TYPE': -82, 'STRUCT': -82, 'LBRACK': -82, 'MAP': -82}
-83 : {'ADD': -83, 'SUB': -83, 'NOT': -83, 'XOR': -83, 'MUL': -83, 'AND': -83, 'LPAREN': -83, 'IDENT': -83, 'INT': -83, 'FLOAT': -83, 'IMAG': -83, 'RUNE': -83, 'STRING': -83, 'TYPE': -83, 'STRUCT': -83, 'LBRACK': -83, 'MAP': -83}
-84 : {'ADD': -84, 'SUB': -84, 'NOT': -84, 'XOR': -84, 'MUL': -84, 'AND': -84, 'LPAREN': -84, 'IDENT': -84, 'INT': -84, 'FLOAT': -84, 'IMAG': -84, 'RUNE': -84, 'STRING': -84, 'TYPE': -84, 'STRUCT': -84, 'LBRACK': -84, 'MAP': -84}
-85 : {'ADD': -85, 'SUB': -85, 'NOT': -85, 'XOR': -85, 'MUL': -85, 'AND': -85, 'LPAREN': -85, 'IDENT': -85, 'INT': -85, 'FLOAT': -85, 'IMAG': -85, 'RUNE': -85, 'STRING': -85, 'TYPE': -85, 'STRUCT': -85, 'LBRACK': -85, 'MAP': -85}
-86 : {'PERIOD': -88, 'LBRACK': -88, 'LPAREN': -88, 'LOR': -88, 'LAND': -88, 'EQL': -88, 'NEQ': -88, 'LSS': -88, 'LEQ': -88, 'GTR': -88, 'GEQ': -88, 'ADD': -88, 'SUB': -88, 'OR': -88, 'XOR': -88, 'MUL': -88, 'QUO': -88, 'REM': -88, 'SHL': -88, 'SHR': -88, 'AND': -88, 'AND_NOT': -88, 'RBRACK': -88, 'COMMA': -88, 'CONST': -88, 'VAR': -88, 'TYPE': -88, '$end': -88, 'RPAREN': -88, 'IDENT': -88, 'COLON': -88, 'RBRACE': -88}
-87 : {'PERIOD': -89, 'LBRACK': -89, 'LPAREN': -89, 'LOR': -89, 'LAND': -89, 'EQL': -89, 'NEQ': -89, 'LSS': -89, 'LEQ': -89, 'GTR': -89, 'GEQ': -89, 'ADD': -89, 'SUB': -89, 'OR': -89, 'XOR': -89, 'MUL': -89, 'QUO': -89, 'REM': -89, 'SHL': -89, 'SHR': -89, 'AND': -89, 'AND_NOT': -89, 'RBRACK': -89, 'COMMA': -89, 'CONST': -89, 'VAR': -89, 'TYPE': -89, '$end': -89, 'RPAREN': -89, 'IDENT': -89, 'COLON': -89, 'RBRACE': -89}
-88 : {'LPAREN': 151, 'INT': 154, 'FLOAT': 155, 'STRING': 156, 'TYPE': 48, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LBRACK': 54, 'STRUCT': 55, 'MAP': 57, 'IDENT': 92, 'IMAG': 96, 'RUNE': 97}
-89 : {'LPAREN': 161}
-90 : {'PERIOD': -91, 'LBRACK': -91, 'LPAREN': -91, 'LOR': -91, 'LAND': -91, 'EQL': -91, 'NEQ': -91, 'LSS': -91, 'LEQ': -91, 'GTR': -91, 'GEQ': -91, 'ADD': -91, 'SUB': -91, 'OR': -91, 'XOR': -91, 'MUL': -91, 'QUO': -91, 'REM': -91, 'SHL': -91, 'SHR': -91, 'AND': -91, 'AND_NOT': -91, 'RBRACK': -91, 'COMMA': -91, 'CONST': -91, 'VAR': -91, 'TYPE': -91, '$end': -91, 'RPAREN': -91, 'IDENT': -91, 'COLON': -91, 'RBRACE': -91}
-91 : {'PERIOD': -92, 'LBRACK': -92, 'LPAREN': -92, 'LOR': -92, 'LAND': -92, 'EQL': -92, 'NEQ': -92, 'LSS': -92, 'LEQ': -92, 'GTR': -92, 'GEQ': -92, 'ADD': -92, 'SUB': -92, 'OR': -92, 'XOR': -92, 'MUL': -92, 'QUO': -92, 'REM': -92, 'SHL': -92, 'SHR': -92, 'AND': -92, 'AND_NOT': -92, 'RBRACK': -92, 'COMMA': -92, 'CONST': -92, 'VAR': -92, 'TYPE': -92, '$end': -92, 'RPAREN': -92, 'IDENT': -92, 'COLON': -92, 'RBRACE': -92}
-92 : {'PERIOD': -115, 'LBRACK': -115, 'LPAREN': -115, 'LOR': -115, 'LAND': -115, 'EQL': -115, 'NEQ': -115, 'LSS': -115, 'LEQ': -115, 'GTR': -115, 'GEQ': -115, 'ADD': -115, 'SUB': -115, 'OR': -115, 'XOR': -115, 'MUL': -115, 'QUO': -115, 'REM': -115, 'SHL': -115, 'SHR': -115, 'AND': -115, 'AND_NOT': -115, 'RBRACK': -115, 'COMMA': -115, 'CONST': -115, 'VAR': -115, 'TYPE': -115, '$end': -115, 'RPAREN': -115, 'IDENT': -115, 'COLON': -115, 'RBRACE': -115}
-93 : {'LPAREN': -29, 'RPAREN': -29, 'COMMA': -29, 'LBRACE': 163}
-94 : {'PERIOD': -93, 'LBRACK': -93, 'LPAREN': -32, 'LOR': -93, 'LAND': -93, 'EQL': -93, 'NEQ': -93, 'LSS': -93, 'LEQ': -93, 'GTR': -93, 'GEQ': -93, 'ADD': -93, 'SUB': -93, 'OR': -93, 'XOR': -93, 'MUL': -93, 'QUO': -93, 'REM': -93, 'SHL': -93, 'SHR': -93, 'AND': -93, 'AND_NOT': -93, 'RBRACK': -93, 'COMMA': -93, 'CONST': -93, 'VAR': -93, 'TYPE': -93, '$end': -93, 'RPAREN': -93, 'IDENT': -93, 'COLON': -93, 'RBRACE': -93, 'LBRACE': -32}
-95 : {'PERIOD': -94, 'LBRACK': -94, 'LPAREN': -33, 'LOR': -94, 'LAND': -94, 'EQL': -94, 'NEQ': -94, 'LSS': -94, 'LEQ': -94, 'GTR': -94, 'GEQ': -94, 'ADD': -94, 'SUB': -94, 'OR': -94, 'XOR': -94, 'MUL': -94, 'QUO': -94, 'REM': -94, 'SHL': -94, 'SHR': -94, 'AND': -94, 'AND_NOT': -94, 'RBRACK': -94, 'COMMA': -94, 'CONST': -94, 'VAR': -94, 'TYPE': -94, '$end': -94, 'RPAREN': -94, 'IDENT': -94, 'COLON': -94, 'RBRACE': -94, 'LBRACE': -33}
-96 : {'PERIOD': -95, 'LBRACK': -95, 'LPAREN': -95, 'LOR': -95, 'LAND': -95, 'EQL': -95, 'NEQ': -95, 'LSS': -95, 'LEQ': -95, 'GTR': -95, 'GEQ': -95, 'ADD': -95, 'SUB': -95, 'OR': -95, 'XOR': -95, 'MUL': -95, 'QUO': -95, 'REM': -95, 'SHL': -95, 'SHR': -95, 'AND': -95, 'AND_NOT': -95, 'RBRACK': -95, 'COMMA': -95, 'CONST': -95, 'VAR': -95, 'TYPE': -95, '$end': -95, 'RPAREN': -95, 'IDENT': -95, 'COLON': -95, 'RBRACE': -95}
-97 : {'PERIOD': -96, 'LBRACK': -96, 'LPAREN': -96, 'LOR': -96, 'LAND': -96, 'EQL': -96, 'NEQ': -96, 'LSS': -96, 'LEQ': -96, 'GTR': -96, 'GEQ': -96, 'ADD': -96, 'SUB': -96, 'OR': -96, 'XOR': -96, 'MUL': -96, 'QUO': -96, 'REM': -96, 'SHL': -96, 'SHR': -96, 'AND': -96, 'AND_NOT': -96, 'RBRACK': -96, 'COMMA': -96, 'CONST': -96, 'VAR': -96, 'TYPE': -96, '$end': -96, 'RPAREN': -96, 'IDENT': -96, 'COLON': -96, 'RBRACE': -96}
-98 : {'PERIOD': -97, 'LBRACK': -97, 'LPAREN': -34, 'LOR': -97, 'LAND': -97, 'EQL': -97, 'NEQ': -97, 'LSS': -97, 'LEQ': -97, 'GTR': -97, 'GEQ': -97, 'ADD': -97, 'SUB': -97, 'OR': -97, 'XOR': -97, 'MUL': -97, 'QUO': -97, 'REM': -97, 'SHL': -97, 'SHR': -97, 'AND': -97, 'AND_NOT': -97, 'RBRACK': -97, 'COMMA': -97, 'CONST': -97, 'VAR': -97, 'TYPE': -97, '$end': -97, 'RPAREN': -97, 'IDENT': -97, 'COLON': -97, 'RBRACE': -97, 'LBRACE': -34}
-99 : {'LPAREN': -37, 'LBRACE': 163}
-100 : {'LPAREN': -36, 'LBRACE': 163}
-101 : {'LPAREN': -39, 'LBRACE': 163}
-102 : {'LPAREN': -40, 'LBRACE': 163}
-103 : {'RBRACE': -46, 'IDENT': -46}
-104 : {'ASSIGN': -48, 'CONST': -48, 'VAR': -48, 'TYPE': -48, '$end': -48, 'RPAREN': -48, 'IDENT': -48, 'LPAREN': -48, 'LBRACE': -48, 'RBRACK': -48, 'COMMA': -48, 'RBRACE': -48}
-105 : {'ASSIGN': -49, 'CONST': -49, 'VAR': -49, 'TYPE': -49, '$end': -49, 'RPAREN': -49, 'IDENT': -49, 'LBRACE': -49, 'LPAREN': -49, 'RBRACK': -49, 'COMMA': -49, 'RBRACE': -49}
-106 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-107 : {'IDENT': 171}
-108 : {'CONST': -146, 'VAR': -146, 'TYPE': -146, '$end': -146}
-109 : {'RPAREN': -147, 'IDENT': -147}
-110 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-111 : {'CONST': -150, 'VAR': -150, 'TYPE': -150, '$end': -150, 'RPAREN': -150, 'IDENT': -150}
-112 : {'COMMA': -87, 'CONST': -87, 'VAR': -87, 'TYPE': -87, '$end': -87, 'RPAREN': -87, 'IDENT': -87, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-113 : {'CONST': -138, 'VAR': -138, 'TYPE': -138, '$end': -138}
-114 : {'RPAREN': -139, 'IDENT': -139}
-115 : {'CONST': -143, 'VAR': -143, 'TYPE': -143, '$end': -143, 'RPAREN': -143, 'IDENT': -143}
-116 : {'CONST': -25, 'VAR': -25, 'TYPE': -25, '$end': -25, 'RPAREN': -25, 'IDENT': -25}
-117 : {'ASSIGN': -31, 'CONST': -31, 'VAR': -31, 'TYPE': -31, '$end': -31, 'RPAREN': -31, 'IDENT': -31, 'LPAREN': -31, 'LBRACE': -31, 'RBRACK': -31, 'COMMA': -31, 'RBRACE': -31}
-118 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-119 : {'ASSIGN': -50, 'CONST': -50, 'VAR': -50, 'TYPE': -50, '$end': -50, 'RPAREN': -50, 'IDENT': -50, 'LBRACE': -50, 'LPAREN': -50, 'RBRACK': -50, 'COMMA': -50, 'RBRACE': -50}
-120 : {'ASSIGN': -43, 'CONST': -43, 'VAR': -43, 'TYPE': -43, '$end': -43, 'RPAREN': -43, 'IDENT': -43, 'LBRACE': -43, 'LPAREN': -43, 'RBRACK': -43, 'COMMA': -43, 'RBRACE': -43}
-121 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-122 : {'ADD': -58, 'SUB': -58, 'NOT': -58, 'XOR': -58, 'MUL': -58, 'AND': -58, 'LPAREN': -58, 'IDENT': -58, 'INT': -58, 'FLOAT': -58, 'IMAG': -58, 'RUNE': -58, 'STRING': -58, 'TYPE': -58, 'STRUCT': -58, 'LBRACK': -58, 'MAP': -58}
-123 : {'ADD': -59, 'SUB': -59, 'NOT': -59, 'XOR': -59, 'MUL': -59, 'AND': -59, 'LPAREN': -59, 'IDENT': -59, 'INT': -59, 'FLOAT': -59, 'IMAG': -59, 'RUNE': -59, 'STRING': -59, 'TYPE': -59, 'STRUCT': -59, 'LBRACK': -59, 'MAP': -59}
-124 : {'ADD': -60, 'SUB': -60, 'NOT': -60, 'XOR': -60, 'MUL': -60, 'AND': -60, 'LPAREN': -60, 'IDENT': -60, 'INT': -60, 'FLOAT': -60, 'IMAG': -60, 'RUNE': -60, 'STRING': -60, 'TYPE': -60, 'STRUCT': -60, 'LBRACK': -60, 'MAP': -60}
-125 : {'ADD': -61, 'SUB': -61, 'NOT': -61, 'XOR': -61, 'MUL': -61, 'AND': -61, 'LPAREN': -61, 'IDENT': -61, 'INT': -61, 'FLOAT': -61, 'IMAG': -61, 'RUNE': -61, 'STRING': -61, 'TYPE': -61, 'STRUCT': -61, 'LBRACK': -61, 'MAP': -61}
-126 : {'ADD': -62, 'SUB': -62, 'NOT': -62, 'XOR': -62, 'MUL': -62, 'AND': -62, 'LPAREN': -62, 'IDENT': -62, 'INT': -62, 'FLOAT': -62, 'IMAG': -62, 'RUNE': -62, 'STRING': -62, 'TYPE': -62, 'STRUCT': -62, 'LBRACK': -62, 'MAP': -62}
-127 : {'ADD': -63, 'SUB': -63, 'NOT': -63, 'XOR': -63, 'MUL': -63, 'AND': -63, 'LPAREN': -63, 'IDENT': -63, 'INT': -63, 'FLOAT': -63, 'IMAG': -63, 'RUNE': -63, 'STRING': -63, 'TYPE': -63, 'STRUCT': -63, 'LBRACK': -63, 'MAP': -63}
-128 : {'ADD': -64, 'SUB': -64, 'NOT': -64, 'XOR': -64, 'MUL': -64, 'AND': -64, 'LPAREN': -64, 'IDENT': -64, 'INT': -64, 'FLOAT': -64, 'IMAG': -64, 'RUNE': -64, 'STRING': -64, 'TYPE': -64, 'STRUCT': -64, 'LBRACK': -64, 'MAP': -64}
-129 : {'ADD': -65, 'SUB': -65, 'NOT': -65, 'XOR': -65, 'MUL': -65, 'AND': -65, 'LPAREN': -65, 'IDENT': -65, 'INT': -65, 'FLOAT': -65, 'IMAG': -65, 'RUNE': -65, 'STRING': -65, 'TYPE': -65, 'STRUCT': -65, 'LBRACK': -65, 'MAP': -65}
-130 : {'ADD': -66, 'SUB': -66, 'NOT': -66, 'XOR': -66, 'MUL': -66, 'AND': -66, 'LPAREN': -66, 'IDENT': -66, 'INT': -66, 'FLOAT': -66, 'IMAG': -66, 'RUNE': -66, 'STRING': -66, 'TYPE': -66, 'STRUCT': -66, 'LBRACK': -66, 'MAP': -66}
-131 : {'ADD': -67, 'SUB': -67, 'NOT': -67, 'XOR': -67, 'MUL': -67, 'AND': -67, 'LPAREN': -67, 'IDENT': -67, 'INT': -67, 'FLOAT': -67, 'IMAG': -67, 'RUNE': -67, 'STRING': -67, 'TYPE': -67, 'STRUCT': -67, 'LBRACK': -67, 'MAP': -67}
-132 : {'ADD': -68, 'SUB': -68, 'NOT': -68, 'XOR': -68, 'MUL': -68, 'AND': -68, 'LPAREN': -68, 'IDENT': -68, 'INT': -68, 'FLOAT': -68, 'IMAG': -68, 'RUNE': -68, 'STRING': -68, 'TYPE': -68, 'STRUCT': -68, 'LBRACK': -68, 'MAP': -68}
-133 : {'ADD': -69, 'SUB': -69, 'NOT': -69, 'XOR': -69, 'MUL': -69, 'AND': -69, 'LPAREN': -69, 'IDENT': -69, 'INT': -69, 'FLOAT': -69, 'IMAG': -69, 'RUNE': -69, 'STRING': -69, 'TYPE': -69, 'STRUCT': -69, 'LBRACK': -69, 'MAP': -69}
-134 : {'ADD': -70, 'SUB': -70, 'NOT': -70, 'XOR': -70, 'MUL': -70, 'AND': -70, 'LPAREN': -70, 'IDENT': -70, 'INT': -70, 'FLOAT': -70, 'IMAG': -70, 'RUNE': -70, 'STRING': -70, 'TYPE': -70, 'STRUCT': -70, 'LBRACK': -70, 'MAP': -70}
-135 : {'ADD': -71, 'SUB': -71, 'NOT': -71, 'XOR': -71, 'MUL': -71, 'AND': -71, 'LPAREN': -71, 'IDENT': -71, 'INT': -71, 'FLOAT': -71, 'IMAG': -71, 'RUNE': -71, 'STRING': -71, 'TYPE': -71, 'STRUCT': -71, 'LBRACK': -71, 'MAP': -71}
-136 : {'ADD': -72, 'SUB': -72, 'NOT': -72, 'XOR': -72, 'MUL': -72, 'AND': -72, 'LPAREN': -72, 'IDENT': -72, 'INT': -72, 'FLOAT': -72, 'IMAG': -72, 'RUNE': -72, 'STRING': -72, 'TYPE': -72, 'STRUCT': -72, 'LBRACK': -72, 'MAP': -72}
-137 : {'ADD': -73, 'SUB': -73, 'NOT': -73, 'XOR': -73, 'MUL': -73, 'AND': -73, 'LPAREN': -73, 'IDENT': -73, 'INT': -73, 'FLOAT': -73, 'IMAG': -73, 'RUNE': -73, 'STRING': -73, 'TYPE': -73, 'STRUCT': -73, 'LBRACK': -73, 'MAP': -73}
-138 : {'ADD': -74, 'SUB': -74, 'NOT': -74, 'XOR': -74, 'MUL': -74, 'AND': -74, 'LPAREN': -74, 'IDENT': -74, 'INT': -74, 'FLOAT': -74, 'IMAG': -74, 'RUNE': -74, 'STRING': -74, 'TYPE': -74, 'STRUCT': -74, 'LBRACK': -74, 'MAP': -74}
-139 : {'ADD': -75, 'SUB': -75, 'NOT': -75, 'XOR': -75, 'MUL': -75, 'AND': -75, 'LPAREN': -75, 'IDENT': -75, 'INT': -75, 'FLOAT': -75, 'IMAG': -75, 'RUNE': -75, 'STRING': -75, 'TYPE': -75, 'STRUCT': -75, 'LBRACK': -75, 'MAP': -75}
-140 : {'ADD': -76, 'SUB': -76, 'NOT': -76, 'XOR': -76, 'MUL': -76, 'AND': -76, 'LPAREN': -76, 'IDENT': -76, 'INT': -76, 'FLOAT': -76, 'IMAG': -76, 'RUNE': -76, 'STRING': -76, 'TYPE': -76, 'STRUCT': -76, 'LBRACK': -76, 'MAP': -76}
-141 : {'ADD': -77, 'SUB': -77, 'NOT': -77, 'XOR': -77, 'MUL': -77, 'AND': -77, 'LPAREN': -77, 'IDENT': -77, 'INT': -77, 'FLOAT': -77, 'IMAG': -77, 'RUNE': -77, 'STRING': -77, 'TYPE': -77, 'STRUCT': -77, 'LBRACK': -77, 'MAP': -77}
-142 : {'ADD': -78, 'SUB': -78, 'NOT': -78, 'XOR': -78, 'MUL': -78, 'AND': -78, 'LPAREN': -78, 'IDENT': -78, 'INT': -78, 'FLOAT': -78, 'IMAG': -78, 'RUNE': -78, 'STRING': -78, 'TYPE': -78, 'STRUCT': -78, 'LBRACK': -78, 'MAP': -78}
-143 : {'ADD': -79, 'SUB': -79, 'NOT': -79, 'XOR': -79, 'MUL': -79, 'AND': -79, 'LPAREN': -79, 'IDENT': -79, 'INT': -79, 'FLOAT': -79, 'IMAG': -79, 'RUNE': -79, 'STRING': -79, 'TYPE': -79, 'STRUCT': -79, 'LBRACK': -79, 'MAP': -79}
-144 : {'PERIOD': -118, 'LBRACK': -118, 'LPAREN': -118, 'LOR': -118, 'LAND': -118, 'EQL': -118, 'NEQ': -118, 'LSS': -118, 'LEQ': -118, 'GTR': -118, 'GEQ': -118, 'ADD': -118, 'SUB': -118, 'OR': -118, 'XOR': -118, 'MUL': -118, 'QUO': -118, 'REM': -118, 'SHL': -118, 'SHR': -118, 'AND': -118, 'AND_NOT': -118, 'RBRACK': -118, 'COMMA': -118, 'CONST': -118, 'VAR': -118, 'TYPE': -118, '$end': -118, 'RPAREN': -118, 'IDENT': -118, 'COLON': -118, 'RBRACE': -118}
-145 : {'PERIOD': -119, 'LBRACK': -119, 'LPAREN': -119, 'LOR': -119, 'LAND': -119, 'EQL': -119, 'NEQ': -119, 'LSS': -119, 'LEQ': -119, 'GTR': -119, 'GEQ': -119, 'ADD': -119, 'SUB': -119, 'OR': -119, 'XOR': -119, 'MUL': -119, 'QUO': -119, 'REM': -119, 'SHL': -119, 'SHR': -119, 'AND': -119, 'AND_NOT': -119, 'RBRACK': -119, 'COMMA': -119, 'CONST': -119, 'VAR': -119, 'TYPE': -119, '$end': -119, 'RPAREN': -119, 'IDENT': -119, 'COLON': -119, 'RBRACE': -119}
-146 : {'PERIOD': -120, 'LBRACK': -120, 'LPAREN': -120, 'LOR': -120, 'LAND': -120, 'EQL': -120, 'NEQ': -120, 'LSS': -120, 'LEQ': -120, 'GTR': -120, 'GEQ': -120, 'ADD': -120, 'SUB': -120, 'OR': -120, 'XOR': -120, 'MUL': -120, 'QUO': -120, 'REM': -120, 'SHL': -120, 'SHR': -120, 'AND': -120, 'AND_NOT': -120, 'RBRACK': -120, 'COMMA': -120, 'CONST': -120, 'VAR': -120, 'TYPE': -120, '$end': -120, 'RPAREN': -120, 'IDENT': -120, 'COLON': -120, 'RBRACE': -120}
-147 : {'IDENT': 176}
-148 : {'COLON': 178, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-149 : {'RPAREN': 179, 'LPAREN': 151, 'INT': 154, 'FLOAT': 155, 'STRING': 156, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 182, 'MAP': 57, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'AND': 85, 'IDENT': 92, 'IMAG': 96, 'RUNE': 97}
-150 : {'LOR': -57, 'LAND': -57, 'EQL': -57, 'NEQ': -57, 'LSS': -57, 'LEQ': -57, 'GTR': -57, 'GEQ': -57, 'ADD': -57, 'SUB': -57, 'OR': -57, 'XOR': -57, 'MUL': -57, 'QUO': -57, 'REM': -57, 'SHL': -57, 'SHR': -57, 'AND': -57, 'AND_NOT': -57, 'RBRACK': -57, 'COMMA': -57, 'CONST': -57, 'VAR': -57, 'TYPE': -57, '$end': -57, 'RPAREN': -57, 'IDENT': -57, 'COLON': -57, 'RBRACE': -57}
-151 : {'LPAREN': 151, 'INT': 154, 'FLOAT': 155, 'STRING': 156, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 182, 'MAP': 57, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'AND': 85, 'IDENT': 92, 'IMAG': 96, 'RUNE': 97}
-152 : {'RPAREN': 183, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-153 : {'RPAREN': 117, 'LPAREN': 161}
-154 : {'LBRACE': -32, 'RPAREN': -32, 'LPAREN': -32, 'COMMA': -32, 'PERIOD': -93, 'LBRACK': -93, 'LOR': -93, 'LAND': -93, 'EQL': -93, 'NEQ': -93, 'LSS': -93, 'LEQ': -93, 'GTR': -93, 'GEQ': -93, 'ADD': -93, 'SUB': -93, 'OR': -93, 'XOR': -93, 'MUL': -93, 'QUO': -93, 'REM': -93, 'SHL': -93, 'SHR': -93, 'AND': -93, 'AND_NOT': -93}
-155 : {'LBRACE': -33, 'RPAREN': -33, 'LPAREN': -33, 'COMMA': -33, 'PERIOD': -94, 'LBRACK': -94, 'LOR': -94, 'LAND': -94, 'EQL': -94, 'NEQ': -94, 'LSS': -94, 'LEQ': -94, 'GTR': -94, 'GEQ': -94, 'ADD': -94, 'SUB': -94, 'OR': -94, 'XOR': -94, 'MUL': -94, 'QUO': -94, 'REM': -94, 'SHL': -94, 'SHR': -94, 'AND': -94, 'AND_NOT': -94}
-156 : {'LBRACE': -34, 'RPAREN': -34, 'LPAREN': -34, 'COMMA': -34, 'PERIOD': -97, 'LBRACK': -97, 'LOR': -97, 'LAND': -97, 'EQL': -97, 'NEQ': -97, 'LSS': -97, 'LEQ': -97, 'GTR': -97, 'GEQ': -97, 'ADD': -97, 'SUB': -97, 'OR': -97, 'XOR': -97, 'MUL': -97, 'QUO': -97, 'REM': -97, 'SHL': -97, 'SHR': -97, 'AND': -97, 'AND_NOT': -97}
-157 : {'RPAREN': -36, 'LPAREN': -36, 'COMMA': -36, 'LBRACE': 163}
-158 : {'RPAREN': -37, 'LPAREN': -37, 'COMMA': -37, 'LBRACE': 163}
-159 : {'RPAREN': -39, 'LPAREN': -39, 'COMMA': -39, 'LBRACE': 163}
-160 : {'RPAREN': -40, 'LPAREN': -40, 'COMMA': -40, 'LBRACE': 163}
-161 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-162 : {'PERIOD': -102, 'LBRACK': -102, 'LPAREN': -102, 'LOR': -102, 'LAND': -102, 'EQL': -102, 'NEQ': -102, 'LSS': -102, 'LEQ': -102, 'GTR': -102, 'GEQ': -102, 'ADD': -102, 'SUB': -102, 'OR': -102, 'XOR': -102, 'MUL': -102, 'QUO': -102, 'REM': -102, 'SHL': -102, 'SHR': -102, 'AND': -102, 'AND_NOT': -102, 'RBRACK': -102, 'COMMA': -102, 'CONST': -102, 'VAR': -102, 'TYPE': -102, '$end': -102, 'RPAREN': -102, 'IDENT': -102, 'COLON': -102, 'RBRACE': -102}
-163 : {'RBRACE': 186, 'IDENT': 192, 'LBRACE': 163, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-164 : {'PERIOD': -98, 'LBRACK': -98, 'LPAREN': -98, 'LOR': -98, 'LAND': -98, 'EQL': -98, 'NEQ': -98, 'LSS': -98, 'LEQ': -98, 'GTR': -98, 'GEQ': -98, 'ADD': -98, 'SUB': -98, 'OR': -98, 'XOR': -98, 'MUL': -98, 'QUO': -98, 'REM': -98, 'SHL': -98, 'SHR': -98, 'AND': -98, 'AND_NOT': -98, 'RBRACK': -98, 'COMMA': -98, 'CONST': -98, 'VAR': -98, 'TYPE': -98, '$end': -98, 'RPAREN': -98, 'IDENT': -98, 'COLON': -98, 'RBRACE': -98}
-165 : {'PERIOD': -99, 'LBRACK': -99, 'LPAREN': -99, 'LOR': -99, 'LAND': -99, 'EQL': -99, 'NEQ': -99, 'LSS': -99, 'LEQ': -99, 'GTR': -99, 'GEQ': -99, 'ADD': -99, 'SUB': -99, 'OR': -99, 'XOR': -99, 'MUL': -99, 'QUO': -99, 'REM': -99, 'SHL': -99, 'SHR': -99, 'AND': -99, 'AND_NOT': -99, 'RBRACK': -99, 'COMMA': -99, 'CONST': -99, 'VAR': -99, 'TYPE': -99, '$end': -99, 'RPAREN': -99, 'IDENT': -99, 'COLON': -99, 'RBRACE': -99}
-166 : {'PERIOD': -100, 'LBRACK': -100, 'LPAREN': -100, 'LOR': -100, 'LAND': -100, 'EQL': -100, 'NEQ': -100, 'LSS': -100, 'LEQ': -100, 'GTR': -100, 'GEQ': -100, 'ADD': -100, 'SUB': -100, 'OR': -100, 'XOR': -100, 'MUL': -100, 'QUO': -100, 'REM': -100, 'SHL': -100, 'SHR': -100, 'AND': -100, 'AND_NOT': -100, 'RBRACK': -100, 'COMMA': -100, 'CONST': -100, 'VAR': -100, 'TYPE': -100, '$end': -100, 'RPAREN': -100, 'IDENT': -100, 'COLON': -100, 'RBRACE': -100}
-167 : {'PERIOD': -101, 'LBRACK': -101, 'LPAREN': -101, 'LOR': -101, 'LAND': -101, 'EQL': -101, 'NEQ': -101, 'LSS': -101, 'LEQ': -101, 'GTR': -101, 'GEQ': -101, 'ADD': -101, 'SUB': -101, 'OR': -101, 'XOR': -101, 'MUL': -101, 'QUO': -101, 'REM': -101, 'SHL': -101, 'SHR': -101, 'AND': -101, 'AND_NOT': -101, 'RBRACK': -101, 'COMMA': -101, 'CONST': -101, 'VAR': -101, 'TYPE': -101, '$end': -101, 'RPAREN': -101, 'IDENT': -101, 'COLON': -101, 'RBRACE': -101}
-168 : {'RBRACE': 193, 'IDENT': 28}
-169 : {'RBRACK': 196}
-170 : {'RBRACK': -52}
-171 : {'COMMA': -27, 'LPAREN': -27, 'INT': -27, 'FLOAT': -27, 'STRING': -27, 'TYPE': -27, 'LBRACK': -27, 'STRUCT': -27, 'MUL': -27, 'MAP': -27, 'ASSIGN': -27}
-172 : {'CONST': -149, 'VAR': -149, 'TYPE': -149, '$end': -149, 'RPAREN': -149, 'IDENT': -149}
-173 : {'CONST': -53, 'VAR': -53, 'TYPE': -53, '$end': -53, 'RPAREN': -53, 'IDENT': -53, 'COMMA': 197}
-174 : {'ASSIGN': -41, 'CONST': -41, 'VAR': -41, 'TYPE': -41, '$end': -41, 'RPAREN': -41, 'IDENT': -41, 'LBRACE': -41, 'LPAREN': -41, 'RBRACK': -41, 'COMMA': -41, 'RBRACE': -41}
-175 : {'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143, 'RBRACK': -55, 'COMMA': -55, 'CONST': -55, 'VAR': -55, 'TYPE': -55, '$end': -55, 'RPAREN': -55, 'IDENT': -55, 'COLON': -55, 'RBRACE': -55}
-176 : {'PERIOD': -123, 'LBRACK': -123, 'LPAREN': -123, 'LOR': -123, 'LAND': -123, 'EQL': -123, 'NEQ': -123, 'LSS': -123, 'LEQ': -123, 'GTR': -123, 'GEQ': -123, 'ADD': -123, 'SUB': -123, 'OR': -123, 'XOR': -123, 'MUL': -123, 'QUO': -123, 'REM': -123, 'SHL': -123, 'SHR': -123, 'AND': -123, 'AND_NOT': -123, 'RBRACK': -123, 'COMMA': -123, 'CONST': -123, 'VAR': -123, 'TYPE': -123, '$end': -123, 'RPAREN': -123, 'IDENT': -123, 'COLON': -123, 'RBRACE': -123}
-177 : {'COLON': 198, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-178 : {'RBRACK': 200, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-179 : {'PERIOD': -130, 'LBRACK': -130, 'LPAREN': -130, 'LOR': -130, 'LAND': -130, 'EQL': -130, 'NEQ': -130, 'LSS': -130, 'LEQ': -130, 'GTR': -130, 'GEQ': -130, 'ADD': -130, 'SUB': -130, 'OR': -130, 'XOR': -130, 'MUL': -130, 'QUO': -130, 'REM': -130, 'SHL': -130, 'SHR': -130, 'AND': -130, 'AND_NOT': -130, 'RBRACK': -130, 'COMMA': -130, 'CONST': -130, 'VAR': -130, 'TYPE': -130, '$end': -130, 'RPAREN': -130, 'IDENT': -130, 'COLON': -130, 'RBRACE': -130}
-180 : {'RPAREN': 201, 'COMMA': 202}
-181 : {'RPAREN': 203, 'COMMA': 204, 'LPAREN': 161}
-182 : {'ADD': -84, 'SUB': -84, 'NOT': -84, 'XOR': -84, 'MUL': -84, 'AND': -84, 'LPAREN': -84, 'IDENT': -84, 'INT': -84, 'FLOAT': -84, 'IMAG': -84, 'RUNE': -84, 'STRING': -84, 'TYPE': -84, 'STRUCT': -84, 'LBRACK': -84, 'MAP': -84}
-183 : {'PERIOD': -90, 'LBRACK': -90, 'LPAREN': -90, 'LOR': -90, 'LAND': -90, 'EQL': -90, 'NEQ': -90, 'LSS': -90, 'LEQ': -90, 'GTR': -90, 'GEQ': -90, 'ADD': -90, 'SUB': -90, 'OR': -90, 'XOR': -90, 'MUL': -90, 'QUO': -90, 'REM': -90, 'SHL': -90, 'SHR': -90, 'AND': -90, 'AND_NOT': -90, 'RBRACK': -90, 'COMMA': -90, 'CONST': -90, 'VAR': -90, 'TYPE': -90, '$end': -90, 'RPAREN': -90, 'IDENT': -90, 'COLON': -90, 'RBRACE': -90}
-184 : {'RPAREN': 205, 'COMMA': 206, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-185 : {'COMMA': 207, 'RBRACE': 208}
-186 : {'PERIOD': -105, 'LBRACK': -105, 'LPAREN': -105, 'LOR': -105, 'LAND': -105, 'EQL': -105, 'NEQ': -105, 'LSS': -105, 'LEQ': -105, 'GTR': -105, 'GEQ': -105, 'ADD': -105, 'SUB': -105, 'OR': -105, 'XOR': -105, 'MUL': -105, 'QUO': -105, 'REM': -105, 'SHL': -105, 'SHR': -105, 'AND': -105, 'AND_NOT': -105, 'RBRACK': -105, 'COMMA': -105, 'CONST': -105, 'VAR': -105, 'TYPE': -105, '$end': -105, 'RPAREN': -105, 'IDENT': -105, 'COLON': -105, 'RBRACE': -105}
-187 : {'COMMA': -106, 'RBRACE': -106}
-188 : {'COMMA': -108, 'RBRACE': -108}
-189 : {'COLON': 209}
-190 : {'COMMA': -113, 'RBRACE': -113, 'COLON': -111, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-191 : {'COMMA': -114, 'RBRACE': -114, 'COLON': -112}
-192 : {'COLON': -110, 'PERIOD': -115, 'LBRACK': -115, 'LPAREN': -115, 'LOR': -115, 'LAND': -115, 'EQL': -115, 'NEQ': -115, 'LSS': -115, 'LEQ': -115, 'GTR': -115, 'GEQ': -115, 'ADD': -115, 'SUB': -115, 'OR': -115, 'XOR': -115, 'MUL': -115, 'QUO': -115, 'REM': -115, 'SHL': -115, 'SHR': -115, 'AND': -115, 'AND_NOT': -115, 'COMMA': -115, 'RBRACE': -115}
-193 : {'ASSIGN': -44, 'CONST': -44, 'VAR': -44, 'TYPE': -44, '$end': -44, 'RPAREN': -44, 'IDENT': -44, 'LBRACE': -44, 'LPAREN': -44, 'RBRACK': -44, 'COMMA': -44, 'RBRACE': -44}
-194 : {'RBRACE': -45, 'IDENT': -45}
-195 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-196 : {'LPAREN': 44, 'INT': 45, 'FLOAT': 46, 'STRING': 47, 'TYPE': 48, 'LBRACK': 54, 'STRUCT': 55, 'MUL': 56, 'MAP': 57}
-197 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-198 : {'RBRACK': 214, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-199 : {'RBRACK': 216, 'COLON': 215, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-200 : {'PERIOD': -127, 'LBRACK': -127, 'LPAREN': -127, 'LOR': -127, 'LAND': -127, 'EQL': -127, 'NEQ': -127, 'LSS': -127, 'LEQ': -127, 'GTR': -127, 'GEQ': -127, 'ADD': -127, 'SUB': -127, 'OR': -127, 'XOR': -127, 'MUL': -127, 'QUO': -127, 'REM': -127, 'SHL': -127, 'SHR': -127, 'AND': -127, 'AND_NOT': -127, 'RBRACK': -127, 'COMMA': -127, 'CONST': -127, 'VAR': -127, 'TYPE': -127, '$end': -127, 'RPAREN': -127, 'IDENT': -127, 'COLON': -127, 'RBRACE': -127}
-201 : {'PERIOD': -131, 'LBRACK': -131, 'LPAREN': -131, 'LOR': -131, 'LAND': -131, 'EQL': -131, 'NEQ': -131, 'LSS': -131, 'LEQ': -131, 'GTR': -131, 'GEQ': -131, 'ADD': -131, 'SUB': -131, 'OR': -131, 'XOR': -131, 'MUL': -131, 'QUO': -131, 'REM': -131, 'SHL': -131, 'SHR': -131, 'AND': -131, 'AND_NOT': -131, 'RBRACK': -131, 'COMMA': -131, 'CONST': -131, 'VAR': -131, 'TYPE': -131, '$end': -131, 'RPAREN': -131, 'IDENT': -131, 'COLON': -131, 'RBRACE': -131}
-202 : {'RPAREN': 217}
-203 : {'PERIOD': -133, 'LBRACK': -133, 'LPAREN': -133, 'LOR': -133, 'LAND': -133, 'EQL': -133, 'NEQ': -133, 'LSS': -133, 'LEQ': -133, 'GTR': -133, 'GEQ': -133, 'ADD': -133, 'SUB': -133, 'OR': -133, 'XOR': -133, 'MUL': -133, 'QUO': -133, 'REM': -133, 'SHL': -133, 'SHR': -133, 'AND': -133, 'AND_NOT': -133, 'RBRACK': -133, 'COMMA': -133, 'CONST': -133, 'VAR': -133, 'TYPE': -133, '$end': -133, 'RPAREN': -133, 'IDENT': -133, 'COLON': -133, 'RBRACE': -133}
-204 : {'RPAREN': 218, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-205 : {'PERIOD': -121, 'LBRACK': -121, 'LPAREN': -121, 'LOR': -121, 'LAND': -121, 'EQL': -121, 'NEQ': -121, 'LSS': -121, 'LEQ': -121, 'GTR': -121, 'GEQ': -121, 'ADD': -121, 'SUB': -121, 'OR': -121, 'XOR': -121, 'MUL': -121, 'QUO': -121, 'REM': -121, 'SHL': -121, 'SHR': -121, 'AND': -121, 'AND_NOT': -121, 'RBRACK': -121, 'COMMA': -121, 'CONST': -121, 'VAR': -121, 'TYPE': -121, '$end': -121, 'RPAREN': -121, 'IDENT': -121, 'COLON': -121, 'RBRACE': -121}
-206 : {'RPAREN': 220}
-207 : {'RBRACE': 221, 'IDENT': 192, 'LBRACE': 163, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-208 : {'PERIOD': -104, 'LBRACK': -104, 'LPAREN': -104, 'LOR': -104, 'LAND': -104, 'EQL': -104, 'NEQ': -104, 'LSS': -104, 'LEQ': -104, 'GTR': -104, 'GEQ': -104, 'ADD': -104, 'SUB': -104, 'OR': -104, 'XOR': -104, 'MUL': -104, 'QUO': -104, 'REM': -104, 'SHL': -104, 'SHR': -104, 'AND': -104, 'AND_NOT': -104, 'RBRACK': -104, 'COMMA': -104, 'CONST': -104, 'VAR': -104, 'TYPE': -104, '$end': -104, 'RPAREN': -104, 'IDENT': -104, 'COLON': -104, 'RBRACE': -104}
-209 : {'LBRACE': 163, 'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-210 : {'RBRACE': -47, 'IDENT': -47}
-211 : {'ASSIGN': -51, 'CONST': -51, 'VAR': -51, 'TYPE': -51, '$end': -51, 'RPAREN': -51, 'IDENT': -51, 'LBRACE': -51, 'LPAREN': -51, 'RBRACK': -51, 'COMMA': -51, 'RBRACE': -51}
-212 : {'COMMA': -86, 'CONST': -86, 'VAR': -86, 'TYPE': -86, '$end': -86, 'RPAREN': -86, 'IDENT': -86, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-213 : {'RBRACK': 227, 'COLON': 226, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-214 : {'PERIOD': -126, 'LBRACK': -126, 'LPAREN': -126, 'LOR': -126, 'LAND': -126, 'EQL': -126, 'NEQ': -126, 'LSS': -126, 'LEQ': -126, 'GTR': -126, 'GEQ': -126, 'ADD': -126, 'SUB': -126, 'OR': -126, 'XOR': -126, 'MUL': -126, 'QUO': -126, 'REM': -126, 'SHL': -126, 'SHR': -126, 'AND': -126, 'AND_NOT': -126, 'RBRACK': -126, 'COMMA': -126, 'CONST': -126, 'VAR': -126, 'TYPE': -126, '$end': -126, 'RPAREN': -126, 'IDENT': -126, 'COLON': -126, 'RBRACE': -126}
-215 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-216 : {'PERIOD': -125, 'LBRACK': -125, 'LPAREN': -125, 'LOR': -125, 'LAND': -125, 'EQL': -125, 'NEQ': -125, 'LSS': -125, 'LEQ': -125, 'GTR': -125, 'GEQ': -125, 'ADD': -125, 'SUB': -125, 'OR': -125, 'XOR': -125, 'MUL': -125, 'QUO': -125, 'REM': -125, 'SHL': -125, 'SHR': -125, 'AND': -125, 'AND_NOT': -125, 'RBRACK': -125, 'COMMA': -125, 'CONST': -125, 'VAR': -125, 'TYPE': -125, '$end': -125, 'RPAREN': -125, 'IDENT': -125, 'COLON': -125, 'RBRACE': -125}
-217 : {'PERIOD': -132, 'LBRACK': -132, 'LPAREN': -132, 'LOR': -132, 'LAND': -132, 'EQL': -132, 'NEQ': -132, 'LSS': -132, 'LEQ': -132, 'GTR': -132, 'GEQ': -132, 'ADD': -132, 'SUB': -132, 'OR': -132, 'XOR': -132, 'MUL': -132, 'QUO': -132, 'REM': -132, 'SHL': -132, 'SHR': -132, 'AND': -132, 'AND_NOT': -132, 'RBRACK': -132, 'COMMA': -132, 'CONST': -132, 'VAR': -132, 'TYPE': -132, '$end': -132, 'RPAREN': -132, 'IDENT': -132, 'COLON': -132, 'RBRACE': -132}
-218 : {'PERIOD': -134, 'LBRACK': -134, 'LPAREN': -134, 'LOR': -134, 'LAND': -134, 'EQL': -134, 'NEQ': -134, 'LSS': -134, 'LEQ': -134, 'GTR': -134, 'GEQ': -134, 'ADD': -134, 'SUB': -134, 'OR': -134, 'XOR': -134, 'MUL': -134, 'QUO': -134, 'REM': -134, 'SHL': -134, 'SHR': -134, 'AND': -134, 'AND_NOT': -134, 'RBRACK': -134, 'COMMA': -134, 'CONST': -134, 'VAR': -134, 'TYPE': -134, '$end': -134, 'RPAREN': -134, 'IDENT': -134, 'COLON': -134, 'RBRACE': -134}
-219 : {'RPAREN': 230, 'COMMA': 229}
-220 : {'PERIOD': -122, 'LBRACK': -122, 'LPAREN': -122, 'LOR': -122, 'LAND': -122, 'EQL': -122, 'NEQ': -122, 'LSS': -122, 'LEQ': -122, 'GTR': -122, 'GEQ': -122, 'ADD': -122, 'SUB': -122, 'OR': -122, 'XOR': -122, 'MUL': -122, 'QUO': -122, 'REM': -122, 'SHL': -122, 'SHR': -122, 'AND': -122, 'AND_NOT': -122, 'RBRACK': -122, 'COMMA': -122, 'CONST': -122, 'VAR': -122, 'TYPE': -122, '$end': -122, 'RPAREN': -122, 'IDENT': -122, 'COLON': -122, 'RBRACE': -122}
-221 : {'PERIOD': -103, 'LBRACK': -103, 'LPAREN': -103, 'LOR': -103, 'LAND': -103, 'EQL': -103, 'NEQ': -103, 'LSS': -103, 'LEQ': -103, 'GTR': -103, 'GEQ': -103, 'ADD': -103, 'SUB': -103, 'OR': -103, 'XOR': -103, 'MUL': -103, 'QUO': -103, 'REM': -103, 'SHL': -103, 'SHR': -103, 'AND': -103, 'AND_NOT': -103, 'RBRACK': -103, 'COMMA': -103, 'CONST': -103, 'VAR': -103, 'TYPE': -103, '$end': -103, 'RPAREN': -103, 'IDENT': -103, 'COLON': -103, 'RBRACE': -103}
-222 : {'COMMA': -107, 'RBRACE': -107}
-223 : {'COMMA': -109, 'RBRACE': -109}
-224 : {'COMMA': -113, 'RBRACE': -113, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-225 : {'COMMA': -114, 'RBRACE': -114}
-226 : {'ADD': 80, 'SUB': 81, 'NOT': 82, 'XOR': 83, 'MUL': 84, 'AND': 85, 'LPAREN': 88, 'IDENT': 92, 'INT': 94, 'FLOAT': 95, 'IMAG': 96, 'RUNE': 97, 'STRING': 98, 'TYPE': 48, 'STRUCT': 55, 'LBRACK': 54, 'MAP': 57}
-227 : {'PERIOD': -124, 'LBRACK': -124, 'LPAREN': -124, 'LOR': -124, 'LAND': -124, 'EQL': -124, 'NEQ': -124, 'LSS': -124, 'LEQ': -124, 'GTR': -124, 'GEQ': -124, 'ADD': -124, 'SUB': -124, 'OR': -124, 'XOR': -124, 'MUL': -124, 'QUO': -124, 'REM': -124, 'SHL': -124, 'SHR': -124, 'AND': -124, 'AND_NOT': -124, 'RBRACK': -124, 'COMMA': -124, 'CONST': -124, 'VAR': -124, 'TYPE': -124, '$end': -124, 'RPAREN': -124, 'IDENT': -124, 'COLON': -124, 'RBRACE': -124}
-228 : {'RBRACK': 232, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-229 : {'RPAREN': 233}
-230 : {'PERIOD': -135, 'LBRACK': -135, 'LPAREN': -135, 'LOR': -135, 'LAND': -135, 'EQL': -135, 'NEQ': -135, 'LSS': -135, 'LEQ': -135, 'GTR': -135, 'GEQ': -135, 'ADD': -135, 'SUB': -135, 'OR': -135, 'XOR': -135, 'MUL': -135, 'QUO': -135, 'REM': -135, 'SHL': -135, 'SHR': -135, 'AND': -135, 'AND_NOT': -135, 'RBRACK': -135, 'COMMA': -135, 'CONST': -135, 'VAR': -135, 'TYPE': -135, '$end': -135, 'RPAREN': -135, 'IDENT': -135, 'COLON': -135, 'RBRACE': -135}
-231 : {'RBRACK': 234, 'LOR': 122, 'LAND': 123, 'EQL': 127, 'NEQ': 128, 'LSS': 129, 'LEQ': 130, 'GTR': 131, 'GEQ': 132, 'ADD': 133, 'SUB': 134, 'OR': 135, 'XOR': 136, 'MUL': 137, 'QUO': 138, 'REM': 139, 'SHL': 140, 'SHR': 141, 'AND': 142, 'AND_NOT': 143}
-232 : {'PERIOD': -128, 'LBRACK': -128, 'LPAREN': -128, 'LOR': -128, 'LAND': -128, 'EQL': -128, 'NEQ': -128, 'LSS': -128, 'LEQ': -128, 'GTR': -128, 'GEQ': -128, 'ADD': -128, 'SUB': -128, 'OR': -128, 'XOR': -128, 'MUL': -128, 'QUO': -128, 'REM': -128, 'SHL': -128, 'SHR': -128, 'AND': -128, 'AND_NOT': -128, 'RBRACK': -128, 'COMMA': -128, 'CONST': -128, 'VAR': -128, 'TYPE': -128, '$end': -128, 'RPAREN': -128, 'IDENT': -128, 'COLON': -128, 'RBRACE': -128}
-233 : {'PERIOD': -136, 'LBRACK': -136, 'LPAREN': -136, 'LOR': -136, 'LAND': -136, 'EQL': -136, 'NEQ': -136, 'LSS': -136, 'LEQ': -136, 'GTR': -136, 'GEQ': -136, 'ADD': -136, 'SUB': -136, 'OR': -136, 'XOR': -136, 'MUL': -136, 'QUO': -136, 'REM': -136, 'SHL': -136, 'SHR': -136, 'AND': -136, 'AND_NOT': -136, 'RBRACK': -136, 'COMMA': -136, 'CONST': -136, 'VAR': -136, 'TYPE': -136, '$end': -136, 'RPAREN': -136, 'IDENT': -136, 'COLON': -136, 'RBRACE': -136}
-234 : {'PERIOD': -129, 'LBRACK': -129, 'LPAREN': -129, 'LOR': -129, 'LAND': -129, 'EQL': -129, 'NEQ': -129, 'LSS': -129, 'LEQ': -129, 'GTR': -129, 'GEQ': -129, 'ADD': -129, 'SUB': -129, 'OR': -129, 'XOR': -129, 'MUL': -129, 'QUO': -129, 'REM': -129, 'SHL': -129, 'SHR': -129, 'AND': -129, 'AND_NOT': -129, 'RBRACK': -129, 'COMMA': -129, 'CONST': -129, 'VAR': -129, 'TYPE': -129, '$end': -129, 'RPAREN': -129, 'IDENT': -129, 'COLON': -129, 'RBRACE': -129}
+4 : {'FUNC': -15, 'CONST': -15, 'VAR': -15, 'TYPE': -15, '$end': -15, 'IMPORT': 9}
+5 : {'IMPORT': -2, 'FUNC': -2, 'CONST': -2, 'VAR': -2, 'TYPE': -2, '$end': -2}
+6 : {'IMPORT': -3, 'FUNC': -3, 'CONST': -3, 'VAR': -3, 'TYPE': -3, '$end': -3}
+7 : {'$end': -1, 'FUNC': 16, 'CONST': 17, 'VAR': 18, 'TYPE': 19}
+8 : {'IMPORT': -4, 'FUNC': -4, 'CONST': -4, 'VAR': -4, 'TYPE': -4, '$end': -4}
+9 : {'LPAREN': 21, 'PERIOD': 22, 'IDENT': 24, 'STRING': 25}
+10 : {'FUNC': -14, 'CONST': -14, 'VAR': -14, 'TYPE': -14, '$end': -14}
+11 : {'FUNC': -16, 'CONST': -16, 'VAR': -16, 'TYPE': -16, '$end': -16}
+12 : {'FUNC': -17, 'CONST': -17, 'VAR': -17, 'TYPE': -17, '$end': -17}
+13 : {'FUNC': -18, 'CONST': -18, 'VAR': -18, 'TYPE': -18, '$end': -18}
+14 : {'FUNC': -19, 'CONST': -19, 'VAR': -19, 'TYPE': -19, '$end': -19}
+15 : {'FUNC': -20, 'CONST': -20, 'VAR': -20, 'TYPE': -20, '$end': -20}
+16 : {'IDENT': 27}
+17 : {'LPAREN': 29, 'IDENT': 31}
+18 : {'LPAREN': 33, 'IDENT': 31}
+19 : {'LPAREN': 36, 'IDENT': 39}
+20 : {'IMPORT': -6, 'FUNC': -6, 'CONST': -6, 'VAR': -6, 'TYPE': -6, '$end': -6}
+21 : {'RPAREN': -9, 'PERIOD': -9, 'IDENT': -9, 'STRING': -9}
+22 : {'STRING': 25}
+23 : {'IMPORT': -12, 'FUNC': -12, 'CONST': -12, 'VAR': -12, 'TYPE': -12, '$end': -12, 'RPAREN': -12, 'PERIOD': -12, 'IDENT': -12, 'STRING': -12}
+24 : {'STRING': 25}
+25 : {'IMPORT': -13, 'FUNC': -13, 'CONST': -13, 'VAR': -13, 'TYPE': -13, '$end': -13, 'RPAREN': -13, 'PERIOD': -13, 'IDENT': -13, 'STRING': -13}
+26 : {'LPAREN': 45}
+27 : {'LPAREN': -160}
+28 : {'FUNC': -21, 'CONST': -21, 'VAR': -21, 'TYPE': -21, '$end': -21}
+29 : {'RPAREN': -24, 'IDENT': -24}
+30 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+31 : {'COMMA': -28, 'LPAREN': -28, 'IDENT': -28, 'LBRACK': -28, 'STRUCT': -28, 'MUL': -28, 'MAP': -28, 'ASSIGN': -28}
+32 : {'FUNC': -150, 'CONST': -150, 'VAR': -150, 'TYPE': -150, '$end': -150}
+33 : {'RPAREN': -153, 'IDENT': -153}
+34 : {'ASSIGN': 65, 'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+35 : {'FUNC': -142, 'CONST': -142, 'VAR': -142, 'TYPE': -142, '$end': -142}
+36 : {'RPAREN': -145, 'IDENT': -145}
+37 : {'FUNC': -146, 'CONST': -146, 'VAR': -146, 'TYPE': -146, '$end': -146, 'RPAREN': -146, 'IDENT': -146}
+38 : {'FUNC': -147, 'CONST': -147, 'VAR': -147, 'TYPE': -147, '$end': -147, 'RPAREN': -147, 'IDENT': -147}
+39 : {'ASSIGN': 67, 'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+40 : {'RPAREN': 69, 'PERIOD': 22, 'IDENT': 24, 'STRING': 25}
+41 : {'IMPORT': -10, 'FUNC': -10, 'CONST': -10, 'VAR': -10, 'TYPE': -10, '$end': -10, 'RPAREN': -10, 'PERIOD': -10, 'IDENT': -10, 'STRING': -10}
+42 : {'IMPORT': -11, 'FUNC': -11, 'CONST': -11, 'VAR': -11, 'TYPE': -11, '$end': -11, 'RPAREN': -11, 'PERIOD': -11, 'IDENT': -11, 'STRING': -11}
+43 : {'FUNC': -159, 'CONST': -159, 'VAR': -159, 'TYPE': -159, '$end': -159, 'LBRACE': 73}
+44 : {'LBRACE': -167, 'FUNC': -167, 'CONST': -167, 'VAR': -167, 'TYPE': -167, '$end': -167, 'LPAREN': 77, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+45 : {'RPAREN': 78, 'LPAREN': 50, 'IDENT': 83, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+46 : {'RPAREN': 84, 'IDENT': 31}
+47 : {'ASSIGN': 86}
+48 : {'ASSIGN': -29, 'FUNC': -29, 'CONST': -29, 'VAR': -29, 'TYPE': -29, '$end': -29, 'RPAREN': -29, 'IDENT': -29, 'LBRACE': -29, 'COMMA': -29, 'LPAREN': -29, 'RBRACK': -29, 'STRING': -29, 'RBRACE': -29, 'MUL': -29}
+49 : {'ASSIGN': -30, 'FUNC': -30, 'CONST': -30, 'VAR': -30, 'TYPE': -30, '$end': -30, 'RPAREN': -30, 'IDENT': -30, 'LBRACE': -30, 'COMMA': -30, 'LPAREN': -30, 'RBRACK': -30, 'STRING': -30, 'RBRACE': -30, 'MUL': -30}
+50 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+51 : {'ASSIGN': -32, 'FUNC': -32, 'CONST': -32, 'VAR': -32, 'TYPE': -32, '$end': -32, 'RPAREN': -32, 'IDENT': -32, 'LBRACE': -32, 'COMMA': -32, 'LPAREN': -32, 'RBRACK': -32, 'STRING': -32, 'RBRACE': -32, 'MUL': -32, 'PERIOD': 88}
+52 : {'ASSIGN': -33, 'FUNC': -33, 'CONST': -33, 'VAR': -33, 'TYPE': -33, '$end': -33, 'RPAREN': -33, 'IDENT': -33, 'LBRACE': -33, 'COMMA': -33, 'LPAREN': -33, 'RBRACK': -33, 'STRING': -33, 'RBRACE': -33, 'MUL': -33}
+53 : {'ASSIGN': -35, 'FUNC': -35, 'CONST': -35, 'VAR': -35, 'TYPE': -35, '$end': -35, 'RPAREN': -35, 'IDENT': -35, 'LBRACE': -35, 'COMMA': -35, 'LPAREN': -35, 'RBRACK': -35, 'STRING': -35, 'RBRACE': -35, 'MUL': -35}
+54 : {'ASSIGN': -36, 'FUNC': -36, 'CONST': -36, 'VAR': -36, 'TYPE': -36, '$end': -36, 'RPAREN': -36, 'IDENT': -36, 'LBRACE': -36, 'COMMA': -36, 'LPAREN': -36, 'RBRACK': -36, 'STRING': -36, 'RBRACE': -36, 'MUL': -36}
+55 : {'ASSIGN': -37, 'FUNC': -37, 'CONST': -37, 'VAR': -37, 'TYPE': -37, '$end': -37, 'RPAREN': -37, 'IDENT': -37, 'LBRACE': -37, 'COMMA': -37, 'LPAREN': -37, 'RBRACK': -37, 'STRING': -37, 'RBRACE': -37, 'MUL': -37}
+56 : {'ASSIGN': -38, 'FUNC': -38, 'CONST': -38, 'VAR': -38, 'TYPE': -38, '$end': -38, 'RPAREN': -38, 'IDENT': -38, 'LBRACE': -38, 'COMMA': -38, 'LPAREN': -38, 'RBRACK': -38, 'STRING': -38, 'RBRACE': -38, 'MUL': -38}
+57 : {'ASSIGN': -39, 'FUNC': -39, 'CONST': -39, 'VAR': -39, 'TYPE': -39, '$end': -39, 'RPAREN': -39, 'IDENT': -39, 'LBRACE': -39, 'COMMA': -39, 'LPAREN': -39, 'RBRACK': -39, 'STRING': -39, 'RBRACE': -39, 'MUL': -39}
+58 : {'RBRACK': 90, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+59 : {'LBRACE': 120}
+60 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+61 : {'LBRACK': 123}
+62 : {'LPAREN': -26, 'IDENT': -26, 'LBRACK': -26, 'STRUCT': -26, 'MUL': -26, 'MAP': -26, 'ASSIGN': -26, 'COMMA': 124}
+63 : {'RPAREN': 125, 'IDENT': 31}
+64 : {'ASSIGN': 127, 'FUNC': -156, 'CONST': -156, 'VAR': -156, 'TYPE': -156, '$end': -156, 'RPAREN': -156, 'IDENT': -156}
+65 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+66 : {'RPAREN': 130, 'IDENT': 39}
+67 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+68 : {'FUNC': -149, 'CONST': -149, 'VAR': -149, 'TYPE': -149, '$end': -149, 'RPAREN': -149, 'IDENT': -149}
+69 : {'IMPORT': -7, 'FUNC': -7, 'CONST': -7, 'VAR': -7, 'TYPE': -7, '$end': -7}
+70 : {'RPAREN': -8, 'PERIOD': -8, 'IDENT': -8, 'STRING': -8}
+71 : {'FUNC': -158, 'CONST': -158, 'VAR': -158, 'TYPE': -158, '$end': -158}
+72 : {'FUNC': -161, 'CONST': -161, 'VAR': -161, 'TYPE': -161, '$end': -161}
+73 : {'RBRACE': -164, 'SEMICOLON': -164}
+74 : {'LBRACE': -175, 'FUNC': -175, 'CONST': -175, 'VAR': -175, 'TYPE': -175, '$end': -175}
+75 : {'LBRACE': -166, 'FUNC': -166, 'CONST': -166, 'VAR': -166, 'TYPE': -166, '$end': -166}
+76 : {'LBRACE': -176, 'FUNC': -176, 'CONST': -176, 'VAR': -176, 'TYPE': -176, '$end': -176}
+77 : {'RPAREN': 78, 'LPAREN': 50, 'IDENT': 135, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+78 : {'LPAREN': -168, 'IDENT': -168, 'LBRACK': -168, 'STRUCT': -168, 'MUL': -168, 'MAP': -168, 'LBRACE': -168, 'FUNC': -168, 'CONST': -168, 'VAR': -168, 'TYPE': -168, '$end': -168}
+79 : {'RPAREN': 136, 'COMMA': 137}
+80 : {'RPAREN': -172, 'COMMA': -172}
+81 : {'RPAREN': -173, 'COMMA': -173}
+82 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+83 : {'RPAREN': -32, 'COMMA': -28, 'STRING': -32, 'RBRACE': -32, 'IDENT': -28, 'MUL': -28, 'PERIOD': 88, 'LPAREN': -28, 'LBRACK': -28, 'STRUCT': -28, 'MAP': -28}
+84 : {'FUNC': -22, 'CONST': -22, 'VAR': -22, 'TYPE': -22, '$end': -22}
+85 : {'RPAREN': -23, 'IDENT': -23}
+86 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+87 : {'RPAREN': 140}
+88 : {'IDENT': 141}
+89 : {'RBRACK': 142}
+90 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+91 : {'RBRACK': -41, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+92 : {'LOR': -59, 'LAND': -59, 'EQL': -59, 'NEQ': -59, 'LSS': -59, 'LEQ': -59, 'GTR': -59, 'GEQ': -59, 'ADD': -59, 'SUB': -59, 'OR': -59, 'XOR': -59, 'MUL': -59, 'QUO': -59, 'REM': -59, 'SHL': -59, 'SHR': -59, 'AND': -59, 'AND_NOT': -59, 'RBRACK': -59, 'COMMA': -59, 'FUNC': -59, 'CONST': -59, 'VAR': -59, 'TYPE': -59, '$end': -59, 'RPAREN': -59, 'IDENT': -59, 'COLON': -59, 'RBRACE': -59}
+93 : {'LOR': -61, 'LAND': -61, 'EQL': -61, 'NEQ': -61, 'LSS': -61, 'LEQ': -61, 'GTR': -61, 'GEQ': -61, 'ADD': -61, 'SUB': -61, 'OR': -61, 'XOR': -61, 'MUL': -61, 'QUO': -61, 'REM': -61, 'SHL': -61, 'SHR': -61, 'AND': -61, 'AND_NOT': -61, 'RBRACK': -61, 'COMMA': -61, 'FUNC': -61, 'CONST': -61, 'VAR': -61, 'TYPE': -61, '$end': -61, 'RPAREN': -61, 'IDENT': -61, 'COLON': -61, 'RBRACE': -61, 'PERIOD': 171, 'LBRACK': 172, 'LPAREN': 173}
+94 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+95 : {'PERIOD': -121, 'LBRACK': -121, 'LPAREN': -121, 'LOR': -121, 'LAND': -121, 'EQL': -121, 'NEQ': -121, 'LSS': -121, 'LEQ': -121, 'GTR': -121, 'GEQ': -121, 'ADD': -121, 'SUB': -121, 'OR': -121, 'XOR': -121, 'MUL': -121, 'QUO': -121, 'REM': -121, 'SHL': -121, 'SHR': -121, 'AND': -121, 'AND_NOT': -121, 'RBRACK': -121, 'COMMA': -121, 'FUNC': -121, 'CONST': -121, 'VAR': -121, 'TYPE': -121, '$end': -121, 'RPAREN': -121, 'IDENT': -121, 'COLON': -121, 'RBRACE': -121}
+96 : {'PERIOD': -122, 'LBRACK': -122, 'LPAREN': -122, 'LOR': -122, 'LAND': -122, 'EQL': -122, 'NEQ': -122, 'LSS': -122, 'LEQ': -122, 'GTR': -122, 'GEQ': -122, 'ADD': -122, 'SUB': -122, 'OR': -122, 'XOR': -122, 'MUL': -122, 'QUO': -122, 'REM': -122, 'SHL': -122, 'SHR': -122, 'AND': -122, 'AND_NOT': -122, 'RBRACK': -122, 'COMMA': -122, 'FUNC': -122, 'CONST': -122, 'VAR': -122, 'TYPE': -122, '$end': -122, 'RPAREN': -122, 'IDENT': -122, 'COLON': -122, 'RBRACE': -122}
+97 : {'ADD': -85, 'SUB': -85, 'NOT': -85, 'XOR': -85, 'MUL': -85, 'AND': -85, 'LPAREN': -85, 'IDENT': -85, 'INT': -85, 'FLOAT': -85, 'IMAG': -85, 'RUNE': -85, 'STRING': -85, 'STRUCT': -85, 'LBRACK': -85, 'MAP': -85}
+98 : {'ADD': -86, 'SUB': -86, 'NOT': -86, 'XOR': -86, 'MUL': -86, 'AND': -86, 'LPAREN': -86, 'IDENT': -86, 'INT': -86, 'FLOAT': -86, 'IMAG': -86, 'RUNE': -86, 'STRING': -86, 'STRUCT': -86, 'LBRACK': -86, 'MAP': -86}
+99 : {'ADD': -87, 'SUB': -87, 'NOT': -87, 'XOR': -87, 'MUL': -87, 'AND': -87, 'LPAREN': -87, 'IDENT': -87, 'INT': -87, 'FLOAT': -87, 'IMAG': -87, 'RUNE': -87, 'STRING': -87, 'STRUCT': -87, 'LBRACK': -87, 'MAP': -87}
+100 : {'ADD': -88, 'SUB': -88, 'NOT': -88, 'XOR': -88, 'MUL': -88, 'AND': -88, 'LPAREN': -88, 'IDENT': -88, 'INT': -88, 'FLOAT': -88, 'IMAG': -88, 'RUNE': -88, 'STRING': -88, 'STRUCT': -88, 'LBRACK': -88, 'MAP': -88}
+101 : {'ADD': -89, 'SUB': -89, 'NOT': -89, 'XOR': -89, 'MUL': -89, 'AND': -89, 'LPAREN': -89, 'IDENT': -89, 'INT': -89, 'FLOAT': -89, 'IMAG': -89, 'RUNE': -89, 'STRING': -89, 'STRUCT': -89, 'LBRACK': -89, 'MAP': -89}
+102 : {'ADD': -90, 'SUB': -90, 'NOT': -90, 'XOR': -90, 'MUL': -90, 'AND': -90, 'LPAREN': -90, 'IDENT': -90, 'INT': -90, 'FLOAT': -90, 'IMAG': -90, 'RUNE': -90, 'STRING': -90, 'STRUCT': -90, 'LBRACK': -90, 'MAP': -90}
+103 : {'PERIOD': -93, 'LBRACK': -93, 'LPAREN': -93, 'LOR': -93, 'LAND': -93, 'EQL': -93, 'NEQ': -93, 'LSS': -93, 'LEQ': -93, 'GTR': -93, 'GEQ': -93, 'ADD': -93, 'SUB': -93, 'OR': -93, 'XOR': -93, 'MUL': -93, 'QUO': -93, 'REM': -93, 'SHL': -93, 'SHR': -93, 'AND': -93, 'AND_NOT': -93, 'RBRACK': -93, 'COMMA': -93, 'FUNC': -93, 'CONST': -93, 'VAR': -93, 'TYPE': -93, '$end': -93, 'RPAREN': -93, 'IDENT': -93, 'COLON': -93, 'RBRACE': -93}
+104 : {'PERIOD': -94, 'LBRACK': -94, 'LPAREN': -94, 'LOR': -94, 'LAND': -94, 'EQL': -94, 'NEQ': -94, 'LSS': -94, 'LEQ': -94, 'GTR': -94, 'GEQ': -94, 'ADD': -94, 'SUB': -94, 'OR': -94, 'XOR': -94, 'MUL': -94, 'QUO': -94, 'REM': -94, 'SHL': -94, 'SHR': -94, 'AND': -94, 'AND_NOT': -94, 'RBRACK': -94, 'COMMA': -94, 'FUNC': -94, 'CONST': -94, 'VAR': -94, 'TYPE': -94, '$end': -94, 'RPAREN': -94, 'IDENT': -94, 'COLON': -94, 'RBRACE': -94}
+105 : {'LPAREN': 175, 'IDENT': 178, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LBRACK': 58, 'STRUCT': 59, 'MAP': 61, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115}
+106 : {'LPAREN': 183}
+107 : {'PERIOD': -96, 'LBRACK': -96, 'LPAREN': -96, 'LOR': -96, 'LAND': -96, 'EQL': -96, 'NEQ': -96, 'LSS': -96, 'LEQ': -96, 'GTR': -96, 'GEQ': -96, 'ADD': -96, 'SUB': -96, 'OR': -96, 'XOR': -96, 'MUL': -96, 'QUO': -96, 'REM': -96, 'SHL': -96, 'SHR': -96, 'AND': -96, 'AND_NOT': -96, 'RBRACK': -96, 'COMMA': -96, 'FUNC': -96, 'CONST': -96, 'VAR': -96, 'TYPE': -96, '$end': -96, 'RPAREN': -96, 'IDENT': -96, 'COLON': -96, 'RBRACE': -96}
+108 : {'PERIOD': -97, 'LBRACK': -97, 'LPAREN': -97, 'LOR': -97, 'LAND': -97, 'EQL': -97, 'NEQ': -97, 'LSS': -97, 'LEQ': -97, 'GTR': -97, 'GEQ': -97, 'ADD': -97, 'SUB': -97, 'OR': -97, 'XOR': -97, 'MUL': -97, 'QUO': -97, 'REM': -97, 'SHL': -97, 'SHR': -97, 'AND': -97, 'AND_NOT': -97, 'RBRACK': -97, 'COMMA': -97, 'FUNC': -97, 'CONST': -97, 'VAR': -97, 'TYPE': -97, '$end': -97, 'RPAREN': -97, 'IDENT': -97, 'COLON': -97, 'RBRACE': -97}
+109 : {'PERIOD': 88, 'LBRACK': -120, 'LPAREN': -32, 'LOR': -120, 'LAND': -120, 'EQL': -120, 'NEQ': -120, 'LSS': -120, 'LEQ': -120, 'GTR': -120, 'GEQ': -120, 'ADD': -120, 'SUB': -120, 'OR': -120, 'XOR': -120, 'MUL': -120, 'QUO': -120, 'REM': -120, 'SHL': -120, 'SHR': -120, 'AND': -120, 'AND_NOT': -120, 'RBRACK': -120, 'COMMA': -120, 'FUNC': -120, 'CONST': -120, 'VAR': -120, 'TYPE': -120, '$end': -120, 'RPAREN': -120, 'IDENT': -120, 'COLON': -120, 'RBRACE': -120, 'LBRACE': -32}
+110 : {'LPAREN': -29, 'RPAREN': -29, 'COMMA': -29, 'LBRACE': 185}
+111 : {'PERIOD': -98, 'LBRACK': -98, 'LPAREN': -98, 'LOR': -98, 'LAND': -98, 'EQL': -98, 'NEQ': -98, 'LSS': -98, 'LEQ': -98, 'GTR': -98, 'GEQ': -98, 'ADD': -98, 'SUB': -98, 'OR': -98, 'XOR': -98, 'MUL': -98, 'QUO': -98, 'REM': -98, 'SHL': -98, 'SHR': -98, 'AND': -98, 'AND_NOT': -98, 'RBRACK': -98, 'COMMA': -98, 'FUNC': -98, 'CONST': -98, 'VAR': -98, 'TYPE': -98, '$end': -98, 'RPAREN': -98, 'IDENT': -98, 'COLON': -98, 'RBRACE': -98}
+112 : {'PERIOD': -99, 'LBRACK': -99, 'LPAREN': -99, 'LOR': -99, 'LAND': -99, 'EQL': -99, 'NEQ': -99, 'LSS': -99, 'LEQ': -99, 'GTR': -99, 'GEQ': -99, 'ADD': -99, 'SUB': -99, 'OR': -99, 'XOR': -99, 'MUL': -99, 'QUO': -99, 'REM': -99, 'SHL': -99, 'SHR': -99, 'AND': -99, 'AND_NOT': -99, 'RBRACK': -99, 'COMMA': -99, 'FUNC': -99, 'CONST': -99, 'VAR': -99, 'TYPE': -99, '$end': -99, 'RPAREN': -99, 'IDENT': -99, 'COLON': -99, 'RBRACE': -99}
+113 : {'PERIOD': -100, 'LBRACK': -100, 'LPAREN': -100, 'LOR': -100, 'LAND': -100, 'EQL': -100, 'NEQ': -100, 'LSS': -100, 'LEQ': -100, 'GTR': -100, 'GEQ': -100, 'ADD': -100, 'SUB': -100, 'OR': -100, 'XOR': -100, 'MUL': -100, 'QUO': -100, 'REM': -100, 'SHL': -100, 'SHR': -100, 'AND': -100, 'AND_NOT': -100, 'RBRACK': -100, 'COMMA': -100, 'FUNC': -100, 'CONST': -100, 'VAR': -100, 'TYPE': -100, '$end': -100, 'RPAREN': -100, 'IDENT': -100, 'COLON': -100, 'RBRACE': -100}
+114 : {'PERIOD': -101, 'LBRACK': -101, 'LPAREN': -101, 'LOR': -101, 'LAND': -101, 'EQL': -101, 'NEQ': -101, 'LSS': -101, 'LEQ': -101, 'GTR': -101, 'GEQ': -101, 'ADD': -101, 'SUB': -101, 'OR': -101, 'XOR': -101, 'MUL': -101, 'QUO': -101, 'REM': -101, 'SHL': -101, 'SHR': -101, 'AND': -101, 'AND_NOT': -101, 'RBRACK': -101, 'COMMA': -101, 'FUNC': -101, 'CONST': -101, 'VAR': -101, 'TYPE': -101, '$end': -101, 'RPAREN': -101, 'IDENT': -101, 'COLON': -101, 'RBRACE': -101}
+115 : {'PERIOD': -102, 'LBRACK': -102, 'LPAREN': -102, 'LOR': -102, 'LAND': -102, 'EQL': -102, 'NEQ': -102, 'LSS': -102, 'LEQ': -102, 'GTR': -102, 'GEQ': -102, 'ADD': -102, 'SUB': -102, 'OR': -102, 'XOR': -102, 'MUL': -102, 'QUO': -102, 'REM': -102, 'SHL': -102, 'SHR': -102, 'AND': -102, 'AND_NOT': -102, 'RBRACK': -102, 'COMMA': -102, 'FUNC': -102, 'CONST': -102, 'VAR': -102, 'TYPE': -102, '$end': -102, 'RPAREN': -102, 'IDENT': -102, 'COLON': -102, 'RBRACE': -102}
+116 : {'LPAREN': -36, 'LBRACE': 185}
+117 : {'LPAREN': -35, 'LBRACE': 185}
+118 : {'LPAREN': -38, 'LBRACE': 185}
+119 : {'LPAREN': -39, 'LBRACE': 185}
+120 : {'RBRACE': -45, 'IDENT': -45, 'MUL': -45}
+121 : {'ASSIGN': -53, 'FUNC': -53, 'CONST': -53, 'VAR': -53, 'TYPE': -53, '$end': -53, 'RPAREN': -53, 'IDENT': -53, 'LBRACE': -53, 'COMMA': -53, 'LPAREN': -53, 'RBRACK': -53, 'STRING': -53, 'RBRACE': -53, 'MUL': -53}
+122 : {'ASSIGN': -54, 'FUNC': -54, 'CONST': -54, 'VAR': -54, 'TYPE': -54, '$end': -54, 'RPAREN': -54, 'IDENT': -54, 'LBRACE': -54, 'COMMA': -54, 'LPAREN': -54, 'RBRACK': -54, 'STRING': -54, 'RBRACE': -54, 'MUL': -54}
+123 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+124 : {'IDENT': 193}
+125 : {'FUNC': -151, 'CONST': -151, 'VAR': -151, 'TYPE': -151, '$end': -151}
+126 : {'RPAREN': -152, 'IDENT': -152}
+127 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+128 : {'FUNC': -155, 'CONST': -155, 'VAR': -155, 'TYPE': -155, '$end': -155, 'RPAREN': -155, 'IDENT': -155}
+129 : {'COMMA': -92, 'FUNC': -92, 'CONST': -92, 'VAR': -92, 'TYPE': -92, '$end': -92, 'RPAREN': -92, 'IDENT': -92, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+130 : {'FUNC': -143, 'CONST': -143, 'VAR': -143, 'TYPE': -143, '$end': -143}
+131 : {'RPAREN': -144, 'IDENT': -144}
+132 : {'FUNC': -148, 'CONST': -148, 'VAR': -148, 'TYPE': -148, '$end': -148, 'RPAREN': -148, 'IDENT': -148}
+133 : {'RBRACE': 196, 'SEMICOLON': -165}
+134 : {'RPAREN': 140, 'COMMA': -173}
+135 : {'RPAREN': -32, 'COMMA': -28, 'PERIOD': 88, 'LPAREN': -28, 'IDENT': -28, 'LBRACK': -28, 'STRUCT': -28, 'MUL': -28, 'MAP': -28}
+136 : {'LPAREN': -169, 'IDENT': -169, 'LBRACK': -169, 'STRUCT': -169, 'MUL': -169, 'MAP': -169, 'LBRACE': -169, 'FUNC': -169, 'CONST': -169, 'VAR': -169, 'TYPE': -169, '$end': -169}
+137 : {'RPAREN': 198, 'LPAREN': 50, 'IDENT': 83, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+138 : {'RPAREN': -174, 'COMMA': -174}
+139 : {'FUNC': -25, 'CONST': -25, 'VAR': -25, 'TYPE': -25, '$end': -25, 'RPAREN': -25, 'IDENT': -25}
+140 : {'ASSIGN': -31, 'FUNC': -31, 'CONST': -31, 'VAR': -31, 'TYPE': -31, '$end': -31, 'RPAREN': -31, 'IDENT': -31, 'LBRACE': -31, 'COMMA': -31, 'LPAREN': -31, 'RBRACK': -31, 'STRING': -31, 'RBRACE': -31, 'MUL': -31}
+141 : {'ASSIGN': -34, 'FUNC': -34, 'CONST': -34, 'VAR': -34, 'TYPE': -34, '$end': -34, 'RPAREN': -34, 'IDENT': -34, 'LBRACE': -34, 'COMMA': -34, 'LPAREN': -34, 'RBRACK': -34, 'STRING': -34, 'RBRACE': -34, 'MUL': -34}
+142 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+143 : {'ASSIGN': -55, 'FUNC': -55, 'CONST': -55, 'VAR': -55, 'TYPE': -55, '$end': -55, 'RPAREN': -55, 'IDENT': -55, 'LBRACE': -55, 'COMMA': -55, 'LPAREN': -55, 'RBRACK': -55, 'STRING': -55, 'RBRACE': -55, 'MUL': -55}
+144 : {'ASSIGN': -42, 'FUNC': -42, 'CONST': -42, 'VAR': -42, 'TYPE': -42, '$end': -42, 'RPAREN': -42, 'IDENT': -42, 'LBRACE': -42, 'COMMA': -42, 'LPAREN': -42, 'RBRACK': -42, 'STRING': -42, 'RBRACE': -42, 'MUL': -42}
+145 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+146 : {'ADD': -63, 'SUB': -63, 'NOT': -63, 'XOR': -63, 'MUL': -63, 'AND': -63, 'LPAREN': -63, 'IDENT': -63, 'INT': -63, 'FLOAT': -63, 'IMAG': -63, 'RUNE': -63, 'STRING': -63, 'STRUCT': -63, 'LBRACK': -63, 'MAP': -63}
+147 : {'ADD': -64, 'SUB': -64, 'NOT': -64, 'XOR': -64, 'MUL': -64, 'AND': -64, 'LPAREN': -64, 'IDENT': -64, 'INT': -64, 'FLOAT': -64, 'IMAG': -64, 'RUNE': -64, 'STRING': -64, 'STRUCT': -64, 'LBRACK': -64, 'MAP': -64}
+148 : {'ADD': -65, 'SUB': -65, 'NOT': -65, 'XOR': -65, 'MUL': -65, 'AND': -65, 'LPAREN': -65, 'IDENT': -65, 'INT': -65, 'FLOAT': -65, 'IMAG': -65, 'RUNE': -65, 'STRING': -65, 'STRUCT': -65, 'LBRACK': -65, 'MAP': -65}
+149 : {'ADD': -66, 'SUB': -66, 'NOT': -66, 'XOR': -66, 'MUL': -66, 'AND': -66, 'LPAREN': -66, 'IDENT': -66, 'INT': -66, 'FLOAT': -66, 'IMAG': -66, 'RUNE': -66, 'STRING': -66, 'STRUCT': -66, 'LBRACK': -66, 'MAP': -66}
+150 : {'ADD': -67, 'SUB': -67, 'NOT': -67, 'XOR': -67, 'MUL': -67, 'AND': -67, 'LPAREN': -67, 'IDENT': -67, 'INT': -67, 'FLOAT': -67, 'IMAG': -67, 'RUNE': -67, 'STRING': -67, 'STRUCT': -67, 'LBRACK': -67, 'MAP': -67}
+151 : {'ADD': -68, 'SUB': -68, 'NOT': -68, 'XOR': -68, 'MUL': -68, 'AND': -68, 'LPAREN': -68, 'IDENT': -68, 'INT': -68, 'FLOAT': -68, 'IMAG': -68, 'RUNE': -68, 'STRING': -68, 'STRUCT': -68, 'LBRACK': -68, 'MAP': -68}
+152 : {'ADD': -69, 'SUB': -69, 'NOT': -69, 'XOR': -69, 'MUL': -69, 'AND': -69, 'LPAREN': -69, 'IDENT': -69, 'INT': -69, 'FLOAT': -69, 'IMAG': -69, 'RUNE': -69, 'STRING': -69, 'STRUCT': -69, 'LBRACK': -69, 'MAP': -69}
+153 : {'ADD': -70, 'SUB': -70, 'NOT': -70, 'XOR': -70, 'MUL': -70, 'AND': -70, 'LPAREN': -70, 'IDENT': -70, 'INT': -70, 'FLOAT': -70, 'IMAG': -70, 'RUNE': -70, 'STRING': -70, 'STRUCT': -70, 'LBRACK': -70, 'MAP': -70}
+154 : {'ADD': -71, 'SUB': -71, 'NOT': -71, 'XOR': -71, 'MUL': -71, 'AND': -71, 'LPAREN': -71, 'IDENT': -71, 'INT': -71, 'FLOAT': -71, 'IMAG': -71, 'RUNE': -71, 'STRING': -71, 'STRUCT': -71, 'LBRACK': -71, 'MAP': -71}
+155 : {'ADD': -72, 'SUB': -72, 'NOT': -72, 'XOR': -72, 'MUL': -72, 'AND': -72, 'LPAREN': -72, 'IDENT': -72, 'INT': -72, 'FLOAT': -72, 'IMAG': -72, 'RUNE': -72, 'STRING': -72, 'STRUCT': -72, 'LBRACK': -72, 'MAP': -72}
+156 : {'ADD': -73, 'SUB': -73, 'NOT': -73, 'XOR': -73, 'MUL': -73, 'AND': -73, 'LPAREN': -73, 'IDENT': -73, 'INT': -73, 'FLOAT': -73, 'IMAG': -73, 'RUNE': -73, 'STRING': -73, 'STRUCT': -73, 'LBRACK': -73, 'MAP': -73}
+157 : {'ADD': -74, 'SUB': -74, 'NOT': -74, 'XOR': -74, 'MUL': -74, 'AND': -74, 'LPAREN': -74, 'IDENT': -74, 'INT': -74, 'FLOAT': -74, 'IMAG': -74, 'RUNE': -74, 'STRING': -74, 'STRUCT': -74, 'LBRACK': -74, 'MAP': -74}
+158 : {'ADD': -75, 'SUB': -75, 'NOT': -75, 'XOR': -75, 'MUL': -75, 'AND': -75, 'LPAREN': -75, 'IDENT': -75, 'INT': -75, 'FLOAT': -75, 'IMAG': -75, 'RUNE': -75, 'STRING': -75, 'STRUCT': -75, 'LBRACK': -75, 'MAP': -75}
+159 : {'ADD': -76, 'SUB': -76, 'NOT': -76, 'XOR': -76, 'MUL': -76, 'AND': -76, 'LPAREN': -76, 'IDENT': -76, 'INT': -76, 'FLOAT': -76, 'IMAG': -76, 'RUNE': -76, 'STRING': -76, 'STRUCT': -76, 'LBRACK': -76, 'MAP': -76}
+160 : {'ADD': -77, 'SUB': -77, 'NOT': -77, 'XOR': -77, 'MUL': -77, 'AND': -77, 'LPAREN': -77, 'IDENT': -77, 'INT': -77, 'FLOAT': -77, 'IMAG': -77, 'RUNE': -77, 'STRING': -77, 'STRUCT': -77, 'LBRACK': -77, 'MAP': -77}
+161 : {'ADD': -78, 'SUB': -78, 'NOT': -78, 'XOR': -78, 'MUL': -78, 'AND': -78, 'LPAREN': -78, 'IDENT': -78, 'INT': -78, 'FLOAT': -78, 'IMAG': -78, 'RUNE': -78, 'STRING': -78, 'STRUCT': -78, 'LBRACK': -78, 'MAP': -78}
+162 : {'ADD': -79, 'SUB': -79, 'NOT': -79, 'XOR': -79, 'MUL': -79, 'AND': -79, 'LPAREN': -79, 'IDENT': -79, 'INT': -79, 'FLOAT': -79, 'IMAG': -79, 'RUNE': -79, 'STRING': -79, 'STRUCT': -79, 'LBRACK': -79, 'MAP': -79}
+163 : {'ADD': -80, 'SUB': -80, 'NOT': -80, 'XOR': -80, 'MUL': -80, 'AND': -80, 'LPAREN': -80, 'IDENT': -80, 'INT': -80, 'FLOAT': -80, 'IMAG': -80, 'RUNE': -80, 'STRING': -80, 'STRUCT': -80, 'LBRACK': -80, 'MAP': -80}
+164 : {'ADD': -81, 'SUB': -81, 'NOT': -81, 'XOR': -81, 'MUL': -81, 'AND': -81, 'LPAREN': -81, 'IDENT': -81, 'INT': -81, 'FLOAT': -81, 'IMAG': -81, 'RUNE': -81, 'STRING': -81, 'STRUCT': -81, 'LBRACK': -81, 'MAP': -81}
+165 : {'ADD': -82, 'SUB': -82, 'NOT': -82, 'XOR': -82, 'MUL': -82, 'AND': -82, 'LPAREN': -82, 'IDENT': -82, 'INT': -82, 'FLOAT': -82, 'IMAG': -82, 'RUNE': -82, 'STRING': -82, 'STRUCT': -82, 'LBRACK': -82, 'MAP': -82}
+166 : {'ADD': -83, 'SUB': -83, 'NOT': -83, 'XOR': -83, 'MUL': -83, 'AND': -83, 'LPAREN': -83, 'IDENT': -83, 'INT': -83, 'FLOAT': -83, 'IMAG': -83, 'RUNE': -83, 'STRING': -83, 'STRUCT': -83, 'LBRACK': -83, 'MAP': -83}
+167 : {'ADD': -84, 'SUB': -84, 'NOT': -84, 'XOR': -84, 'MUL': -84, 'AND': -84, 'LPAREN': -84, 'IDENT': -84, 'INT': -84, 'FLOAT': -84, 'IMAG': -84, 'RUNE': -84, 'STRING': -84, 'STRUCT': -84, 'LBRACK': -84, 'MAP': -84}
+168 : {'PERIOD': -123, 'LBRACK': -123, 'LPAREN': -123, 'LOR': -123, 'LAND': -123, 'EQL': -123, 'NEQ': -123, 'LSS': -123, 'LEQ': -123, 'GTR': -123, 'GEQ': -123, 'ADD': -123, 'SUB': -123, 'OR': -123, 'XOR': -123, 'MUL': -123, 'QUO': -123, 'REM': -123, 'SHL': -123, 'SHR': -123, 'AND': -123, 'AND_NOT': -123, 'RBRACK': -123, 'COMMA': -123, 'FUNC': -123, 'CONST': -123, 'VAR': -123, 'TYPE': -123, '$end': -123, 'RPAREN': -123, 'IDENT': -123, 'COLON': -123, 'RBRACE': -123}
+169 : {'PERIOD': -124, 'LBRACK': -124, 'LPAREN': -124, 'LOR': -124, 'LAND': -124, 'EQL': -124, 'NEQ': -124, 'LSS': -124, 'LEQ': -124, 'GTR': -124, 'GEQ': -124, 'ADD': -124, 'SUB': -124, 'OR': -124, 'XOR': -124, 'MUL': -124, 'QUO': -124, 'REM': -124, 'SHL': -124, 'SHR': -124, 'AND': -124, 'AND_NOT': -124, 'RBRACK': -124, 'COMMA': -124, 'FUNC': -124, 'CONST': -124, 'VAR': -124, 'TYPE': -124, '$end': -124, 'RPAREN': -124, 'IDENT': -124, 'COLON': -124, 'RBRACE': -124}
+170 : {'PERIOD': -125, 'LBRACK': -125, 'LPAREN': -125, 'LOR': -125, 'LAND': -125, 'EQL': -125, 'NEQ': -125, 'LSS': -125, 'LEQ': -125, 'GTR': -125, 'GEQ': -125, 'ADD': -125, 'SUB': -125, 'OR': -125, 'XOR': -125, 'MUL': -125, 'QUO': -125, 'REM': -125, 'SHL': -125, 'SHR': -125, 'AND': -125, 'AND_NOT': -125, 'RBRACK': -125, 'COMMA': -125, 'FUNC': -125, 'CONST': -125, 'VAR': -125, 'TYPE': -125, '$end': -125, 'RPAREN': -125, 'IDENT': -125, 'COLON': -125, 'RBRACE': -125}
+171 : {'IDENT': 202}
+172 : {'COLON': 204, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+173 : {'RPAREN': 205, 'LPAREN': 175, 'IDENT': 178, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 208, 'MAP': 61, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'AND': 102, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115}
+174 : {'LOR': -62, 'LAND': -62, 'EQL': -62, 'NEQ': -62, 'LSS': -62, 'LEQ': -62, 'GTR': -62, 'GEQ': -62, 'ADD': -62, 'SUB': -62, 'OR': -62, 'XOR': -62, 'MUL': -62, 'QUO': -62, 'REM': -62, 'SHL': -62, 'SHR': -62, 'AND': -62, 'AND_NOT': -62, 'RBRACK': -62, 'COMMA': -62, 'FUNC': -62, 'CONST': -62, 'VAR': -62, 'TYPE': -62, '$end': -62, 'RPAREN': -62, 'IDENT': -62, 'COLON': -62, 'RBRACE': -62}
+175 : {'LPAREN': 175, 'IDENT': 178, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 208, 'MAP': 61, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'AND': 102, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115}
+176 : {'RPAREN': 209, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+177 : {'RPAREN': 140, 'LPAREN': 183}
+178 : {'LBRACE': -32, 'RPAREN': -32, 'LPAREN': -32, 'COMMA': -32, 'PERIOD': 88, 'LBRACK': -120, 'LOR': -120, 'LAND': -120, 'EQL': -120, 'NEQ': -120, 'LSS': -120, 'LEQ': -120, 'GTR': -120, 'GEQ': -120, 'ADD': -120, 'SUB': -120, 'OR': -120, 'XOR': -120, 'MUL': -120, 'QUO': -120, 'REM': -120, 'SHL': -120, 'SHR': -120, 'AND': -120, 'AND_NOT': -120}
+179 : {'RPAREN': -35, 'LPAREN': -35, 'COMMA': -35, 'LBRACE': 185}
+180 : {'RPAREN': -36, 'LPAREN': -36, 'COMMA': -36, 'LBRACE': 185}
+181 : {'RPAREN': -38, 'LPAREN': -38, 'COMMA': -38, 'LBRACE': 185}
+182 : {'RPAREN': -39, 'LPAREN': -39, 'COMMA': -39, 'LBRACE': 185}
+183 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+184 : {'PERIOD': -107, 'LBRACK': -107, 'LPAREN': -107, 'LOR': -107, 'LAND': -107, 'EQL': -107, 'NEQ': -107, 'LSS': -107, 'LEQ': -107, 'GTR': -107, 'GEQ': -107, 'ADD': -107, 'SUB': -107, 'OR': -107, 'XOR': -107, 'MUL': -107, 'QUO': -107, 'REM': -107, 'SHL': -107, 'SHR': -107, 'AND': -107, 'AND_NOT': -107, 'RBRACK': -107, 'COMMA': -107, 'FUNC': -107, 'CONST': -107, 'VAR': -107, 'TYPE': -107, '$end': -107, 'RPAREN': -107, 'IDENT': -107, 'COLON': -107, 'RBRACE': -107}
+185 : {'RBRACE': 212, 'IDENT': 218, 'LBRACE': 185, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+186 : {'PERIOD': -103, 'LBRACK': -103, 'LPAREN': -103, 'LOR': -103, 'LAND': -103, 'EQL': -103, 'NEQ': -103, 'LSS': -103, 'LEQ': -103, 'GTR': -103, 'GEQ': -103, 'ADD': -103, 'SUB': -103, 'OR': -103, 'XOR': -103, 'MUL': -103, 'QUO': -103, 'REM': -103, 'SHL': -103, 'SHR': -103, 'AND': -103, 'AND_NOT': -103, 'RBRACK': -103, 'COMMA': -103, 'FUNC': -103, 'CONST': -103, 'VAR': -103, 'TYPE': -103, '$end': -103, 'RPAREN': -103, 'IDENT': -103, 'COLON': -103, 'RBRACE': -103}
+187 : {'PERIOD': -104, 'LBRACK': -104, 'LPAREN': -104, 'LOR': -104, 'LAND': -104, 'EQL': -104, 'NEQ': -104, 'LSS': -104, 'LEQ': -104, 'GTR': -104, 'GEQ': -104, 'ADD': -104, 'SUB': -104, 'OR': -104, 'XOR': -104, 'MUL': -104, 'QUO': -104, 'REM': -104, 'SHL': -104, 'SHR': -104, 'AND': -104, 'AND_NOT': -104, 'RBRACK': -104, 'COMMA': -104, 'FUNC': -104, 'CONST': -104, 'VAR': -104, 'TYPE': -104, '$end': -104, 'RPAREN': -104, 'IDENT': -104, 'COLON': -104, 'RBRACE': -104}
+188 : {'PERIOD': -105, 'LBRACK': -105, 'LPAREN': -105, 'LOR': -105, 'LAND': -105, 'EQL': -105, 'NEQ': -105, 'LSS': -105, 'LEQ': -105, 'GTR': -105, 'GEQ': -105, 'ADD': -105, 'SUB': -105, 'OR': -105, 'XOR': -105, 'MUL': -105, 'QUO': -105, 'REM': -105, 'SHL': -105, 'SHR': -105, 'AND': -105, 'AND_NOT': -105, 'RBRACK': -105, 'COMMA': -105, 'FUNC': -105, 'CONST': -105, 'VAR': -105, 'TYPE': -105, '$end': -105, 'RPAREN': -105, 'IDENT': -105, 'COLON': -105, 'RBRACE': -105}
+189 : {'PERIOD': -106, 'LBRACK': -106, 'LPAREN': -106, 'LOR': -106, 'LAND': -106, 'EQL': -106, 'NEQ': -106, 'LSS': -106, 'LEQ': -106, 'GTR': -106, 'GEQ': -106, 'ADD': -106, 'SUB': -106, 'OR': -106, 'XOR': -106, 'MUL': -106, 'QUO': -106, 'REM': -106, 'SHL': -106, 'SHR': -106, 'AND': -106, 'AND_NOT': -106, 'RBRACK': -106, 'COMMA': -106, 'FUNC': -106, 'CONST': -106, 'VAR': -106, 'TYPE': -106, '$end': -106, 'RPAREN': -106, 'IDENT': -106, 'COLON': -106, 'RBRACE': -106}
+190 : {'RBRACE': 219, 'IDENT': 83, 'MUL': 223}
+191 : {'RBRACK': 225}
+192 : {'RBRACK': -57}
+193 : {'COMMA': -27, 'LPAREN': -27, 'IDENT': -27, 'LBRACK': -27, 'STRUCT': -27, 'MUL': -27, 'MAP': -27, 'ASSIGN': -27}
+194 : {'FUNC': -154, 'CONST': -154, 'VAR': -154, 'TYPE': -154, '$end': -154, 'RPAREN': -154, 'IDENT': -154}
+195 : {'FUNC': -58, 'CONST': -58, 'VAR': -58, 'TYPE': -58, '$end': -58, 'RPAREN': -58, 'IDENT': -58, 'COMMA': 226}
+196 : {'FUNC': -162, 'CONST': -162, 'VAR': -162, 'TYPE': -162, '$end': -162}
+197 : {'SEMICOLON': 227}
+198 : {'LPAREN': -170, 'IDENT': -170, 'LBRACK': -170, 'STRUCT': -170, 'MUL': -170, 'MAP': -170, 'LBRACE': -170, 'FUNC': -170, 'CONST': -170, 'VAR': -170, 'TYPE': -170, '$end': -170}
+199 : {'RPAREN': -171, 'COMMA': -171}
+200 : {'ASSIGN': -40, 'FUNC': -40, 'CONST': -40, 'VAR': -40, 'TYPE': -40, '$end': -40, 'RPAREN': -40, 'IDENT': -40, 'LBRACE': -40, 'COMMA': -40, 'LPAREN': -40, 'RBRACK': -40, 'STRING': -40, 'RBRACE': -40, 'MUL': -40}
+201 : {'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167, 'RBRACK': -60, 'COMMA': -60, 'FUNC': -60, 'CONST': -60, 'VAR': -60, 'TYPE': -60, '$end': -60, 'RPAREN': -60, 'IDENT': -60, 'COLON': -60, 'RBRACE': -60}
+202 : {'PERIOD': -128, 'LBRACK': -128, 'LPAREN': -128, 'LOR': -128, 'LAND': -128, 'EQL': -128, 'NEQ': -128, 'LSS': -128, 'LEQ': -128, 'GTR': -128, 'GEQ': -128, 'ADD': -128, 'SUB': -128, 'OR': -128, 'XOR': -128, 'MUL': -128, 'QUO': -128, 'REM': -128, 'SHL': -128, 'SHR': -128, 'AND': -128, 'AND_NOT': -128, 'RBRACK': -128, 'COMMA': -128, 'FUNC': -128, 'CONST': -128, 'VAR': -128, 'TYPE': -128, '$end': -128, 'RPAREN': -128, 'IDENT': -128, 'COLON': -128, 'RBRACE': -128}
+203 : {'COLON': 228, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+204 : {'RBRACK': 230, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+205 : {'PERIOD': -135, 'LBRACK': -135, 'LPAREN': -135, 'LOR': -135, 'LAND': -135, 'EQL': -135, 'NEQ': -135, 'LSS': -135, 'LEQ': -135, 'GTR': -135, 'GEQ': -135, 'ADD': -135, 'SUB': -135, 'OR': -135, 'XOR': -135, 'MUL': -135, 'QUO': -135, 'REM': -135, 'SHL': -135, 'SHR': -135, 'AND': -135, 'AND_NOT': -135, 'RBRACK': -135, 'COMMA': -135, 'FUNC': -135, 'CONST': -135, 'VAR': -135, 'TYPE': -135, '$end': -135, 'RPAREN': -135, 'IDENT': -135, 'COLON': -135, 'RBRACE': -135}
+206 : {'RPAREN': 231, 'COMMA': 232}
+207 : {'RPAREN': 233, 'COMMA': 234, 'LPAREN': 183}
+208 : {'ADD': -89, 'SUB': -89, 'NOT': -89, 'XOR': -89, 'MUL': -89, 'AND': -89, 'LPAREN': -89, 'IDENT': -89, 'INT': -89, 'FLOAT': -89, 'IMAG': -89, 'RUNE': -89, 'STRING': -89, 'STRUCT': -89, 'LBRACK': -89, 'MAP': -89}
+209 : {'PERIOD': -95, 'LBRACK': -95, 'LPAREN': -95, 'LOR': -95, 'LAND': -95, 'EQL': -95, 'NEQ': -95, 'LSS': -95, 'LEQ': -95, 'GTR': -95, 'GEQ': -95, 'ADD': -95, 'SUB': -95, 'OR': -95, 'XOR': -95, 'MUL': -95, 'QUO': -95, 'REM': -95, 'SHL': -95, 'SHR': -95, 'AND': -95, 'AND_NOT': -95, 'RBRACK': -95, 'COMMA': -95, 'FUNC': -95, 'CONST': -95, 'VAR': -95, 'TYPE': -95, '$end': -95, 'RPAREN': -95, 'IDENT': -95, 'COLON': -95, 'RBRACE': -95}
+210 : {'RPAREN': 235, 'COMMA': 236, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+211 : {'COMMA': 237, 'RBRACE': 238}
+212 : {'PERIOD': -110, 'LBRACK': -110, 'LPAREN': -110, 'LOR': -110, 'LAND': -110, 'EQL': -110, 'NEQ': -110, 'LSS': -110, 'LEQ': -110, 'GTR': -110, 'GEQ': -110, 'ADD': -110, 'SUB': -110, 'OR': -110, 'XOR': -110, 'MUL': -110, 'QUO': -110, 'REM': -110, 'SHL': -110, 'SHR': -110, 'AND': -110, 'AND_NOT': -110, 'RBRACK': -110, 'COMMA': -110, 'FUNC': -110, 'CONST': -110, 'VAR': -110, 'TYPE': -110, '$end': -110, 'RPAREN': -110, 'IDENT': -110, 'COLON': -110, 'RBRACE': -110}
+213 : {'COMMA': -111, 'RBRACE': -111}
+214 : {'COMMA': -113, 'RBRACE': -113}
+215 : {'COLON': 239}
+216 : {'COMMA': -118, 'RBRACE': -118, 'COLON': -116, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+217 : {'COMMA': -119, 'RBRACE': -119, 'COLON': -117}
+218 : {'COLON': -115, 'PERIOD': 88, 'LBRACK': -120, 'LPAREN': -32, 'LOR': -120, 'LAND': -120, 'EQL': -120, 'NEQ': -120, 'LSS': -120, 'LEQ': -120, 'GTR': -120, 'GEQ': -120, 'ADD': -120, 'SUB': -120, 'OR': -120, 'XOR': -120, 'MUL': -120, 'QUO': -120, 'REM': -120, 'SHL': -120, 'SHR': -120, 'AND': -120, 'AND_NOT': -120, 'COMMA': -120, 'RBRACE': -120, 'LBRACE': -32}
+219 : {'ASSIGN': -43, 'FUNC': -43, 'CONST': -43, 'VAR': -43, 'TYPE': -43, '$end': -43, 'RPAREN': -43, 'IDENT': -43, 'LBRACE': -43, 'COMMA': -43, 'LPAREN': -43, 'RBRACK': -43, 'STRING': -43, 'RBRACE': -43, 'MUL': -43}
+220 : {'RBRACE': -44, 'IDENT': -44, 'MUL': -44}
+221 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+222 : {'RBRACE': -47, 'IDENT': -47, 'MUL': -47, 'STRING': 242}
+223 : {'IDENT': 51}
+224 : {'STRING': -52, 'RBRACE': -52, 'IDENT': -52, 'MUL': -52}
+225 : {'LPAREN': 50, 'IDENT': 51, 'LBRACK': 58, 'STRUCT': 59, 'MUL': 60, 'MAP': 61}
+226 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+227 : {'RBRACE': -163, 'SEMICOLON': -163}
+228 : {'RBRACK': 247, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+229 : {'RBRACK': 249, 'COLON': 248, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+230 : {'PERIOD': -132, 'LBRACK': -132, 'LPAREN': -132, 'LOR': -132, 'LAND': -132, 'EQL': -132, 'NEQ': -132, 'LSS': -132, 'LEQ': -132, 'GTR': -132, 'GEQ': -132, 'ADD': -132, 'SUB': -132, 'OR': -132, 'XOR': -132, 'MUL': -132, 'QUO': -132, 'REM': -132, 'SHL': -132, 'SHR': -132, 'AND': -132, 'AND_NOT': -132, 'RBRACK': -132, 'COMMA': -132, 'FUNC': -132, 'CONST': -132, 'VAR': -132, 'TYPE': -132, '$end': -132, 'RPAREN': -132, 'IDENT': -132, 'COLON': -132, 'RBRACE': -132}
+231 : {'PERIOD': -136, 'LBRACK': -136, 'LPAREN': -136, 'LOR': -136, 'LAND': -136, 'EQL': -136, 'NEQ': -136, 'LSS': -136, 'LEQ': -136, 'GTR': -136, 'GEQ': -136, 'ADD': -136, 'SUB': -136, 'OR': -136, 'XOR': -136, 'MUL': -136, 'QUO': -136, 'REM': -136, 'SHL': -136, 'SHR': -136, 'AND': -136, 'AND_NOT': -136, 'RBRACK': -136, 'COMMA': -136, 'FUNC': -136, 'CONST': -136, 'VAR': -136, 'TYPE': -136, '$end': -136, 'RPAREN': -136, 'IDENT': -136, 'COLON': -136, 'RBRACE': -136}
+232 : {'RPAREN': 250}
+233 : {'PERIOD': -138, 'LBRACK': -138, 'LPAREN': -138, 'LOR': -138, 'LAND': -138, 'EQL': -138, 'NEQ': -138, 'LSS': -138, 'LEQ': -138, 'GTR': -138, 'GEQ': -138, 'ADD': -138, 'SUB': -138, 'OR': -138, 'XOR': -138, 'MUL': -138, 'QUO': -138, 'REM': -138, 'SHL': -138, 'SHR': -138, 'AND': -138, 'AND_NOT': -138, 'RBRACK': -138, 'COMMA': -138, 'FUNC': -138, 'CONST': -138, 'VAR': -138, 'TYPE': -138, '$end': -138, 'RPAREN': -138, 'IDENT': -138, 'COLON': -138, 'RBRACE': -138}
+234 : {'RPAREN': 251, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+235 : {'PERIOD': -126, 'LBRACK': -126, 'LPAREN': -126, 'LOR': -126, 'LAND': -126, 'EQL': -126, 'NEQ': -126, 'LSS': -126, 'LEQ': -126, 'GTR': -126, 'GEQ': -126, 'ADD': -126, 'SUB': -126, 'OR': -126, 'XOR': -126, 'MUL': -126, 'QUO': -126, 'REM': -126, 'SHL': -126, 'SHR': -126, 'AND': -126, 'AND_NOT': -126, 'RBRACK': -126, 'COMMA': -126, 'FUNC': -126, 'CONST': -126, 'VAR': -126, 'TYPE': -126, '$end': -126, 'RPAREN': -126, 'IDENT': -126, 'COLON': -126, 'RBRACE': -126}
+236 : {'RPAREN': 253}
+237 : {'RBRACE': 254, 'IDENT': 218, 'LBRACE': 185, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+238 : {'PERIOD': -109, 'LBRACK': -109, 'LPAREN': -109, 'LOR': -109, 'LAND': -109, 'EQL': -109, 'NEQ': -109, 'LSS': -109, 'LEQ': -109, 'GTR': -109, 'GEQ': -109, 'ADD': -109, 'SUB': -109, 'OR': -109, 'XOR': -109, 'MUL': -109, 'QUO': -109, 'REM': -109, 'SHL': -109, 'SHR': -109, 'AND': -109, 'AND_NOT': -109, 'RBRACK': -109, 'COMMA': -109, 'FUNC': -109, 'CONST': -109, 'VAR': -109, 'TYPE': -109, '$end': -109, 'RPAREN': -109, 'IDENT': -109, 'COLON': -109, 'RBRACE': -109}
+239 : {'LBRACE': 185, 'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+240 : {'RBRACE': -46, 'IDENT': -46, 'MUL': -46, 'STRING': 242}
+241 : {'RBRACE': -49, 'IDENT': -49, 'MUL': -49}
+242 : {'RBRACE': -50, 'IDENT': -50, 'MUL': -50}
+243 : {'STRING': -51, 'RBRACE': -51, 'IDENT': -51, 'MUL': -51}
+244 : {'ASSIGN': -56, 'FUNC': -56, 'CONST': -56, 'VAR': -56, 'TYPE': -56, '$end': -56, 'RPAREN': -56, 'IDENT': -56, 'LBRACE': -56, 'COMMA': -56, 'LPAREN': -56, 'RBRACK': -56, 'STRING': -56, 'RBRACE': -56, 'MUL': -56}
+245 : {'COMMA': -91, 'FUNC': -91, 'CONST': -91, 'VAR': -91, 'TYPE': -91, '$end': -91, 'RPAREN': -91, 'IDENT': -91, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+246 : {'RBRACK': 261, 'COLON': 260, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+247 : {'PERIOD': -131, 'LBRACK': -131, 'LPAREN': -131, 'LOR': -131, 'LAND': -131, 'EQL': -131, 'NEQ': -131, 'LSS': -131, 'LEQ': -131, 'GTR': -131, 'GEQ': -131, 'ADD': -131, 'SUB': -131, 'OR': -131, 'XOR': -131, 'MUL': -131, 'QUO': -131, 'REM': -131, 'SHL': -131, 'SHR': -131, 'AND': -131, 'AND_NOT': -131, 'RBRACK': -131, 'COMMA': -131, 'FUNC': -131, 'CONST': -131, 'VAR': -131, 'TYPE': -131, '$end': -131, 'RPAREN': -131, 'IDENT': -131, 'COLON': -131, 'RBRACE': -131}
+248 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+249 : {'PERIOD': -130, 'LBRACK': -130, 'LPAREN': -130, 'LOR': -130, 'LAND': -130, 'EQL': -130, 'NEQ': -130, 'LSS': -130, 'LEQ': -130, 'GTR': -130, 'GEQ': -130, 'ADD': -130, 'SUB': -130, 'OR': -130, 'XOR': -130, 'MUL': -130, 'QUO': -130, 'REM': -130, 'SHL': -130, 'SHR': -130, 'AND': -130, 'AND_NOT': -130, 'RBRACK': -130, 'COMMA': -130, 'FUNC': -130, 'CONST': -130, 'VAR': -130, 'TYPE': -130, '$end': -130, 'RPAREN': -130, 'IDENT': -130, 'COLON': -130, 'RBRACE': -130}
+250 : {'PERIOD': -137, 'LBRACK': -137, 'LPAREN': -137, 'LOR': -137, 'LAND': -137, 'EQL': -137, 'NEQ': -137, 'LSS': -137, 'LEQ': -137, 'GTR': -137, 'GEQ': -137, 'ADD': -137, 'SUB': -137, 'OR': -137, 'XOR': -137, 'MUL': -137, 'QUO': -137, 'REM': -137, 'SHL': -137, 'SHR': -137, 'AND': -137, 'AND_NOT': -137, 'RBRACK': -137, 'COMMA': -137, 'FUNC': -137, 'CONST': -137, 'VAR': -137, 'TYPE': -137, '$end': -137, 'RPAREN': -137, 'IDENT': -137, 'COLON': -137, 'RBRACE': -137}
+251 : {'PERIOD': -139, 'LBRACK': -139, 'LPAREN': -139, 'LOR': -139, 'LAND': -139, 'EQL': -139, 'NEQ': -139, 'LSS': -139, 'LEQ': -139, 'GTR': -139, 'GEQ': -139, 'ADD': -139, 'SUB': -139, 'OR': -139, 'XOR': -139, 'MUL': -139, 'QUO': -139, 'REM': -139, 'SHL': -139, 'SHR': -139, 'AND': -139, 'AND_NOT': -139, 'RBRACK': -139, 'COMMA': -139, 'FUNC': -139, 'CONST': -139, 'VAR': -139, 'TYPE': -139, '$end': -139, 'RPAREN': -139, 'IDENT': -139, 'COLON': -139, 'RBRACE': -139}
+252 : {'RPAREN': 264, 'COMMA': 263}
+253 : {'PERIOD': -127, 'LBRACK': -127, 'LPAREN': -127, 'LOR': -127, 'LAND': -127, 'EQL': -127, 'NEQ': -127, 'LSS': -127, 'LEQ': -127, 'GTR': -127, 'GEQ': -127, 'ADD': -127, 'SUB': -127, 'OR': -127, 'XOR': -127, 'MUL': -127, 'QUO': -127, 'REM': -127, 'SHL': -127, 'SHR': -127, 'AND': -127, 'AND_NOT': -127, 'RBRACK': -127, 'COMMA': -127, 'FUNC': -127, 'CONST': -127, 'VAR': -127, 'TYPE': -127, '$end': -127, 'RPAREN': -127, 'IDENT': -127, 'COLON': -127, 'RBRACE': -127}
+254 : {'PERIOD': -108, 'LBRACK': -108, 'LPAREN': -108, 'LOR': -108, 'LAND': -108, 'EQL': -108, 'NEQ': -108, 'LSS': -108, 'LEQ': -108, 'GTR': -108, 'GEQ': -108, 'ADD': -108, 'SUB': -108, 'OR': -108, 'XOR': -108, 'MUL': -108, 'QUO': -108, 'REM': -108, 'SHL': -108, 'SHR': -108, 'AND': -108, 'AND_NOT': -108, 'RBRACK': -108, 'COMMA': -108, 'FUNC': -108, 'CONST': -108, 'VAR': -108, 'TYPE': -108, '$end': -108, 'RPAREN': -108, 'IDENT': -108, 'COLON': -108, 'RBRACE': -108}
+255 : {'COMMA': -112, 'RBRACE': -112}
+256 : {'COMMA': -114, 'RBRACE': -114}
+257 : {'COMMA': -118, 'RBRACE': -118, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+258 : {'COMMA': -119, 'RBRACE': -119}
+259 : {'RBRACE': -48, 'IDENT': -48, 'MUL': -48}
+260 : {'ADD': 97, 'SUB': 98, 'NOT': 99, 'XOR': 100, 'MUL': 101, 'AND': 102, 'LPAREN': 105, 'IDENT': 109, 'INT': 111, 'FLOAT': 112, 'IMAG': 113, 'RUNE': 114, 'STRING': 115, 'STRUCT': 59, 'LBRACK': 58, 'MAP': 61}
+261 : {'PERIOD': -129, 'LBRACK': -129, 'LPAREN': -129, 'LOR': -129, 'LAND': -129, 'EQL': -129, 'NEQ': -129, 'LSS': -129, 'LEQ': -129, 'GTR': -129, 'GEQ': -129, 'ADD': -129, 'SUB': -129, 'OR': -129, 'XOR': -129, 'MUL': -129, 'QUO': -129, 'REM': -129, 'SHL': -129, 'SHR': -129, 'AND': -129, 'AND_NOT': -129, 'RBRACK': -129, 'COMMA': -129, 'FUNC': -129, 'CONST': -129, 'VAR': -129, 'TYPE': -129, '$end': -129, 'RPAREN': -129, 'IDENT': -129, 'COLON': -129, 'RBRACE': -129}
+262 : {'RBRACK': 266, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+263 : {'RPAREN': 267}
+264 : {'PERIOD': -140, 'LBRACK': -140, 'LPAREN': -140, 'LOR': -140, 'LAND': -140, 'EQL': -140, 'NEQ': -140, 'LSS': -140, 'LEQ': -140, 'GTR': -140, 'GEQ': -140, 'ADD': -140, 'SUB': -140, 'OR': -140, 'XOR': -140, 'MUL': -140, 'QUO': -140, 'REM': -140, 'SHL': -140, 'SHR': -140, 'AND': -140, 'AND_NOT': -140, 'RBRACK': -140, 'COMMA': -140, 'FUNC': -140, 'CONST': -140, 'VAR': -140, 'TYPE': -140, '$end': -140, 'RPAREN': -140, 'IDENT': -140, 'COLON': -140, 'RBRACE': -140}
+265 : {'RBRACK': 268, 'LOR': 146, 'LAND': 147, 'EQL': 151, 'NEQ': 152, 'LSS': 153, 'LEQ': 154, 'GTR': 155, 'GEQ': 156, 'ADD': 157, 'SUB': 158, 'OR': 159, 'XOR': 160, 'MUL': 161, 'QUO': 162, 'REM': 163, 'SHL': 164, 'SHR': 165, 'AND': 166, 'AND_NOT': 167}
+266 : {'PERIOD': -133, 'LBRACK': -133, 'LPAREN': -133, 'LOR': -133, 'LAND': -133, 'EQL': -133, 'NEQ': -133, 'LSS': -133, 'LEQ': -133, 'GTR': -133, 'GEQ': -133, 'ADD': -133, 'SUB': -133, 'OR': -133, 'XOR': -133, 'MUL': -133, 'QUO': -133, 'REM': -133, 'SHL': -133, 'SHR': -133, 'AND': -133, 'AND_NOT': -133, 'RBRACK': -133, 'COMMA': -133, 'FUNC': -133, 'CONST': -133, 'VAR': -133, 'TYPE': -133, '$end': -133, 'RPAREN': -133, 'IDENT': -133, 'COLON': -133, 'RBRACE': -133}
+267 : {'PERIOD': -141, 'LBRACK': -141, 'LPAREN': -141, 'LOR': -141, 'LAND': -141, 'EQL': -141, 'NEQ': -141, 'LSS': -141, 'LEQ': -141, 'GTR': -141, 'GEQ': -141, 'ADD': -141, 'SUB': -141, 'OR': -141, 'XOR': -141, 'MUL': -141, 'QUO': -141, 'REM': -141, 'SHL': -141, 'SHR': -141, 'AND': -141, 'AND_NOT': -141, 'RBRACK': -141, 'COMMA': -141, 'FUNC': -141, 'CONST': -141, 'VAR': -141, 'TYPE': -141, '$end': -141, 'RPAREN': -141, 'IDENT': -141, 'COLON': -141, 'RBRACE': -141}
+268 : {'PERIOD': -134, 'LBRACK': -134, 'LPAREN': -134, 'LOR': -134, 'LAND': -134, 'EQL': -134, 'NEQ': -134, 'LSS': -134, 'LEQ': -134, 'GTR': -134, 'GEQ': -134, 'ADD': -134, 'SUB': -134, 'OR': -134, 'XOR': -134, 'MUL': -134, 'QUO': -134, 'REM': -134, 'SHL': -134, 'SHR': -134, 'AND': -134, 'AND_NOT': -134, 'RBRACK': -134, 'COMMA': -134, 'FUNC': -134, 'CONST': -134, 'VAR': -134, 'TYPE': -134, '$end': -134, 'RPAREN': -134, 'IDENT': -134, 'COLON': -134, 'RBRACE': -134}

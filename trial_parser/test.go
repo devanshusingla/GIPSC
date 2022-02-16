@@ -2,7 +2,9 @@ package main
 
 import "fmt"
 
-func main() {
-    var a = 20
-    fmt.Println(a)
+type Random struct {
+    a,b int
+    d float32
 }
+
+var A [6]int

@@ -124,13 +124,14 @@ def p_Type(p):
          | LPAREN Type RPAREN
     """
 
-#extra
 def p_TypeName(p):
     """
-    TypeName : INT
-             | FLOAT
-             | STRING
-             | TYPE IDENT
+    TypeName : IDENT
+             | QualifiedIdent
+    """
+def p_QualifiedIdent(p):
+    """
+    QualifiedIdent : IDENT PERIOD IDENT
     """
 
 # function type remaining
@@ -175,6 +176,19 @@ def p_FieldDeclMult(p):
 def p_FieldDecl(p):
     """
     FieldDecl : IdentifierList Type
+              | EmbeddedField
+              | IdentifierList Type Tag
+              | EmbeddedField Tag
+    """
+def p_Tag(p):
+    """
+    Tag : STRING
+    """
+
+def p_EmbeddedField(p):
+    """
+    EmbeddedField : MUL TypeName
+                  | TypeName
     """
 
 # pointer type
@@ -461,8 +475,99 @@ def p_ShortVarDecl(p):
 
 def p_FuncDecl(p):
     """
-    FuncDecl : 
+    FuncDecl : FUNC FunctionName Signature FunctionBody
+             | FUNC FunctionName Signature
     """
+
+def p_FunctionName(p):
+    """
+    FunctionName : IDENT
+    """    
+
+def p_FunctionBody(p):
+    """
+    FunctionBody : Block
+    """
+
+def p_Block(p):
+    """
+    Block : LBRACE StatementList RBRACE
+    """
+
+## Statements
+
+def p_StatementList(p):
+    """
+    StatementList : StatementList Statement SEMICOLON 
+                  | 
+    """
+
+def p_Statement(p):
+    """
+    Statement : 
+    """
+# def p_Statement(p):
+#     """
+#     Statement : Decl
+#               | LabeledStmt
+#               | SimpleStmt
+#               | GoStmt
+#               | ReturnStmt
+#               | BreakStmt
+#               | ContinueStmt
+#               | GotoStmt
+#               | FallthroughStmt
+#               | Block
+#               | IfStmt
+#               | SwitchStmt
+#               | SelectStmt
+#               | ForStmt
+#               | DeferStmt
+#     """
+
+# def p_LabeledStmt(p):
+#     """
+#     LabeledStmt : Label COLON Statement
+#     """
+
+# def p_Label(p):
+#     """
+#     Label : IDENT
+#     """
+
+## Signatures
+
+def p_Signature(p):
+    """
+    Signature : Parameters Result
+              | Parameters
+    """
+
+def p_Parameters(p):
+    """
+    Parameters : LPAREN RPAREN
+               | LPAREN ParameterList RPAREN
+               | LPAREN ParameterList COMMA RPAREN
+    """
+    
+def p_ParameterList(p):
+    """
+    ParameterList : ParameterList COMMA ParameterDecl
+                  | ParameterDecl
+    """
+
+def p_ParameterDecl(p):
+    """
+    ParameterDecl : Type
+                  | IdentifierList Type
+    """
+
+def p_Result(p):
+    """
+    Result : Parameters 
+           | Type
+    """
+
 
 def p_error(p):
     print("Print Syntax Error", p)
