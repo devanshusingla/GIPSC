@@ -238,7 +238,7 @@
 237 : {'BinOp': 155, 'ExprOth': 208, 'RelOp': 158, 'AddOp': 159, 'MulOp': 160}
 238 : {}
 239 : {}
-240 : {'Condition': 302, 'ForClause': 303, 'RangeClause': 304, 'Expr': 305, 'InitStmtOpt': 306, 'RangeList': 307, 'UnaryExpr': 97, 'SimpleStmt': 308, 'ExpressionList': 309, 'IdentifierList': 310, 'PrimaryExpr': 98, 'UnaryOp': 99, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+240 : {'Condition': 302, 'ForClause': 303, 'RangeClause': 304, 'Expr': 305, 'InitStmt': 306, 'RangeList': 307, 'UnaryExpr': 97, 'SimpleStmt': 308, 'ExpressionList': 309, 'IdentifierList': 310, 'PrimaryExpr': 98, 'UnaryOp': 99, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 241 : {'IdentifierOth': 67}
 242 : {}
 243 : {'SimpleStmtOpt': 312, 'SimpleStmt': 298, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'Expr': 237, 'ExpressionList': 232, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
@@ -377,7 +377,7 @@
 376 : {}
 377 : {}
 378 : {'IfStmt': 386, 'Block': 387}
-379 : {'PostStmtOpt': 388, 'SimpleStmt': 389, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'Expr': 237, 'ExpressionList': 232, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
+379 : {'PostStmt': 388, 'SimpleStmt': 389, 'EmptyStmt': 225, 'ExpressionStmt': 226, 'IncDecStmt': 227, 'Assignment': 228, 'ShortVarDecl': 229, 'Expr': 237, 'ExpressionList': 232, 'IdentifierList': 242, 'UnaryExpr': 97, 'PrimaryExpr': 98, 'UnaryOp': 99, 'Operand': 100, 'Conversion': 101, 'Lit': 108, 'OperandName': 109, 'Type': 111, 'BasicLit': 112, 'CompositeLit': 113, 'FunctionLit': 114, 'TypeName': 116, 'TypeLit': 52, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125, 'QualifiedIdent': 55, 'PointerType': 58, 'FunctionType': 61}
 380 : {'ExprCaseClause': 391, 'ExprSwitchCase': 392}
 381 : {'TypeCaseClause': 396, 'TypeSwitchCase': 397}
 382 : {}

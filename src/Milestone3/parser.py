@@ -5,6 +5,7 @@ from lexer import *
 import sys
 
 tokens=lexer.tokens
+tokens.remove('COMMENT')
 
 precedence = (
     ('right', 'ASSIGN', 'DEFINE', 'NOT'),
@@ -782,13 +783,12 @@ def p_Condition(p):
 ## For Clause -------------------------------------
 def p_ForClause(p):
     """
-    ForClause : InitStmtOpt SEMICOLON ConditionOpt SEMICOLON PostStmtOpt
+    ForClause : InitStmt SEMICOLON ConditionOpt SEMICOLON PostStmt
     """
 
-def p_InitStmtOpt(p):
+def p_InitStmt(p):
     """
-    InitStmtOpt :   SimpleStmt
-                    |
+    InitStmt :   SimpleStmt
     """
 
 def p_ConditionOpt(p):
@@ -797,10 +797,9 @@ def p_ConditionOpt(p):
                     |
     """
 
-def p_PostStmtOpt(p):
+def p_PostStmt(p):
     """
-    PostStmtOpt :   SimpleStmt
-                    |
+    PostStmt :   SimpleStmt
     """
 ## --------------------------------------------------
 
@@ -825,13 +824,15 @@ def p_error(p):
 ## Build lexer
 lexer = lex.lex()
 
-parser=yacc.yacc()
+parser=yacc.yacc(debug=False)
 
-with open("action.txt", "w") as f:
+path_to_root = os.environ['PATH_TO_ROOT']
+milestone = os.environ['MILESTONE']
+with open(path_to_root + "/src/Milestone" + str(milestone) + "/action.txt", "w") as f:
     for key, val in parser.action.items():
         f.writelines(f'{key} : {val}\n')
 
-with open("goto.txt", "w") as f:
+with open(path_to_root + "/src/Milestone" + str(milestone) + "/goto.txt", "w") as f:
     for key, val in parser.goto.items():
         f.writelines(f'{key} : {val}\n')
 

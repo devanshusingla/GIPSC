@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Taking the path to Golang source file
+if [[ $# -ne 1 ]]; then
+    echo "Enter only the path to the source file as argument" >&2
+    exit 2
+fi
+
+export MILESTONE=3
+
+path_to_root=$( dirname $( dirname $( realpath $0) ) )
+abs_path_to_parser="${path_to_root}/src/Milestone${MILESTONE}/parser.py"
+abs_path_to_file=$(realpath $1)
+
+export PATH_TO_ROOT=$path_to_root
+
+python3 $abs_path_to_parser $abs_path_to_file
