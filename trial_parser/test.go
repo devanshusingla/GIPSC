@@ -3,6 +3,6 @@ package main
 import "fmt"
 
 func main() {
-    a := 2
+    var a = 20
     fmt.Println(a)
 }

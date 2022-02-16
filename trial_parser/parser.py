@@ -7,7 +7,7 @@ import sys
 tokens=lexer.tokens
 
 precedence = (
-    ('right', 'ASSIGN', 'DEFINE', 'NOT')
+    ('right', 'ASSIGN', 'DEFINE', 'NOT'),
     ('left', 'LOR'),
     ('left', 'LAND'),
     ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
@@ -19,7 +19,7 @@ precedence = (
 
 def p_SourceFile(p):
     """
-    SourceFile : PackageStat ImportDeclMult TopLevDeclMult
+    SourceFile : PackageStat ImportDeclMult TopLevelDeclMult
     """
 
 ## Package related grammar
@@ -71,6 +71,7 @@ def p_ImportPath(p):
 def p_TopLevelDeclMult(p):
     """
     TopLevelDeclMult : TopLevelDeclMult TopLevelDecl
+                     |
     """
 
 def p_TopLevelDecl(p):
@@ -100,7 +101,7 @@ def p_ConstSpecMult(p):
 
 def p_ConstSpec(p):
     """
-    ConstSpec : IdetifierList Type ASSIGN ExpressionList 
+    ConstSpec : IdentifierList Type ASSIGN ExpressionList 
     """
 
 def p_IdentifierList(p):
@@ -129,7 +130,6 @@ def p_TypeName(p):
     TypeName : INT
              | FLOAT
              | STRING
-             | BOOL
              | TYPE IDENT
     """
 
@@ -162,7 +162,7 @@ def p_ElementType(p):
 #struct type
 def p_StructType(p):
     """
-    StructType : STRUCT LBRACE FieldDeclMult RBACE 
+    StructType : STRUCT LBRACE FieldDeclMult RBRACE 
     """
 
 #extra
@@ -172,7 +172,7 @@ def p_FieldDeclMult(p):
                   | 
     """
 
-def FieldDecl(p):
+def p_FieldDecl(p):
     """
     FieldDecl : IdentifierList Type
     """
@@ -246,7 +246,7 @@ def p_RelOp(p):
 
 def p_AddOp(p):
     """
-    AddOP : ADD 
+    AddOp : ADD 
           | SUB
           | OR
           | XOR
@@ -321,7 +321,7 @@ def p_LiteralValue(p):
 
 def p_ElementList(p):
     """
-    ElementList : KeyedElem 
+    ElementList : KeyedElement 
                 | ElementList COMMA KeyedElement
     """
 
@@ -394,8 +394,7 @@ def p_Arguments(p):
               | LPAREN Type RPAREN
               | LPAREN Type COMMA RPAREN
               | LPAREN Type COMMA ExpressionList RPAREN 
-              | LPAREN Type COMMA ExpressionList COMMA RPAREN 
-              | LPAREN Type COMMA ExpressionList RPAREN  
+              | LPAREN Type COMMA ExpressionList COMMA RPAREN   
     """
 
 ## Type declarations
