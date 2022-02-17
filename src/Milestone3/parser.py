@@ -26,8 +26,8 @@ precedence = (
     ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
     ('left', 'ADD', 'SUB','OR','XOR'),
     ('left', 'MUL', 'QUO','REM','AND','AND_NOT','SHL','SHR'),
-    ('left', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'INC', 'DEC', 'PERIOD')
-    # ('right', 'UMINUS'),
+    ('left', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'INC', 'DEC', 'PERIOD'),
+    ('left', 'UMUL'),
 )
 
 non_terminals = {}
@@ -247,17 +247,19 @@ def p_EmbeddedField(p):
 
 def p_PointerType(p):
     """
-    PointerType : MUL BaseType
+    PointerType : MUL Type %prec UMUL
+               | MUL IDENT %prec UMUL
+                | MUL IDENT PERIOD IDENT %prec UMUL
     """
     p[0] = get_value_p(p)
     
-def p_BaseType(p):
-    """
-    BaseType : Type
-               | IDENT
-                | IDENT PERIOD IDENT
-    """
-    p[0] = get_value_p(p)
+# def p_BaseType(p):
+#     """
+#     BaseType : Type
+#                | IDENT
+#                 | IDENT PERIOD IDENT
+#     """
+#     p[0] = get_value_p(p)
 
 #slice type
 def p_SliceType(p):
@@ -300,69 +302,89 @@ def p_ExpressionList(p):
 def p_Expr(p):
     """
     Expr : UnaryExpr 
-         | Expr BinOp Expr 
+         | Expr LOR  Expr
+          | Expr LAND Expr
+          | Expr EQL  Expr
+          | Expr NEQ Expr
+          | Expr LSS Expr
+          | Expr LEQ Expr
+          | Expr GTR Expr
+          | Expr GEQ Expr
+          | Expr ADD  Expr
+          | Expr SUB Expr
+          | Expr OR Expr
+          | Expr XOR Expr
+          | Expr MUL Expr
+          | Expr QUO Expr
+          | Expr REM Expr
+          | Expr SHL Expr
+          | Expr SHR Expr
+          | Expr AND Expr
+          | Expr AND_NOT Expr
     """
     p[0] = get_value_p(p)
 
 def p_UnaryExpr(p):
     """
     UnaryExpr : PrimaryExpr 
-              | UnaryOp UnaryExpr
+            | ADD UnaryExpr
+            | SUB UnaryExpr
+            | NOT UnaryExpr
+            | XOR UnaryExpr
+            | MUL UnaryExpr
+            | AND UnaryExpr
     """
     p[0] = get_value_p(p)
 
-def p_BinOp(p):
-    """
-    BinOp : LOR 
-          | LAND
-          | RelOp
-          | AddOp
-          | MulOp
-    """
-    p[0] = get_value_p(p)
+# def p_BinOp(p):
+#     """
+#     BinOp : LOR 
+#           | LAND
+#           | RelOp
+#           | AddOp
+#           | MulOp
+#     """
+#     p[0] = get_value_p(p)
 
-def p_RelOp(p):
-    """
-    RelOp : EQL 
-          | NEQ
-          | LSS
-          | LEQ
-          | GTR
-          | GEQ
-    """
-    p[0] = get_value_p(p)
+# def p_RelOp(p):
+#     """
+#     RelOp : 
+          
+#     """
+#     p[0] = get_value_p(p)
 
-def p_AddOp(p):
-    """
-    AddOp : ADD 
-          | SUB
-          | OR
-          | XOR
-    """
-    p[0] = get_value_p(p)
+# def p_AddOp(p):
+#     """
+#     AddOp : ADD 
+#           | SUB
+#           | OR
+#           | XOR
+#     """
+#     p[0] = get_value_p(p)
 
-def p_MulOp(p):
-    """
-    MulOp : MUL
-          | QUO
-          | REM
-          | SHL
-          | SHR
-          | AND
-          | AND_NOT
-    """
-    p[0] = get_value_p(p)
+# def p_MulOp(p):
+#     """
+#     MulOp :
+#           | MUL
+#           | QUO
+#           | REM
+#           | SHL
+#           | SHR
+#           | AND
+#           | AND_NOT
+#     """
+#     p[0] = get_value_p(p)
     
-def p_UnaryOp(p):
-    """
-    UnaryOp : ADD
-            | SUB
-            | NOT
-            | XOR
-            | MUL
-            | AND
-    """
-    p[0] = get_value_p(p)
+# def p_UnaryOp(p):
+#     """
+#     UnaryOp : ADD
+#             | SUB
+#             | NOT
+#             | XOR
+#             | MUL
+#             | AND
+#     """
+#     p[0] = get_value_p(p)
 
 # def p_ExprOth(p):
 #     """
@@ -836,12 +858,12 @@ def p_else_stmt(p):
     """
     p[0] = get_value_p(p)
 
-def p_SimpleStmtOpt(p):
-    """
-    SimpleStmtOpt : 
-                  | SimpleStmt SEMICOLON
-    """
-    p[0] = get_value_p(p)
+# def p_SimpleStmtOpt(p):
+#     """
+#     SimpleStmtOpt : 
+#                   | SimpleStmt SEMICOLON
+#     """
+#     p[0] = get_value_p(p)
 
 ## --------------------------------------------------
 
@@ -857,16 +879,19 @@ def p_SwitchStmt(p):
 ## ExprSwitchStmt -----------------------------------
 def p_ExprSwitchStmt(p):
     """
-    ExprSwitchStmt : SWITCH SimpleStmtOpt ExprOpt LBRACE ExprCaseClauseMult RBRACE
+    ExprSwitchStmt : SWITCH SimpleStmt SEMICOLON Expr LBRACE ExprCaseClauseMult RBRACE
+                     | SWITCH Expr LBRACE ExprCaseClauseMult RBRACE
+                     | SWITCH SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult RBRACE
+                     | SWITCH LBRACE ExprCaseClauseMult RBRACE
     """
     p[0] = get_value_p(p)
 
-def p_ExprOpt(p):
-    """
-    ExprOpt : Expr
-              |
-    """
-    p[0] = get_value_p(p)
+# def p_ExprOpt(p):
+#     """
+#     ExprOpt : Expr
+#               |
+#     """
+#     p[0] = get_value_p(p)
 
 def p_ExprCaseClauseMult(p):
     """
@@ -892,22 +917,24 @@ def p_ExprSwitchCase(p):
 ## TypeSwitchStmt ----------------------------------
 def p_TypeSwitchStmt(p):
     """
-    TypeSwitchStmt : SWITCH SimpleStmtOpt TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
+    TypeSwitchStmt : SWITCH SimpleStmt SEMICOLON TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
+                     | SWITCH TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
     """
     p[0] = get_value_p(p)
 
 def p_TypeSwitchGuard(p):
     """
-    TypeSwitchGuard : ShortVarDeclOpt PrimaryExpr PERIOD LPAREN TYPE RPAREN
+    TypeSwitchGuard : IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE RPAREN
+                      | PrimaryExpr PERIOD LPAREN TYPE RPAREN
     """
     p[0] = get_value_p(p)
 
-def p_ShortVarDeclOpt(p):
-    """
-    ShortVarDeclOpt :   IDENT DEFINE
-                        |
-    """
-    p[0] = get_value_p(p)
+# def p_ShortVarDeclOpt(p):
+#     """
+#     ShortVarDeclOpt :   IDENT DEFINE
+#                         |
+#     """
+#     p[0] = get_value_p(p)
 
 def p_TypeCaseClauseMult(p):
     """
@@ -974,7 +1001,8 @@ def p_Condition(p):
 ## For Clause -------------------------------------
 def p_ForClause(p):
     """
-    ForClause : InitStmt SEMICOLON ConditionOpt SEMICOLON PostStmt
+    ForClause : InitStmt SEMICOLON Condition SEMICOLON PostStmt
+                | InitStmt SEMICOLON SEMICOLON PostStmt
     """
     p[0] = get_value_p(p)
 
@@ -984,12 +1012,12 @@ def p_InitStmt(p):
     """
     p[0] = get_value_p(p)
 
-def p_ConditionOpt(p):
-    """
-    ConditionOpt :   Condition
-                    |
-    """
-    p[0] = get_value_p(p)
+# def p_ConditionOpt(p):
+#     """
+#     ConditionOpt :   Condition
+#                     |
+#     """
+#     p[0] = get_value_p(p)
 
 def p_PostStmt(p):
     """
