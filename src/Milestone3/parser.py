@@ -8,7 +8,24 @@ tokens=lexer.tokens
 tokens.remove('COMMENT')
 
 precedence = (
+    ('left', 'IDENT'),
+    ('left', 'COMMA' ),
+    ('left', 'LBRACK' ),
+    ('left', 'RBRACK'),
+    ('left', 'LBRACE'),
+    ('left', 'RBRACE'),
+    ('left', 'PERIOD'),
+    ('left', 'SEMICOLON'),
+    ('left', 'COLON'),
+    ('left', 'INT'),
+    ('left', 'FLOAT'),
+    ('left', 'STRING'),
+    ('left', 'BREAK'),
+    ('left', 'CONTINUE'),
+    ('left', 'RETURN'),
     ('right', 'ASSIGN', 'DEFINE', 'NOT'),
+    ('left','LPAREN'),
+    ('left','RPAREN'),
     ('left', 'LOR'),
     ('left', 'LAND'),
     ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
@@ -67,7 +84,7 @@ def p_ImportDecl(p):
 
 def p_ImportMult(p):
     """
-    ImportSpecMult : ImportSpecMult ImportSpec SEMICOLON 
+    ImportSpecMult : ImportSpec SEMICOLON ImportSpecMult  
                |
     """
     p[0] = get_value_p(p)
@@ -90,7 +107,7 @@ def p_ImportPath(p):
 
 def p_TopLevelDeclMult(p):
     """
-    TopLevelDeclMult : TopLevelDeclMult TopLevelDecl SEMICOLON
+    TopLevelDeclMult : TopLevelDecl SEMICOLON TopLevelDeclMult 
                      |
     """
     p[0] = get_value_p(p)
@@ -119,7 +136,7 @@ def p_ConstDecl(p):
 
 def p_ConstSpecMult(p):
     """
-    ConstSpecMult : ConstSpecMult ConstSpec SEMICOLON
+    ConstSpecMult : ConstSpec SEMICOLON ConstSpecMult 
                   | 
     """
     p[0] = get_value_p(p)
@@ -138,7 +155,7 @@ def p_IdentifierList(p):
 
 def p_IdentifierOth(p):
     """
-    IdentifierOth : IdentifierOth COMMA IDENT 
+    IdentifierOth : COMMA IDENT IdentifierOth  
                   | 
     """
     p[0] = get_value_p(p)
@@ -208,7 +225,7 @@ def p_StructType(p):
 #extra
 def p_FieldDeclMult(p):
     """
-    FieldDeclMult : FieldDeclMult FieldDecl SEMICOLON
+    FieldDeclMult : FieldDecl SEMICOLON FieldDeclMult 
                   | 
     """
     p[0] = get_value_p(p)
@@ -353,7 +370,7 @@ def p_UnaryOp(p):
 
 def p_ExprOth(p):
     """
-    ExprOth : ExprOth COMMA Expr
+    ExprOth : COMMA Expr ExprOth 
             | 
     """
     p[0] = get_value_p(p)
@@ -407,7 +424,7 @@ def p_LiteralValue(p):
 def p_ElementList(p):
     """
     ElementList : KeyedElement 
-                | ElementList COMMA KeyedElement
+                | COMMA KeyedElement ElementList 
     """
     p[0] = get_value_p(p)
 
@@ -505,7 +522,7 @@ def p_TypeDecl(p):
 #typespecmult
 def p_TypeSpecMult(p):
     """
-    TypeSpecMult : TypeSpecMult TypeSpec SEMICOLON
+    TypeSpecMult : TypeSpec SEMICOLON TypeSpecMult 
                  | 
     """
     p[0] = get_value_p(p)
@@ -543,7 +560,7 @@ def p_VarDecl(p):
 
 def p_VarMult(p):
     """
-    VarMult : VarMult VarSpec SEMICOLON
+    VarMult : VarSpec SEMICOLON VarMult 
             | 
     """
     p[0] = get_value_p(p)
@@ -600,7 +617,7 @@ def p_Parameters(p):
     
 def p_ParameterList(p):
     """
-    ParameterList : ParameterList COMMA ParameterDecl
+    ParameterList : COMMA ParameterDecl ParameterList 
                   | ParameterDecl
     """
     p[0] = get_value_p(p)
@@ -623,7 +640,7 @@ def p_Result(p):
 
 def p_StatementList(p):
     """
-    StatementList : StatementList Statement SEMICOLON 
+    StatementList : Statement SEMICOLON StatementList  
                   | 
     """
     p[0] = get_value_p(p)
@@ -817,7 +834,7 @@ def p_ExprOpt(p):
 
 def p_ExprCaseClauseMult(p):
     """
-    ExprCaseClauseMult : ExprCaseClauseMult ExprCaseClause
+    ExprCaseClauseMult : ExprCaseClause ExprCaseClauseMult 
                          |
     """
     p[0] = get_value_p(p)
@@ -858,7 +875,7 @@ def p_ShortVarDeclOpt(p):
 
 def p_TypeCaseClauseMult(p):
     """
-    TypeCaseClauseMult : TypeCaseClauseMult TypeCaseClause
+    TypeCaseClauseMult : TypeCaseClause TypeCaseClauseMult 
                         |
     """
     p[0] = get_value_p(p)
@@ -962,23 +979,24 @@ def p_error(p):
 ## Build lexer
 lexer = lex.lex()
 
-parser, grammar = yacc.yacc(debug=False)
+parser, grammar = yacc.yacc(debug=True)
 
-path_to_root = os.environ['PATH_TO_ROOT']
-milestone = os.environ['MILESTONE']
-with open(path_to_root + "/src/Milestone" + str(milestone) + "/action.txt", "w") as f:
-    for key, val in parser.action.items():
-        f.writelines(f'{key} : {val}\n')
+path_to_root = os.environ.get('PATH_TO_ROOT')
+milestone = os.environ.get('MILESTONE')
+if path_to_root is not None:
+    with open(path_to_root + "/src/Milestone" + str(milestone) + "/action.txt", "w") as f:
+        for key, val in parser.action.items():
+            f.writelines(f'{key} : {val}\n')
 
-with open(path_to_root + "/src/Milestone" + str(milestone) + "/goto.txt", "w") as f:
-    for key, val in parser.goto.items():
-        f.writelines(f'{key} : {val}\n')
+    with open(path_to_root + "/src/Milestone" + str(milestone) + "/goto.txt", "w") as f:
+        for key, val in parser.goto.items():
+            f.writelines(f'{key} : {val}\n')
 
 non_terminals = grammar.Nonterminals
 ## Trying to handle input
 with open(sys.argv[1], 'r') as f:
     import pprint
-    out = parser.parse(f.read(), lexer = lexer, debug=False)
+    out = parser.parse(f.read(), lexer = lexer, debug=True)
     if out is None:
         f.close()
         sys.exit(1)

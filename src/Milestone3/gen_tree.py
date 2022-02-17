@@ -9,7 +9,7 @@ path_to_tree = sys.argv[1]
 path_to_dot = '.'.join(path_to_tree.split('.')[:-1])+".dot"
 
 fdot= open(path_to_dot,"w")
-fdot.write("digraph AST {")
+fdot.write("digraph ParseTree {")
 fdot.write("\n")
 
 def writeGraph(outerList, stateId):
