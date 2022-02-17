@@ -27,10 +27,10 @@ echo "Compilation Successful!"
 python3 $abs_path_to_gen_ast $abs_path_to_output
 if [ $? != 0 ];
 then
-    echo "AST Generation failed!"
+    echo "Parse Tree Generation failed!"
     exit 1
 fi
-echo "AST Generated Successfully!"
+echo "Parse Tree Generated Successfully!"
 dot -Tpdf $abs_path_to_dot -o $abs_path_to_pdf
 if [ $? != 0 ];
 then

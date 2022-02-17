@@ -1,4 +1,4 @@
-digraph AST {
+digraph ParseTree {
 0[label="SourceFile"]; 1[label="PackageClause"]; 0->1 ;
 1[label="PackageClause"]; 2[label="package"]; 1->2 ;
 1[label="PackageClause"]; 3[label="PackageName"]; 1->3 ;
