@@ -269,31 +269,30 @@ Rule 263   TypeSwitchGuard -> IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE RPAREN
 Rule 264   TypeSwitchGuard -> PrimaryExpr PERIOD LPAREN TYPE RPAREN
 Rule 265   TypeCaseClauseMult -> TypeCaseClause TypeCaseClauseMult
 Rule 266   TypeCaseClauseMult -> <empty>
-Rule 267   TypeCaseClause -> TypeSwitchCase COLON StatementList
-Rule 268   TypeSwitchCase -> CASE TypeList
-Rule 269   TypeSwitchCase -> DEFAULT
-Rule 270   TypeList -> Type
-Rule 271   TypeList -> IDENT
-Rule 272   TypeList -> IDENT PERIOD IDENT
-Rule 273   TypeList -> Type COMMA TypeList
-Rule 274   TypeList -> IDENT COMMA TypeList
-Rule 275   TypeList -> IDENT PERIOD IDENT COMMA TypeList
-Rule 276   ForStmt -> FOR Condition Block
-Rule 277   ForStmt -> FOR ForClause Block
-Rule 278   ForStmt -> FOR RangeClause Block
-Rule 279   Condition -> Expr
-Rule 280   ForClause -> InitStmt SEMICOLON Condition SEMICOLON PostStmt
-Rule 281   ForClause -> InitStmt SEMICOLON SEMICOLON PostStmt
-Rule 282   InitStmt -> SimpleStmt
-Rule 283   PostStmt -> SimpleStmt
-Rule 284   RangeClause -> RangeList RANGE Expr
-Rule 285   RangeList -> ExpressionList ASSIGN
-Rule 286   RangeList -> IdentifierList DEFINE
-Rule 287   RangeList -> <empty>
-Rule 288   Type -> TypeLit
-Rule 289   Type -> LPAREN Type RPAREN
-Rule 290   Type -> LPAREN IDENT RPAREN
-Rule 291   Type -> LPAREN IDENT PERIOD IDENT RPAREN
+Rule 267   TypeCaseClause -> CASE TypeList COLON StatementList
+Rule 268   TypeCaseClause -> DEFAULT COLON StatementList
+Rule 269   TypeList -> Type
+Rule 270   TypeList -> IDENT
+Rule 271   TypeList -> IDENT PERIOD IDENT
+Rule 272   TypeList -> Type COMMA TypeList
+Rule 273   TypeList -> IDENT COMMA TypeList
+Rule 274   TypeList -> IDENT PERIOD IDENT COMMA TypeList
+Rule 275   ForStmt -> FOR Condition Block
+Rule 276   ForStmt -> FOR ForClause Block
+Rule 277   ForStmt -> FOR RangeClause Block
+Rule 278   Condition -> Expr
+Rule 279   ForClause -> InitStmt SEMICOLON Condition SEMICOLON PostStmt
+Rule 280   ForClause -> InitStmt SEMICOLON SEMICOLON PostStmt
+Rule 281   InitStmt -> SimpleStmt
+Rule 282   PostStmt -> SimpleStmt
+Rule 283   RangeClause -> RangeList RANGE Expr
+Rule 284   RangeList -> ExpressionList ASSIGN
+Rule 285   RangeList -> IdentifierList DEFINE
+Rule 286   RangeList -> <empty>
+Rule 287   Type -> TypeLit
+Rule 288   Type -> LPAREN Type RPAREN
+Rule 289   Type -> LPAREN IDENT RPAREN
+Rule 290   Type -> LPAREN IDENT PERIOD IDENT RPAREN
 
 Terminals, with rules where they appear
 
@@ -303,26 +302,26 @@ AND                  : 85 93
 AND_ASSIGN           : 232
 AND_NOT              : 86
 AND_NOT_ASSIGN       : 235
-ASSIGN               : 24 25 26 157 158 159 167 168 169 170 224 285
+ASSIGN               : 24 25 26 157 158 159 167 168 169 170 224 284
 BREAK                : 238 239
-CASE                 : 259 268
-COLON                : 114 130 131 132 133 134 134 135 135 210 258 267
-COMMA                : 28 66 108 112 138 140 141 142 142 144 145 146 146 148 149 150 150 183 184 273 274 275
+CASE                 : 259 267
+COLON                : 114 130 131 132 133 134 134 135 135 210 258 267 268
+COMMA                : 28 66 108 112 138 140 141 142 142 144 145 146 146 148 149 150 150 183 184 272 273 274
 CONST                : 20 21
 CONTINUE             : 240 241
 DEC                  : 220
-DEFAULT              : 260 269
-DEFINE               : 174 263 286
+DEFAULT              : 260 268
+DEFINE               : 174 263 285
 ELSE                 : 247 248
 EQL                  : 70
 FALLTHROUGH          : 243
 FLOAT                : 98
-FOR                  : 276 277 278
+FOR                  : 275 276 277
 FUNC                 : 64 119 175 176
 GEQ                  : 75
 GOTO                 : 242
 GTR                  : 74
-IDENT                : 2 10 25 26 26 27 28 38 39 39 44 45 45 48 49 49 52 53 54 54 55 55 57 58 58 62 63 63 106 107 107 121 122 122 129 143 144 145 146 147 147 148 148 149 149 150 150 157 158 158 159 159 159 160 161 161 162 162 162 168 169 169 172 173 173 177 187 188 188 190 191 191 194 195 195 211 263 271 272 272 274 275 275 290 291 291
+IDENT                : 2 10 25 26 26 27 28 38 39 39 44 45 45 48 49 49 52 53 54 54 55 55 57 58 58 62 63 63 106 107 107 121 122 122 129 143 144 145 146 147 147 148 148 149 149 150 150 157 158 158 159 159 159 160 161 161 162 162 162 168 169 169 172 173 173 177 187 188 188 190 191 191 194 195 195 211 263 270 271 271 273 274 274 289 290 290
 IF                   : 245 246
 IMAG                 : 99
 IMPORT               : 5 6
@@ -333,7 +332,7 @@ LBRACE               : 40 108 109 110 244 252 253 254 255 261 262
 LBRACK               : 35 59 60 128 130 131 132 133 134 135
 LEQ                  : 73
 LOR                  : 68
-LPAREN               : 6 21 123 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 152 164 181 182 183 263 264 289 290 291
+LPAREN               : 6 21 123 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 152 164 181 182 183 263 264 288 289 290
 LSS                  : 72
 MAP                  : 60
 MUL                  : 52 54 56 57 58 80 92
@@ -343,18 +342,18 @@ NOT                  : 90
 OR                   : 78
 OR_ASSIGN            : 227
 PACKAGE              : 2
-PERIOD               : 9 26 39 45 49 54 55 58 63 107 122 129 147 148 149 150 159 162 169 173 188 191 195 263 264 272 275 291
+PERIOD               : 9 26 39 45 49 54 55 58 63 107 122 129 147 148 149 150 159 162 169 173 188 191 195 263 264 271 274 290
 QUO                  : 81
 QUO_ASSIGN           : 230
-RANGE                : 284
+RANGE                : 283
 RBRACE               : 40 108 109 110 244 252 253 254 255 261 262
 RBRACK               : 35 59 60 128 130 131 132 133 134 135
 REM                  : 82
 REM_ASSIGN           : 231
 RETURN               : 236 237
-RPAREN               : 6 21 123 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 152 164 181 182 183 263 264 289 290 291
+RPAREN               : 6 21 123 136 137 138 139 140 141 142 143 144 145 146 147 148 149 150 152 164 181 182 183 263 264 288 289 290
 RUNE                 : 100
-SEMICOLON            : 1 3 7 13 22 41 153 165 196 246 252 254 261 280 280 281 281
+SEMICOLON            : 1 3 7 13 22 41 153 165 196 246 252 254 261 279 279 280 280
 SHL                  : 83
 SHL_ASSIGN           : 233
 SHR                  : 84
@@ -378,10 +377,10 @@ ArrayLength          : 35
 ArrayType            : 29 103
 Assignment           : 215
 BasicLit             : 94
-Block                : 178 206 245 248 276 277 278
+Block                : 178 206 245 248 275 276 277
 BreakStmt            : 203
 CompositeLit         : 95
-Condition            : 276 280
+Condition            : 275 279
 ConstDecl            : 17
 ConstSpec            : 20 22
 ConstSpecMult        : 21 22
@@ -392,17 +391,17 @@ ElementList          : 108 109 112
 ElementType          : 35 59 60
 EmbeddedField        : 46 50
 EmptyStmt            : 212
-Expr                 : 36 65 66 68 68 69 69 70 70 71 71 72 72 73 73 74 74 75 75 76 76 77 77 78 78 79 79 80 80 81 81 82 82 83 83 84 84 85 85 86 86 115 117 123 128 130 130 131 132 134 134 135 135 135 218 219 220 245 246 252 253 279 284
+Expr                 : 36 65 66 68 68 69 69 70 70 71 71 72 72 73 73 74 74 75 75 76 76 77 77 78 78 79 79 80 80 81 81 82 82 83 83 84 84 85 85 86 86 115 117 123 128 130 130 131 132 134 134 135 135 135 218 219 220 245 246 252 253 278 283
 ExprCaseClause       : 256
 ExprCaseClauseMult   : 252 253 254 255 256
 ExprSwitchCase       : 258
 ExprSwitchStmt       : 250
-ExpressionList       : 24 25 26 66 137 138 141 142 145 146 149 150 167 168 169 170 174 221 221 236 259 285
+ExpressionList       : 24 25 26 66 137 138 141 142 145 146 149 150 167 168 169 170 174 221 221 236 259 284
 ExpressionStmt       : 213
 FallthroughStmt      : 205
 FieldDecl            : 41
 FieldDeclMult        : 40 41
-ForClause            : 277
+ForClause            : 276
 ForStmt              : 209
 FuncDecl             : 16
 FunctionBody         : 119 175
@@ -410,7 +409,7 @@ FunctionLit          : 96
 FunctionName         : 175 176
 FunctionType         : 34
 GotoStmt             : 201
-IdentifierList       : 24 25 26 28 43 44 45 47 48 49 167 168 169 170 171 172 173 174 189 190 191 286
+IdentifierList       : 24 25 26 28 43 44 45 47 48 49 167 168 169 170 171 172 173 174 189 190 191 285
 IfStmt               : 207 247
 ImportDecl           : 3
 ImportDeclMult       : 1 3
@@ -419,7 +418,7 @@ ImportSpec           : 5 7
 ImportSpecMult       : 6 7
 IncDecStmt           : 214
 Index                : 125
-InitStmt             : 280 281
+InitStmt             : 279 280
 Key                  : 114
 KeyType              : 60
 KeyedElement         : 111 112
@@ -433,35 +432,34 @@ ParameterDecl        : 184 185
 ParameterList        : 182 183 184
 Parameters           : 179 180 192
 PointerType          : 31
-PostStmt             : 280 281
+PostStmt             : 279 280
 PrimaryExpr          : 87 124 125 126 127 263 264
-RangeClause          : 278
-RangeList            : 284
+RangeClause          : 277
+RangeList            : 283
 Result               : 179
 ReturnStmt           : 202
 Selector             : 124
 ShortVarDecl         : 216
 Signature            : 64 119 175 176
-SimpleStmt           : 200 246 252 254 261 282 283
+SimpleStmt           : 200 246 252 254 261 281 282
 Slice                : 126
 SliceType            : 32 104
 SourceFile           : 0
 Statement            : 196 210
-StatementList        : 196 244 258 267
+StatementList        : 196 244 258 267 268
 StructType           : 30 102
 SwitchStmt           : 208
 Tag                  : 47 48 49 50
 TopLevelDecl         : 13
 TopLevelDeclMult     : 1 13
-Type                 : 24 37 43 47 56 61 139 140 141 142 157 160 167 171 186 189 193 270 273 289
+Type                 : 24 37 43 47 56 61 139 140 141 142 157 160 167 171 186 189 193 269 272 288
 TypeCaseClause       : 265
 TypeCaseClauseMult   : 261 262 265
 TypeDecl             : 19
-TypeList             : 268 273 274 275
-TypeLit              : 288
+TypeList             : 267 272 273 274
+TypeLit              : 287
 TypeSpec             : 151 153
 TypeSpecMult         : 152 153
-TypeSwitchCase       : 267
 TypeSwitchGuard      : 261 262
 TypeSwitchStmt       : 251
 Typedef              : 156
@@ -864,10 +862,10 @@ state 32
     (24) ConstSpec -> IdentifierList . Type ASSIGN ExpressionList
     (25) ConstSpec -> IdentifierList . IDENT ASSIGN ExpressionList
     (26) ConstSpec -> IdentifierList . IDENT PERIOD IDENT ASSIGN ExpressionList
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -955,10 +953,10 @@ state 36
     (171) VarSpec -> IdentifierList . Type
     (172) VarSpec -> IdentifierList . IDENT
     (173) VarSpec -> IdentifierList . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -1043,10 +1041,10 @@ state 41
     (160) Typedef -> IDENT . Type
     (161) Typedef -> IDENT . IDENT
     (162) Typedef -> IDENT . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -1150,10 +1148,10 @@ state 49
     (181) Parameters -> . LPAREN RPAREN
     (182) Parameters -> . LPAREN ParameterList RPAREN
     (183) Parameters -> . LPAREN ParameterList COMMA RPAREN
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -1209,10 +1207,10 @@ state 50
     (189) ParameterDecl -> . IdentifierList Type
     (190) ParameterDecl -> . IdentifierList IDENT
     (191) ParameterDecl -> . IdentifierList IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (27) IdentifierList -> . IDENT
     (28) IdentifierList -> . IDENT COMMA IdentifierList
     (29) TypeLit -> . ArrayType
@@ -1283,27 +1281,27 @@ state 54
 
 state 55
 
-    (288) Type -> TypeLit .
+    (287) Type -> TypeLit .
 
-    ASSIGN          reduce using rule 288 (Type -> TypeLit .)
-    SEMICOLON       reduce using rule 288 (Type -> TypeLit .)
-    LBRACE          reduce using rule 288 (Type -> TypeLit .)
-    COMMA           reduce using rule 288 (Type -> TypeLit .)
-    RPAREN          reduce using rule 288 (Type -> TypeLit .)
-    RBRACK          reduce using rule 288 (Type -> TypeLit .)
-    STRING          reduce using rule 288 (Type -> TypeLit .)
-    COLON           reduce using rule 288 (Type -> TypeLit .)
+    ASSIGN          reduce using rule 287 (Type -> TypeLit .)
+    SEMICOLON       reduce using rule 287 (Type -> TypeLit .)
+    LBRACE          reduce using rule 287 (Type -> TypeLit .)
+    COMMA           reduce using rule 287 (Type -> TypeLit .)
+    RPAREN          reduce using rule 287 (Type -> TypeLit .)
+    RBRACK          reduce using rule 287 (Type -> TypeLit .)
+    STRING          reduce using rule 287 (Type -> TypeLit .)
+    COLON           reduce using rule 287 (Type -> TypeLit .)
 
 
 state 56
 
-    (289) Type -> LPAREN . Type RPAREN
-    (290) Type -> LPAREN . IDENT RPAREN
-    (291) Type -> LPAREN . IDENT PERIOD IDENT RPAREN
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (288) Type -> LPAREN . Type RPAREN
+    (289) Type -> LPAREN . IDENT RPAREN
+    (290) Type -> LPAREN . IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -1524,10 +1522,10 @@ state 65
     (56) PointerType -> MUL . Type
     (57) PointerType -> MUL . IDENT
     (58) PointerType -> MUL . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -1745,10 +1743,10 @@ state 77
     (157) AliasDecl -> IDENT ASSIGN . Type
     (158) AliasDecl -> IDENT ASSIGN . IDENT
     (159) AliasDecl -> IDENT ASSIGN . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -1910,9 +1908,9 @@ state 83
     (246) IfStmt -> . IF SimpleStmt SEMICOLON Expr else_stmt
     (250) SwitchStmt -> . ExprSwitchStmt
     (251) SwitchStmt -> . TypeSwitchStmt
-    (276) ForStmt -> . FOR Condition Block
-    (277) ForStmt -> . FOR ForClause Block
-    (278) ForStmt -> . FOR RangeClause Block
+    (275) ForStmt -> . FOR Condition Block
+    (276) ForStmt -> . FOR ForClause Block
+    (277) ForStmt -> . FOR RangeClause Block
     (20) ConstDecl -> . CONST ConstSpec
     (21) ConstDecl -> . CONST LPAREN ConstSpecMult RPAREN
     (163) VarDecl -> . VAR VarSpec
@@ -2125,15 +2123,15 @@ state 88
     (181) Parameters -> LPAREN . RPAREN
     (182) Parameters -> LPAREN . ParameterList RPAREN
     (183) Parameters -> LPAREN . ParameterList COMMA RPAREN
-    (289) Type -> LPAREN . Type RPAREN
-    (290) Type -> LPAREN . IDENT RPAREN
-    (291) Type -> LPAREN . IDENT PERIOD IDENT RPAREN
+    (288) Type -> LPAREN . Type RPAREN
+    (289) Type -> LPAREN . IDENT RPAREN
+    (290) Type -> LPAREN . IDENT PERIOD IDENT RPAREN
     (184) ParameterList -> . ParameterDecl COMMA ParameterList
     (185) ParameterList -> . ParameterDecl
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (186) ParameterDecl -> . Type
     (187) ParameterDecl -> . IDENT
     (188) ParameterDecl -> . IDENT PERIOD IDENT
@@ -2254,10 +2252,10 @@ state 94
     (189) ParameterDecl -> IdentifierList . Type
     (190) ParameterDecl -> IdentifierList . IDENT
     (191) ParameterDecl -> IdentifierList . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -2506,15 +2504,15 @@ state 99
 
 state 100
 
-    (289) Type -> LPAREN Type . RPAREN
+    (288) Type -> LPAREN Type . RPAREN
 
     RPAREN          shift and go to state 195
 
 
 state 101
 
-    (290) Type -> LPAREN IDENT . RPAREN
-    (291) Type -> LPAREN IDENT . PERIOD IDENT RPAREN
+    (289) Type -> LPAREN IDENT . RPAREN
+    (290) Type -> LPAREN IDENT . PERIOD IDENT RPAREN
 
     RPAREN          shift and go to state 196
     PERIOD          shift and go to state 197
@@ -2533,10 +2531,10 @@ state 103
     (37) ElementType -> . Type
     (38) ElementType -> . IDENT
     (39) ElementType -> . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -3866,10 +3864,10 @@ state 132
     (61) KeyType -> . Type
     (62) KeyType -> . IDENT
     (63) KeyType -> . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -4787,13 +4785,13 @@ state 177
 
 state 178
 
-    (276) ForStmt -> FOR . Condition Block
-    (277) ForStmt -> FOR . ForClause Block
-    (278) ForStmt -> FOR . RangeClause Block
-    (279) Condition -> . Expr
-    (280) ForClause -> . InitStmt SEMICOLON Condition SEMICOLON PostStmt
-    (281) ForClause -> . InitStmt SEMICOLON SEMICOLON PostStmt
-    (284) RangeClause -> . RangeList RANGE Expr
+    (275) ForStmt -> FOR . Condition Block
+    (276) ForStmt -> FOR . ForClause Block
+    (277) ForStmt -> FOR . RangeClause Block
+    (278) Condition -> . Expr
+    (279) ForClause -> . InitStmt SEMICOLON Condition SEMICOLON PostStmt
+    (280) ForClause -> . InitStmt SEMICOLON SEMICOLON PostStmt
+    (283) RangeClause -> . RangeList RANGE Expr
     (67) Expr -> . UnaryExpr
     (68) Expr -> . Expr LOR Expr
     (69) Expr -> . Expr LAND Expr
@@ -4814,10 +4812,10 @@ state 178
     (84) Expr -> . Expr SHR Expr
     (85) Expr -> . Expr AND Expr
     (86) Expr -> . Expr AND_NOT Expr
-    (282) InitStmt -> . SimpleStmt
-    (285) RangeList -> . ExpressionList ASSIGN
-    (286) RangeList -> . IdentifierList DEFINE
-    (287) RangeList -> .
+    (281) InitStmt -> . SimpleStmt
+    (284) RangeList -> . ExpressionList ASSIGN
+    (285) RangeList -> . IdentifierList DEFINE
+    (286) RangeList -> .
     (87) UnaryExpr -> . PrimaryExpr
     (88) UnaryExpr -> . ADD UnaryExpr
     (89) UnaryExpr -> . SUB UnaryExpr
@@ -4868,7 +4866,7 @@ state 178
     (59) SliceType -> . LBRACK RBRACK ElementType
     (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
 
-    RANGE           reduce using rule 287 (RangeList -> .)
+    RANGE           reduce using rule 286 (RangeList -> .)
     ADD             shift and go to state 106
     SUB             shift and go to state 107
     NOT             shift and go to state 112
@@ -5110,7 +5108,7 @@ state 182
 
 state 183
 
-    (289) Type -> LPAREN Type . RPAREN
+    (288) Type -> LPAREN Type . RPAREN
     (186) ParameterDecl -> Type .
 
   ! shift/reduce conflict for RPAREN resolved as shift
@@ -5122,8 +5120,8 @@ state 183
 
 state 184
 
-    (290) Type -> LPAREN IDENT . RPAREN
-    (291) Type -> LPAREN IDENT . PERIOD IDENT RPAREN
+    (289) Type -> LPAREN IDENT . RPAREN
+    (290) Type -> LPAREN IDENT . PERIOD IDENT RPAREN
     (187) ParameterDecl -> IDENT .
     (188) ParameterDecl -> IDENT . PERIOD IDENT
     (27) IdentifierList -> IDENT .
@@ -5183,10 +5181,10 @@ state 187
     (189) ParameterDecl -> . IdentifierList Type
     (190) ParameterDecl -> . IdentifierList IDENT
     (191) ParameterDecl -> . IdentifierList IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (27) IdentifierList -> . IDENT
     (28) IdentifierList -> . IDENT COMMA IdentifierList
     (29) TypeLit -> . ArrayType
@@ -5279,35 +5277,35 @@ state 194
 
 state 195
 
-    (289) Type -> LPAREN Type RPAREN .
+    (288) Type -> LPAREN Type RPAREN .
 
-    ASSIGN          reduce using rule 289 (Type -> LPAREN Type RPAREN .)
-    SEMICOLON       reduce using rule 289 (Type -> LPAREN Type RPAREN .)
-    LBRACE          reduce using rule 289 (Type -> LPAREN Type RPAREN .)
-    COMMA           reduce using rule 289 (Type -> LPAREN Type RPAREN .)
-    RPAREN          reduce using rule 289 (Type -> LPAREN Type RPAREN .)
-    RBRACK          reduce using rule 289 (Type -> LPAREN Type RPAREN .)
-    STRING          reduce using rule 289 (Type -> LPAREN Type RPAREN .)
-    COLON           reduce using rule 289 (Type -> LPAREN Type RPAREN .)
+    ASSIGN          reduce using rule 288 (Type -> LPAREN Type RPAREN .)
+    SEMICOLON       reduce using rule 288 (Type -> LPAREN Type RPAREN .)
+    LBRACE          reduce using rule 288 (Type -> LPAREN Type RPAREN .)
+    COMMA           reduce using rule 288 (Type -> LPAREN Type RPAREN .)
+    RPAREN          reduce using rule 288 (Type -> LPAREN Type RPAREN .)
+    RBRACK          reduce using rule 288 (Type -> LPAREN Type RPAREN .)
+    STRING          reduce using rule 288 (Type -> LPAREN Type RPAREN .)
+    COLON           reduce using rule 288 (Type -> LPAREN Type RPAREN .)
 
 
 state 196
 
-    (290) Type -> LPAREN IDENT RPAREN .
+    (289) Type -> LPAREN IDENT RPAREN .
 
-    ASSIGN          reduce using rule 290 (Type -> LPAREN IDENT RPAREN .)
-    SEMICOLON       reduce using rule 290 (Type -> LPAREN IDENT RPAREN .)
-    LBRACE          reduce using rule 290 (Type -> LPAREN IDENT RPAREN .)
-    COMMA           reduce using rule 290 (Type -> LPAREN IDENT RPAREN .)
-    RPAREN          reduce using rule 290 (Type -> LPAREN IDENT RPAREN .)
-    RBRACK          reduce using rule 290 (Type -> LPAREN IDENT RPAREN .)
-    STRING          reduce using rule 290 (Type -> LPAREN IDENT RPAREN .)
-    COLON           reduce using rule 290 (Type -> LPAREN IDENT RPAREN .)
+    ASSIGN          reduce using rule 289 (Type -> LPAREN IDENT RPAREN .)
+    SEMICOLON       reduce using rule 289 (Type -> LPAREN IDENT RPAREN .)
+    LBRACE          reduce using rule 289 (Type -> LPAREN IDENT RPAREN .)
+    COMMA           reduce using rule 289 (Type -> LPAREN IDENT RPAREN .)
+    RPAREN          reduce using rule 289 (Type -> LPAREN IDENT RPAREN .)
+    RBRACK          reduce using rule 289 (Type -> LPAREN IDENT RPAREN .)
+    STRING          reduce using rule 289 (Type -> LPAREN IDENT RPAREN .)
+    COLON           reduce using rule 289 (Type -> LPAREN IDENT RPAREN .)
 
 
 state 197
 
-    (291) Type -> LPAREN IDENT PERIOD . IDENT RPAREN
+    (290) Type -> LPAREN IDENT PERIOD . IDENT RPAREN
 
     IDENT           shift and go to state 313
 
@@ -5318,10 +5316,10 @@ state 198
     (37) ElementType -> . Type
     (38) ElementType -> . IDENT
     (39) ElementType -> . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -7627,10 +7625,10 @@ state 232
     (150) Arguments -> LPAREN . IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN
     (65) ExpressionList -> . Expr
     (66) ExpressionList -> . Expr COMMA ExpressionList
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (67) Expr -> . UnaryExpr
     (68) Expr -> . Expr LOR Expr
     (69) Expr -> . Expr LAND Expr
@@ -8223,10 +8221,10 @@ state 245
     (47) FieldDecl -> IdentifierList . Type Tag
     (48) FieldDecl -> IdentifierList . IDENT Tag
     (49) FieldDecl -> IdentifierList . IDENT PERIOD IDENT Tag
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -8559,9 +8557,9 @@ state 262
     (246) IfStmt -> . IF SimpleStmt SEMICOLON Expr else_stmt
     (250) SwitchStmt -> . ExprSwitchStmt
     (251) SwitchStmt -> . TypeSwitchStmt
-    (276) ForStmt -> . FOR Condition Block
-    (277) ForStmt -> . FOR ForClause Block
-    (278) ForStmt -> . FOR RangeClause Block
+    (275) ForStmt -> . FOR Condition Block
+    (276) ForStmt -> . FOR ForClause Block
+    (277) ForStmt -> . FOR RangeClause Block
     (20) ConstDecl -> . CONST ConstSpec
     (21) ConstDecl -> . CONST LPAREN ConstSpecMult RPAREN
     (163) VarDecl -> . VAR VarSpec
@@ -8750,9 +8748,9 @@ state 263
     (246) IfStmt -> . IF SimpleStmt SEMICOLON Expr else_stmt
     (250) SwitchStmt -> . ExprSwitchStmt
     (251) SwitchStmt -> . TypeSwitchStmt
-    (276) ForStmt -> . FOR Condition Block
-    (277) ForStmt -> . FOR ForClause Block
-    (278) ForStmt -> . FOR RangeClause Block
+    (275) ForStmt -> . FOR Condition Block
+    (276) ForStmt -> . FOR ForClause Block
+    (277) ForStmt -> . FOR RangeClause Block
     (20) ConstDecl -> . CONST ConstSpec
     (21) ConstDecl -> . CONST LPAREN ConstSpecMult RPAREN
     (163) VarDecl -> . VAR VarSpec
@@ -9500,7 +9498,7 @@ state 288
 
 state 289
 
-    (276) ForStmt -> FOR Condition . Block
+    (275) ForStmt -> FOR Condition . Block
     (244) Block -> . LBRACE StatementList RBRACE
 
     LBRACE          shift and go to state 83
@@ -9509,7 +9507,7 @@ state 289
 
 state 290
 
-    (277) ForStmt -> FOR ForClause . Block
+    (276) ForStmt -> FOR ForClause . Block
     (244) Block -> . LBRACE StatementList RBRACE
 
     LBRACE          shift and go to state 83
@@ -9518,7 +9516,7 @@ state 290
 
 state 291
 
-    (278) ForStmt -> FOR RangeClause . Block
+    (277) ForStmt -> FOR RangeClause . Block
     (244) Block -> . LBRACE StatementList RBRACE
 
     LBRACE          shift and go to state 83
@@ -9527,7 +9525,7 @@ state 291
 
 state 292
 
-    (279) Condition -> Expr .
+    (278) Condition -> Expr .
     (68) Expr -> Expr . LOR Expr
     (69) Expr -> Expr . LAND Expr
     (70) Expr -> Expr . EQL Expr
@@ -9553,7 +9551,7 @@ state 292
     (219) IncDecStmt -> Expr . INC
     (220) IncDecStmt -> Expr . DEC
 
-    LBRACE          reduce using rule 279 (Condition -> Expr .)
+    LBRACE          reduce using rule 278 (Condition -> Expr .)
     LOR             shift and go to state 202
     LAND            shift and go to state 203
     EQL             shift and go to state 204
@@ -9593,29 +9591,29 @@ state 292
 
 state 293
 
-    (280) ForClause -> InitStmt . SEMICOLON Condition SEMICOLON PostStmt
-    (281) ForClause -> InitStmt . SEMICOLON SEMICOLON PostStmt
+    (279) ForClause -> InitStmt . SEMICOLON Condition SEMICOLON PostStmt
+    (280) ForClause -> InitStmt . SEMICOLON SEMICOLON PostStmt
 
     SEMICOLON       shift and go to state 381
 
 
 state 294
 
-    (284) RangeClause -> RangeList . RANGE Expr
+    (283) RangeClause -> RangeList . RANGE Expr
 
     RANGE           shift and go to state 382
 
 
 state 295
 
-    (282) InitStmt -> SimpleStmt .
+    (281) InitStmt -> SimpleStmt .
 
-    SEMICOLON       reduce using rule 282 (InitStmt -> SimpleStmt .)
+    SEMICOLON       reduce using rule 281 (InitStmt -> SimpleStmt .)
 
 
 state 296
 
-    (285) RangeList -> ExpressionList . ASSIGN
+    (284) RangeList -> ExpressionList . ASSIGN
     (221) Assignment -> ExpressionList . assign_op ExpressionList
     (222) assign_op -> . add_op_assign
     (223) assign_op -> . mul_op_assign
@@ -9651,7 +9649,7 @@ state 296
 
 state 297
 
-    (286) RangeList -> IdentifierList . DEFINE
+    (285) RangeList -> IdentifierList . DEFINE
     (174) ShortVarDecl -> IdentifierList . DEFINE ExpressionList
 
     DEFINE          shift and go to state 384
@@ -10060,7 +10058,7 @@ state 306
 
 state 307
 
-    (291) Type -> LPAREN IDENT PERIOD . IDENT RPAREN
+    (290) Type -> LPAREN IDENT PERIOD . IDENT RPAREN
     (188) ParameterDecl -> IDENT PERIOD . IDENT
 
     IDENT           shift and go to state 396
@@ -10203,7 +10201,7 @@ state 312
 
 state 313
 
-    (291) Type -> LPAREN IDENT PERIOD IDENT . RPAREN
+    (290) Type -> LPAREN IDENT PERIOD IDENT . RPAREN
 
     RPAREN          shift and go to state 399
 
@@ -12055,14 +12053,14 @@ state 337
 
 state 338
 
-    (289) Type -> LPAREN . Type RPAREN
-    (290) Type -> LPAREN . IDENT RPAREN
-    (291) Type -> LPAREN . IDENT PERIOD IDENT RPAREN
+    (288) Type -> LPAREN . Type RPAREN
+    (289) Type -> LPAREN . IDENT RPAREN
+    (290) Type -> LPAREN . IDENT PERIOD IDENT RPAREN
     (123) PrimaryExpr -> LPAREN . Expr RPAREN
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (67) Expr -> . UnaryExpr
     (68) Expr -> . Expr LOR Expr
     (69) Expr -> . Expr LAND Expr
@@ -12295,10 +12293,10 @@ state 343
     (91) UnaryExpr -> . XOR UnaryExpr
     (92) UnaryExpr -> . MUL UnaryExpr
     (93) UnaryExpr -> . AND UnaryExpr
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (120) PrimaryExpr -> . Lit
     (121) PrimaryExpr -> . IDENT
     (122) PrimaryExpr -> . IDENT PERIOD IDENT
@@ -12861,10 +12859,10 @@ state 368
     (37) ElementType -> . Type
     (38) ElementType -> . IDENT
     (39) ElementType -> . IDENT PERIOD IDENT
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -13152,30 +13150,30 @@ state 377
 
 state 378
 
-    (276) ForStmt -> FOR Condition Block .
+    (275) ForStmt -> FOR Condition Block .
 
-    SEMICOLON       reduce using rule 276 (ForStmt -> FOR Condition Block .)
+    SEMICOLON       reduce using rule 275 (ForStmt -> FOR Condition Block .)
 
 
 state 379
 
-    (277) ForStmt -> FOR ForClause Block .
+    (276) ForStmt -> FOR ForClause Block .
 
-    SEMICOLON       reduce using rule 277 (ForStmt -> FOR ForClause Block .)
+    SEMICOLON       reduce using rule 276 (ForStmt -> FOR ForClause Block .)
 
 
 state 380
 
-    (278) ForStmt -> FOR RangeClause Block .
+    (277) ForStmt -> FOR RangeClause Block .
 
-    SEMICOLON       reduce using rule 278 (ForStmt -> FOR RangeClause Block .)
+    SEMICOLON       reduce using rule 277 (ForStmt -> FOR RangeClause Block .)
 
 
 state 381
 
-    (280) ForClause -> InitStmt SEMICOLON . Condition SEMICOLON PostStmt
-    (281) ForClause -> InitStmt SEMICOLON . SEMICOLON PostStmt
-    (279) Condition -> . Expr
+    (279) ForClause -> InitStmt SEMICOLON . Condition SEMICOLON PostStmt
+    (280) ForClause -> InitStmt SEMICOLON . SEMICOLON PostStmt
+    (278) Condition -> . Expr
     (67) Expr -> . UnaryExpr
     (68) Expr -> . Expr LOR Expr
     (69) Expr -> . Expr LAND Expr
@@ -13265,7 +13263,7 @@ state 381
 
 state 382
 
-    (284) RangeClause -> RangeList RANGE . Expr
+    (283) RangeClause -> RangeList RANGE . Expr
     (67) Expr -> . UnaryExpr
     (68) Expr -> . Expr LOR Expr
     (69) Expr -> . Expr LAND Expr
@@ -13353,10 +13351,10 @@ state 382
 
 state 383
 
-    (285) RangeList -> ExpressionList ASSIGN .
+    (284) RangeList -> ExpressionList ASSIGN .
     (224) assign_op -> ASSIGN .
 
-    RANGE           reduce using rule 285 (RangeList -> ExpressionList ASSIGN .)
+    RANGE           reduce using rule 284 (RangeList -> ExpressionList ASSIGN .)
     ADD             reduce using rule 224 (assign_op -> ASSIGN .)
     SUB             reduce using rule 224 (assign_op -> ASSIGN .)
     NOT             reduce using rule 224 (assign_op -> ASSIGN .)
@@ -13378,7 +13376,7 @@ state 383
 
 state 384
 
-    (286) RangeList -> IdentifierList DEFINE .
+    (285) RangeList -> IdentifierList DEFINE .
     (174) ShortVarDecl -> IdentifierList DEFINE . ExpressionList
     (65) ExpressionList -> . Expr
     (66) ExpressionList -> . Expr COMMA ExpressionList
@@ -13437,7 +13435,7 @@ state 384
     (59) SliceType -> . LBRACK RBRACK ElementType
     (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
 
-    RANGE           reduce using rule 286 (RangeList -> IdentifierList DEFINE .)
+    RANGE           reduce using rule 285 (RangeList -> IdentifierList DEFINE .)
     ADD             shift and go to state 106
     SUB             shift and go to state 107
     NOT             shift and go to state 112
@@ -13722,17 +13720,15 @@ state 393
     (262) TypeSwitchStmt -> SWITCH TypeSwitchGuard LBRACE . TypeCaseClauseMult RBRACE
     (265) TypeCaseClauseMult -> . TypeCaseClause TypeCaseClauseMult
     (266) TypeCaseClauseMult -> .
-    (267) TypeCaseClause -> . TypeSwitchCase COLON StatementList
-    (268) TypeSwitchCase -> . CASE TypeList
-    (269) TypeSwitchCase -> . DEFAULT
+    (267) TypeCaseClause -> . CASE TypeList COLON StatementList
+    (268) TypeCaseClause -> . DEFAULT COLON StatementList
 
     RBRACE          reduce using rule 266 (TypeCaseClauseMult -> .)
-    CASE            shift and go to state 448
-    DEFAULT         shift and go to state 449
+    CASE            shift and go to state 447
+    DEFAULT         shift and go to state 448
 
     TypeCaseClauseMult             shift and go to state 445
     TypeCaseClause                 shift and go to state 446
-    TypeSwitchCase                 shift and go to state 447
 
 state 394
 
@@ -13777,7 +13773,7 @@ state 394
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    PrimaryExpr                    shift and go to state 450
+    PrimaryExpr                    shift and go to state 449
     Lit                            shift and go to state 113
     BasicLit                       shift and go to state 116
     CompositeLit                   shift and go to state 117
@@ -13792,13 +13788,13 @@ state 395
     (264) TypeSwitchGuard -> PrimaryExpr PERIOD . LPAREN TYPE RPAREN
     (129) Selector -> PERIOD . IDENT
 
-    LPAREN          shift and go to state 451
+    LPAREN          shift and go to state 450
     IDENT           shift and go to state 335
 
 
 state 396
 
-    (291) Type -> LPAREN IDENT PERIOD IDENT . RPAREN
+    (290) Type -> LPAREN IDENT PERIOD IDENT . RPAREN
     (188) ParameterDecl -> IDENT PERIOD IDENT .
 
     RPAREN          shift and go to state 399
@@ -13824,16 +13820,16 @@ state 398
 
 state 399
 
-    (291) Type -> LPAREN IDENT PERIOD IDENT RPAREN .
+    (290) Type -> LPAREN IDENT PERIOD IDENT RPAREN .
 
-    ASSIGN          reduce using rule 291 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
-    SEMICOLON       reduce using rule 291 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
-    LBRACE          reduce using rule 291 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
-    COMMA           reduce using rule 291 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
-    RPAREN          reduce using rule 291 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
-    RBRACK          reduce using rule 291 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
-    STRING          reduce using rule 291 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
-    COLON           reduce using rule 291 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
+    ASSIGN          reduce using rule 290 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
+    SEMICOLON       reduce using rule 290 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
+    LBRACE          reduce using rule 290 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
+    COMMA           reduce using rule 290 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
+    RPAREN          reduce using rule 290 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
+    RBRACK          reduce using rule 290 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
+    STRING          reduce using rule 290 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
+    COLON           reduce using rule 290 (Type -> LPAREN IDENT PERIOD IDENT RPAREN .)
 
 
 state 400
@@ -13960,7 +13956,7 @@ state 402
     (59) SliceType -> . LBRACK RBRACK ElementType
     (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
 
-    RBRACK          shift and go to state 453
+    RBRACK          shift and go to state 452
     ADD             shift and go to state 106
     SUB             shift and go to state 107
     NOT             shift and go to state 112
@@ -13979,7 +13975,7 @@ state 402
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    Expr                           shift and go to state 452
+    Expr                           shift and go to state 451
     UnaryExpr                      shift and go to state 105
     PrimaryExpr                    shift and go to state 111
     Lit                            shift and go to state 113
@@ -14015,8 +14011,8 @@ state 403
     (85) Expr -> Expr . AND Expr
     (86) Expr -> Expr . AND_NOT Expr
 
-    RBRACK          shift and go to state 455
-    COLON           shift and go to state 454
+    RBRACK          shift and go to state 454
+    COLON           shift and go to state 453
     LOR             shift and go to state 202
     LAND            shift and go to state 203
     EQL             shift and go to state 204
@@ -14090,8 +14086,8 @@ state 404
 
 state 405
 
-    (290) Type -> LPAREN IDENT . RPAREN
-    (291) Type -> LPAREN IDENT . PERIOD IDENT RPAREN
+    (289) Type -> LPAREN IDENT . RPAREN
+    (290) Type -> LPAREN IDENT . PERIOD IDENT RPAREN
     (121) PrimaryExpr -> IDENT .
     (122) PrimaryExpr -> IDENT . PERIOD IDENT
     (106) CompositeLit -> IDENT . LiteralValue
@@ -14101,7 +14097,7 @@ state 405
     (110) LiteralValue -> . LBRACE RBRACE
 
     RPAREN          shift and go to state 196
-    PERIOD          shift and go to state 456
+    PERIOD          shift and go to state 455
     LBRACK          reduce using rule 121 (PrimaryExpr -> IDENT .)
     LPAREN          reduce using rule 121 (PrimaryExpr -> IDENT .)
     LOR             reduce using rule 121 (PrimaryExpr -> IDENT .)
@@ -14184,7 +14180,7 @@ state 407
 
     (138) Arguments -> LPAREN ExpressionList COMMA . RPAREN
 
-    RPAREN          shift and go to state 457
+    RPAREN          shift and go to state 456
 
 
 state 408
@@ -14299,7 +14295,7 @@ state 409
     (59) SliceType -> . LBRACK RBRACK ElementType
     (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
 
-    RPAREN          shift and go to state 458
+    RPAREN          shift and go to state 457
     ADD             shift and go to state 106
     SUB             shift and go to state 107
     NOT             shift and go to state 112
@@ -14318,7 +14314,7 @@ state 409
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    ExpressionList                 shift and go to state 459
+    ExpressionList                 shift and go to state 458
     Expr                           shift and go to state 139
     UnaryExpr                      shift and go to state 105
     PrimaryExpr                    shift and go to state 111
@@ -14443,7 +14439,7 @@ state 411
     (59) SliceType -> . LBRACK RBRACK ElementType
     (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
 
-    RPAREN          shift and go to state 460
+    RPAREN          shift and go to state 459
     ADD             shift and go to state 106
     SUB             shift and go to state 107
     NOT             shift and go to state 112
@@ -14462,7 +14458,7 @@ state 411
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    ExpressionList                 shift and go to state 461
+    ExpressionList                 shift and go to state 460
     Expr                           shift and go to state 139
     UnaryExpr                      shift and go to state 105
     PrimaryExpr                    shift and go to state 111
@@ -14484,7 +14480,7 @@ state 412
     (122) PrimaryExpr -> IDENT PERIOD . IDENT
     (107) CompositeLit -> IDENT PERIOD . IDENT LiteralValue
 
-    IDENT           shift and go to state 462
+    IDENT           shift and go to state 461
 
 
 state 413
@@ -14503,7 +14499,7 @@ state 413
   ! reduce/reduce conflict for RPAREN resolved using rule 57 (PointerType -> MUL IDENT .)
     RPAREN          reduce using rule 57 (PointerType -> MUL IDENT .)
     COMMA           reduce using rule 57 (PointerType -> MUL IDENT .)
-    PERIOD          shift and go to state 463
+    PERIOD          shift and go to state 462
     LBRACK          reduce using rule 121 (PrimaryExpr -> IDENT .)
     LPAREN          reduce using rule 121 (PrimaryExpr -> IDENT .)
     LOR             reduce using rule 121 (PrimaryExpr -> IDENT .)
@@ -14601,7 +14597,7 @@ state 416
 
     (108) LiteralValue -> LBRACE ElementList COMMA . RBRACE
 
-    RBRACE          shift and go to state 464
+    RBRACE          shift and go to state 463
 
 
 state 417
@@ -14743,7 +14739,7 @@ state 418
     MAP             shift and go to state 66
 
     KeyedElement                   shift and go to state 352
-    ElementList                    shift and go to state 465
+    ElementList                    shift and go to state 464
     Element                        shift and go to state 353
     Key                            shift and go to state 354
     Expr                           shift and go to state 355
@@ -14841,9 +14837,9 @@ state 419
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    Element                        shift and go to state 466
-    Expr                           shift and go to state 467
-    LiteralValue                   shift and go to state 468
+    Element                        shift and go to state 465
+    Expr                           shift and go to state 466
+    LiteralValue                   shift and go to state 467
     UnaryExpr                      shift and go to state 105
     PrimaryExpr                    shift and go to state 111
     Lit                            shift and go to state 113
@@ -14874,7 +14870,7 @@ state 422
     (45) FieldDecl -> IdentifierList IDENT PERIOD . IDENT
     (49) FieldDecl -> IdentifierList IDENT PERIOD . IDENT Tag
 
-    IDENT           shift and go to state 469
+    IDENT           shift and go to state 468
 
 
 state 423
@@ -14896,7 +14892,7 @@ state 425
 
     (54) EmbeddedField -> MUL IDENT PERIOD . IDENT
 
-    IDENT           shift and go to state 470
+    IDENT           shift and go to state 469
 
 
 state 426
@@ -14945,8 +14941,8 @@ state 430
     IF              shift and go to state 174
     LBRACE          shift and go to state 83
 
-    IfStmt                         shift and go to state 471
-    Block                          shift and go to state 472
+    IfStmt                         shift and go to state 470
+    Block                          shift and go to state 471
 
 state 431
 
@@ -14996,12 +14992,12 @@ state 431
     ELSE            shift and go to state 430
     SEMICOLON       reduce using rule 249 (else_stmt -> .)
 
-    else_stmt                      shift and go to state 473
+    else_stmt                      shift and go to state 472
 
 state 432
 
-    (281) ForClause -> InitStmt SEMICOLON SEMICOLON . PostStmt
-    (283) PostStmt -> . SimpleStmt
+    (280) ForClause -> InitStmt SEMICOLON SEMICOLON . PostStmt
+    (282) PostStmt -> . SimpleStmt
     (212) SimpleStmt -> . EmptyStmt
     (213) SimpleStmt -> . ExpressionStmt
     (214) SimpleStmt -> . IncDecStmt
@@ -15091,8 +15087,8 @@ state 432
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    PostStmt                       shift and go to state 474
-    SimpleStmt                     shift and go to state 475
+    PostStmt                       shift and go to state 473
+    SimpleStmt                     shift and go to state 474
     EmptyStmt                      shift and go to state 163
     ExpressionStmt                 shift and go to state 164
     IncDecStmt                     shift and go to state 165
@@ -15114,14 +15110,14 @@ state 432
 
 state 433
 
-    (280) ForClause -> InitStmt SEMICOLON Condition . SEMICOLON PostStmt
+    (279) ForClause -> InitStmt SEMICOLON Condition . SEMICOLON PostStmt
 
-    SEMICOLON       shift and go to state 476
+    SEMICOLON       shift and go to state 475
 
 
 state 434
 
-    (279) Condition -> Expr .
+    (278) Condition -> Expr .
     (68) Expr -> Expr . LOR Expr
     (69) Expr -> Expr . LAND Expr
     (70) Expr -> Expr . EQL Expr
@@ -15142,7 +15138,7 @@ state 434
     (85) Expr -> Expr . AND Expr
     (86) Expr -> Expr . AND_NOT Expr
 
-    SEMICOLON       reduce using rule 279 (Condition -> Expr .)
+    SEMICOLON       reduce using rule 278 (Condition -> Expr .)
     LOR             shift and go to state 202
     LAND            shift and go to state 203
     EQL             shift and go to state 204
@@ -15166,7 +15162,7 @@ state 434
 
 state 435
 
-    (284) RangeClause -> RangeList RANGE Expr .
+    (283) RangeClause -> RangeList RANGE Expr .
     (68) Expr -> Expr . LOR Expr
     (69) Expr -> Expr . LAND Expr
     (70) Expr -> Expr . EQL Expr
@@ -15187,7 +15183,7 @@ state 435
     (85) Expr -> Expr . AND Expr
     (86) Expr -> Expr . AND_NOT Expr
 
-    LBRACE          reduce using rule 284 (RangeClause -> RangeList RANGE Expr .)
+    LBRACE          reduce using rule 283 (RangeClause -> RangeList RANGE Expr .)
     LOR             shift and go to state 202
     LAND            shift and go to state 203
     EQL             shift and go to state 204
@@ -15232,7 +15228,7 @@ state 436
     (85) Expr -> Expr . AND Expr
     (86) Expr -> Expr . AND_NOT Expr
 
-    LBRACE          shift and go to state 477
+    LBRACE          shift and go to state 476
     LOR             shift and go to state 202
     LAND            shift and go to state 203
     EQL             shift and go to state 204
@@ -15267,7 +15263,7 @@ state 437
     CASE            shift and go to state 391
     DEFAULT         shift and go to state 392
 
-    ExprCaseClauseMult             shift and go to state 478
+    ExprCaseClauseMult             shift and go to state 477
     ExprCaseClause                 shift and go to state 389
     ExprSwitchCase                 shift and go to state 390
 
@@ -15275,7 +15271,7 @@ state 438
 
     (261) TypeSwitchStmt -> SWITCH SimpleStmt SEMICOLON TypeSwitchGuard . LBRACE TypeCaseClauseMult RBRACE
 
-    LBRACE          shift and go to state 479
+    LBRACE          shift and go to state 478
 
 
 state 439
@@ -15323,7 +15319,7 @@ state 440
 
     (253) ExprSwitchStmt -> SWITCH Expr LBRACE ExprCaseClauseMult . RBRACE
 
-    RBRACE          shift and go to state 480
+    RBRACE          shift and go to state 479
 
 
 state 441
@@ -15379,9 +15375,9 @@ state 443
     (246) IfStmt -> . IF SimpleStmt SEMICOLON Expr else_stmt
     (250) SwitchStmt -> . ExprSwitchStmt
     (251) SwitchStmt -> . TypeSwitchStmt
-    (276) ForStmt -> . FOR Condition Block
-    (277) ForStmt -> . FOR ForClause Block
-    (278) ForStmt -> . FOR RangeClause Block
+    (275) ForStmt -> . FOR Condition Block
+    (276) ForStmt -> . FOR ForClause Block
+    (277) ForStmt -> . FOR RangeClause Block
     (20) ConstDecl -> . CONST ConstSpec
     (21) ConstDecl -> . CONST LPAREN ConstSpecMult RPAREN
     (163) VarDecl -> . VAR VarSpec
@@ -15494,7 +15490,7 @@ state 443
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    StatementList                  shift and go to state 481
+    StatementList                  shift and go to state 480
     Statement                      shift and go to state 149
     Decl                           shift and go to state 150
     LabeledStmt                    shift and go to state 151
@@ -15544,7 +15540,7 @@ state 445
 
     (262) TypeSwitchStmt -> SWITCH TypeSwitchGuard LBRACE TypeCaseClauseMult . RBRACE
 
-    RBRACE          shift and go to state 482
+    RBRACE          shift and go to state 481
 
 
 state 446
@@ -15552,38 +15548,29 @@ state 446
     (265) TypeCaseClauseMult -> TypeCaseClause . TypeCaseClauseMult
     (265) TypeCaseClauseMult -> . TypeCaseClause TypeCaseClauseMult
     (266) TypeCaseClauseMult -> .
-    (267) TypeCaseClause -> . TypeSwitchCase COLON StatementList
-    (268) TypeSwitchCase -> . CASE TypeList
-    (269) TypeSwitchCase -> . DEFAULT
+    (267) TypeCaseClause -> . CASE TypeList COLON StatementList
+    (268) TypeCaseClause -> . DEFAULT COLON StatementList
 
     RBRACE          reduce using rule 266 (TypeCaseClauseMult -> .)
-    CASE            shift and go to state 448
-    DEFAULT         shift and go to state 449
+    CASE            shift and go to state 447
+    DEFAULT         shift and go to state 448
 
     TypeCaseClause                 shift and go to state 446
-    TypeCaseClauseMult             shift and go to state 483
-    TypeSwitchCase                 shift and go to state 447
+    TypeCaseClauseMult             shift and go to state 482
 
 state 447
 
-    (267) TypeCaseClause -> TypeSwitchCase . COLON StatementList
-
-    COLON           shift and go to state 484
-
-
-state 448
-
-    (268) TypeSwitchCase -> CASE . TypeList
-    (270) TypeList -> . Type
-    (271) TypeList -> . IDENT
-    (272) TypeList -> . IDENT PERIOD IDENT
-    (273) TypeList -> . Type COMMA TypeList
-    (274) TypeList -> . IDENT COMMA TypeList
-    (275) TypeList -> . IDENT PERIOD IDENT COMMA TypeList
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (267) TypeCaseClause -> CASE . TypeList COLON StatementList
+    (269) TypeList -> . Type
+    (270) TypeList -> . IDENT
+    (271) TypeList -> . IDENT PERIOD IDENT
+    (272) TypeList -> . Type COMMA TypeList
+    (273) TypeList -> . IDENT COMMA TypeList
+    (274) TypeList -> . IDENT PERIOD IDENT COMMA TypeList
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -15599,7 +15586,7 @@ state 448
     (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
     (64) FunctionType -> . FUNC Signature
 
-    IDENT           shift and go to state 487
+    IDENT           shift and go to state 485
     LPAREN          shift and go to state 56
     LBRACK          shift and go to state 63
     STRUCT          shift and go to state 64
@@ -15607,8 +15594,8 @@ state 448
     MAP             shift and go to state 66
     FUNC            shift and go to state 67
 
-    TypeList                       shift and go to state 485
-    Type                           shift and go to state 486
+    TypeList                       shift and go to state 483
+    Type                           shift and go to state 484
     TypeLit                        shift and go to state 55
     ArrayType                      shift and go to state 57
     StructType                     shift and go to state 58
@@ -15617,14 +15604,14 @@ state 448
     MapType                        shift and go to state 61
     FunctionType                   shift and go to state 62
 
+state 448
+
+    (268) TypeCaseClause -> DEFAULT . COLON StatementList
+
+    COLON           shift and go to state 486
+
+
 state 449
-
-    (269) TypeSwitchCase -> DEFAULT .
-
-    COLON           reduce using rule 269 (TypeSwitchCase -> DEFAULT .)
-
-
-state 450
 
     (263) TypeSwitchGuard -> IDENT DEFINE PrimaryExpr . PERIOD LPAREN TYPE RPAREN
     (124) PrimaryExpr -> PrimaryExpr . Selector
@@ -15655,7 +15642,7 @@ state 450
     (149) Arguments -> . LPAREN IDENT PERIOD IDENT COMMA ExpressionList RPAREN
     (150) Arguments -> . LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN
 
-    PERIOD          shift and go to state 488
+    PERIOD          shift and go to state 487
     LBRACK          shift and go to state 231
     LPAREN          shift and go to state 232
 
@@ -15664,14 +15651,14 @@ state 450
     Slice                          shift and go to state 228
     Arguments                      shift and go to state 229
 
-state 451
+state 450
 
     (264) TypeSwitchGuard -> PrimaryExpr PERIOD LPAREN . TYPE RPAREN
 
-    TYPE            shift and go to state 489
+    TYPE            shift and go to state 488
 
 
-state 452
+state 451
 
     (130) Slice -> LBRACK Expr COLON Expr . RBRACK
     (135) Slice -> LBRACK Expr COLON Expr . COLON Expr RBRACK
@@ -15695,8 +15682,8 @@ state 452
     (85) Expr -> Expr . AND Expr
     (86) Expr -> Expr . AND_NOT Expr
 
-    RBRACK          shift and go to state 491
-    COLON           shift and go to state 490
+    RBRACK          shift and go to state 490
+    COLON           shift and go to state 489
     LOR             shift and go to state 202
     LAND            shift and go to state 203
     EQL             shift and go to state 204
@@ -15718,7 +15705,7 @@ state 452
     AND_NOT         shift and go to state 220
 
 
-state 453
+state 452
 
     (132) Slice -> LBRACK Expr COLON RBRACK .
 
@@ -15768,7 +15755,7 @@ state 453
     ELSE            reduce using rule 132 (Slice -> LBRACK Expr COLON RBRACK .)
 
 
-state 454
+state 453
 
     (134) Slice -> LBRACK COLON Expr COLON . Expr RBRACK
     (67) Expr -> . UnaryExpr
@@ -15844,7 +15831,7 @@ state 454
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    Expr                           shift and go to state 492
+    Expr                           shift and go to state 491
     UnaryExpr                      shift and go to state 105
     PrimaryExpr                    shift and go to state 111
     Lit                            shift and go to state 113
@@ -15856,7 +15843,7 @@ state 454
     SliceType                      shift and go to state 126
     MapType                        shift and go to state 127
 
-state 455
+state 454
 
     (131) Slice -> LBRACK COLON Expr RBRACK .
 
@@ -15906,16 +15893,16 @@ state 455
     ELSE            reduce using rule 131 (Slice -> LBRACK COLON Expr RBRACK .)
 
 
-state 456
+state 455
 
-    (291) Type -> LPAREN IDENT PERIOD . IDENT RPAREN
+    (290) Type -> LPAREN IDENT PERIOD . IDENT RPAREN
     (122) PrimaryExpr -> IDENT PERIOD . IDENT
     (107) CompositeLit -> IDENT PERIOD . IDENT LiteralValue
 
-    IDENT           shift and go to state 493
+    IDENT           shift and go to state 492
 
 
-state 457
+state 456
 
     (138) Arguments -> LPAREN ExpressionList COMMA RPAREN .
 
@@ -15965,7 +15952,7 @@ state 457
     ELSE            reduce using rule 138 (Arguments -> LPAREN ExpressionList COMMA RPAREN .)
 
 
-state 458
+state 457
 
     (140) Arguments -> LPAREN Type COMMA RPAREN .
 
@@ -16015,16 +16002,16 @@ state 458
     ELSE            reduce using rule 140 (Arguments -> LPAREN Type COMMA RPAREN .)
 
 
-state 459
+state 458
 
     (141) Arguments -> LPAREN Type COMMA ExpressionList . RPAREN
     (142) Arguments -> LPAREN Type COMMA ExpressionList . COMMA RPAREN
 
-    RPAREN          shift and go to state 495
-    COMMA           shift and go to state 494
+    RPAREN          shift and go to state 494
+    COMMA           shift and go to state 493
 
 
-state 460
+state 459
 
     (144) Arguments -> LPAREN IDENT COMMA RPAREN .
 
@@ -16074,16 +16061,16 @@ state 460
     ELSE            reduce using rule 144 (Arguments -> LPAREN IDENT COMMA RPAREN .)
 
 
-state 461
+state 460
 
     (145) Arguments -> LPAREN IDENT COMMA ExpressionList . RPAREN
     (146) Arguments -> LPAREN IDENT COMMA ExpressionList . COMMA RPAREN
 
-    RPAREN          shift and go to state 497
-    COMMA           shift and go to state 496
+    RPAREN          shift and go to state 496
+    COMMA           shift and go to state 495
 
 
-state 462
+state 461
 
     (147) Arguments -> LPAREN IDENT PERIOD IDENT . RPAREN
     (148) Arguments -> LPAREN IDENT PERIOD IDENT . COMMA RPAREN
@@ -16095,8 +16082,8 @@ state 462
     (109) LiteralValue -> . LBRACE ElementList RBRACE
     (110) LiteralValue -> . LBRACE RBRACE
 
-    RPAREN          shift and go to state 498
-    COMMA           shift and go to state 499
+    RPAREN          shift and go to state 497
+    COMMA           shift and go to state 498
     PERIOD          reduce using rule 122 (PrimaryExpr -> IDENT PERIOD IDENT .)
     LBRACK          reduce using rule 122 (PrimaryExpr -> IDENT PERIOD IDENT .)
     LPAREN          reduce using rule 122 (PrimaryExpr -> IDENT PERIOD IDENT .)
@@ -16126,16 +16113,16 @@ state 462
 
     LiteralValue                   shift and go to state 415
 
-state 463
+state 462
 
     (58) PointerType -> MUL IDENT PERIOD . IDENT
     (122) PrimaryExpr -> IDENT PERIOD . IDENT
     (107) CompositeLit -> IDENT PERIOD . IDENT LiteralValue
 
-    IDENT           shift and go to state 500
+    IDENT           shift and go to state 499
 
 
-state 464
+state 463
 
     (108) LiteralValue -> LBRACE ElementList COMMA RBRACE .
 
@@ -16185,7 +16172,7 @@ state 464
     ELSE            reduce using rule 108 (LiteralValue -> LBRACE ElementList COMMA RBRACE .)
 
 
-state 465
+state 464
 
     (112) ElementList -> KeyedElement COMMA ElementList .
 
@@ -16193,7 +16180,7 @@ state 465
     RBRACE          reduce using rule 112 (ElementList -> KeyedElement COMMA ElementList .)
 
 
-state 466
+state 465
 
     (114) KeyedElement -> Key COLON Element .
 
@@ -16201,7 +16188,7 @@ state 466
     RBRACE          reduce using rule 114 (KeyedElement -> Key COLON Element .)
 
 
-state 467
+state 466
 
     (117) Element -> Expr .
     (68) Expr -> Expr . LOR Expr
@@ -16247,7 +16234,7 @@ state 467
     AND_NOT         shift and go to state 220
 
 
-state 468
+state 467
 
     (118) Element -> LiteralValue .
 
@@ -16255,7 +16242,7 @@ state 468
     RBRACE          reduce using rule 118 (Element -> LiteralValue .)
 
 
-state 469
+state 468
 
     (45) FieldDecl -> IdentifierList IDENT PERIOD IDENT .
     (49) FieldDecl -> IdentifierList IDENT PERIOD IDENT . Tag
@@ -16264,9 +16251,9 @@ state 469
     SEMICOLON       reduce using rule 45 (FieldDecl -> IdentifierList IDENT PERIOD IDENT .)
     STRING          shift and go to state 365
 
-    Tag                            shift and go to state 501
+    Tag                            shift and go to state 500
 
-state 470
+state 469
 
     (54) EmbeddedField -> MUL IDENT PERIOD IDENT .
 
@@ -16274,45 +16261,45 @@ state 470
     SEMICOLON       reduce using rule 54 (EmbeddedField -> MUL IDENT PERIOD IDENT .)
 
 
-state 471
+state 470
 
     (247) else_stmt -> ELSE IfStmt .
 
     SEMICOLON       reduce using rule 247 (else_stmt -> ELSE IfStmt .)
 
 
-state 472
+state 471
 
     (248) else_stmt -> ELSE Block .
 
     SEMICOLON       reduce using rule 248 (else_stmt -> ELSE Block .)
 
 
-state 473
+state 472
 
     (246) IfStmt -> IF SimpleStmt SEMICOLON Expr else_stmt .
 
     SEMICOLON       reduce using rule 246 (IfStmt -> IF SimpleStmt SEMICOLON Expr else_stmt .)
 
 
+state 473
+
+    (280) ForClause -> InitStmt SEMICOLON SEMICOLON PostStmt .
+
+    LBRACE          reduce using rule 280 (ForClause -> InitStmt SEMICOLON SEMICOLON PostStmt .)
+
+
 state 474
 
-    (281) ForClause -> InitStmt SEMICOLON SEMICOLON PostStmt .
+    (282) PostStmt -> SimpleStmt .
 
-    LBRACE          reduce using rule 281 (ForClause -> InitStmt SEMICOLON SEMICOLON PostStmt .)
+    LBRACE          reduce using rule 282 (PostStmt -> SimpleStmt .)
 
 
 state 475
 
-    (283) PostStmt -> SimpleStmt .
-
-    LBRACE          reduce using rule 283 (PostStmt -> SimpleStmt .)
-
-
-state 476
-
-    (280) ForClause -> InitStmt SEMICOLON Condition SEMICOLON . PostStmt
-    (283) PostStmt -> . SimpleStmt
+    (279) ForClause -> InitStmt SEMICOLON Condition SEMICOLON . PostStmt
+    (282) PostStmt -> . SimpleStmt
     (212) SimpleStmt -> . EmptyStmt
     (213) SimpleStmt -> . ExpressionStmt
     (214) SimpleStmt -> . IncDecStmt
@@ -16402,8 +16389,8 @@ state 476
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    PostStmt                       shift and go to state 502
-    SimpleStmt                     shift and go to state 475
+    PostStmt                       shift and go to state 501
+    SimpleStmt                     shift and go to state 474
     EmptyStmt                      shift and go to state 163
     ExpressionStmt                 shift and go to state 164
     IncDecStmt                     shift and go to state 165
@@ -16423,7 +16410,7 @@ state 476
     SliceType                      shift and go to state 126
     MapType                        shift and go to state 127
 
-state 477
+state 476
 
     (252) ExprSwitchStmt -> SWITCH SimpleStmt SEMICOLON Expr LBRACE . ExprCaseClauseMult RBRACE
     (256) ExprCaseClauseMult -> . ExprCaseClause ExprCaseClauseMult
@@ -16436,42 +16423,40 @@ state 477
     CASE            shift and go to state 391
     DEFAULT         shift and go to state 392
 
-    ExprCaseClauseMult             shift and go to state 503
+    ExprCaseClauseMult             shift and go to state 502
     ExprCaseClause                 shift and go to state 389
     ExprSwitchCase                 shift and go to state 390
 
-state 478
+state 477
 
     (254) ExprSwitchStmt -> SWITCH SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult . RBRACE
 
-    RBRACE          shift and go to state 504
+    RBRACE          shift and go to state 503
 
 
-state 479
+state 478
 
     (261) TypeSwitchStmt -> SWITCH SimpleStmt SEMICOLON TypeSwitchGuard LBRACE . TypeCaseClauseMult RBRACE
     (265) TypeCaseClauseMult -> . TypeCaseClause TypeCaseClauseMult
     (266) TypeCaseClauseMult -> .
-    (267) TypeCaseClause -> . TypeSwitchCase COLON StatementList
-    (268) TypeSwitchCase -> . CASE TypeList
-    (269) TypeSwitchCase -> . DEFAULT
+    (267) TypeCaseClause -> . CASE TypeList COLON StatementList
+    (268) TypeCaseClause -> . DEFAULT COLON StatementList
 
     RBRACE          reduce using rule 266 (TypeCaseClauseMult -> .)
-    CASE            shift and go to state 448
-    DEFAULT         shift and go to state 449
+    CASE            shift and go to state 447
+    DEFAULT         shift and go to state 448
 
-    TypeCaseClauseMult             shift and go to state 505
+    TypeCaseClauseMult             shift and go to state 504
     TypeCaseClause                 shift and go to state 446
-    TypeSwitchCase                 shift and go to state 447
 
-state 480
+state 479
 
     (253) ExprSwitchStmt -> SWITCH Expr LBRACE ExprCaseClauseMult RBRACE .
 
     SEMICOLON       reduce using rule 253 (ExprSwitchStmt -> SWITCH Expr LBRACE ExprCaseClauseMult RBRACE .)
 
 
-state 481
+state 480
 
     (258) ExprCaseClause -> ExprSwitchCase COLON StatementList .
 
@@ -16480,23 +16465,51 @@ state 481
     RBRACE          reduce using rule 258 (ExprCaseClause -> ExprSwitchCase COLON StatementList .)
 
 
-state 482
+state 481
 
     (262) TypeSwitchStmt -> SWITCH TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE .
 
     SEMICOLON       reduce using rule 262 (TypeSwitchStmt -> SWITCH TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE .)
 
 
-state 483
+state 482
 
     (265) TypeCaseClauseMult -> TypeCaseClause TypeCaseClauseMult .
 
     RBRACE          reduce using rule 265 (TypeCaseClauseMult -> TypeCaseClause TypeCaseClauseMult .)
 
 
+state 483
+
+    (267) TypeCaseClause -> CASE TypeList . COLON StatementList
+
+    COLON           shift and go to state 505
+
+
 state 484
 
-    (267) TypeCaseClause -> TypeSwitchCase COLON . StatementList
+    (269) TypeList -> Type .
+    (272) TypeList -> Type . COMMA TypeList
+
+    COLON           reduce using rule 269 (TypeList -> Type .)
+    COMMA           shift and go to state 506
+
+
+state 485
+
+    (270) TypeList -> IDENT .
+    (271) TypeList -> IDENT . PERIOD IDENT
+    (273) TypeList -> IDENT . COMMA TypeList
+    (274) TypeList -> IDENT . PERIOD IDENT COMMA TypeList
+
+    COLON           reduce using rule 270 (TypeList -> IDENT .)
+    PERIOD          shift and go to state 507
+    COMMA           shift and go to state 508
+
+
+state 486
+
+    (268) TypeCaseClause -> DEFAULT COLON . StatementList
     (196) StatementList -> . Statement SEMICOLON StatementList
     (197) StatementList -> .
     (198) Statement -> . Decl
@@ -16533,9 +16546,9 @@ state 484
     (246) IfStmt -> . IF SimpleStmt SEMICOLON Expr else_stmt
     (250) SwitchStmt -> . ExprSwitchStmt
     (251) SwitchStmt -> . TypeSwitchStmt
-    (276) ForStmt -> . FOR Condition Block
-    (277) ForStmt -> . FOR ForClause Block
-    (278) ForStmt -> . FOR RangeClause Block
+    (275) ForStmt -> . FOR Condition Block
+    (276) ForStmt -> . FOR ForClause Block
+    (277) ForStmt -> . FOR RangeClause Block
     (20) ConstDecl -> . CONST ConstSpec
     (21) ConstDecl -> . CONST LPAREN ConstSpecMult RPAREN
     (163) VarDecl -> . VAR VarSpec
@@ -16648,7 +16661,7 @@ state 484
     LBRACK          shift and go to state 63
     MAP             shift and go to state 66
 
-    StatementList                  shift and go to state 506
+    StatementList                  shift and go to state 509
     Statement                      shift and go to state 149
     Decl                           shift and go to state 150
     LabeledStmt                    shift and go to state 151
@@ -16687,35 +16700,7 @@ state 484
     SliceType                      shift and go to state 126
     MapType                        shift and go to state 127
 
-state 485
-
-    (268) TypeSwitchCase -> CASE TypeList .
-
-    COLON           reduce using rule 268 (TypeSwitchCase -> CASE TypeList .)
-
-
-state 486
-
-    (270) TypeList -> Type .
-    (273) TypeList -> Type . COMMA TypeList
-
-    COLON           reduce using rule 270 (TypeList -> Type .)
-    COMMA           shift and go to state 507
-
-
 state 487
-
-    (271) TypeList -> IDENT .
-    (272) TypeList -> IDENT . PERIOD IDENT
-    (274) TypeList -> IDENT . COMMA TypeList
-    (275) TypeList -> IDENT . PERIOD IDENT COMMA TypeList
-
-    COLON           reduce using rule 271 (TypeList -> IDENT .)
-    PERIOD          shift and go to state 508
-    COMMA           shift and go to state 509
-
-
-state 488
 
     (263) TypeSwitchGuard -> IDENT DEFINE PrimaryExpr PERIOD . LPAREN TYPE RPAREN
     (129) Selector -> PERIOD . IDENT
@@ -16724,14 +16709,14 @@ state 488
     IDENT           shift and go to state 335
 
 
-state 489
+state 488
 
     (264) TypeSwitchGuard -> PrimaryExpr PERIOD LPAREN TYPE . RPAREN
 
     RPAREN          shift and go to state 511
 
 
-state 490
+state 489
 
     (135) Slice -> LBRACK Expr COLON Expr COLON . Expr RBRACK
     (67) Expr -> . UnaryExpr
@@ -16819,7 +16804,7 @@ state 490
     SliceType                      shift and go to state 126
     MapType                        shift and go to state 127
 
-state 491
+state 490
 
     (130) Slice -> LBRACK Expr COLON Expr RBRACK .
 
@@ -16869,7 +16854,7 @@ state 491
     ELSE            reduce using rule 130 (Slice -> LBRACK Expr COLON Expr RBRACK .)
 
 
-state 492
+state 491
 
     (134) Slice -> LBRACK COLON Expr COLON Expr . RBRACK
     (68) Expr -> Expr . LOR Expr
@@ -16914,9 +16899,9 @@ state 492
     AND_NOT         shift and go to state 220
 
 
-state 493
+state 492
 
-    (291) Type -> LPAREN IDENT PERIOD IDENT . RPAREN
+    (290) Type -> LPAREN IDENT PERIOD IDENT . RPAREN
     (122) PrimaryExpr -> IDENT PERIOD IDENT .
     (107) CompositeLit -> IDENT PERIOD IDENT . LiteralValue
     (108) LiteralValue -> . LBRACE ElementList COMMA RBRACE
@@ -16952,14 +16937,14 @@ state 493
 
     LiteralValue                   shift and go to state 415
 
-state 494
+state 493
 
     (142) Arguments -> LPAREN Type COMMA ExpressionList COMMA . RPAREN
 
     RPAREN          shift and go to state 514
 
 
-state 495
+state 494
 
     (141) Arguments -> LPAREN Type COMMA ExpressionList RPAREN .
 
@@ -17009,14 +16994,14 @@ state 495
     ELSE            reduce using rule 141 (Arguments -> LPAREN Type COMMA ExpressionList RPAREN .)
 
 
-state 496
+state 495
 
     (146) Arguments -> LPAREN IDENT COMMA ExpressionList COMMA . RPAREN
 
     RPAREN          shift and go to state 515
 
 
-state 497
+state 496
 
     (145) Arguments -> LPAREN IDENT COMMA ExpressionList RPAREN .
 
@@ -17066,7 +17051,7 @@ state 497
     ELSE            reduce using rule 145 (Arguments -> LPAREN IDENT COMMA ExpressionList RPAREN .)
 
 
-state 498
+state 497
 
     (147) Arguments -> LPAREN IDENT PERIOD IDENT RPAREN .
 
@@ -17116,7 +17101,7 @@ state 498
     ELSE            reduce using rule 147 (Arguments -> LPAREN IDENT PERIOD IDENT RPAREN .)
 
 
-state 499
+state 498
 
     (148) Arguments -> LPAREN IDENT PERIOD IDENT COMMA . RPAREN
     (149) Arguments -> LPAREN IDENT PERIOD IDENT COMMA . ExpressionList RPAREN
@@ -17210,7 +17195,7 @@ state 499
     SliceType                      shift and go to state 126
     MapType                        shift and go to state 127
 
-state 500
+state 499
 
     (58) PointerType -> MUL IDENT PERIOD IDENT .
     (122) PrimaryExpr -> IDENT PERIOD IDENT .
@@ -17252,117 +17237,301 @@ state 500
 
     LiteralValue                   shift and go to state 415
 
-state 501
+state 500
 
     (49) FieldDecl -> IdentifierList IDENT PERIOD IDENT Tag .
 
     SEMICOLON       reduce using rule 49 (FieldDecl -> IdentifierList IDENT PERIOD IDENT Tag .)
 
 
+state 501
+
+    (279) ForClause -> InitStmt SEMICOLON Condition SEMICOLON PostStmt .
+
+    LBRACE          reduce using rule 279 (ForClause -> InitStmt SEMICOLON Condition SEMICOLON PostStmt .)
+
+
 state 502
-
-    (280) ForClause -> InitStmt SEMICOLON Condition SEMICOLON PostStmt .
-
-    LBRACE          reduce using rule 280 (ForClause -> InitStmt SEMICOLON Condition SEMICOLON PostStmt .)
-
-
-state 503
 
     (252) ExprSwitchStmt -> SWITCH SimpleStmt SEMICOLON Expr LBRACE ExprCaseClauseMult . RBRACE
 
     RBRACE          shift and go to state 518
 
 
-state 504
+state 503
 
     (254) ExprSwitchStmt -> SWITCH SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult RBRACE .
 
     SEMICOLON       reduce using rule 254 (ExprSwitchStmt -> SWITCH SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult RBRACE .)
 
 
-state 505
+state 504
 
     (261) TypeSwitchStmt -> SWITCH SimpleStmt SEMICOLON TypeSwitchGuard LBRACE TypeCaseClauseMult . RBRACE
 
     RBRACE          shift and go to state 519
 
 
+state 505
+
+    (267) TypeCaseClause -> CASE TypeList COLON . StatementList
+    (196) StatementList -> . Statement SEMICOLON StatementList
+    (197) StatementList -> .
+    (198) Statement -> . Decl
+    (199) Statement -> . LabeledStmt
+    (200) Statement -> . SimpleStmt
+    (201) Statement -> . GotoStmt
+    (202) Statement -> . ReturnStmt
+    (203) Statement -> . BreakStmt
+    (204) Statement -> . ContinueStmt
+    (205) Statement -> . FallthroughStmt
+    (206) Statement -> . Block
+    (207) Statement -> . IfStmt
+    (208) Statement -> . SwitchStmt
+    (209) Statement -> . ForStmt
+    (17) Decl -> . ConstDecl
+    (18) Decl -> . VarDecl
+    (19) Decl -> . TypeDecl
+    (210) LabeledStmt -> . Label COLON Statement
+    (212) SimpleStmt -> . EmptyStmt
+    (213) SimpleStmt -> . ExpressionStmt
+    (214) SimpleStmt -> . IncDecStmt
+    (215) SimpleStmt -> . Assignment
+    (216) SimpleStmt -> . ShortVarDecl
+    (242) GotoStmt -> . GOTO Label
+    (236) ReturnStmt -> . RETURN ExpressionList
+    (237) ReturnStmt -> . RETURN
+    (238) BreakStmt -> . BREAK Label
+    (239) BreakStmt -> . BREAK
+    (240) ContinueStmt -> . CONTINUE Label
+    (241) ContinueStmt -> . CONTINUE
+    (243) FallthroughStmt -> . FALLTHROUGH
+    (244) Block -> . LBRACE StatementList RBRACE
+    (245) IfStmt -> . IF Expr Block else_stmt
+    (246) IfStmt -> . IF SimpleStmt SEMICOLON Expr else_stmt
+    (250) SwitchStmt -> . ExprSwitchStmt
+    (251) SwitchStmt -> . TypeSwitchStmt
+    (275) ForStmt -> . FOR Condition Block
+    (276) ForStmt -> . FOR ForClause Block
+    (277) ForStmt -> . FOR RangeClause Block
+    (20) ConstDecl -> . CONST ConstSpec
+    (21) ConstDecl -> . CONST LPAREN ConstSpecMult RPAREN
+    (163) VarDecl -> . VAR VarSpec
+    (164) VarDecl -> . VAR LPAREN VarMult RPAREN
+    (151) TypeDecl -> . TYPE TypeSpec
+    (152) TypeDecl -> . TYPE LPAREN TypeSpecMult RPAREN
+    (211) Label -> . IDENT
+    (217) EmptyStmt -> .
+    (218) ExpressionStmt -> . Expr
+    (219) IncDecStmt -> . Expr INC
+    (220) IncDecStmt -> . Expr DEC
+    (221) Assignment -> . ExpressionList assign_op ExpressionList
+    (174) ShortVarDecl -> . IdentifierList DEFINE ExpressionList
+    (252) ExprSwitchStmt -> . SWITCH SimpleStmt SEMICOLON Expr LBRACE ExprCaseClauseMult RBRACE
+    (253) ExprSwitchStmt -> . SWITCH Expr LBRACE ExprCaseClauseMult RBRACE
+    (254) ExprSwitchStmt -> . SWITCH SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult RBRACE
+    (255) ExprSwitchStmt -> . SWITCH LBRACE ExprCaseClauseMult RBRACE
+    (261) TypeSwitchStmt -> . SWITCH SimpleStmt SEMICOLON TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
+    (262) TypeSwitchStmt -> . SWITCH TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
+    (67) Expr -> . UnaryExpr
+    (68) Expr -> . Expr LOR Expr
+    (69) Expr -> . Expr LAND Expr
+    (70) Expr -> . Expr EQL Expr
+    (71) Expr -> . Expr NEQ Expr
+    (72) Expr -> . Expr LSS Expr
+    (73) Expr -> . Expr LEQ Expr
+    (74) Expr -> . Expr GTR Expr
+    (75) Expr -> . Expr GEQ Expr
+    (76) Expr -> . Expr ADD Expr
+    (77) Expr -> . Expr SUB Expr
+    (78) Expr -> . Expr OR Expr
+    (79) Expr -> . Expr XOR Expr
+    (80) Expr -> . Expr MUL Expr
+    (81) Expr -> . Expr QUO Expr
+    (82) Expr -> . Expr REM Expr
+    (83) Expr -> . Expr SHL Expr
+    (84) Expr -> . Expr SHR Expr
+    (85) Expr -> . Expr AND Expr
+    (86) Expr -> . Expr AND_NOT Expr
+    (65) ExpressionList -> . Expr
+    (66) ExpressionList -> . Expr COMMA ExpressionList
+    (27) IdentifierList -> . IDENT
+    (28) IdentifierList -> . IDENT COMMA IdentifierList
+    (87) UnaryExpr -> . PrimaryExpr
+    (88) UnaryExpr -> . ADD UnaryExpr
+    (89) UnaryExpr -> . SUB UnaryExpr
+    (90) UnaryExpr -> . NOT UnaryExpr
+    (91) UnaryExpr -> . XOR UnaryExpr
+    (92) UnaryExpr -> . MUL UnaryExpr
+    (93) UnaryExpr -> . AND UnaryExpr
+    (120) PrimaryExpr -> . Lit
+    (121) PrimaryExpr -> . IDENT
+    (122) PrimaryExpr -> . IDENT PERIOD IDENT
+    (123) PrimaryExpr -> . LPAREN Expr RPAREN
+    (124) PrimaryExpr -> . PrimaryExpr Selector
+    (125) PrimaryExpr -> . PrimaryExpr Index
+    (126) PrimaryExpr -> . PrimaryExpr Slice
+    (127) PrimaryExpr -> . PrimaryExpr Arguments
+    (94) Lit -> . BasicLit
+    (95) Lit -> . CompositeLit
+    (96) Lit -> . FunctionLit
+    (97) BasicLit -> . INT
+    (98) BasicLit -> . FLOAT
+    (99) BasicLit -> . IMAG
+    (100) BasicLit -> . RUNE
+    (101) BasicLit -> . STRING
+    (102) CompositeLit -> . StructType LiteralValue
+    (103) CompositeLit -> . ArrayType LiteralValue
+    (104) CompositeLit -> . SliceType LiteralValue
+    (105) CompositeLit -> . MapType LiteralValue
+    (106) CompositeLit -> . IDENT LiteralValue
+    (107) CompositeLit -> . IDENT PERIOD IDENT LiteralValue
+    (119) FunctionLit -> . FUNC Signature FunctionBody
+    (40) StructType -> . STRUCT LBRACE FieldDeclMult RBRACE
+    (35) ArrayType -> . LBRACK ArrayLength RBRACK ElementType
+    (59) SliceType -> . LBRACK RBRACK ElementType
+    (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
+
+    CASE            reduce using rule 197 (StatementList -> .)
+    DEFAULT         reduce using rule 197 (StatementList -> .)
+    RBRACE          reduce using rule 197 (StatementList -> .)
+    GOTO            shift and go to state 168
+    RETURN          shift and go to state 169
+    BREAK           shift and go to state 171
+    CONTINUE        shift and go to state 172
+    FALLTHROUGH     shift and go to state 173
+    LBRACE          shift and go to state 83
+    IF              shift and go to state 174
+    FOR             shift and go to state 178
+    CONST           shift and go to state 17
+    VAR             shift and go to state 18
+    TYPE            shift and go to state 19
+    IDENT           shift and go to state 179
+    SEMICOLON       reduce using rule 217 (EmptyStmt -> .)
+    SWITCH          shift and go to state 181
+    ADD             shift and go to state 106
+    SUB             shift and go to state 107
+    NOT             shift and go to state 112
+    XOR             shift and go to state 108
+    MUL             shift and go to state 109
+    AND             shift and go to state 110
+    LPAREN          shift and go to state 115
+    INT             shift and go to state 119
+    FLOAT           shift and go to state 120
+    IMAG            shift and go to state 121
+    RUNE            shift and go to state 122
+    STRING          shift and go to state 123
+    FUNC            shift and go to state 128
+    STRUCT          shift and go to state 64
+    LBRACK          shift and go to state 63
+    MAP             shift and go to state 66
+
+    StatementList                  shift and go to state 520
+    Statement                      shift and go to state 149
+    Decl                           shift and go to state 150
+    LabeledStmt                    shift and go to state 151
+    SimpleStmt                     shift and go to state 152
+    GotoStmt                       shift and go to state 153
+    ReturnStmt                     shift and go to state 154
+    BreakStmt                      shift and go to state 155
+    ContinueStmt                   shift and go to state 156
+    FallthroughStmt                shift and go to state 157
+    Block                          shift and go to state 158
+    IfStmt                         shift and go to state 159
+    SwitchStmt                     shift and go to state 160
+    ForStmt                        shift and go to state 161
+    ConstDecl                      shift and go to state 13
+    VarDecl                        shift and go to state 14
+    TypeDecl                       shift and go to state 15
+    Label                          shift and go to state 162
+    EmptyStmt                      shift and go to state 163
+    ExpressionStmt                 shift and go to state 164
+    IncDecStmt                     shift and go to state 165
+    Assignment                     shift and go to state 166
+    ShortVarDecl                   shift and go to state 167
+    ExpressionList                 shift and go to state 170
+    Expr                           shift and go to state 175
+    ExprSwitchStmt                 shift and go to state 176
+    TypeSwitchStmt                 shift and go to state 177
+    IdentifierList                 shift and go to state 180
+    UnaryExpr                      shift and go to state 105
+    PrimaryExpr                    shift and go to state 111
+    Lit                            shift and go to state 113
+    BasicLit                       shift and go to state 116
+    CompositeLit                   shift and go to state 117
+    FunctionLit                    shift and go to state 118
+    StructType                     shift and go to state 124
+    ArrayType                      shift and go to state 125
+    SliceType                      shift and go to state 126
+    MapType                        shift and go to state 127
+
 state 506
 
-    (267) TypeCaseClause -> TypeSwitchCase COLON StatementList .
+    (272) TypeList -> Type COMMA . TypeList
+    (269) TypeList -> . Type
+    (270) TypeList -> . IDENT
+    (271) TypeList -> . IDENT PERIOD IDENT
+    (272) TypeList -> . Type COMMA TypeList
+    (273) TypeList -> . IDENT COMMA TypeList
+    (274) TypeList -> . IDENT PERIOD IDENT COMMA TypeList
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (29) TypeLit -> . ArrayType
+    (30) TypeLit -> . StructType
+    (31) TypeLit -> . PointerType
+    (32) TypeLit -> . SliceType
+    (33) TypeLit -> . MapType
+    (34) TypeLit -> . FunctionType
+    (35) ArrayType -> . LBRACK ArrayLength RBRACK ElementType
+    (40) StructType -> . STRUCT LBRACE FieldDeclMult RBRACE
+    (56) PointerType -> . MUL Type
+    (57) PointerType -> . MUL IDENT
+    (58) PointerType -> . MUL IDENT PERIOD IDENT
+    (59) SliceType -> . LBRACK RBRACK ElementType
+    (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
+    (64) FunctionType -> . FUNC Signature
 
-    CASE            reduce using rule 267 (TypeCaseClause -> TypeSwitchCase COLON StatementList .)
-    DEFAULT         reduce using rule 267 (TypeCaseClause -> TypeSwitchCase COLON StatementList .)
-    RBRACE          reduce using rule 267 (TypeCaseClause -> TypeSwitchCase COLON StatementList .)
+    IDENT           shift and go to state 485
+    LPAREN          shift and go to state 56
+    LBRACK          shift and go to state 63
+    STRUCT          shift and go to state 64
+    MUL             shift and go to state 65
+    MAP             shift and go to state 66
+    FUNC            shift and go to state 67
 
+    Type                           shift and go to state 484
+    TypeList                       shift and go to state 521
+    TypeLit                        shift and go to state 55
+    ArrayType                      shift and go to state 57
+    StructType                     shift and go to state 58
+    PointerType                    shift and go to state 59
+    SliceType                      shift and go to state 60
+    MapType                        shift and go to state 61
+    FunctionType                   shift and go to state 62
 
 state 507
 
-    (273) TypeList -> Type COMMA . TypeList
-    (270) TypeList -> . Type
-    (271) TypeList -> . IDENT
-    (272) TypeList -> . IDENT PERIOD IDENT
-    (273) TypeList -> . Type COMMA TypeList
-    (274) TypeList -> . IDENT COMMA TypeList
-    (275) TypeList -> . IDENT PERIOD IDENT COMMA TypeList
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
-    (29) TypeLit -> . ArrayType
-    (30) TypeLit -> . StructType
-    (31) TypeLit -> . PointerType
-    (32) TypeLit -> . SliceType
-    (33) TypeLit -> . MapType
-    (34) TypeLit -> . FunctionType
-    (35) ArrayType -> . LBRACK ArrayLength RBRACK ElementType
-    (40) StructType -> . STRUCT LBRACE FieldDeclMult RBRACE
-    (56) PointerType -> . MUL Type
-    (57) PointerType -> . MUL IDENT
-    (58) PointerType -> . MUL IDENT PERIOD IDENT
-    (59) SliceType -> . LBRACK RBRACK ElementType
-    (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
-    (64) FunctionType -> . FUNC Signature
+    (271) TypeList -> IDENT PERIOD . IDENT
+    (274) TypeList -> IDENT PERIOD . IDENT COMMA TypeList
 
-    IDENT           shift and go to state 487
-    LPAREN          shift and go to state 56
-    LBRACK          shift and go to state 63
-    STRUCT          shift and go to state 64
-    MUL             shift and go to state 65
-    MAP             shift and go to state 66
-    FUNC            shift and go to state 67
+    IDENT           shift and go to state 522
 
-    Type                           shift and go to state 486
-    TypeList                       shift and go to state 520
-    TypeLit                        shift and go to state 55
-    ArrayType                      shift and go to state 57
-    StructType                     shift and go to state 58
-    PointerType                    shift and go to state 59
-    SliceType                      shift and go to state 60
-    MapType                        shift and go to state 61
-    FunctionType                   shift and go to state 62
 
 state 508
 
-    (272) TypeList -> IDENT PERIOD . IDENT
-    (275) TypeList -> IDENT PERIOD . IDENT COMMA TypeList
-
-    IDENT           shift and go to state 521
-
-
-state 509
-
-    (274) TypeList -> IDENT COMMA . TypeList
-    (270) TypeList -> . Type
-    (271) TypeList -> . IDENT
-    (272) TypeList -> . IDENT PERIOD IDENT
-    (273) TypeList -> . Type COMMA TypeList
-    (274) TypeList -> . IDENT COMMA TypeList
-    (275) TypeList -> . IDENT PERIOD IDENT COMMA TypeList
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (273) TypeList -> IDENT COMMA . TypeList
+    (269) TypeList -> . Type
+    (270) TypeList -> . IDENT
+    (271) TypeList -> . IDENT PERIOD IDENT
+    (272) TypeList -> . Type COMMA TypeList
+    (273) TypeList -> . IDENT COMMA TypeList
+    (274) TypeList -> . IDENT PERIOD IDENT COMMA TypeList
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -17378,7 +17547,7 @@ state 509
     (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
     (64) FunctionType -> . FUNC Signature
 
-    IDENT           shift and go to state 487
+    IDENT           shift and go to state 485
     LPAREN          shift and go to state 56
     LBRACK          shift and go to state 63
     STRUCT          shift and go to state 64
@@ -17386,8 +17555,8 @@ state 509
     MAP             shift and go to state 66
     FUNC            shift and go to state 67
 
-    TypeList                       shift and go to state 522
-    Type                           shift and go to state 486
+    TypeList                       shift and go to state 523
+    Type                           shift and go to state 484
     TypeLit                        shift and go to state 55
     ArrayType                      shift and go to state 57
     StructType                     shift and go to state 58
@@ -17395,12 +17564,21 @@ state 509
     SliceType                      shift and go to state 60
     MapType                        shift and go to state 61
     FunctionType                   shift and go to state 62
+
+state 509
+
+    (268) TypeCaseClause -> DEFAULT COLON StatementList .
+
+    CASE            reduce using rule 268 (TypeCaseClause -> DEFAULT COLON StatementList .)
+    DEFAULT         reduce using rule 268 (TypeCaseClause -> DEFAULT COLON StatementList .)
+    RBRACE          reduce using rule 268 (TypeCaseClause -> DEFAULT COLON StatementList .)
+
 
 state 510
 
     (263) TypeSwitchGuard -> IDENT DEFINE PrimaryExpr PERIOD LPAREN . TYPE RPAREN
 
-    TYPE            shift and go to state 523
+    TYPE            shift and go to state 524
 
 
 state 511
@@ -17433,7 +17611,7 @@ state 512
     (85) Expr -> Expr . AND Expr
     (86) Expr -> Expr . AND_NOT Expr
 
-    RBRACK          shift and go to state 524
+    RBRACK          shift and go to state 525
     LOR             shift and go to state 202
     LAND            shift and go to state 203
     EQL             shift and go to state 204
@@ -17660,8 +17838,8 @@ state 517
     (149) Arguments -> LPAREN IDENT PERIOD IDENT COMMA ExpressionList . RPAREN
     (150) Arguments -> LPAREN IDENT PERIOD IDENT COMMA ExpressionList . COMMA RPAREN
 
-    RPAREN          shift and go to state 526
-    COMMA           shift and go to state 525
+    RPAREN          shift and go to state 527
+    COMMA           shift and go to state 526
 
 
 state 518
@@ -17680,35 +17858,44 @@ state 519
 
 state 520
 
-    (273) TypeList -> Type COMMA TypeList .
+    (267) TypeCaseClause -> CASE TypeList COLON StatementList .
 
-    COLON           reduce using rule 273 (TypeList -> Type COMMA TypeList .)
+    CASE            reduce using rule 267 (TypeCaseClause -> CASE TypeList COLON StatementList .)
+    DEFAULT         reduce using rule 267 (TypeCaseClause -> CASE TypeList COLON StatementList .)
+    RBRACE          reduce using rule 267 (TypeCaseClause -> CASE TypeList COLON StatementList .)
 
 
 state 521
 
-    (272) TypeList -> IDENT PERIOD IDENT .
-    (275) TypeList -> IDENT PERIOD IDENT . COMMA TypeList
+    (272) TypeList -> Type COMMA TypeList .
 
-    COLON           reduce using rule 272 (TypeList -> IDENT PERIOD IDENT .)
-    COMMA           shift and go to state 527
+    COLON           reduce using rule 272 (TypeList -> Type COMMA TypeList .)
 
 
 state 522
 
-    (274) TypeList -> IDENT COMMA TypeList .
+    (271) TypeList -> IDENT PERIOD IDENT .
+    (274) TypeList -> IDENT PERIOD IDENT . COMMA TypeList
 
-    COLON           reduce using rule 274 (TypeList -> IDENT COMMA TypeList .)
+    COLON           reduce using rule 271 (TypeList -> IDENT PERIOD IDENT .)
+    COMMA           shift and go to state 528
 
 
 state 523
 
-    (263) TypeSwitchGuard -> IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE . RPAREN
+    (273) TypeList -> IDENT COMMA TypeList .
 
-    RPAREN          shift and go to state 528
+    COLON           reduce using rule 273 (TypeList -> IDENT COMMA TypeList .)
 
 
 state 524
+
+    (263) TypeSwitchGuard -> IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE . RPAREN
+
+    RPAREN          shift and go to state 529
+
+
+state 525
 
     (135) Slice -> LBRACK Expr COLON Expr COLON Expr RBRACK .
 
@@ -17758,14 +17945,14 @@ state 524
     ELSE            reduce using rule 135 (Slice -> LBRACK Expr COLON Expr COLON Expr RBRACK .)
 
 
-state 525
+state 526
 
     (150) Arguments -> LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA . RPAREN
 
-    RPAREN          shift and go to state 529
+    RPAREN          shift and go to state 530
 
 
-state 526
+state 527
 
     (149) Arguments -> LPAREN IDENT PERIOD IDENT COMMA ExpressionList RPAREN .
 
@@ -17815,19 +18002,19 @@ state 526
     ELSE            reduce using rule 149 (Arguments -> LPAREN IDENT PERIOD IDENT COMMA ExpressionList RPAREN .)
 
 
-state 527
+state 528
 
-    (275) TypeList -> IDENT PERIOD IDENT COMMA . TypeList
-    (270) TypeList -> . Type
-    (271) TypeList -> . IDENT
-    (272) TypeList -> . IDENT PERIOD IDENT
-    (273) TypeList -> . Type COMMA TypeList
-    (274) TypeList -> . IDENT COMMA TypeList
-    (275) TypeList -> . IDENT PERIOD IDENT COMMA TypeList
-    (288) Type -> . TypeLit
-    (289) Type -> . LPAREN Type RPAREN
-    (290) Type -> . LPAREN IDENT RPAREN
-    (291) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
+    (274) TypeList -> IDENT PERIOD IDENT COMMA . TypeList
+    (269) TypeList -> . Type
+    (270) TypeList -> . IDENT
+    (271) TypeList -> . IDENT PERIOD IDENT
+    (272) TypeList -> . Type COMMA TypeList
+    (273) TypeList -> . IDENT COMMA TypeList
+    (274) TypeList -> . IDENT PERIOD IDENT COMMA TypeList
+    (287) Type -> . TypeLit
+    (288) Type -> . LPAREN Type RPAREN
+    (289) Type -> . LPAREN IDENT RPAREN
+    (290) Type -> . LPAREN IDENT PERIOD IDENT RPAREN
     (29) TypeLit -> . ArrayType
     (30) TypeLit -> . StructType
     (31) TypeLit -> . PointerType
@@ -17843,7 +18030,7 @@ state 527
     (60) MapType -> . MAP LBRACK KeyType RBRACK ElementType
     (64) FunctionType -> . FUNC Signature
 
-    IDENT           shift and go to state 487
+    IDENT           shift and go to state 485
     LPAREN          shift and go to state 56
     LBRACK          shift and go to state 63
     STRUCT          shift and go to state 64
@@ -17851,8 +18038,8 @@ state 527
     MAP             shift and go to state 66
     FUNC            shift and go to state 67
 
-    TypeList                       shift and go to state 530
-    Type                           shift and go to state 486
+    TypeList                       shift and go to state 531
+    Type                           shift and go to state 484
     TypeLit                        shift and go to state 55
     ArrayType                      shift and go to state 57
     StructType                     shift and go to state 58
@@ -17861,14 +18048,14 @@ state 527
     MapType                        shift and go to state 61
     FunctionType                   shift and go to state 62
 
-state 528
+state 529
 
     (263) TypeSwitchGuard -> IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE RPAREN .
 
     LBRACE          reduce using rule 263 (TypeSwitchGuard -> IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE RPAREN .)
 
 
-state 529
+state 530
 
     (150) Arguments -> LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN .
 
@@ -17918,11 +18105,11 @@ state 529
     ELSE            reduce using rule 150 (Arguments -> LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN .)
 
 
-state 530
+state 531
 
-    (275) TypeList -> IDENT PERIOD IDENT COMMA TypeList .
+    (274) TypeList -> IDENT PERIOD IDENT COMMA TypeList .
 
-    COLON           reduce using rule 275 (TypeList -> IDENT PERIOD IDENT COMMA TypeList .)
+    COLON           reduce using rule 274 (TypeList -> IDENT PERIOD IDENT COMMA TypeList .)
 
 WARNING: 
 WARNING: Conflicts:
@@ -17933,5 +18120,5 @@ WARNING: shift/reduce conflict for RPAREN in state 183 resolved as shift
 WARNING: shift/reduce conflict for COMMA in state 352 resolved as shift
 WARNING: reduce/reduce conflict in state 413 resolved using rule (PointerType -> MUL IDENT)
 WARNING: rejected rule (PrimaryExpr -> IDENT) in state 413
-WARNING: reduce/reduce conflict in state 500 resolved using rule (PointerType -> MUL IDENT PERIOD IDENT)
-WARNING: rejected rule (PrimaryExpr -> IDENT PERIOD IDENT) in state 500
+WARNING: reduce/reduce conflict in state 499 resolved using rule (PointerType -> MUL IDENT PERIOD IDENT)
+WARNING: rejected rule (PrimaryExpr -> IDENT PERIOD IDENT) in state 499

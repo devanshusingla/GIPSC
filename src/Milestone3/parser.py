@@ -945,16 +945,17 @@ def p_TypeCaseClauseMult(p):
 
 def p_TypeCaseClause(p):
     """
-    TypeCaseClause : TypeSwitchCase COLON StatementList
+    TypeCaseClause : CASE TypeList COLON StatementList
+                     | DEFAULT COLON StatementList
     """
     p[0] = get_value_p(p)
 
-def p_TypeSwitchCase(p):
-    """
-    TypeSwitchCase : CASE TypeList 
-                     | DEFAULT
-    """
-    p[0] = get_value_p(p)
+# def p_TypeSwitchCase(p):
+#     """
+#     TypeSwitchCase : CASE TypeList 
+#                      | DEFAULT
+#     """
+#     p[0] = get_value_p(p)
 
 def p_TypeList(p):
     """
