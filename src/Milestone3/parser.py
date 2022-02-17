@@ -8,12 +8,16 @@ tokens=lexer.tokens
 tokens.remove('COMMENT')
 
 precedence = (
+    # ('left', 'CONV'),
+    ('left', 'LBRACE', 'RBRACE'),
     ('left','IDENT'),
+    
     ('left','SEMICOLON'),
     ('left','COLON'),
     ('left','INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING'),
     ('left','BREAK'),
     ('left','CONTINUE'),
+    
     ('left','RETURN'),
     ('left', 'COMMA'),
     ('right', 'ASSIGN', 'DEFINE', 'NOT', 'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'SHL_ASSIGN', 'SHR_ASSIGN', 'AND_NOT_ASSIGN'),
@@ -22,7 +26,7 @@ precedence = (
     ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
     ('left', 'ADD', 'SUB','OR','XOR'),
     ('left', 'MUL', 'QUO','REM','AND','AND_NOT','SHL','SHR'),
-    ('left', 'LPAREN', 'LBRACK', 'RBRACK', 'INC', 'DEC', 'PERIOD')
+    ('left', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'INC', 'DEC', 'PERIOD')
     # ('right', 'UMINUS'),
 )
 
@@ -49,15 +53,15 @@ def p_SourceFile(p):
 
 def p_PackageClause(p):
     """
-    PackageClause : PACKAGE PackageName
+    PackageClause : PACKAGE IDENT
     """
     p[0] = get_value_p(p)
 
-def p_PackageName(p):
-    """
-    PackageName : IDENT
-    """
-    p[0] = get_value_p(p)
+# def p_PackageName(p):
+#     """
+#     PackageName : IDENT
+#     """
+#     p[0] = get_value_p(p)
 
 ## Import related grammar
 
@@ -137,27 +141,30 @@ def p_ConstSpecMult(p):
 def p_ConstSpec(p):
     """
     ConstSpec : IdentifierList Type ASSIGN ExpressionList 
+                | IdentifierList IDENT ASSIGN ExpressionList
+                | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
     """
     p[0] = get_value_p(p)
 
 def p_IdentifierList(p):
     """
-    IdentifierList : IDENT IdentifierOth
+    IdentifierList : IDENT
+                    | IDENT COMMA IdentifierList
     """
     p[0] = get_value_p(p)
 
-def p_IdentifierOth(p):
-    """
-    IdentifierOth : COMMA IDENT IdentifierOth  
-                  | 
-    """
-    p[0] = get_value_p(p)
+# def p_IdentifierOth(p):
+#     """
+#     IdentifierOth : COMMA IDENT IdentifierOth  
+#                   | 
+#     """
+#     p[0] = get_value_p(p)
 
-def p_QualifiedIdent(p):
-    """
-    QualifiedIdent : IDENT PERIOD IDENT
-    """
-    p[0] = get_value_p(p)
+# def p_QualifiedIdent(p):
+#     """
+#     QualifiedIdent : IDENT PERIOD IDENT
+#     """
+#     p[0] = get_value_p(p)
 
 # function type remaining
 # Added function type
@@ -188,6 +195,8 @@ def p_ArrayLength(p):
 def p_ElementType(p):
     """
     ElementType : Type
+                | IDENT
+                | IDENT PERIOD IDENT
     """
     p[0] = get_value_p(p)
 
@@ -208,9 +217,13 @@ def p_FieldDeclMult(p):
 
 def p_FieldDecl(p):
     """
-    FieldDecl : IdentifierList Type
+    FieldDecl : IdentifierList Type 
+              | IdentifierList IDENT
+              | IdentifierList IDENT PERIOD IDENT
               | EmbeddedField
               | IdentifierList Type Tag
+              | IdentifierList IDENT Tag
+              | IdentifierList IDENT PERIOD IDENT Tag
               | EmbeddedField Tag
     """
     p[0] = get_value_p(p)
@@ -223,8 +236,10 @@ def p_Tag(p):
 
 def p_EmbeddedField(p):
     """
-    EmbeddedField : MUL TypeName
-                  | TypeName
+    EmbeddedField : MUL IDENT
+                  | IDENT
+                  | MUL IDENT PERIOD IDENT
+                  | IDENT PERIOD IDENT
     """
     p[0] = get_value_p(p)
 
@@ -239,6 +254,8 @@ def p_PointerType(p):
 def p_BaseType(p):
     """
     BaseType : Type
+               | IDENT
+                | IDENT PERIOD IDENT
     """
     p[0] = get_value_p(p)
 
@@ -259,6 +276,8 @@ def p_MapType(p):
 def p_KeyType(p):
     """
     KeyType : Type
+            | IDENT
+            | IDENT PERIOD IDENT
     """
     p[0] = get_value_p(p)
 
@@ -273,7 +292,8 @@ def p_FunctionType(p):
 
 def p_ExpressionList(p):
     """
-    ExpressionList : Expr ExprOth
+    ExpressionList : Expr
+                    | Expr COMMA ExpressionList
     """
     p[0] = get_value_p(p)
 
@@ -344,22 +364,23 @@ def p_UnaryOp(p):
     """
     p[0] = get_value_p(p)
 
-def p_ExprOth(p):
-    """
-    ExprOth : COMMA Expr ExprOth 
-            | 
-    """
-    p[0] = get_value_p(p)
+# def p_ExprOth(p):
+#     """
+#     ExprOth : Expr COMMA ExprOth 
+#             | 
+#     """
+#     p[0] = get_value_p(p)
 
 ## Operands and Literals
 
-def p_Operand(p):
-    """
-    Operand : Lit 
-            | OperandName
-            | LPAREN Expr RPAREN
-    """
-    p[0] = get_value_p(p)
+# def p_Operand(p):
+#     """
+#     Operand : Lit 
+#             | IDENT
+#             | IDENT PERIOD IDENT
+#             | LPAREN Expr RPAREN
+    # """
+    # p[0] = get_value_p(p)
 
 def p_Lit(p):
     """
@@ -385,7 +406,8 @@ def p_CompositeLit(p):
                  | ArrayType LiteralValue
                  | SliceType LiteralValue
                  | MapType LiteralValue
-                 | TypeName LiteralValue
+                 | IDENT LiteralValue
+                 | IDENT PERIOD IDENT LiteralValue
     """
     p[0] = get_value_p(p)
 
@@ -413,8 +435,7 @@ def p_KeyedElement(p):
 
 def p_Key(p):
     """
-    Key : IDENT
-        | Expr
+    Key : Expr
         | LiteralValue
     """
     p[0] = get_value_p(p)
@@ -426,12 +447,12 @@ def p_Element(p):
     """
     p[0] = get_value_p(p)
 
-def p_OperandName(p):
-    """
-    OperandName : IDENT
-                | QualifiedIdent
-    """
-    p[0] = get_value_p(p)
+# def p_OperandName(p):
+#     """
+#     OperandName : IDENT
+#                 | QualifiedIdent
+#     """
+#     p[0] = get_value_p(p)
 
 def p_FunctionLit(p):
     """
@@ -443,8 +464,10 @@ def p_FunctionLit(p):
 
 def p_PrimaryExpr(p):
     """
-    PrimaryExpr : Operand
-                | Conversion
+    PrimaryExpr :  Lit 
+                | IDENT
+                | IDENT PERIOD IDENT
+                | LPAREN Expr RPAREN
                 | PrimaryExpr Selector
                 | PrimaryExpr Index
                 | PrimaryExpr Slice
@@ -459,12 +482,16 @@ def p_Index(p):
     p[0] = get_value_p(p)
 
 
-def p_Conversion(p):
-    """
-    Conversion : Type LPAREN Expr RPAREN
-               | Type LPAREN Expr COMMA RPAREN
-    """
-    p[0] = get_value_p(p)
+# def p_Conversion(p):
+#     """
+#     Conversion : Type LPAREN Expr RPAREN %prec CONV
+#                | Type LPAREN Expr COMMA RPAREN  %prec CONV
+#                | IDENT LPAREN Expr RPAREN %prec CONV
+#                | IDENT LPAREN Expr COMMA RPAREN %prec CONV
+#                | IDENT PERIOD IDENT LPAREN Expr RPAREN %prec CONV
+#                | IDENT PERIOD IDENT LPAREN Expr COMMA RPAREN %prec CONV
+#     """
+#     p[0] = get_value_p(p)
 
 def p_Selector(p):
     """
@@ -491,7 +518,15 @@ def p_Arguments(p):
               | LPAREN Type RPAREN
               | LPAREN Type COMMA RPAREN
               | LPAREN Type COMMA ExpressionList RPAREN 
-              | LPAREN Type COMMA ExpressionList COMMA RPAREN   
+              | LPAREN Type COMMA ExpressionList COMMA RPAREN 
+              | LPAREN IDENT RPAREN
+              | LPAREN IDENT COMMA RPAREN
+              | LPAREN IDENT COMMA ExpressionList RPAREN 
+              | LPAREN IDENT COMMA ExpressionList COMMA RPAREN 
+              | LPAREN IDENT PERIOD IDENT RPAREN
+              | LPAREN IDENT PERIOD IDENT COMMA RPAREN
+              | LPAREN IDENT PERIOD IDENT COMMA ExpressionList RPAREN 
+              | LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN   
     """
     p[0] = get_value_p(p)
 
@@ -524,6 +559,8 @@ def p_TypeSpec(p):
 def p_AliasDecl(p):
     """
     AliasDecl : IDENT ASSIGN Type
+                | IDENT ASSIGN IDENT
+                | IDENT ASSIGN IDENT PERIOD IDENT
     """
     p[0] = get_value_p(p)
 
@@ -531,6 +568,9 @@ def p_AliasDecl(p):
 def p_TypeDef(p):
     """
     Typedef : IDENT Type
+              | IDENT IDENT
+              | IDENT IDENT PERIOD IDENT
+
     """
     p[0] = get_value_p(p)
 
@@ -553,8 +593,12 @@ def p_VarMult(p):
 def p_VarSpec(p):
     """
     VarSpec : IdentifierList Type ASSIGN ExpressionList
+            | IdentifierList IDENT ASSIGN ExpressionList
+            | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
             | IdentifierList ASSIGN ExpressionList
             | IdentifierList Type
+            | IdentifierList IDENT
+            | IdentifierList IDENT PERIOD IDENT
     """
     p[0] = get_value_p(p)
 
@@ -602,7 +646,7 @@ def p_Parameters(p):
     
 def p_ParameterList(p):
     """
-    ParameterList : COMMA ParameterDecl ParameterList 
+    ParameterList : ParameterDecl COMMA ParameterList 
                   | ParameterDecl
     """
     p[0] = get_value_p(p)
@@ -610,7 +654,11 @@ def p_ParameterList(p):
 def p_ParameterDecl(p):
     """
     ParameterDecl : Type
+                  | IDENT
+                  | IDENT PERIOD IDENT
                   | IdentifierList Type
+                  | IdentifierList IDENT
+                  | IdentifierList IDENT PERIOD IDENT
     """
     p[0] = get_value_p(p)
 
@@ -618,6 +666,8 @@ def p_Result(p):
     """
     Result : Parameters 
            | Type
+           | IDENT
+           | IDENT PERIOD IDENT
     """
     p[0] = get_value_p(p)
 
@@ -881,16 +931,23 @@ def p_TypeSwitchCase(p):
 
 def p_TypeList(p):
     """
-    TypeList : Type TypeOth
+    TypeList : Type
+                | IDENT 
+                | IDENT PERIOD IDENT
+                | Type COMMA TypeList
+                | IDENT COMMA TypeList
+                | IDENT PERIOD IDENT COMMA TypeList
     """
     p[0] = get_value_p(p)
 
-def p_TypeOth(p):
-    """
-    TypeOth :  COMMA Type TypeOth
-                |
-    """
-    p[0] = get_value_p(p)
+# def p_TypeOth(p):
+#     """
+#     TypeOth :  COMMA Type TypeOth
+#                 | COMMA IDENT TypeOth
+#                 | COMMA IDENT PERIOD IDENT TypeOth
+#                 |
+#     """
+#     p[0] = get_value_p(p)
 
 ## -------------------------------------------------
 
@@ -964,18 +1021,19 @@ def p_RangeList(p):
 
 def p_Type(p):
     """
-    Type : TypeName 
-         | TypeLit
+    Type : TypeLit
          | LPAREN Type RPAREN
+         | LPAREN IDENT RPAREN
+         | LPAREN IDENT PERIOD IDENT RPAREN
     """
     p[0] = get_value_p(p)
 
-def p_TypeName(p):
-    """
-    TypeName : IDENT
-             | QualifiedIdent
-    """
-    p[0] = get_value_p(p)
+# def p_TypeName(p):
+#     """
+#     TypeName : IDENT
+#              | QualifiedIdent
+#     """
+#     p[0] = get_value_p(p)
 
 
 def p_error(p):
