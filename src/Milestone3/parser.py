@@ -8,27 +8,21 @@ tokens=lexer.tokens
 tokens.remove('COMMENT')
 
 precedence = (
-    ('left','LPAREN'),
-    ('left','LBRACE'),
     ('left','IDENT'),
-    ('left','DEFINE'),
-    ('left','COMMA'),
-    ('left','LBRACK'),
-    ('left','RBRACK'),
-    ('left','PERIOD'),
     ('left','SEMICOLON'),
     ('left','COLON'),
-    ('left','INT'),
-    ('left','FLOAT'),
-    ('left','STRING'),
+    ('left','INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING'),
     ('left','BREAK'),
     ('left','CONTINUE'),
     ('left','RETURN'),
+    ('left', 'COMMA'),
+    ('right', 'ASSIGN', 'DEFINE', 'NOT', 'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'SHL_ASSIGN', 'SHR_ASSIGN', 'AND_NOT_ASSIGN'),
     ('left', 'LOR'),
     ('left', 'LAND'),
     ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
     ('left', 'ADD', 'SUB','OR','XOR'),
     ('left', 'MUL', 'QUO','REM','AND','AND_NOT','SHL','SHR'),
+    ('left', 'LPAREN', 'LBRACK', 'RBRACK', 'INC', 'DEC', 'PERIOD')
     # ('right', 'UMINUS'),
 )
 

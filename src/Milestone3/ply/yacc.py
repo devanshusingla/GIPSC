@@ -1786,6 +1786,10 @@ class LRTable:
                                 r = st_action.get(a)
                                 if r is not None:
                                     # Whoa. Have a shift/reduce or reduce/reduce conflict
+                                    print("Whoa. Have a shift/reduce or reduce/reduce conflict\n")
+                                    print(f"r: {r}")
+                                    print(f'a: {a}')
+                                    print(f'st_action: {st_action}')
                                     if r > 0:
                                         # Need to decide on shift or reduce here
                                         # By default we favor shifting. Need to add
