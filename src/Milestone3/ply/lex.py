@@ -207,8 +207,8 @@ class Lexer:
     # ------------------------------------------------------------
     def token(self):
         # Make local copies of frequently referenced attributes
-        if self.lexdata[-1] != ";":
-            self.lexdata = self.lexdata + ";"
+        if self.lexdata[-1] != "\n":
+            self.lexdata = self.lexdata + "\n"
             self.lexlen += 1
         lexpos    = self.lexpos
         lexlen    = self.lexlen
@@ -221,7 +221,7 @@ class Lexer:
             # This code provides some short-circuit code for whitespace, tabs, and other ignored characters
             if lexdata[lexpos] in lexignore:
                 if lexdata[lexpos] == '\n':
-                    if self.prevtok.type  != None and self.prevtok.type in ["IDENT", "FLOAT", "INT", "IMAGE", "RUNE", "STRING", "BREAK", "CONTINUE", "FALLTHROUGH", "RETURN", "INC", "DEC", "RPAREN", "RBRACK", "RBRACE"]:
+                    if self.prevtok  != None and self.prevtok.type in ["IDENT", "FLOAT", "INT", "IMAG", "RUNE", "STRING", "BREAK", "CONTINUE", "FALLTHROUGH", "RETURN", "INC", "DEC", "RPAREN", "RBRACK", "RBRACE"]:
                         self.lexdata = lexdata[:lexpos] + ';' + lexdata[lexpos:]
                         lexlen += 1
                         self.lexlen += 1

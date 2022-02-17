@@ -8,29 +8,28 @@ tokens=lexer.tokens
 tokens.remove('COMMENT')
 
 precedence = (
-    ('left', 'IDENT'),
-    ('left', 'COMMA' ),
-    ('left', 'LBRACK' ),
-    ('left', 'RBRACK'),
-    ('left', 'LBRACE'),
-    ('left', 'RBRACE'),
-    ('left', 'PERIOD'),
-    ('left', 'SEMICOLON'),
-    ('left', 'COLON'),
-    ('left', 'INT'),
-    ('left', 'FLOAT'),
-    ('left', 'STRING'),
-    ('left', 'BREAK'),
-    ('left', 'CONTINUE'),
-    ('left', 'RETURN'),
-    ('right', 'ASSIGN', 'DEFINE', 'NOT'),
     ('left','LPAREN'),
-    ('left','RPAREN'),
+    ('left','LBRACE'),
+    ('left','IDENT'),
+    ('left','DEFINE'),
+    ('left','COMMA'),
+    ('left','LBRACK'),
+    ('left','RBRACK'),
+    ('left','PERIOD'),
+    ('left','SEMICOLON'),
+    ('left','COLON'),
+    ('left','INT'),
+    ('left','FLOAT'),
+    ('left','STRING'),
+    ('left','BREAK'),
+    ('left','CONTINUE'),
+    ('left','RETURN'),
     ('left', 'LOR'),
     ('left', 'LAND'),
     ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
     ('left', 'ADD', 'SUB','OR','XOR'),
     ('left', 'MUL', 'QUO','REM','AND','AND_NOT','SHL','SHR'),
+    # ('right', 'UMINUS'),
 )
 
 non_terminals = {}
@@ -70,7 +69,7 @@ def p_PackageName(p):
 
 def p_ImportDeclMult(p):
     """
-    ImportDeclMult : ImportDeclMult ImportDecl SEMICOLON
+    ImportDeclMult : ImportDecl SEMICOLON ImportDeclMult
                    |  
     """
     p[0] = get_value_p(p)
@@ -157,23 +156,6 @@ def p_IdentifierOth(p):
     """
     IdentifierOth : COMMA IDENT IdentifierOth  
                   | 
-    """
-    p[0] = get_value_p(p)
-    
-#Type
-
-def p_Type(p):
-    """
-    Type : TypeName 
-         | TypeLit
-         | LPAREN Type RPAREN
-    """
-    p[0] = get_value_p(p)
-
-def p_TypeName(p):
-    """
-    TypeName : IDENT
-             | QualifiedIdent
     """
     p[0] = get_value_p(p)
 
@@ -424,7 +406,7 @@ def p_LiteralValue(p):
 def p_ElementList(p):
     """
     ElementList : KeyedElement 
-                | COMMA KeyedElement ElementList 
+                | KeyedElement COMMA ElementList 
     """
     p[0] = get_value_p(p)
 
@@ -453,6 +435,7 @@ def p_Element(p):
 def p_OperandName(p):
     """
     OperandName : IDENT
+                | QualifiedIdent
     """
     p[0] = get_value_p(p)
 
@@ -469,10 +452,18 @@ def p_PrimaryExpr(p):
     PrimaryExpr : Operand
                 | Conversion
                 | PrimaryExpr Selector
+                | PrimaryExpr Index
                 | PrimaryExpr Slice
                 | PrimaryExpr Arguments
     """
     p[0] = get_value_p(p)
+
+def p_Index(p):
+    """
+    Index : LBRACK Expr RBRACK
+    """
+    p[0] = get_value_p(p)
+
 
 def p_Conversion(p):
     """
@@ -788,7 +779,8 @@ def p_Block(p):
 ## If Else Block -----------------------------------
 def p_IfStmt(p):
     """
-    IfStmt : IF SimpleStmtOpt Expr Block else_stmt
+    IfStmt : IF Expr Block else_stmt
+           | IF SimpleStmt SEMICOLON Expr else_stmt
     """
     p[0] = get_value_p(p)
 
@@ -802,8 +794,8 @@ def p_else_stmt(p):
 
 def p_SimpleStmtOpt(p):
     """
-    SimpleStmtOpt : SimpleStmt SEMICOLON 
-                    |
+    SimpleStmtOpt : 
+                  | SimpleStmt SEMICOLON
     """
     p[0] = get_value_p(p)
 
@@ -972,6 +964,25 @@ def p_RangeList(p):
 
 ## --------------------------------------------------
 ## --------------------------------------------------
+
+    
+#Type
+
+def p_Type(p):
+    """
+    Type : TypeName 
+         | TypeLit
+         | LPAREN Type RPAREN
+    """
+    p[0] = get_value_p(p)
+
+def p_TypeName(p):
+    """
+    TypeName : IDENT
+             | QualifiedIdent
+    """
+    p[0] = get_value_p(p)
+
 
 def p_error(p):
     print("Syntax Error: ", p)

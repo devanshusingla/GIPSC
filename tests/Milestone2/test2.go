@@ -16,11 +16,11 @@ func main() {
 		This will not give any error/* //
 		...$$
 	*/
-	words := []string{"I", " a\"m", "\ta", " student"}
+	words := []string{"I", " aFfxhzsgnxhjewmhxmjehxmj", "\ta", " student"}
 	var sentence string = ""
 	for _, word := range words {
 		sentence += word
-		x = x/2 + 2/x
+		x = -x/-2 - -(2/-x)
 	}
 	fmt.Println(sentence)
 	fmt.Printf("value of x := %d\n", x)

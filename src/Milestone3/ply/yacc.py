@@ -1797,8 +1797,12 @@ class LRTable:
                                         # Reduce precedence comes from rule being reduced (p)
                                         rprec, rlevel = Productions[p.number].prec
 
+                                        print("CONFLICT")
+                                        print(sprec, slevel, rprec, rlevel)
+
                                         if (slevel < rlevel) or ((slevel == rlevel) and (rprec == 'left')):
                                             # We really need to reduce here.
+                                            print("We really need to reduce here")
                                             st_action[a] = -p.number
                                             st_actionp[a] = p
                                             if not slevel and not rlevel:
@@ -1809,6 +1813,7 @@ class LRTable:
                                             st_action[a] = None
                                         else:
                                             # Hmmm. Guess we'll keep the shift
+                                            print("Hmmm. Guess we'll keep the shift")
                                             if not rlevel:
                                                 log.info('  ! shift/reduce conflict for %s resolved as shift', a)
                                                 self.sr_conflicts.append((st, a, 'shift'))

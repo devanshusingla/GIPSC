@@ -10,7 +10,7 @@ export MILESTONE=3
 
 path_to_root=$( dirname $( dirname $( realpath $0) ) )
 abs_path_to_parser="${path_to_root}/src/Milestone${MILESTONE}/parser.py"
-abs_path_to_gen_ast="${path_to_root}/src/Milestone${MILESTONE}/gen_ast.py"
+abs_path_to_gen_ast="${path_to_root}/src/Milestone${MILESTONE}/gen_tree.py"
 abs_path_to_file=$(realpath $1)
 abs_path_to_output=$(echo $abs_path_to_file | sed 's/.go$/.output/')
 abs_path_to_dot=$(echo $abs_path_to_file | sed 's/.go$/.dot/')
