@@ -207,6 +207,9 @@ class Lexer:
     # ------------------------------------------------------------
     def token(self):
         # Make local copies of frequently referenced attributes
+        if self.lexdata[-1] != ";":
+            self.lexdata = self.lexdata + ";"
+            self.lexlen += 1
         lexpos    = self.lexpos
         lexlen    = self.lexlen
         lexcol    = self.lexcol
