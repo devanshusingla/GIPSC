@@ -979,6 +979,9 @@ non_terminals = grammar.Nonterminals
 with open(sys.argv[1], 'r') as f:
     import pprint
     out = parser.parse(f.read(), lexer = lexer, debug=False)
+    if out is None:
+        f.close()
+        sys.exit(1)
     output_file = sys.argv[1][:-2] + "output"
     with open(output_file, 'w') as fout:
         pprint.pprint(out, width=10, stream=fout)

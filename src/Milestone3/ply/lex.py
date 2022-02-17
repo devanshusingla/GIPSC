@@ -220,6 +220,8 @@ class Lexer:
                 if lexdata[lexpos] == '\n':
                     if self.prevtok.type  != None and self.prevtok.type in ["IDENT", "FLOAT", "INT", "IMAGE", "RUNE", "STRING", "BREAK", "CONTINUE", "FALLTHROUGH", "RETURN", "INC", "DEC", "RPAREN", "RBRACK", "RBRACE"]:
                         self.lexdata = lexdata[:lexpos] + ';' + lexdata[lexpos:]
+                        lexlen += 1
+                        self.lexlen += 1
                         lexdata = self.lexdata
                         to_semicolon = True
                     else:
