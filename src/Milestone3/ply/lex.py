@@ -122,6 +122,7 @@ class Lexer:
         self.lexmodule = None         # Module
         self.lineno = 1               # Current line number
         self.lexcol = 1               # Column number of current token
+        self.prevtok = None           # Previous token
 
     def clone(self, object=None):
         c = copy.copy(self)
@@ -213,19 +214,28 @@ class Lexer:
         lexdata   = self.lexdata
 
         while lexpos < lexlen:
+            to_semicolon = False
             # This code provides some short-circuit code for whitespace, tabs, and other ignored characters
             if lexdata[lexpos] in lexignore:
                 if lexdata[lexpos] == '\n':
-                    lexcol = 1
-                    self.lineno += 1
+                    if self.prevtok.type  != None and self.prevtok.type in ["IDENT", "FLOAT", "INT", "IMAGE", "RUNE", "STRING", "BREAK", "CONTINUE", "FALLTHROUGH", "RETURN", "INC", "DEC", "RPAREN", "RBRACK", "RBRACE"]:
+                        self.lexdata = lexdata[:lexpos] + ';' + lexdata[lexpos:]
+                        lexdata = self.lexdata
+                        to_semicolon = True
+                    else:
+                        lexcol = 1
+                        self.lineno += 1
+
+                        
                 elif lexdata[lexpos] == '\t':
                     lexcol += TABLENGTH
                     # lexcol -= (lexcol%TABLENGTH)
                 else:
                     lexcol += 1
                 
-                lexpos += 1
-                continue
+                if not to_semicolon:
+                    lexpos += 1
+                    continue
 
             # Look for a regular expression match
             for lexre, lexindexfunc in self.lexre:
@@ -250,6 +260,7 @@ class Lexer:
                     # If no token type was set, it's an ignored token
                     if tok.type:
                         self.lexpos = m.end()
+                        self.prevtok = tok
                         return tok
                     else:
                         lexpos = m.end()
@@ -272,6 +283,7 @@ class Lexer:
                     lexpos    = self.lexpos         # This is here in case user has updated lexpos.
                     lexignore = self.lexignore      # This is here in case there was a state change
                     break
+                self.prevtok = newtok
                 return newtok
             else:
                 # No match, see if in literals
@@ -282,6 +294,7 @@ class Lexer:
                     tok.type = tok.value
                     tok.lexpos = lexpos
                     self.lexpos = lexpos + 1
+                    self.prevtok = tok
                     return tok
 
                 # No match. Call t_error() if defined.
@@ -301,6 +314,7 @@ class Lexer:
                     lexpos = self.lexpos
                     if not newtok:
                         continue
+                    self.prevtok = newtok
                     return newtok
 
                 self.lexpos = lexpos
@@ -316,6 +330,7 @@ class Lexer:
             tok.lexer = self
             self.lexpos = lexpos
             newtok = self.lexeoff(tok)
+            self.prevtok = newtok
             return newtok
 
         self.lexpos = lexpos + 1

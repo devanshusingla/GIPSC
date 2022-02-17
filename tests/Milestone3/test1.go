@@ -1,6 +1,6 @@
-package main;
+package main
 
-import "fmt";
+import "fmt"
 
 type Random struct {
     a,b int;
@@ -9,6 +9,6 @@ type Random struct {
 
 func main() {
     // Some comment
-    var a int = 20;
-    fmt.Println(a);
+    var a int = 20
+    fmt.Println(a)
 };
