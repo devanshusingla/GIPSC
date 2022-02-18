@@ -32,7 +32,9 @@ def writeGraph(outerList, stateId):
     return nextStateId
 
 with open(path_to_tree, 'r') as ftree:
-    writeGraph(ast.literal_eval(ftree.read()), 0)
+    output = ast.literal_eval(ftree.read())
+    # print(output)
+    writeGraph(output, 0)
 
 fdot.write("}")
 fdot.close()

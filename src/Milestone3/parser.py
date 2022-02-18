@@ -32,15 +32,33 @@ precedence = (
 )
 
 non_terminals = {}
-
+ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
 ## Starting grammar
 def get_value_p(p):
     value = [str(sys._getframe(1).f_code.co_name)[2:]]
+    # value = []
     for i in range(1, len(p)):
-        if isinstance(p[i], str) and p[i] not in non_terminals:
-            value.append([p[i]])
-        else:
-            value.append(p[i])
+        if isinstance(p[i], str):
+            if p[i] in ignored_tokens:
+                continue
+            if p[i] not in non_terminals:
+                value.append([p[i]])
+        elif len(p[i]) > 0:
+            if p[i][0] == value[0]:
+                value.extend(p[i][1:])
+            else:
+                value.append(p[i])
+    if not isinstance(value, str):
+        if len(value) == 2:
+            return value[1]
+        if len(value) == 1:
+            return []
+        if len(value) > 2:
+            if value[0] == 'Expr':
+                value = value[2] + [value[1]] + value[3:]
+            elif value[0] == 'UnaryExpr':
+                value = value[1] + [value[2]]
+                # print(value, value[2] + [value[1]] + value[3:])
     return value
     
 def p_SourceFile(p):
@@ -1084,7 +1102,7 @@ def p_error(p):
 ## Build lexer
 lexer = lex.lex()
 
-parser, grammar = yacc.yacc(debug=True)
+parser, grammar = yacc.yacc()
 
 path_to_root = os.environ.get('PATH_TO_ROOT')
 milestone = os.environ.get('MILESTONE')
@@ -1101,7 +1119,7 @@ non_terminals = grammar.Nonterminals
 ## Trying to handle input
 with open(sys.argv[1], 'r') as f:
     import pprint
-    out = parser.parse(f.read(), lexer = lexer, debug=True)
+    out = parser.parse(f.read(), lexer = lexer)
     if out is None:
         f.close()
         sys.exit(1)
