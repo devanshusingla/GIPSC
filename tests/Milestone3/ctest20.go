@@ -2,16 +2,17 @@ package main
 import "fmt"
 type node struct {
 	val int
-	l   struct *node
-	r   struct *node
+	l  *node
+	r  *node
 }
 var nil node
+
 func inorder(head *node) {
 	if (head == &nil) {
 		return
 	}
 	bst((*head).l)
-	print((*head).val,"\n")
+	fmt.Println((*head).val,"\n")
 	bst((*head).r)
 }
 
