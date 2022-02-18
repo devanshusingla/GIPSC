@@ -668,17 +668,17 @@ def p_Parameters(p):
     
 def p_ParameterList(p):
     """
-    ParameterList : ParameterList COMMA ParameterDecl 
-                  | ParameterDecl
+    ParameterList : ParameterDecl
+                  | ParameterList COMMA IDENT
+                  | ParameterList COMMA IDENT PERIOD IDENT
+                  | ParameterList COMMA Type
+                  | ParameterList COMMA ParameterDecl 
     """
     p[0] = get_value_p(p)
 
 def p_ParameterDecl(p):
     """
-    ParameterDecl : Type
-                  | IDENT
-                  | IDENT PERIOD IDENT
-                  | IdentifierList Type
+    ParameterDecl : IdentifierList Type
                   | IdentifierList IDENT
                   | IdentifierList IDENT PERIOD IDENT
     """

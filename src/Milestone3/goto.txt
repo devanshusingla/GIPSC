@@ -48,100 +48,100 @@
 47 : {}
 48 : {'FunctionBody': 81, 'Block': 82}
 49 : {'Parameters': 84, 'Result': 85, 'Type': 86, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
-50 : {'ParameterList': 90, 'ParameterDecl': 91, 'Type': 92, 'IdentifierList': 94, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+50 : {'ParameterList': 90, 'ParameterDecl': 91, 'IdentifierList': 92}
 51 : {}
 52 : {}
 53 : {}
 54 : {}
 55 : {}
-56 : {'Type': 100, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+56 : {'Type': 98, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 57 : {}
 58 : {}
 59 : {}
 60 : {}
 61 : {}
 62 : {}
-63 : {'ArrayLength': 102, 'Expr': 104, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+63 : {'ArrayLength': 100, 'Expr': 102, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 64 : {}
-65 : {'Type': 130, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+65 : {'Type': 128, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 66 : {}
-67 : {'Signature': 133, 'Parameters': 49}
-68 : {'IdentifierList': 134}
+67 : {'Signature': 131, 'Parameters': 49}
+68 : {'IdentifierList': 132}
 69 : {}
 70 : {}
 71 : {}
-72 : {'ExpressionList': 138, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+72 : {'ExpressionList': 136, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 73 : {}
 74 : {}
 75 : {}
 76 : {}
-77 : {'Type': 146, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+77 : {'Type': 144, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 78 : {}
 79 : {}
-80 : {'ImportSpec': 44, 'ImportSpecMult': 147, 'ImportPath': 24}
+80 : {'ImportSpec': 44, 'ImportSpecMult': 145, 'ImportPath': 24}
 81 : {}
 82 : {}
-83 : {'StatementList': 148, 'Statement': 149, 'Decl': 150, 'LabeledStmt': 151, 'SimpleStmt': 152, 'GotoStmt': 153, 'ReturnStmt': 154, 'BreakStmt': 155, 'ContinueStmt': 156, 'FallthroughStmt': 157, 'Block': 158, 'IfStmt': 159, 'SwitchStmt': 160, 'ForStmt': 161, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 162, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'ExpressionList': 170, 'Expr': 175, 'ExprSwitchStmt': 176, 'TypeSwitchStmt': 177, 'IdentifierList': 180, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+83 : {'StatementList': 146, 'Statement': 147, 'Decl': 148, 'LabeledStmt': 149, 'SimpleStmt': 150, 'GotoStmt': 151, 'ReturnStmt': 152, 'BreakStmt': 153, 'ContinueStmt': 154, 'FallthroughStmt': 155, 'Block': 156, 'IfStmt': 157, 'SwitchStmt': 158, 'ForStmt': 159, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 160, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'ExpressionList': 168, 'Expr': 173, 'ExprSwitchStmt': 174, 'TypeSwitchStmt': 175, 'IdentifierList': 178, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 84 : {}
 85 : {}
 86 : {}
 87 : {}
-88 : {'ParameterList': 90, 'Type': 183, 'ParameterDecl': 91, 'TypeLit': 55, 'IdentifierList': 94, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+88 : {'ParameterList': 90, 'Type': 98, 'ParameterDecl': 91, 'TypeLit': 55, 'IdentifierList': 92, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 89 : {}
 90 : {}
 91 : {}
-92 : {}
+92 : {'Type': 184, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 93 : {}
-94 : {'Type': 188, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
-95 : {}
-96 : {'ConstSpec': 52, 'ConstSpecMult': 190, 'IdentifierList': 32}
-97 : {'ExpressionList': 191, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-98 : {'ExpressionList': 192, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+94 : {'ConstSpec': 52, 'ConstSpecMult': 186, 'IdentifierList': 32}
+95 : {'ExpressionList': 187, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+96 : {'ExpressionList': 188, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+97 : {}
+98 : {}
 99 : {}
 100 : {}
-101 : {}
+101 : {'ElementType': 194, 'Type': 195, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 102 : {}
-103 : {'ElementType': 198, 'Type': 199, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
-104 : {}
-105 : {}
-106 : {'UnaryExpr': 220, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-107 : {'UnaryExpr': 221, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-108 : {'UnaryExpr': 222, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-109 : {'UnaryExpr': 223, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-110 : {'UnaryExpr': 224, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-111 : {'Selector': 225, 'Index': 226, 'Slice': 227, 'Arguments': 228}
-112 : {'UnaryExpr': 232, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-113 : {}
-114 : {'LiteralValue': 234}
-115 : {'Expr': 236, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+103 : {}
+104 : {'UnaryExpr': 216, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+105 : {'UnaryExpr': 217, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+106 : {'UnaryExpr': 218, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+107 : {'UnaryExpr': 219, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+108 : {'UnaryExpr': 220, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+109 : {'Selector': 221, 'Index': 222, 'Slice': 223, 'Arguments': 224}
+110 : {'UnaryExpr': 228, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+111 : {}
+112 : {'LiteralValue': 230}
+113 : {'Expr': 232, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+114 : {}
+115 : {}
 116 : {}
 117 : {}
 118 : {}
 119 : {}
 120 : {}
 121 : {}
-122 : {}
-123 : {}
-124 : {'LiteralValue': 237}
-125 : {'LiteralValue': 238}
-126 : {'LiteralValue': 239}
-127 : {'LiteralValue': 240}
-128 : {'Signature': 241, 'Parameters': 49}
-129 : {'FieldDeclMult': 242, 'FieldDecl': 243, 'IdentifierList': 244, 'EmbeddedField': 246}
-130 : {}
+122 : {'LiteralValue': 233}
+123 : {'LiteralValue': 234}
+124 : {'LiteralValue': 235}
+125 : {'LiteralValue': 236}
+126 : {'Signature': 237, 'Parameters': 49}
+127 : {'FieldDeclMult': 238, 'FieldDecl': 239, 'IdentifierList': 240, 'EmbeddedField': 242}
+128 : {}
+129 : {}
+130 : {'KeyType': 245, 'Type': 246, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 131 : {}
-132 : {'KeyType': 249, 'Type': 250, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+132 : {}
 133 : {}
-134 : {}
-135 : {}
-136 : {'VarSpec': 70, 'VarMult': 252, 'IdentifierList': 36}
-137 : {'ExpressionList': 253, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-138 : {}
+134 : {'VarSpec': 70, 'VarMult': 248, 'IdentifierList': 36}
+135 : {'ExpressionList': 249, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+136 : {}
+137 : {}
+138 : {'ExpressionList': 251, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 139 : {}
-140 : {'ExpressionList': 255, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-141 : {}
+140 : {}
+141 : {'TypeSpec': 75, 'TypeSpecMult': 253, 'AliasDecl': 39, 'Typedef': 40}
 142 : {}
-143 : {'TypeSpec': 75, 'TypeSpecMult': 257, 'AliasDecl': 39, 'Typedef': 40}
+143 : {}
 144 : {}
 145 : {}
 146 : {}
@@ -164,107 +164,107 @@
 163 : {}
 164 : {}
 165 : {}
-166 : {}
-167 : {}
-168 : {'Label': 263}
-169 : {'ExpressionList': 265, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-170 : {'assign_op': 266, 'add_op_assign': 267, 'mul_op_assign': 268}
-171 : {'Label': 281}
-172 : {'Label': 282}
+166 : {'Label': 259}
+167 : {'ExpressionList': 261, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+168 : {'assign_op': 262, 'add_op_assign': 263, 'mul_op_assign': 264}
+169 : {'Label': 277}
+170 : {'Label': 278}
+171 : {}
+172 : {'Expr': 279, 'SimpleStmt': 280, 'UnaryExpr': 103, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'PrimaryExpr': 109, 'ExpressionList': 168, 'IdentifierList': 178, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 173 : {}
-174 : {'Expr': 283, 'SimpleStmt': 284, 'UnaryExpr': 105, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'PrimaryExpr': 111, 'ExpressionList': 170, 'IdentifierList': 180, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+174 : {}
 175 : {}
-176 : {}
-177 : {}
-178 : {'Condition': 288, 'ForClause': 289, 'RangeClause': 290, 'Expr': 291, 'InitStmt': 292, 'RangeList': 293, 'UnaryExpr': 105, 'SimpleStmt': 294, 'ExpressionList': 295, 'IdentifierList': 296, 'PrimaryExpr': 111, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-179 : {'LiteralValue': 234}
+176 : {'Condition': 284, 'ForClause': 285, 'RangeClause': 286, 'Expr': 287, 'InitStmt': 288, 'RangeList': 289, 'UnaryExpr': 103, 'SimpleStmt': 290, 'ExpressionList': 291, 'IdentifierList': 292, 'PrimaryExpr': 109, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+177 : {'LiteralValue': 230}
+178 : {}
+179 : {'SimpleStmt': 295, 'Expr': 296, 'TypeSwitchGuard': 298, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'UnaryExpr': 103, 'PrimaryExpr': 300, 'ExpressionList': 168, 'IdentifierList': 178, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 180 : {}
-181 : {'SimpleStmt': 299, 'Expr': 300, 'TypeSwitchGuard': 302, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'UnaryExpr': 105, 'PrimaryExpr': 304, 'ExpressionList': 170, 'IdentifierList': 180, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+181 : {}
 182 : {}
-183 : {}
+183 : {'Type': 304, 'ParameterDecl': 305, 'TypeLit': 55, 'IdentifierList': 92, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 184 : {}
 185 : {}
-186 : {'ParameterDecl': 308, 'Type': 92, 'IdentifierList': 94, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+186 : {}
 187 : {}
 188 : {}
 189 : {}
 190 : {}
 191 : {}
 192 : {}
-193 : {}
+193 : {'ElementType': 309, 'Type': 195, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 194 : {}
 195 : {}
 196 : {}
-197 : {'ElementType': 313, 'Type': 199, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
-198 : {}
-199 : {}
-200 : {}
-201 : {'Expr': 315, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-202 : {'Expr': 316, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-203 : {'Expr': 317, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-204 : {'Expr': 318, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-205 : {'Expr': 319, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-206 : {'Expr': 320, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-207 : {'Expr': 321, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-208 : {'Expr': 322, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-209 : {'Expr': 323, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-210 : {'Expr': 324, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-211 : {'Expr': 325, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-212 : {'Expr': 326, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-213 : {'Expr': 327, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-214 : {'Expr': 328, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-215 : {'Expr': 329, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-216 : {'Expr': 330, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-217 : {'Expr': 331, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-218 : {'Expr': 332, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-219 : {'Expr': 333, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+197 : {'Expr': 311, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+198 : {'Expr': 312, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+199 : {'Expr': 313, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+200 : {'Expr': 314, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+201 : {'Expr': 315, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+202 : {'Expr': 316, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+203 : {'Expr': 317, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+204 : {'Expr': 318, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+205 : {'Expr': 319, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+206 : {'Expr': 320, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+207 : {'Expr': 321, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+208 : {'Expr': 322, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+209 : {'Expr': 323, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+210 : {'Expr': 324, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+211 : {'Expr': 325, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+212 : {'Expr': 326, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+213 : {'Expr': 327, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+214 : {'Expr': 328, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+215 : {'Expr': 329, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+216 : {}
+217 : {}
+218 : {}
+219 : {}
 220 : {}
 221 : {}
 222 : {}
 223 : {}
 224 : {}
 225 : {}
-226 : {}
-227 : {}
+226 : {'Expr': 331, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+227 : {'ExpressionList': 335, 'Type': 336, 'Expr': 137, 'TypeLit': 55, 'UnaryExpr': 103, 'ArrayType': 339, 'StructType': 340, 'PointerType': 59, 'SliceType': 341, 'MapType': 342, 'FunctionType': 62, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116}
 228 : {}
 229 : {}
-230 : {'Expr': 335, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-231 : {'ExpressionList': 339, 'Type': 340, 'Expr': 139, 'TypeLit': 55, 'UnaryExpr': 105, 'ArrayType': 343, 'StructType': 344, 'PointerType': 59, 'SliceType': 345, 'MapType': 346, 'FunctionType': 62, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118}
+230 : {}
+231 : {'ElementList': 345, 'KeyedElement': 347, 'Element': 348, 'Key': 349, 'Expr': 350, 'LiteralValue': 351, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 232 : {}
 233 : {}
 234 : {}
-235 : {'ElementList': 349, 'KeyedElement': 351, 'Element': 352, 'Key': 353, 'Expr': 354, 'LiteralValue': 355, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+235 : {}
 236 : {}
-237 : {}
+237 : {'FunctionBody': 353, 'Block': 82}
 238 : {}
 239 : {}
-240 : {}
-241 : {'FunctionBody': 357, 'Block': 82}
-242 : {}
+240 : {'Type': 356, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+241 : {}
+242 : {'Tag': 359}
 243 : {}
-244 : {'Type': 360, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+244 : {}
 245 : {}
-246 : {'Tag': 363}
+246 : {}
 247 : {}
 248 : {}
 249 : {}
-250 : {}
+250 : {'Expr': 365, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 251 : {}
 252 : {}
 253 : {}
-254 : {'Expr': 369, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+254 : {}
 255 : {}
 256 : {}
-257 : {}
-258 : {}
+257 : {'Statement': 147, 'StatementList': 368, 'Decl': 148, 'LabeledStmt': 149, 'SimpleStmt': 150, 'GotoStmt': 151, 'ReturnStmt': 152, 'BreakStmt': 153, 'ContinueStmt': 154, 'FallthroughStmt': 155, 'Block': 156, 'IfStmt': 157, 'SwitchStmt': 158, 'ForStmt': 159, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 160, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'ExpressionList': 168, 'Expr': 173, 'ExprSwitchStmt': 174, 'TypeSwitchStmt': 175, 'IdentifierList': 178, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+258 : {'Label': 160, 'Statement': 369, 'Decl': 148, 'LabeledStmt': 149, 'SimpleStmt': 150, 'GotoStmt': 151, 'ReturnStmt': 152, 'BreakStmt': 153, 'ContinueStmt': 154, 'FallthroughStmt': 155, 'Block': 156, 'IfStmt': 157, 'SwitchStmt': 158, 'ForStmt': 159, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'ExpressionList': 168, 'Expr': 173, 'ExprSwitchStmt': 174, 'TypeSwitchStmt': 175, 'IdentifierList': 178, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 259 : {}
 260 : {}
-261 : {'Statement': 149, 'StatementList': 372, 'Decl': 150, 'LabeledStmt': 151, 'SimpleStmt': 152, 'GotoStmt': 153, 'ReturnStmt': 154, 'BreakStmt': 155, 'ContinueStmt': 156, 'FallthroughStmt': 157, 'Block': 158, 'IfStmt': 159, 'SwitchStmt': 160, 'ForStmt': 161, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 162, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'ExpressionList': 170, 'Expr': 175, 'ExprSwitchStmt': 176, 'TypeSwitchStmt': 177, 'IdentifierList': 180, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-262 : {'Label': 162, 'Statement': 373, 'Decl': 150, 'LabeledStmt': 151, 'SimpleStmt': 152, 'GotoStmt': 153, 'ReturnStmt': 154, 'BreakStmt': 155, 'ContinueStmt': 156, 'FallthroughStmt': 157, 'Block': 158, 'IfStmt': 159, 'SwitchStmt': 160, 'ForStmt': 161, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'ExpressionList': 170, 'Expr': 175, 'ExprSwitchStmt': 176, 'TypeSwitchStmt': 177, 'IdentifierList': 180, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+261 : {}
+262 : {'ExpressionList': 370, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 263 : {}
 264 : {}
 265 : {}
-266 : {'ExpressionList': 374, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+266 : {}
 267 : {}
 268 : {}
 269 : {}
@@ -277,39 +277,39 @@
 276 : {}
 277 : {}
 278 : {}
-279 : {}
+279 : {'Block': 371}
 280 : {}
-281 : {}
+281 : {'LiteralValue': 230}
 282 : {}
-283 : {'Block': 375}
-284 : {}
-285 : {'LiteralValue': 234}
-286 : {}
+283 : {}
+284 : {'Block': 373}
+285 : {'Block': 374}
+286 : {'Block': 375}
 287 : {}
-288 : {'Block': 377}
-289 : {'Block': 378}
-290 : {'Block': 379}
-291 : {}
+288 : {}
+289 : {}
+290 : {}
+291 : {'assign_op': 262, 'add_op_assign': 263, 'mul_op_assign': 264}
 292 : {}
-293 : {}
-294 : {}
-295 : {'assign_op': 266, 'add_op_assign': 267, 'mul_op_assign': 268}
+293 : {'LiteralValue': 230}
+294 : {'ExpressionList': 380, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+295 : {}
 296 : {}
-297 : {'LiteralValue': 234}
-298 : {'ExpressionList': 384, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-299 : {}
-300 : {}
-301 : {'ExprCaseClauseMult': 387, 'ExprCaseClause': 388, 'ExprSwitchCase': 389}
+297 : {'ExprCaseClauseMult': 383, 'ExprCaseClause': 384, 'ExprSwitchCase': 385}
+298 : {}
+299 : {'LiteralValue': 230}
+300 : {'Selector': 221, 'Index': 222, 'Slice': 223, 'Arguments': 224}
+301 : {}
 302 : {}
-303 : {'LiteralValue': 234}
-304 : {'Selector': 225, 'Index': 226, 'Slice': 227, 'Arguments': 228}
+303 : {}
+304 : {}
 305 : {}
 306 : {}
-307 : {}
+307 : {'ExpressionList': 393, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 308 : {}
 309 : {}
 310 : {}
-311 : {'ExpressionList': 397, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+311 : {}
 312 : {}
 313 : {}
 314 : {}
@@ -330,181 +330,181 @@
 329 : {}
 330 : {}
 331 : {}
-332 : {}
-333 : {}
+332 : {'Expr': 398, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+333 : {'Type': 98, 'Expr': 232, 'TypeLit': 55, 'UnaryExpr': 103, 'ArrayType': 339, 'StructType': 340, 'PointerType': 59, 'SliceType': 341, 'MapType': 342, 'FunctionType': 62, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116}
 334 : {}
 335 : {}
-336 : {'Expr': 402, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-337 : {'Type': 100, 'Expr': 236, 'TypeLit': 55, 'UnaryExpr': 105, 'ArrayType': 343, 'StructType': 344, 'PointerType': 59, 'SliceType': 345, 'MapType': 346, 'FunctionType': 62, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118}
-338 : {}
-339 : {}
-340 : {}
-341 : {'LiteralValue': 234}
-342 : {'UnaryExpr': 223, 'Type': 130, 'PrimaryExpr': 111, 'TypeLit': 55, 'Lit': 113, 'ArrayType': 343, 'StructType': 344, 'PointerType': 59, 'SliceType': 345, 'MapType': 346, 'FunctionType': 62, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118}
-343 : {'LiteralValue': 238}
-344 : {'LiteralValue': 237}
-345 : {'LiteralValue': 239}
-346 : {'LiteralValue': 240}
-347 : {'Signature': 413, 'Parameters': 49}
-348 : {'LiteralValue': 414}
+336 : {}
+337 : {'LiteralValue': 230}
+338 : {'UnaryExpr': 219, 'Type': 128, 'PrimaryExpr': 109, 'TypeLit': 55, 'Lit': 111, 'ArrayType': 339, 'StructType': 340, 'PointerType': 59, 'SliceType': 341, 'MapType': 342, 'FunctionType': 62, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116}
+339 : {'LiteralValue': 234}
+340 : {'LiteralValue': 233}
+341 : {'LiteralValue': 235}
+342 : {'LiteralValue': 236}
+343 : {'Signature': 409, 'Parameters': 49}
+344 : {'LiteralValue': 410}
+345 : {}
+346 : {}
+347 : {}
+348 : {}
 349 : {}
 350 : {}
 351 : {}
 352 : {}
 353 : {}
 354 : {}
-355 : {}
-356 : {}
-357 : {}
+355 : {'FieldDecl': 239, 'FieldDeclMult': 414, 'IdentifierList': 240, 'EmbeddedField': 242}
+356 : {'Tag': 415}
+357 : {'Tag': 417}
 358 : {}
-359 : {'FieldDecl': 243, 'FieldDeclMult': 418, 'IdentifierList': 244, 'EmbeddedField': 246}
-360 : {'Tag': 419}
-361 : {'Tag': 421}
+359 : {}
+360 : {}
+361 : {}
 362 : {}
-363 : {}
+363 : {'ElementType': 420, 'Type': 195, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 364 : {}
 365 : {}
-366 : {}
-367 : {'ElementType': 424, 'Type': 199, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+366 : {'ExpressionList': 422, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+367 : {}
 368 : {}
 369 : {}
-370 : {'ExpressionList': 426, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-371 : {}
-372 : {}
+370 : {}
+371 : {'else_stmt': 423}
+372 : {'Expr': 425, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 373 : {}
 374 : {}
-375 : {'else_stmt': 427}
-376 : {'Expr': 429, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-377 : {}
+375 : {}
+376 : {'Condition': 427, 'Expr': 428, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+377 : {'Expr': 429, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 378 : {}
-379 : {}
-380 : {'Condition': 431, 'Expr': 432, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-381 : {'Expr': 433, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-382 : {}
-383 : {'ExpressionList': 384, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-384 : {}
-385 : {'Expr': 434, 'TypeSwitchGuard': 436, 'UnaryExpr': 105, 'PrimaryExpr': 304, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-386 : {'ExprCaseClauseMult': 438, 'ExprCaseClause': 388, 'ExprSwitchCase': 389}
+379 : {'ExpressionList': 380, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+380 : {}
+381 : {'Expr': 430, 'TypeSwitchGuard': 432, 'UnaryExpr': 103, 'PrimaryExpr': 300, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+382 : {'ExprCaseClauseMult': 434, 'ExprCaseClause': 384, 'ExprSwitchCase': 385}
+383 : {}
+384 : {'ExprCaseClause': 384, 'ExprCaseClauseMult': 436, 'ExprSwitchCase': 385}
+385 : {}
+386 : {'ExpressionList': 438, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 387 : {}
-388 : {'ExprCaseClause': 388, 'ExprCaseClauseMult': 440, 'ExprSwitchCase': 389}
-389 : {}
-390 : {'ExpressionList': 442, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+388 : {'TypeCaseClauseMult': 439, 'TypeCaseClause': 440}
+389 : {'PrimaryExpr': 443, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+390 : {}
 391 : {}
-392 : {'TypeCaseClauseMult': 443, 'TypeCaseClause': 444}
-393 : {'PrimaryExpr': 447, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+392 : {}
+393 : {}
 394 : {}
 395 : {}
 396 : {}
-397 : {}
+397 : {'Expr': 446, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 398 : {}
 399 : {}
-400 : {}
-401 : {'Expr': 449, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-402 : {}
+400 : {'LiteralValue': 230}
+401 : {}
+402 : {'Expr': 365, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 403 : {}
-404 : {'LiteralValue': 234}
+404 : {'ExpressionList': 453, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 405 : {}
-406 : {'Expr': 369, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+406 : {'ExpressionList': 455, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 407 : {}
-408 : {'ExpressionList': 456, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-409 : {}
-410 : {'ExpressionList': 458, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-411 : {}
-412 : {'LiteralValue': 234}
-413 : {'FunctionBody': 357, 'Block': 82}
+408 : {'LiteralValue': 230}
+409 : {'FunctionBody': 353, 'Block': 82}
+410 : {}
+411 : {'KeyedElement': 459, 'Element': 348, 'Key': 349, 'Expr': 350, 'LiteralValue': 351, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+412 : {}
+413 : {'Element': 460, 'Expr': 461, 'LiteralValue': 462, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 414 : {}
-415 : {'KeyedElement': 462, 'Element': 352, 'Key': 353, 'Expr': 354, 'LiteralValue': 355, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+415 : {}
 416 : {}
-417 : {'Element': 463, 'Expr': 464, 'LiteralValue': 465, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+417 : {}
 418 : {}
 419 : {}
 420 : {}
 421 : {}
 422 : {}
 423 : {}
-424 : {}
-425 : {}
-426 : {}
+424 : {'IfStmt': 465, 'Block': 466}
+425 : {'else_stmt': 467}
+426 : {'PostStmt': 468, 'SimpleStmt': 469, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'Expr': 173, 'ExpressionList': 168, 'IdentifierList': 178, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 427 : {}
-428 : {'IfStmt': 468, 'Block': 469}
-429 : {'else_stmt': 470}
-430 : {'PostStmt': 471, 'SimpleStmt': 472, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'Expr': 175, 'ExpressionList': 170, 'IdentifierList': 180, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-431 : {}
+428 : {}
+429 : {}
+430 : {}
+431 : {'ExprCaseClauseMult': 472, 'ExprCaseClause': 384, 'ExprSwitchCase': 385}
 432 : {}
-433 : {}
+433 : {'LiteralValue': 230}
 434 : {}
-435 : {'ExprCaseClauseMult': 475, 'ExprCaseClause': 388, 'ExprSwitchCase': 389}
+435 : {}
 436 : {}
-437 : {'LiteralValue': 234}
+437 : {'StatementList': 475, 'Statement': 147, 'Decl': 148, 'LabeledStmt': 149, 'SimpleStmt': 150, 'GotoStmt': 151, 'ReturnStmt': 152, 'BreakStmt': 153, 'ContinueStmt': 154, 'FallthroughStmt': 155, 'Block': 156, 'IfStmt': 157, 'SwitchStmt': 158, 'ForStmt': 159, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 160, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'ExpressionList': 168, 'Expr': 173, 'ExprSwitchStmt': 174, 'TypeSwitchStmt': 175, 'IdentifierList': 178, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 438 : {}
 439 : {}
-440 : {}
-441 : {'StatementList': 478, 'Statement': 149, 'Decl': 150, 'LabeledStmt': 151, 'SimpleStmt': 152, 'GotoStmt': 153, 'ReturnStmt': 154, 'BreakStmt': 155, 'ContinueStmt': 156, 'FallthroughStmt': 157, 'Block': 158, 'IfStmt': 159, 'SwitchStmt': 160, 'ForStmt': 161, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 162, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'ExpressionList': 170, 'Expr': 175, 'ExprSwitchStmt': 176, 'TypeSwitchStmt': 177, 'IdentifierList': 180, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+440 : {'TypeCaseClause': 440, 'TypeCaseClauseMult': 477}
+441 : {'TypeList': 478, 'Type': 479, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 442 : {}
-443 : {}
-444 : {'TypeCaseClause': 444, 'TypeCaseClauseMult': 480}
-445 : {'TypeList': 481, 'Type': 482, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+443 : {'Selector': 221, 'Index': 222, 'Slice': 223, 'Arguments': 224}
+444 : {}
+445 : {}
 446 : {}
-447 : {'Selector': 225, 'Index': 226, 'Slice': 227, 'Arguments': 228}
-448 : {}
+447 : {}
+448 : {'Expr': 486, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 449 : {}
 450 : {}
-451 : {'Expr': 489, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+451 : {}
 452 : {}
 453 : {}
 454 : {}
 455 : {}
-456 : {}
+456 : {'LiteralValue': 410}
 457 : {}
 458 : {}
-459 : {'LiteralValue': 414}
+459 : {}
 460 : {}
 461 : {}
 462 : {}
-463 : {}
+463 : {'Tag': 495}
 464 : {}
 465 : {}
-466 : {'Tag': 498}
+466 : {}
 467 : {}
 468 : {}
 469 : {}
-470 : {}
-471 : {}
+470 : {'PostStmt': 496, 'SimpleStmt': 469, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'Expr': 173, 'ExpressionList': 168, 'IdentifierList': 178, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+471 : {'ExprCaseClauseMult': 497, 'ExprCaseClause': 384, 'ExprSwitchCase': 385}
 472 : {}
-473 : {'PostStmt': 499, 'SimpleStmt': 472, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'Expr': 175, 'ExpressionList': 170, 'IdentifierList': 180, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-474 : {'ExprCaseClauseMult': 500, 'ExprCaseClause': 388, 'ExprSwitchCase': 389}
+473 : {'TypeCaseClauseMult': 499, 'TypeCaseClause': 440}
+474 : {}
 475 : {}
-476 : {'TypeCaseClauseMult': 502, 'TypeCaseClause': 444}
+476 : {}
 477 : {}
 478 : {}
 479 : {}
 480 : {}
-481 : {}
+481 : {'StatementList': 504, 'Statement': 147, 'Decl': 148, 'LabeledStmt': 149, 'SimpleStmt': 150, 'GotoStmt': 151, 'ReturnStmt': 152, 'BreakStmt': 153, 'ContinueStmt': 154, 'FallthroughStmt': 155, 'Block': 156, 'IfStmt': 157, 'SwitchStmt': 158, 'ForStmt': 159, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 160, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'ExpressionList': 168, 'Expr': 173, 'ExprSwitchStmt': 174, 'TypeSwitchStmt': 175, 'IdentifierList': 178, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 482 : {}
 483 : {}
-484 : {'StatementList': 507, 'Statement': 149, 'Decl': 150, 'LabeledStmt': 151, 'SimpleStmt': 152, 'GotoStmt': 153, 'ReturnStmt': 154, 'BreakStmt': 155, 'ContinueStmt': 156, 'FallthroughStmt': 157, 'Block': 158, 'IfStmt': 159, 'SwitchStmt': 160, 'ForStmt': 161, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 162, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'ExpressionList': 170, 'Expr': 175, 'ExprSwitchStmt': 176, 'TypeSwitchStmt': 177, 'IdentifierList': 180, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+484 : {'Expr': 507, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 485 : {}
 486 : {}
-487 : {'Expr': 510, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-488 : {}
+487 : {'LiteralValue': 410}
+488 : {'Expr': 365, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 489 : {}
-490 : {'LiteralValue': 414}
-491 : {'Expr': 369, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+490 : {'Expr': 365, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+491 : {}
 492 : {}
-493 : {'Expr': 369, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-494 : {}
+493 : {'ExpressionList': 512, 'Expr': 137, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+494 : {'LiteralValue': 410}
 495 : {}
-496 : {'ExpressionList': 515, 'Expr': 139, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-497 : {'LiteralValue': 414}
+496 : {}
+497 : {}
 498 : {}
 499 : {}
-500 : {}
-501 : {}
+500 : {'StatementList': 515, 'Statement': 147, 'Decl': 148, 'LabeledStmt': 149, 'SimpleStmt': 150, 'GotoStmt': 151, 'ReturnStmt': 152, 'BreakStmt': 153, 'ContinueStmt': 154, 'FallthroughStmt': 155, 'Block': 156, 'IfStmt': 157, 'SwitchStmt': 158, 'ForStmt': 159, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 160, 'EmptyStmt': 161, 'ExpressionStmt': 162, 'IncDecStmt': 163, 'Assignment': 164, 'ShortVarDecl': 165, 'ExpressionList': 168, 'Expr': 173, 'ExprSwitchStmt': 174, 'TypeSwitchStmt': 175, 'IdentifierList': 178, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
+501 : {'Type': 479, 'TypeList': 516, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
 502 : {}
-503 : {'StatementList': 518, 'Statement': 149, 'Decl': 150, 'LabeledStmt': 151, 'SimpleStmt': 152, 'GotoStmt': 153, 'ReturnStmt': 154, 'BreakStmt': 155, 'ContinueStmt': 156, 'FallthroughStmt': 157, 'Block': 158, 'IfStmt': 159, 'SwitchStmt': 160, 'ForStmt': 161, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'Label': 162, 'EmptyStmt': 163, 'ExpressionStmt': 164, 'IncDecStmt': 165, 'Assignment': 166, 'ShortVarDecl': 167, 'ExpressionList': 170, 'Expr': 175, 'ExprSwitchStmt': 176, 'TypeSwitchStmt': 177, 'IdentifierList': 180, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
-504 : {'Type': 482, 'TypeList': 519, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+503 : {'TypeList': 518, 'Type': 479, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+504 : {}
 505 : {}
-506 : {'TypeList': 521, 'Type': 482, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+506 : {}
 507 : {}
 508 : {}
 509 : {}
@@ -519,12 +519,9 @@
 518 : {}
 519 : {}
 520 : {}
-521 : {}
+521 : {'Expr': 365, 'UnaryExpr': 103, 'PrimaryExpr': 109, 'Lit': 111, 'BasicLit': 114, 'CompositeLit': 115, 'FunctionLit': 116, 'StructType': 122, 'ArrayType': 123, 'SliceType': 124, 'MapType': 125}
 522 : {}
-523 : {}
-524 : {'Expr': 369, 'UnaryExpr': 105, 'PrimaryExpr': 111, 'Lit': 113, 'BasicLit': 116, 'CompositeLit': 117, 'FunctionLit': 118, 'StructType': 124, 'ArrayType': 125, 'SliceType': 126, 'MapType': 127}
+523 : {'TypeList': 526, 'Type': 479, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
+524 : {}
 525 : {}
-526 : {'TypeList': 529, 'Type': 482, 'TypeLit': 55, 'ArrayType': 57, 'StructType': 58, 'PointerType': 59, 'SliceType': 60, 'MapType': 61, 'FunctionType': 62}
-527 : {}
-528 : {}
-529 : {}
+526 : {}
