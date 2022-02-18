@@ -9,7 +9,7 @@ State  : 5
 Defaulted state 5: Reduce using 2
 Stack  : PACKAGE IDENT . None
 Action : Reduce rule [PackageClause -> PACKAGE IDENT] with ['package','main'] and goto state 2
-Result : <list @ 0x7f258aa4d0c8> (['PackageClause', ['package'], ['main']])
+Result : <list @ 0x7f6331cc10c8> (['PackageClause', ['package'], ['main']])
 State  : 2
 Stack  : PackageClause . LexToken(SEMICOLON,';',1,13,12)
 Action : Shift and goto state 4
@@ -23,28 +23,28 @@ State  : 26
 Defaulted state 26: Reduce using 12
 Stack  : PackageClause SEMICOLON IMPORT STRING . None
 Action : Reduce rule [ImportPath -> STRING] with ['"fmt"'] and goto state 24
-Result : <list @ 0x7f258a9e4ac8> (['"fmt"'])
+Result : <list @ 0x7f6331c57bc8> (['"fmt"'])
 State  : 24
 Defaulted state 24: Reduce using 11
 Stack  : PackageClause SEMICOLON IMPORT ImportPath . None
 Action : Reduce rule [ImportSpec -> ImportPath] with [['"fmt"']] and goto state 21
-Result : <list @ 0x7f258a9e4ac8> (['"fmt"'])
+Result : <list @ 0x7f6331c57bc8> (['"fmt"'])
 State  : 21
 Defaulted state 21: Reduce using 5
 Stack  : PackageClause SEMICOLON IMPORT ImportSpec . None
 Action : Reduce rule [ImportDecl -> IMPORT ImportSpec] with ['import',['"fmt"']] and goto state 7
-Result : <list @ 0x7f258a9e4748> (['ImportDecl', ['import'], ['"fmt"']])
+Result : <list @ 0x7f6331c57848> (['ImportDecl', ['import'], ['"fmt"']])
 State  : 7
 Stack  : PackageClause SEMICOLON ImportDecl . LexToken(SEMICOLON,';',3,13,27)
 Action : Shift and goto state 20
 State  : 20
 Stack  : PackageClause SEMICOLON ImportDecl SEMICOLON . LexToken(FUNC,'func',5,1,30)
 Action : Reduce rule [ImportDeclMult -> <empty>] with [] and goto state 42
-Result : <list @ 0x7f258aa4d648> ([])
+Result : <list @ 0x7f6331cc1748> ([])
 State  : 42
 Stack  : PackageClause SEMICOLON ImportDecl SEMICOLON ImportDeclMult . LexToken(FUNC,'func',5,1,30)
-Action : Reduce rule [ImportDeclMult -> ImportDecl SEMICOLON ImportDeclMult] with [<list @ 0x7f258a9e4748>,';',[]] and goto state 6
-Result : <list @ 0x7f258a9e4748> (['ImportDecl', ['import'], ['"fmt"']])
+Action : Reduce rule [ImportDeclMult -> ImportDecl SEMICOLON ImportDeclMult] with [<list @ 0x7f6331c57848>,';',[]] and goto state 6
+Result : <list @ 0x7f6331c57848> (['ImportDecl', ['import'], ['"fmt"']])
 State  : 6
 Stack  : PackageClause SEMICOLON ImportDeclMult . LexToken(FUNC,'func',5,1,30)
 Action : Shift and goto state 16
@@ -55,7 +55,7 @@ State  : 29
 Defaulted state 29: Reduce using 171
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC IDENT . None
 Action : Reduce rule [FunctionName -> IDENT] with ['foo'] and goto state 28
-Result : <list @ 0x7f258aa4d648> (['foo'])
+Result : <list @ 0x7f6331cc1748> (['foo'])
 State  : 28
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName . LexToken(LPAREN,'(',5,9,38)
 Action : Shift and goto state 50
@@ -65,36 +65,36 @@ Action : Shift and goto state 33
 State  : 33
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName LPAREN IDENT . LexToken(IDENT,'int',5,12,41)
 Action : Reduce rule [IdentifierList -> IDENT] with ['a'] and goto state 92
-Result : <list @ 0x7f258aa4d188> (['a'])
+Result : <list @ 0x7f6331cc1288> (['a'])
 State  : 92
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName LPAREN IdentifierList . LexToken(IDENT,'int',5,12,41)
 Action : Shift and goto state 187
 State  : 187
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName LPAREN IdentifierList IDENT . LexToken(RPAREN,')',5,15,44)
 Action : Reduce rule [ParameterDecl -> IdentifierList IDENT] with [['a'],'int'] and goto state 91
-Result : <list @ 0x7f258aa4d2c8> (['ParameterDecl', ['a'], ['int']])
+Result : <list @ 0x7f6331cc13c8> (['ParameterDecl', ['a'], ['int']])
 State  : 91
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName LPAREN ParameterDecl . LexToken(RPAREN,')',5,15,44)
-Action : Reduce rule [ParameterList -> ParameterDecl] with [<list @ 0x7f258aa4d2c8>] and goto state 90
-Result : <list @ 0x7f258aa4d2c8> (['ParameterDecl', ['a'], ['int']])
+Action : Reduce rule [ParameterList -> ParameterDecl] with [<list @ 0x7f6331cc13c8>] and goto state 90
+Result : <list @ 0x7f6331cc13c8> (['ParameterDecl', ['a'], ['int']])
 State  : 90
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName LPAREN ParameterList . LexToken(RPAREN,')',5,15,44)
 Action : Shift and goto state 184
 State  : 184
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName LPAREN ParameterList RPAREN . LexToken(IDENT,'int',5,17,46)
-Action : Reduce rule [Parameters -> LPAREN ParameterList RPAREN] with ['(',<list @ 0x7f258aa4d2c8>,')'] and goto state 49
-Result : <list @ 0x7f258aa4d2c8> (['ParameterDecl', ['a'], ['int']])
+Action : Reduce rule [Parameters -> LPAREN ParameterList RPAREN] with ['(',<list @ 0x7f6331cc13c8>,')'] and goto state 49
+Result : <list @ 0x7f6331cc13c8> (['ParameterDecl', ['a'], ['int']])
 State  : 49
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Parameters . LexToken(IDENT,'int',5,17,46)
 Action : Shift and goto state 87
 State  : 87
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Parameters IDENT . LexToken(LBRACE,'{',5,21,50)
 Action : Reduce rule [Result -> IDENT] with ['int'] and goto state 85
-Result : <list @ 0x7f258aa4d408> (['int'])
+Result : <list @ 0x7f6331cc1508> (['int'])
 State  : 85
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Parameters Result . LexToken(LBRACE,'{',5,21,50)
-Action : Reduce rule [Signature -> Parameters Result] with [<list @ 0x7f258aa4d2c8>,['int']] and goto state 48
-Result : <list @ 0x7f258a9e4d08> (['Signature', ['ParameterDecl', ['a'], [ ...)
+Action : Reduce rule [Signature -> Parameters Result] with [<list @ 0x7f6331cc13c8>,['int']] and goto state 48
+Result : <list @ 0x7f6331c57e08> (['Signature', ['ParameterDecl', ['a'], [ ...)
 State  : 48
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature . LexToken(LBRACE,'{',5,21,50)
 Action : Shift and goto state 83
@@ -107,15 +107,15 @@ Action : Shift and goto state 116
 State  : 116
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN IDENT . LexToken(ADD,'+',6,14,62)
 Action : Reduce rule [PrimaryExpr -> IDENT] with ['a'] and goto state 113
-Result : <list @ 0x7f258aa49a88> (['a'])
+Result : <list @ 0x7f6331cbdb88> (['a'])
 State  : 113
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN PrimaryExpr . LexToken(ADD,'+',6,14,62)
 Action : Reduce rule [UnaryExpr -> PrimaryExpr] with [['a']] and goto state 107
-Result : <list @ 0x7f258aa49a88> (['a'])
+Result : <list @ 0x7f6331cbdb88> (['a'])
 State  : 107
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN UnaryExpr . LexToken(ADD,'+',6,14,62)
 Action : Reduce rule [Expr -> UnaryExpr] with [['a']] and goto state 139
-Result : <list @ 0x7f258aa49a88> (['a'])
+Result : <list @ 0x7f6331cbdb88> (['a'])
 State  : 139
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN Expr . LexToken(ADD,'+',6,14,62)
 Action : Shift and goto state 209
@@ -125,72 +125,72 @@ Action : Shift and goto state 121
 State  : 121
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN Expr ADD INT . LexToken(SEMICOLON,';',6,17,65)
 Action : Reduce rule [BasicLit -> INT] with ['2'] and goto state 118
-Result : <list @ 0x7f258aa49408> (['2'])
+Result : <list @ 0x7f6331cbd508> (['2'])
 State  : 118
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN Expr ADD BasicLit . LexToken(SEMICOLON,';',6,17,65)
 Action : Reduce rule [Lit -> BasicLit] with [['2']] and goto state 115
-Result : <list @ 0x7f258aa49408> (['2'])
+Result : <list @ 0x7f6331cbd508> (['2'])
 State  : 115
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN Expr ADD Lit . LexToken(SEMICOLON,';',6,17,65)
 Action : Reduce rule [PrimaryExpr -> Lit] with [['2']] and goto state 113
-Result : <list @ 0x7f258aa49408> (['2'])
+Result : <list @ 0x7f6331cbd508> (['2'])
 State  : 113
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN Expr ADD PrimaryExpr . LexToken(SEMICOLON,';',6,17,65)
 Action : Reduce rule [UnaryExpr -> PrimaryExpr] with [['2']] and goto state 107
-Result : <list @ 0x7f258aa49408> (['2'])
+Result : <list @ 0x7f6331cbd508> (['2'])
 State  : 107
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN Expr ADD UnaryExpr . LexToken(SEMICOLON,';',6,17,65)
 Action : Reduce rule [Expr -> UnaryExpr] with [['2']] and goto state 318
-Result : <list @ 0x7f258aa49408> (['2'])
+Result : <list @ 0x7f6331cbd508> (['2'])
 State  : 318
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN Expr ADD Expr . LexToken(SEMICOLON,';',6,17,65)
 Action : Reduce rule [Expr -> Expr ADD Expr] with [['a'],'+',['2']] and goto state 139
-Result : <list @ 0x7f258a9e5308> (['+', ['a'], ['2']])
+Result : <list @ 0x7f6331c58408> (['+', ['a'], ['2']])
 State  : 139
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN Expr . LexToken(SEMICOLON,';',6,17,65)
-Action : Reduce rule [ExpressionList -> Expr] with [<list @ 0x7f258a9e5308>] and goto state 259
-Result : <list @ 0x7f258a9e5308> (['+', ['a'], ['2']])
+Action : Reduce rule [ExpressionList -> Expr] with [<list @ 0x7f6331c58408>] and goto state 259
+Result : <list @ 0x7f6331c58408> (['+', ['a'], ['2']])
 State  : 259
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE RETURN ExpressionList . LexToken(SEMICOLON,';',6,17,65)
-Action : Reduce rule [ReturnStmt -> RETURN ExpressionList] with ['return',<list @ 0x7f258a9e5308>] and goto state 154
-Result : <list @ 0x7f258aa49d08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
+Action : Reduce rule [ReturnStmt -> RETURN ExpressionList] with ['return',<list @ 0x7f6331c58408>] and goto state 154
+Result : <list @ 0x7f6331cbde08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
 State  : 154
 Defaulted state 154: Reduce using 196
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE ReturnStmt . LexToken(SEMICOLON,';',6,17,65)
-Action : Reduce rule [Statement -> ReturnStmt] with [<list @ 0x7f258aa49d08>] and goto state 149
-Result : <list @ 0x7f258aa49d08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
+Action : Reduce rule [Statement -> ReturnStmt] with [<list @ 0x7f6331cbde08>] and goto state 149
+Result : <list @ 0x7f6331cbde08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
 State  : 149
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE Statement . LexToken(SEMICOLON,';',6,17,65)
 Action : Shift and goto state 255
 State  : 255
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE Statement SEMICOLON . LexToken(RBRACE,'}',7,1,67)
 Action : Reduce rule [StatementList -> <empty>] with [] and goto state 363
-Result : <list @ 0x7f258a9e5248> ([])
+Result : <list @ 0x7f6331c58348> ([])
 State  : 363
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE Statement SEMICOLON StatementList . LexToken(RBRACE,'}',7,1,67)
-Action : Reduce rule [StatementList -> Statement SEMICOLON StatementList] with [<list @ 0x7f258aa49d08>,';',[]] and goto state 148
-Result : <list @ 0x7f258aa49d08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
+Action : Reduce rule [StatementList -> Statement SEMICOLON StatementList] with [<list @ 0x7f6331cbde08>,';',[]] and goto state 148
+Result : <list @ 0x7f6331cbde08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
 State  : 148
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE StatementList . LexToken(RBRACE,'}',7,1,67)
 Action : Shift and goto state 254
 State  : 254
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature LBRACE StatementList RBRACE . LexToken(SEMICOLON,';',7,2,68)
-Action : Reduce rule [Block -> LBRACE StatementList RBRACE] with ['{',<list @ 0x7f258aa49d08>,'}'] and goto state 82
-Result : <list @ 0x7f258aa49d08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
+Action : Reduce rule [Block -> LBRACE StatementList RBRACE] with ['{',<list @ 0x7f6331cbde08>,'}'] and goto state 82
+Result : <list @ 0x7f6331cbde08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
 State  : 82
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature Block . LexToken(SEMICOLON,';',7,2,68)
-Action : Reduce rule [FunctionBody -> Block] with [<list @ 0x7f258aa49d08>] and goto state 81
-Result : <list @ 0x7f258aa49d08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
+Action : Reduce rule [FunctionBody -> Block] with [<list @ 0x7f6331cbde08>] and goto state 81
+Result : <list @ 0x7f6331cbde08> (['ReturnStmt', ['return'], ['+', ['a'],  ...)
 State  : 81
 Defaulted state 81: Reduce using 169
 Stack  : PackageClause SEMICOLON ImportDeclMult FUNC FunctionName Signature FunctionBody . LexToken(SEMICOLON,';',7,2,68)
-Action : Reduce rule [FuncDecl -> FUNC FunctionName Signature FunctionBody] with ['func',['foo'],<list @ 0x7f258a9e4d08>,<list @ 0x7f258aa49d08>] and goto state 12
-Result : <list @ 0x7f258a9e4fc8> (['FuncDecl', ['func'], ['foo'], ['Signat ...)
+Action : Reduce rule [FuncDecl -> FUNC FunctionName Signature FunctionBody] with ['func',['foo'],<list @ 0x7f6331c57e08>,<list @ 0x7f6331cbde08>] and goto state 12
+Result : <list @ 0x7f6331c58108> (['FuncDecl', ['func'], ['foo'], ['Signat ...)
 State  : 12
 Defaulted state 12: Reduce using 16
 Stack  : PackageClause SEMICOLON ImportDeclMult FuncDecl . LexToken(SEMICOLON,';',7,2,68)
-Action : Reduce rule [TopLevelDecl -> FuncDecl] with [<list @ 0x7f258a9e4fc8>] and goto state 10
-Result : <list @ 0x7f258a9e4fc8> (['FuncDecl', ['func'], ['foo'], ['Signat ...)
+Action : Reduce rule [TopLevelDecl -> FuncDecl] with [<list @ 0x7f6331c58108>] and goto state 10
+Result : <list @ 0x7f6331c58108> (['FuncDecl', ['func'], ['foo'], ['Signat ...)
 State  : 10
 Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl . LexToken(SEMICOLON,';',7,2,68)
 Action : Shift and goto state 27
@@ -204,7 +204,7 @@ State  : 29
 Defaulted state 29: Reduce using 171
 Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC IDENT . None
 Action : Reduce rule [FunctionName -> IDENT] with ['main'] and goto state 28
-Result : <list @ 0x7f258aa49c88> (['main'])
+Result : <list @ 0x7f6331cbdd88> (['main'])
 State  : 28
 Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName . LexToken(LPAREN,'(',9,10,80)
 Action : Shift and goto state 50
@@ -214,105 +214,254 @@ Action : Shift and goto state 89
 State  : 89
 Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName LPAREN RPAREN . LexToken(LBRACE,'{',9,13,83)
 Action : Reduce rule [Parameters -> LPAREN RPAREN] with ['(',')'] and goto state 49
-Result : <list @ 0x7f258aa49f88> ([])
+Result : <list @ 0x7f6331cbd408> ([])
 State  : 49
 Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Parameters . LexToken(LBRACE,'{',9,13,83)
 Action : Reduce rule [Signature -> Parameters] with [[]] and goto state 48
-Result : <list @ 0x7f258a9e5408> ([])
+Result : <list @ 0x7f6331c58508> ([])
 State  : 48
 Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature . LexToken(LBRACE,'{',9,13,83)
 Action : Shift and goto state 83
 State  : 83
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE . LexToken(IDENT,'fmt',10,5,86)
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE . LexToken(IDENT,'f',10,5,86)
 Action : Shift and goto state 179
 State  : 179
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE IDENT . LexToken(PERIOD,'.',10,8,89)
-Action : Shift and goto state 233
-State  : 233
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE IDENT PERIOD . LexToken(IDENT,'Println',10,9,90)
-Action : Shift and goto state 342
-State  : 342
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE IDENT PERIOD IDENT . LexToken(LPAREN,'(',10,16,97)
-Action : Reduce rule [PrimaryExpr -> IDENT PERIOD IDENT] with ['fmt','.','Println'] and goto state 113
-Result : <list @ 0x7f258a9e5648> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE IDENT . LexToken(LPAREN,'(',10,6,87)
+Action : Reduce rule [PrimaryExpr -> IDENT] with ['f'] and goto state 113
+Result : <list @ 0x7f6331cbd408> (['f'])
 State  : 113
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr . LexToken(LPAREN,'(',10,16,97)
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr . LexToken(LPAREN,'(',10,6,87)
 Action : Shift and goto state 231
 State  : 231
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN . LexToken(LPAREN,'(',10,17,98)
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN . LexToken(IDENT,'a',10,7,88)
+Action : Shift and goto state 336
+State  : 336
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN IDENT . LexToken(RPAREN,')',10,8,89)
+Action : Shift and goto state 400
+State  : 400
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN IDENT RPAREN . LexToken(SEMICOLON,';',10,9,90)
+Action : Reduce rule [Arguments -> LPAREN IDENT RPAREN] with ['(','a',')'] and goto state 228
+Result : <list @ 0x7f6331cbd308> (['a'])
+State  : 228
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr Arguments . LexToken(SEMICOLON,';',10,9,90)
+Action : Reduce rule [PrimaryExpr -> PrimaryExpr Arguments] with [['f'],['a']] and goto state 113
+Result : <list @ 0x7f6331cbda88> (['PrimaryExpr', ['f'], ['a']])
+State  : 113
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr . LexToken(SEMICOLON,';',10,9,90)
+Action : Reduce rule [UnaryExpr -> PrimaryExpr] with [<list @ 0x7f6331cbda88>] and goto state 107
+Result : <list @ 0x7f6331cbda88> (['PrimaryExpr', ['f'], ['a']])
+State  : 107
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE UnaryExpr . LexToken(SEMICOLON,';',10,9,90)
+Action : Reduce rule [Expr -> UnaryExpr] with [<list @ 0x7f6331cbda88>] and goto state 175
+Result : <list @ 0x7f6331cbda88> (['PrimaryExpr', ['f'], ['a']])
+State  : 175
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Expr . LexToken(SEMICOLON,';',10,9,90)
+Action : Reduce rule [ExpressionStmt -> Expr] with [<list @ 0x7f6331cbda88>] and goto state 164
+Result : <list @ 0x7f6331cbda88> (['PrimaryExpr', ['f'], ['a']])
+State  : 164
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE ExpressionStmt . LexToken(SEMICOLON,';',10,9,90)
+Action : Reduce rule [SimpleStmt -> ExpressionStmt] with [<list @ 0x7f6331cbda88>] and goto state 152
+Result : <list @ 0x7f6331cbda88> (['PrimaryExpr', ['f'], ['a']])
+State  : 152
+Defaulted state 152: Reduce using 194
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE SimpleStmt . LexToken(SEMICOLON,';',10,9,90)
+Action : Reduce rule [Statement -> SimpleStmt] with [<list @ 0x7f6331cbda88>] and goto state 149
+Result : <list @ 0x7f6331cbda88> (['PrimaryExpr', ['f'], ['a']])
+State  : 149
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement . LexToken(SEMICOLON,';',10,9,90)
+Action : Shift and goto state 255
+State  : 255
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON . LexToken(IDENT,'fmt',11,5,93)
+Action : Shift and goto state 179
+State  : 179
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON IDENT . LexToken(PERIOD,'.',11,8,96)
+Action : Shift and goto state 233
+State  : 233
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON IDENT PERIOD . LexToken(IDENT,'Println',11,9,97)
+Action : Shift and goto state 342
+State  : 342
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON IDENT PERIOD IDENT . LexToken(LPAREN,'(',11,16,104)
+Action : Reduce rule [PrimaryExpr -> IDENT PERIOD IDENT] with ['fmt','.','Println'] and goto state 113
+Result : <list @ 0x7f6331c58748> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+State  : 113
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr . LexToken(LPAREN,'(',11,16,104)
+Action : Shift and goto state 231
+State  : 231
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN . LexToken(LPAREN,'(',11,17,105)
 Action : Shift and goto state 332
 State  : 332
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN . LexToken(IDENT,'foo',10,18,99)
-Action : Shift and goto state 395
-State  : 395
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN IDENT . LexToken(RPAREN,')',10,21,102)
-Action : Shift and goto state 194
-State  : 194
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN IDENT RPAREN . LexToken(LPAREN,'(',10,22,103)
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN IDENT RPAREN . LexToken(LPAREN,'(',10,22,103)
-State  : 194
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN IDENT RPAREN . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN IDENT RPAREN . error
-State  : 395
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN IDENT . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN IDENT . error
-State  : 332
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN LPAREN . error
-State  : 231
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr LPAREN . error
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN LPAREN . LexToken(MUL,'*',11,18,106)
+Action : Shift and goto state 111
+State  : 111
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN LPAREN MUL . LexToken(IDENT,'foo',11,19,107)
+Action : Shift and goto state 116
+State  : 116
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN LPAREN MUL IDENT . LexToken(RPAREN,')',11,22,110)
+Action : Reduce rule [PrimaryExpr -> IDENT] with ['foo'] and goto state 113
+Result : <list @ 0x7f6331cbdf08> (['foo'])
 State  : 113
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE PrimaryExpr . error
-State  : 83
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE . error
-State  : 48
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature . error
-State  : 28
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName . error
-State  : 16
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC . error
-State  : 27
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON . error
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN LPAREN MUL PrimaryExpr . LexToken(RPAREN,')',11,22,110)
+Action : Reduce rule [UnaryExpr -> PrimaryExpr] with [['foo']] and goto state 223
+Result : <list @ 0x7f6331cbdf08> (['foo'])
+State  : 223
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN LPAREN MUL UnaryExpr . LexToken(RPAREN,')',11,22,110)
+Action : Reduce rule [UnaryExpr -> MUL UnaryExpr] with ['*',['foo']] and goto state 107
+Result : <list @ 0x7f6331c58a08> (['*', ['foo']])
+State  : 107
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN LPAREN UnaryExpr . LexToken(RPAREN,')',11,22,110)
+Action : Reduce rule [Expr -> UnaryExpr] with [['*', ['foo']]] and goto state 236
+Result : <list @ 0x7f6331c58a08> (['*', ['foo']])
+State  : 236
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN LPAREN Expr . LexToken(RPAREN,')',11,22,110)
+Action : Shift and goto state 350
+State  : 350
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN LPAREN Expr RPAREN . LexToken(LPAREN,'(',11,23,111)
+Action : Reduce rule [PrimaryExpr -> LPAREN Expr RPAREN] with ['(',['*', ['foo']],')'] and goto state 113
+Result : <list @ 0x7f6331c58a08> (['*', ['foo']])
+State  : 113
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr . LexToken(LPAREN,'(',11,23,111)
+Action : Shift and goto state 231
+State  : 231
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN . LexToken(INT,'4',11,24,112)
+Action : Shift and goto state 121
+State  : 121
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN INT . LexToken(RPAREN,')',11,25,113)
+Action : Reduce rule [BasicLit -> INT] with ['4'] and goto state 118
+Result : <list @ 0x7f6331c58948> (['4'])
+State  : 118
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN BasicLit . LexToken(RPAREN,')',11,25,113)
+Action : Reduce rule [Lit -> BasicLit] with [['4']] and goto state 115
+Result : <list @ 0x7f6331c58948> (['4'])
+State  : 115
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN Lit . LexToken(RPAREN,')',11,25,113)
+Action : Reduce rule [PrimaryExpr -> Lit] with [['4']] and goto state 113
+Result : <list @ 0x7f6331c58948> (['4'])
+State  : 113
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN PrimaryExpr . LexToken(RPAREN,')',11,25,113)
+Action : Reduce rule [UnaryExpr -> PrimaryExpr] with [['4']] and goto state 107
+Result : <list @ 0x7f6331c58948> (['4'])
+State  : 107
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN UnaryExpr . LexToken(RPAREN,')',11,25,113)
+Action : Reduce rule [Expr -> UnaryExpr] with [['4']] and goto state 139
+Result : <list @ 0x7f6331c58948> (['4'])
+State  : 139
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN Expr . LexToken(RPAREN,')',11,25,113)
+Action : Reduce rule [ExpressionList -> Expr] with [['4']] and goto state 334
+Result : <list @ 0x7f6331c58948> (['4'])
+State  : 334
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN ExpressionList . LexToken(RPAREN,')',11,25,113)
+Action : Shift and goto state 396
+State  : 396
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr LPAREN ExpressionList RPAREN . LexToken(RPAREN,')',11,26,114)
+Action : Reduce rule [Arguments -> LPAREN ExpressionList RPAREN] with ['(',['4'],')'] and goto state 228
+Result : <list @ 0x7f6331c58948> (['4'])
+State  : 228
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr Arguments . LexToken(RPAREN,')',11,26,114)
+Action : Reduce rule [PrimaryExpr -> PrimaryExpr Arguments] with [['*', ['foo']],['4']] and goto state 113
+Result : <list @ 0x7f6331c58988> (['PrimaryExpr', ['*', ['foo']], ['4']])
+State  : 113
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN PrimaryExpr . LexToken(RPAREN,')',11,26,114)
+Action : Reduce rule [UnaryExpr -> PrimaryExpr] with [<list @ 0x7f6331c58988>] and goto state 107
+Result : <list @ 0x7f6331c58988> (['PrimaryExpr', ['*', ['foo']], ['4']])
+State  : 107
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN UnaryExpr . LexToken(RPAREN,')',11,26,114)
+Action : Reduce rule [Expr -> UnaryExpr] with [<list @ 0x7f6331c58988>] and goto state 139
+Result : <list @ 0x7f6331c58988> (['PrimaryExpr', ['*', ['foo']], ['4']])
+State  : 139
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN Expr . LexToken(RPAREN,')',11,26,114)
+Action : Reduce rule [ExpressionList -> Expr] with [<list @ 0x7f6331c58988>] and goto state 334
+Result : <list @ 0x7f6331c58988> (['PrimaryExpr', ['*', ['foo']], ['4']])
+State  : 334
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN ExpressionList . LexToken(RPAREN,')',11,26,114)
+Action : Shift and goto state 396
+State  : 396
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr LPAREN ExpressionList RPAREN . LexToken(SEMICOLON,';',11,27,115)
+Action : Reduce rule [Arguments -> LPAREN ExpressionList RPAREN] with ['(',<list @ 0x7f6331c58988>,')'] and goto state 228
+Result : <list @ 0x7f6331c58988> (['PrimaryExpr', ['*', ['foo']], ['4']])
+State  : 228
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr Arguments . LexToken(SEMICOLON,';',11,27,115)
+Action : Reduce rule [PrimaryExpr -> PrimaryExpr Arguments] with [<list @ 0x7f6331c58748>,<list @ 0x7f6331c58988>] and goto state 113
+Result : <list @ 0x7f6331c58b08> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+State  : 113
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON PrimaryExpr . LexToken(SEMICOLON,';',11,27,115)
+Action : Reduce rule [UnaryExpr -> PrimaryExpr] with [<list @ 0x7f6331c58b08>] and goto state 107
+Result : <list @ 0x7f6331c58b08> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+State  : 107
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON UnaryExpr . LexToken(SEMICOLON,';',11,27,115)
+Action : Reduce rule [Expr -> UnaryExpr] with [<list @ 0x7f6331c58b08>] and goto state 175
+Result : <list @ 0x7f6331c58b08> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+State  : 175
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON Expr . LexToken(SEMICOLON,';',11,27,115)
+Action : Reduce rule [ExpressionStmt -> Expr] with [<list @ 0x7f6331c58b08>] and goto state 164
+Result : <list @ 0x7f6331c58b08> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+State  : 164
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON ExpressionStmt . LexToken(SEMICOLON,';',11,27,115)
+Action : Reduce rule [SimpleStmt -> ExpressionStmt] with [<list @ 0x7f6331c58b08>] and goto state 152
+Result : <list @ 0x7f6331c58b08> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+State  : 152
+Defaulted state 152: Reduce using 194
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON SimpleStmt . LexToken(SEMICOLON,';',11,27,115)
+Action : Reduce rule [Statement -> SimpleStmt] with [<list @ 0x7f6331c58b08>] and goto state 149
+Result : <list @ 0x7f6331c58b08> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+State  : 149
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON Statement . LexToken(SEMICOLON,';',11,27,115)
+Action : Shift and goto state 255
+State  : 255
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON Statement SEMICOLON . LexToken(RBRACE,'}',12,1,117)
+Action : Reduce rule [StatementList -> <empty>] with [] and goto state 363
+Result : <list @ 0x7f6331c58748> ([])
+State  : 363
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON Statement SEMICOLON StatementList . LexToken(RBRACE,'}',12,1,117)
+Action : Reduce rule [StatementList -> Statement SEMICOLON StatementList] with [<list @ 0x7f6331c58b08>,';',[]] and goto state 363
+Result : <list @ 0x7f6331c58b08> (['PrimaryExpr', ['fmt'], ['.'], ['Printl ...)
+State  : 363
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE Statement SEMICOLON StatementList . LexToken(RBRACE,'}',12,1,117)
+Action : Reduce rule [StatementList -> Statement SEMICOLON StatementList] with [<list @ 0x7f6331cbda88>,';',<list @ 0x7f6331c58b08>] and goto state 148
+Result : <list @ 0x7f6331cbd588> (['StatementList', ['PrimaryExpr', ['f'], ...)
+State  : 148
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE StatementList . LexToken(RBRACE,'}',12,1,117)
+Action : Shift and goto state 254
+State  : 254
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature LBRACE StatementList RBRACE . LexToken(SEMICOLON,';',12,2,118)
+Action : Reduce rule [Block -> LBRACE StatementList RBRACE] with ['{',<list @ 0x7f6331cbd588>,'}'] and goto state 82
+Result : <list @ 0x7f6331cbd588> (['StatementList', ['PrimaryExpr', ['f'], ...)
+State  : 82
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature Block . LexToken(SEMICOLON,';',12,2,118)
+Action : Reduce rule [FunctionBody -> Block] with [<list @ 0x7f6331cbd588>] and goto state 81
+Result : <list @ 0x7f6331cbd588> (['StatementList', ['PrimaryExpr', ['f'], ...)
+State  : 81
+Defaulted state 81: Reduce using 169
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FUNC FunctionName Signature FunctionBody . LexToken(SEMICOLON,';',12,2,118)
+Action : Reduce rule [FuncDecl -> FUNC FunctionName Signature FunctionBody] with ['func',['main'],[],<list @ 0x7f6331cbd588>] and goto state 12
+Result : <list @ 0x7f6331cc1ec8> (['FuncDecl', ['func'], ['main'], ['State ...)
+State  : 12
+Defaulted state 12: Reduce using 16
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON FuncDecl . LexToken(SEMICOLON,';',12,2,118)
+Action : Reduce rule [TopLevelDecl -> FuncDecl] with [<list @ 0x7f6331cc1ec8>] and goto state 10
+Result : <list @ 0x7f6331cc1ec8> (['FuncDecl', ['func'], ['main'], ['State ...)
 State  : 10
-Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl . error
-State  : 6
-Stack  : PackageClause SEMICOLON ImportDeclMult . error
-ERROR: Error  : PackageClause SEMICOLON ImportDeclMult . error
-State  : 4
-Stack  : PackageClause SEMICOLON . error
-ERROR: Error  : PackageClause SEMICOLON . error
-State  : 2
-Stack  : PackageClause . error
-ERROR: Error  : PackageClause . error
-State  : 0
-Stack  : . error
-ERROR: Error  : . error
-State  : 0
-Stack  : . LexToken(INT,'4',10,23,104)
-ERROR: Error  : . LexToken(INT,'4',10,23,104)
-State  : 0
-Stack  : . LexToken(RPAREN,')',10,24,105)
-ERROR: Error  : . LexToken(RPAREN,')',10,24,105)
-State  : 0
-Stack  : . LexToken(RPAREN,')',10,25,106)
-ERROR: Error  : . LexToken(RPAREN,')',10,25,106)
-State  : 0
-Stack  : . LexToken(SEMICOLON,';',10,26,107)
-ERROR: Error  : . LexToken(SEMICOLON,';',10,26,107)
-State  : 0
-Stack  : . LexToken(RBRACE,'}',11,1,109)
-ERROR: Error  : . LexToken(RBRACE,'}',11,1,109)
-State  : 0
-Stack  : . LexToken(SEMICOLON,';',11,2,110)
-ERROR: Error  : . LexToken(SEMICOLON,';',11,2,110)
-State  : 0
-Stack  : . $end
-ERROR: Error  : . $end
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON TopLevelDecl . LexToken(SEMICOLON,';',12,2,118)
+Action : Shift and goto state 27
+State  : 27
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON TopLevelDecl SEMICOLON . $end
+Action : Reduce rule [TopLevelDeclMult -> <empty>] with [] and goto state 47
+Result : <list @ 0x7f6331c58508> ([])
+State  : 47
+Defaulted state 47: Reduce using 13
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON TopLevelDecl SEMICOLON TopLevelDeclMult . $end
+Action : Reduce rule [TopLevelDeclMult -> TopLevelDecl SEMICOLON TopLevelDeclMult] with [<list @ 0x7f6331cc1ec8>,';',[]] and goto state 47
+Result : <list @ 0x7f6331cc1ec8> (['FuncDecl', ['func'], ['main'], ['State ...)
+State  : 47
+Defaulted state 47: Reduce using 13
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDecl SEMICOLON TopLevelDeclMult . $end
+Action : Reduce rule [TopLevelDeclMult -> TopLevelDecl SEMICOLON TopLevelDeclMult] with [<list @ 0x7f6331c58108>,';',<list @ 0x7f6331cc1ec8>] and goto state 9
+Result : <list @ 0x7f6331c58ac8> (['TopLevelDeclMult', ['FuncDecl', ['func ...)
+State  : 9
+Defaulted state 9: Reduce using 1
+Stack  : PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult . $end
+Action : Reduce rule [SourceFile -> PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult] with [<list @ 0x7f6331cc10c8>,';',<list @ 0x7f6331c57848>,<list @ 0x7f6331c58ac8>] and goto state 1
+Result : <list @ 0x7f6331c58988> (['SourceFile', ['PackageClause', ['packa ...)
+State  : 1
+Stack  : SourceFile . $end
+Done   : Returning <list @ 0x7f6331c58988> (['SourceFile', ['PackageClause', ['packa ...)
+PLY: PARSE DEBUG END

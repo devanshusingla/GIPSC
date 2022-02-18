@@ -509,7 +509,7 @@ def p_FunctionLit(p):
 
 def p_PrimaryExpr(p):
     """
-    PrimaryExpr :  Lit 
+    PrimaryExpr :  Lit
                 | IDENT
                 | IDENT PERIOD IDENT
                 | LPAREN Expr RPAREN
@@ -529,12 +529,12 @@ def p_Index(p):
 
 # def p_Conversion(p):
 #     """
-#     Conversion : Type LPAREN Expr RPAREN 
-#                | Type LPAREN Expr COMMA RPAREN  
-#                | IDENT LPAREN Expr RPAREN 
-#                | IDENT LPAREN Expr COMMA RPAREN 
-#                | IDENT PERIOD IDENT LPAREN Expr RPAREN 
-#                | IDENT PERIOD IDENT LPAREN Expr COMMA RPAREN 
+#     Conversion : TypeT LPAREN Expr RPAREN  
+#                | TypeT LPAREN Expr COMMA RPAREN 
+#                | LPAREN MUL TypeT RPAREN LPAREN Expr RPAREN
+#                | LPAREN MUL TypeT RPAREN LPAREN Expr COMMA RPAREN
+#                | LPAREN MUL IDENT RPAREN LPAREN Expr RPAREN
+#                | LPAREN MUL IDENT RPAREN LPAREN Expr COMMA RPAREN
 #     """
 #     p[0] = get_value_p(p)
 
