@@ -7,6 +7,7 @@ import sys
 tokens=lexer.tokens
 tokens.remove('COMMENT')
 # tokens.append('MULTP')
+COMPACT = True
 
 precedence = (
     # ('left', 'CONV'),
@@ -44,11 +45,14 @@ def get_value_p(p):
             if p[i] not in non_terminals:
                 value.append([p[i]])
         elif len(p[i]) > 0:
-            if p[i][0] == value[0]:
-                value.extend(p[i][1:])
+            if COMPACT:
+                if p[i][0] == value[0]:
+                    value.extend(p[i][1:])
+                else:
+                    value.append(p[i])
             else:
                 value.append(p[i])
-    if not isinstance(value, str):
+    if not isinstance(value, str) and COMPACT:
         if len(value) == 2:
             return value[1]
         if len(value) == 1:
@@ -321,25 +325,25 @@ def p_ExpressionList(p):
 def p_Expr(p):
     """
     Expr : UnaryExpr 
-         | Expr LOR   UnaryExpr
-         | Expr LAND  UnaryExpr
-         | Expr EQL   UnaryExpr
-         | Expr NEQ  UnaryExpr
-         | Expr LSS  UnaryExpr
-         | Expr LEQ  UnaryExpr
-         | Expr GTR  UnaryExpr
-         | Expr GEQ  UnaryExpr
-         | Expr ADD   UnaryExpr
-         | Expr SUB  UnaryExpr
-         | Expr OR  UnaryExpr
-         | Expr XOR  UnaryExpr
-         | Expr MUL  UnaryExpr
-         | Expr QUO  UnaryExpr
-         | Expr REM  UnaryExpr
-         | Expr SHL  UnaryExpr
-         | Expr SHR  UnaryExpr
-         | Expr AND  UnaryExpr
-         | Expr AND_NOT  UnaryExpr
+         | Expr LOR  Expr
+         | Expr LAND Expr
+         | Expr EQL  Expr
+         | Expr NEQ Expr
+         | Expr LSS Expr
+         | Expr LEQ Expr
+         | Expr GTR Expr
+         | Expr GEQ Expr
+         | Expr ADD  Expr
+         | Expr SUB Expr
+         | Expr OR Expr
+         | Expr XOR Expr
+         | Expr MUL Expr
+         | Expr QUO Expr
+         | Expr REM Expr
+         | Expr SHL Expr
+         | Expr SHR Expr
+         | Expr AND Expr
+         | Expr AND_NOT Expr
     """
     p[0] = get_value_p(p)
 
@@ -1102,7 +1106,7 @@ def p_error(p):
 ## Build lexer
 lexer = lex.lex()
 
-parser, grammar = yacc.yacc()
+parser, grammar = yacc.yacc(debug=True)
 
 path_to_root = os.environ.get('PATH_TO_ROOT')
 milestone = os.environ.get('MILESTONE')
@@ -1119,7 +1123,7 @@ non_terminals = grammar.Nonterminals
 ## Trying to handle input
 with open(sys.argv[1], 'r') as f:
     import pprint
-    out = parser.parse(f.read(), lexer = lexer)
+    out = parser.parse(f.read(), lexer = lexer, debug=True)
     if out is None:
         f.close()
         sys.exit(1)
