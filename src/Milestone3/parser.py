@@ -33,7 +33,14 @@ precedence = (
 
 non_terminals = {}
 ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
-## Starting grammar
+
+
+###################################################################################
+#####################                                        ######################
+######                         STARTING GRAMMAR                            ########
+#####################                                        ######################
+###################################################################################
+
 def get_value_p(p):
     value = [str(sys._getframe(1).f_code.co_name)[2:]]
     # value = []
@@ -70,8 +77,9 @@ def p_SourceFile(p):
     """
     p[0] = get_value_p(p)
     
-
-## Package related grammar
+###################################################################################
+### Package related grammar
+###################################################################################
 
 def p_PackageClause(p):
     """
@@ -79,13 +87,9 @@ def p_PackageClause(p):
     """
     p[0] = get_value_p(p)
 
-# def p_PackageName(p):
-#     """
-#     PackageName : IDENT
-#     """
-#     p[0] = get_value_p(p)
-
-## Import related grammar
+###################################################################################
+### Import related grammar
+###################################################################################
 
 def p_ImportDeclMult(p):
     """
@@ -122,7 +126,9 @@ def p_ImportPath(p):
     """
     p[0] = get_value_p(p)
 
-## Top-Level related grammar
+###################################################################################
+### Top-Level related grammar
+###################################################################################
 
 def p_TopLevelDeclMult(p):
     """
@@ -146,6 +152,10 @@ def p_Decl(p):
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+### Constant Declarations
+###################################################################################
+
 def p_ConstDecl(p):
     """
     ConstDecl : CONST ConstSpec
@@ -168,6 +178,82 @@ def p_ConstSpec(p):
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+### Variable Declarations
+###################################################################################
+
+def p_VarDecl(p):
+    """
+    VarDecl : VAR VarSpec
+            | VAR LPAREN VarMult RPAREN
+    """
+    p[0] = get_value_p(p)
+
+def p_VarMult(p):
+    """
+    VarMult : VarSpec SEMICOLON VarMult 
+            | 
+    """
+    p[0] = get_value_p(p)
+
+def p_VarSpec(p):
+    """
+    VarSpec : IdentifierList Type ASSIGN ExpressionList
+            | IdentifierList IDENT ASSIGN ExpressionList
+            | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
+            | IdentifierList ASSIGN ExpressionList
+            | IdentifierList Type
+            | IdentifierList IDENT
+            | IdentifierList IDENT PERIOD IDENT
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Type Declarations
+###################################################################################
+
+def p_TypeDecl(p):
+    """
+    TypeDecl : TYPE TypeSpec
+             | TYPE LPAREN TypeSpecMult RPAREN
+    """
+    p[0] = get_value_p(p)
+
+def p_TypeSpecMult(p):
+    """
+    TypeSpecMult : TypeSpec SEMICOLON TypeSpecMult 
+                 | 
+    """
+    p[0] = get_value_p(p)
+
+def p_TypeSpec(p):
+    """
+    TypeSpec : AliasDecl
+             | Typedef
+    """
+    p[0] = get_value_p(p)
+
+def p_AliasDecl(p):
+    """
+    AliasDecl : IDENT ASSIGN Type
+                | IDENT ASSIGN IDENT
+                | IDENT ASSIGN IDENT PERIOD IDENT
+    """
+    p[0] = get_value_p(p)
+
+def p_TypeDef(p):
+    """
+    Typedef : IDENT Type
+              | IDENT IDENT
+              | IDENT IDENT PERIOD IDENT
+
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Identifier List
+###################################################################################
+
 def p_IdentifierList(p):
     """
     IdentifierList : IDENT
@@ -175,144 +261,12 @@ def p_IdentifierList(p):
     """
     p[0] = get_value_p(p)
 
-# def p_IdentifierOth(p):
-#     """
-#     IdentifierOth : COMMA IDENT IdentifierOth  
-#                   | 
-#     """
-#     p[0] = get_value_p(p)
 
-# def p_QualifiedIdent(p):
-#     """
-#     QualifiedIdent : IDENT PERIOD IDENT
-#     """
-#     p[0] = get_value_p(p)
-
-# function type remaining
-# Added function type
-# def p_TypeLit(p):
-#     """
-#     TypeLit : ArrayType
-#             | StructType
-#             | PointerType
-#             | SliceType
-#             | MapType
-#             | FunctionType
-#     """
-#     p[0] = get_value_p(p)
-
-#array type
-def p_ArrayType(p):
-    """
-    ArrayType : LBRACK ArrayLength RBRACK ElementType
-    """
-    p[0] = get_value_p(p)
-
-def p_ArrayLength(p):
-    """
-    ArrayLength : Expr
-    """
-    p[0] = get_value_p(p)
-
-def p_ElementType(p):
-    """
-    ElementType : Type
-                | IDENT
-                | IDENT PERIOD IDENT
-    """
-    p[0] = get_value_p(p)
-
-#struct type
-def p_StructType(p):
-    """
-    StructType : STRUCT LBRACE FieldDeclMult RBRACE 
-    """
-    p[0] = get_value_p(p)
-
-#extra
-def p_FieldDeclMult(p):
-    """
-    FieldDeclMult : FieldDeclMult FieldDecl SEMICOLON
-                  | 
-    """
-    p[0] = get_value_p(p)
-
-def p_FieldDecl(p):
-    """
-    FieldDecl : IdentifierList Type 
-              | IdentifierList IDENT
-              | IdentifierList IDENT PERIOD IDENT
-              | EmbeddedField
-              | IdentifierList Type Tag
-              | IdentifierList IDENT Tag
-              | IdentifierList IDENT PERIOD IDENT Tag
-              | EmbeddedField Tag
-    """
-    p[0] = get_value_p(p)
-    
-def p_Tag(p):
-    """
-    Tag : STRING
-    """
-    p[0] = get_value_p(p)
-
-def p_EmbeddedField(p):
-    """
-    EmbeddedField : MUL IDENT
-                  | IDENT
-                  | MUL IDENT PERIOD IDENT
-                  | IDENT PERIOD IDENT
-    """
-    p[0] = get_value_p(p)
-
-# pointer type
-
-def p_PointerType(p):
-    """
-    PointerType : MUL Type %prec UMUL
-               | MUL IDENT %prec UMUL
-                | MUL IDENT PERIOD IDENT %prec UMUL
-    """
-    p[0] = get_value_p(p)
-    
-# def p_BaseType(p):
-#     """
-#     BaseType : Type
-#                | IDENT
-#                 | IDENT PERIOD IDENT
-#     """
-#     p[0] = get_value_p(p)
-
-#slice type
-def p_SliceType(p):
-    """
-    SliceType : LBRACK RBRACK ElementType
-    """
-    p[0] = get_value_p(p)
-
-#map type
-def p_MapType(p):
-    """
-    MapType : MAP LBRACK KeyType RBRACK ElementType
-    """
-    p[0] = get_value_p(p)
-    
-def p_KeyType(p):
-    """
-    KeyType : Type
-            | IDENT
-            | IDENT PERIOD IDENT
-    """
-    p[0] = get_value_p(p)
-
-# Function Type
-def p_FunctionType(p):
-    """
-    FunctionType : FUNC Signature 
-    """
-    p[0] = get_value_p(p)
-
-## Expression related grammarExpressionList
+###################################################################################
+#####################                                        ######################
+######                           EXPRESSIONS                               ########
+#####################                                        ######################
+###################################################################################
 
 def p_ExpressionList(p):
     """
@@ -358,73 +312,231 @@ def p_UnaryExpr(p):
     """
     p[0] = get_value_p(p)
 
-# def p_BinOp(p):
-#     """
-#     BinOp : LOR 
-#           | LAND
-#           | RelOp
-#           | AddOp
-#           | MulOp
-#     """
-#     p[0] = get_value_p(p)
+###################################################################################
+### Primary Expression
+###################################################################################
 
-# def p_RelOp(p):
-#     """
-#     RelOp : 
-          
-#     """
-#     p[0] = get_value_p(p)
+def p_PrimaryExpr(p):
+    """
+    PrimaryExpr :  Lit
+                | IDENT
+                | IDENT PERIOD IDENT
+                | LPAREN Expr RPAREN
+                | PrimaryExpr Selector
+                | PrimaryExpr Index
+                | PrimaryExpr Slice
+                | PrimaryExpr Arguments
+    """
+    p[0] = get_value_p(p)
 
-# def p_AddOp(p):
-#     """
-#     AddOp : ADD 
-#           | SUB
-#           | OR
-#           | XOR
-#     """
-#     p[0] = get_value_p(p)
+###################################################################################
+## Selector
 
-# def p_MulOp(p):
-#     """
-#     MulOp :
-#           | MUL
-#           | QUO
-#           | REM
-#           | SHL
-#           | SHR
-#           | AND
-#           | AND_NOT
-#     """
-#     p[0] = get_value_p(p)
+def p_Selector(p):
+    """
+    Selector : PERIOD IDENT
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+## Index
+
+def p_Index(p):
+    """
+    Index : LBRACK Expr RBRACK
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+## Slice
+
+def p_Slice(p):
+    """
+    Slice : LBRACK Expr COLON Expr RBRACK
+          | LBRACK COLON Expr RBRACK
+          | LBRACK Expr COLON RBRACK
+          | LBRACK COLON RBRACK
+          | LBRACK COLON Expr COLON Expr RBRACK
+          | LBRACK Expr COLON Expr COLON Expr RBRACK
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+## Arguments
+
+def p_Arguments(p):
+    """
+    Arguments : LPAREN RPAREN
+              | LPAREN ExpressionList RPAREN
+              | LPAREN ExpressionList COMMA RPAREN
+              | LPAREN TypeT RPAREN
+              | LPAREN TypeT COMMA RPAREN
+              | LPAREN TypeT COMMA ExpressionList RPAREN 
+              | LPAREN TypeT COMMA ExpressionList COMMA RPAREN 
+              | LPAREN IDENT RPAREN
+              | LPAREN IDENT COMMA RPAREN
+              | LPAREN IDENT COMMA ExpressionList RPAREN 
+              | LPAREN IDENT COMMA ExpressionList COMMA RPAREN 
+              | LPAREN IDENT PERIOD IDENT RPAREN
+              | LPAREN IDENT PERIOD IDENT COMMA RPAREN
+              | LPAREN IDENT PERIOD IDENT COMMA ExpressionList RPAREN 
+              | LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN   
+    """
+    p[0] = get_value_p(p)
+
+
+###################################################################################
+#####################                                        ######################
+######                             TYPES                                   ########
+#####################                                        ######################
+###################################################################################
+
+def p_Type(p):
+    """
+    Type : TypeT
+         | PointerType
+         | LPAREN PointerType RPAREN
+    """
+    p[0] = get_value_p(p)
+
+def p_TypeT(p):
+    """
+    TypeT : ArrayType
+        | StructType
+        | SliceType
+        | MapType
+        | FunctionType
+         | LPAREN TypeT RPAREN
+         | LPAREN IDENT RPAREN
+         | LPAREN IDENT PERIOD IDENT RPAREN
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Pointer Type
+###################################################################################
+
+def p_PointerType(p):
+    """
+    PointerType : MUL Type %prec UMUL
+               | MUL IDENT %prec UMUL
+                | MUL IDENT PERIOD IDENT %prec UMUL
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Slice Type
+###################################################################################
+
+def p_SliceType(p):
+    """
+    SliceType : LBRACK RBRACK ElementType
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Array Type
+###################################################################################
+
+def p_ArrayType(p):
+    """
+    ArrayType : LBRACK ArrayLength RBRACK ElementType
+    """
+    p[0] = get_value_p(p)
+
+def p_ArrayLength(p):
+    """
+    ArrayLength : Expr
+    """
+    p[0] = get_value_p(p)
+
+def p_ElementType(p):
+    """
+    ElementType : Type
+                | IDENT
+                | IDENT PERIOD IDENT
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Struct Type
+###################################################################################
+
+def p_StructType(p):
+    """
+    StructType : STRUCT LBRACE FieldDeclMult RBRACE 
+    """
+    p[0] = get_value_p(p)
+
+#extra
+def p_FieldDeclMult(p):
+    """
+    FieldDeclMult : FieldDeclMult FieldDecl SEMICOLON
+                  | 
+    """
+    p[0] = get_value_p(p)
+
+def p_FieldDecl(p):
+    """
+    FieldDecl : IdentifierList Type 
+              | IdentifierList IDENT
+              | IdentifierList IDENT PERIOD IDENT
+              | EmbeddedField
+              | IdentifierList Type Tag
+              | IdentifierList IDENT Tag
+              | IdentifierList IDENT PERIOD IDENT Tag
+              | EmbeddedField Tag
+    """
+    p[0] = get_value_p(p)
     
-# def p_UnaryOp(p):
-#     """
-#     UnaryOp : ADD
-#             | SUB
-#             | NOT
-#             | XOR
-#             | MUL
-#             | AND
-#     """
-#     p[0] = get_value_p(p)
+def p_Tag(p):
+    """
+    Tag : STRING
+    """
+    p[0] = get_value_p(p)
 
-# def p_ExprOth(p):
-#     """
-#     ExprOth : Expr COMMA ExprOth 
-#             | 
-#     """
-#     p[0] = get_value_p(p)
+def p_EmbeddedField(p):
+    """
+    EmbeddedField : MUL IDENT
+                  | IDENT
+                  | MUL IDENT PERIOD IDENT
+                  | IDENT PERIOD IDENT
+    """
+    p[0] = get_value_p(p)
 
-## Operands and Literals
+###################################################################################
+### Map Type
+###################################################################################
 
-# def p_Operand(p):
-#     """
-#     Operand : Lit 
-#             | IDENT
-#             | IDENT PERIOD IDENT
-#             | LPAREN Expr RPAREN
-    # """
-    # p[0] = get_value_p(p)
+def p_MapType(p):
+    """
+    MapType : MAP LBRACK KeyType RBRACK ElementType
+    """
+    p[0] = get_value_p(p)
+    
+def p_KeyType(p):
+    """
+    KeyType : Type
+            | IDENT
+            | IDENT PERIOD IDENT
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Function Type
+###################################################################################
+
+def p_FunctionType(p):
+    """
+    FunctionType : FUNC Signature 
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+#####################                                        ######################
+######                             LITERALS                                ########
+#####################                                        ######################
+###################################################################################
 
 def p_Lit(p):
     """
@@ -433,6 +545,10 @@ def p_Lit(p):
         | FunctionLit
     """
     p[0] = get_value_p(p)
+
+###################################################################################
+### Basic Literal
+###################################################################################
     
 def p_BasicLit(p):
     """
@@ -443,6 +559,10 @@ def p_BasicLit(p):
              | STRING
     """
     p[0] = get_value_p(p)
+
+###################################################################################
+### Composite Literal
+###################################################################################
 
 def p_CompositeLit(p):
     """
@@ -491,12 +611,9 @@ def p_Element(p):
     """
     p[0] = get_value_p(p)
 
-# def p_OperandName(p):
-#     """
-#     OperandName : IDENT
-#                 | QualifiedIdent
-#     """
-#     p[0] = get_value_p(p)
+###################################################################################
+### Function Literal
+###################################################################################
 
 def p_FunctionLit(p):
     """
@@ -504,154 +621,7 @@ def p_FunctionLit(p):
     """
     p[0] = get_value_p(p)
 
-## Primary Expressions
-
-def p_PrimaryExpr(p):
-    """
-    PrimaryExpr :  Lit
-                | IDENT
-                | IDENT PERIOD IDENT
-                | LPAREN Expr RPAREN
-                | PrimaryExpr Selector
-                | PrimaryExpr Index
-                | PrimaryExpr Slice
-                | PrimaryExpr Arguments
-    """
-    p[0] = get_value_p(p)
-
-def p_Index(p):
-    """
-    Index : LBRACK Expr RBRACK
-    """
-    p[0] = get_value_p(p)
-
-
-# def p_Conversion(p):
-#     """
-#     Conversion : TypeT LPAREN Expr RPAREN  
-#                | TypeT LPAREN Expr COMMA RPAREN 
-#                | LPAREN MUL TypeT RPAREN LPAREN Expr RPAREN
-#                | LPAREN MUL TypeT RPAREN LPAREN Expr COMMA RPAREN
-#                | LPAREN MUL IDENT RPAREN LPAREN Expr RPAREN
-#                | LPAREN MUL IDENT RPAREN LPAREN Expr COMMA RPAREN
-#     """
-#     p[0] = get_value_p(p)
-
-def p_Selector(p):
-    """
-    Selector : PERIOD IDENT
-    """
-    p[0] = get_value_p(p)
-
-def p_Slice(p):
-    """
-    Slice : LBRACK Expr COLON Expr RBRACK
-          | LBRACK COLON Expr RBRACK
-          | LBRACK Expr COLON RBRACK
-          | LBRACK COLON RBRACK
-          | LBRACK COLON Expr COLON Expr RBRACK
-          | LBRACK Expr COLON Expr COLON Expr RBRACK
-    """
-    p[0] = get_value_p(p)
-
-def p_Arguments(p):
-    """
-    Arguments : LPAREN RPAREN
-              | LPAREN ExpressionList RPAREN
-              | LPAREN ExpressionList COMMA RPAREN
-              | LPAREN TypeT RPAREN
-              | LPAREN TypeT COMMA RPAREN
-              | LPAREN TypeT COMMA ExpressionList RPAREN 
-              | LPAREN TypeT COMMA ExpressionList COMMA RPAREN 
-              | LPAREN IDENT RPAREN
-              | LPAREN IDENT COMMA RPAREN
-              | LPAREN IDENT COMMA ExpressionList RPAREN 
-              | LPAREN IDENT COMMA ExpressionList COMMA RPAREN 
-              | LPAREN IDENT PERIOD IDENT RPAREN
-              | LPAREN IDENT PERIOD IDENT COMMA RPAREN
-              | LPAREN IDENT PERIOD IDENT COMMA ExpressionList RPAREN 
-              | LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN   
-    """
-    p[0] = get_value_p(p)
-
-## Type declarations
-
-def p_TypeDecl(p):
-    """
-    TypeDecl : TYPE TypeSpec
-             | TYPE LPAREN TypeSpecMult RPAREN
-    """
-    p[0] = get_value_p(p)
-
-#typespecmult
-def p_TypeSpecMult(p):
-    """
-    TypeSpecMult : TypeSpec SEMICOLON TypeSpecMult 
-                 | 
-    """
-    p[0] = get_value_p(p)
-
-#typespec
-def p_TypeSpec(p):
-    """
-    TypeSpec : AliasDecl
-             | Typedef
-    """
-    p[0] = get_value_p(p)
-
-#aliasdecl
-def p_AliasDecl(p):
-    """
-    AliasDecl : IDENT ASSIGN Type
-                | IDENT ASSIGN IDENT
-                | IDENT ASSIGN IDENT PERIOD IDENT
-    """
-    p[0] = get_value_p(p)
-
-#typedef
-def p_TypeDef(p):
-    """
-    Typedef : IDENT Type
-              | IDENT IDENT
-              | IDENT IDENT PERIOD IDENT
-
-    """
-    p[0] = get_value_p(p)
-
-## Variable declarations
-
-def p_VarDecl(p):
-    """
-    VarDecl : VAR VarSpec
-            | VAR LPAREN VarMult RPAREN
-    """
-    p[0] = get_value_p(p)
-
-def p_VarMult(p):
-    """
-    VarMult : VarSpec SEMICOLON VarMult 
-            | 
-    """
-    p[0] = get_value_p(p)
-
-def p_VarSpec(p):
-    """
-    VarSpec : IdentifierList Type ASSIGN ExpressionList
-            | IdentifierList IDENT ASSIGN ExpressionList
-            | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
-            | IdentifierList ASSIGN ExpressionList
-            | IdentifierList Type
-            | IdentifierList IDENT
-            | IdentifierList IDENT PERIOD IDENT
-    """
-    p[0] = get_value_p(p)
-
-def p_ShortVarDecl(p):
-    """
-    ShortVarDecl : IdentifierList DEFINE ExpressionList
-    """
-    p[0] = get_value_p(p)
-
+###################################################################################
 ## Function Declarations
 
 def p_FuncDecl(p):
@@ -661,11 +631,17 @@ def p_FuncDecl(p):
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+## Function Name
+
 def p_FunctionName(p):
     """
     FunctionName : IDENT
     """
     p[0] = get_value_p(p)
+
+###################################################################################
+## Function Body
 
 def p_FunctionBody(p):
     """
@@ -673,12 +649,18 @@ def p_FunctionBody(p):
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+## Function Signature
+
 def p_Signature(p):
     """
     Signature : Parameters Result
               | Parameters
     """
     p[0] = get_value_p(p)
+
+###################################################################################
+## Function Parameters
 
 def p_Parameters(p):
     """
@@ -706,6 +688,9 @@ def p_ParameterDecl(p):
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+## Return Type
+
 def p_Result(p):
     """
     Result : Parameters 
@@ -715,7 +700,12 @@ def p_Result(p):
     """
     p[0] = get_value_p(p)
 
-## Statements ---------------------------------------
+
+###################################################################################
+#####################                                        ######################
+######                           STATEMENTS                                ########
+#####################                                        ######################
+###################################################################################
 
 def p_StatementList(p):
     """
@@ -741,7 +731,10 @@ def p_Statement(p):
     """
     p[0] = get_value_p(p)
 
-## Labeled Statements-----------------------------------
+###################################################################################
+### Labeled Statements
+###################################################################################
+
 def p_LabeledStmt(p):
     """
     LabeledStmt : Label COLON Statement
@@ -754,9 +747,10 @@ def p_Label(p):
     """
     p[0] = get_value_p(p)
 
-## -----------------------------------------------------
+###################################################################################
+### Simple Statements
+###################################################################################
 
-## Simple Statements -----------------------------------
 def p_SimpleStmt(p):
     """
     SimpleStmt :  EmptyStmt
@@ -767,17 +761,26 @@ def p_SimpleStmt(p):
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+### Empty Statements
+
 def p_EmptyStmt(p):
     """
     EmptyStmt : 
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+### Expression Statements
+
 def p_ExpressionStmt(p):
     """
     ExpressionStmt : Expr
     """
     p[0] = get_value_p(p)
+
+###################################################################################
+### Increment/Decrement Statements
 
 def p_IncDecStmt(p):
     """
@@ -786,7 +789,9 @@ def p_IncDecStmt(p):
     """
     p[0] = get_value_p(p)
 
-## Assignment Statements --------------------------
+###################################################################################
+### Assignment Statements
+
 def p_Assignment(p):
     """
     Assignment : ExpressionList assign_op ExpressionList
@@ -822,8 +827,28 @@ def p_mul_op_assign(p):
     """
     p[0] = get_value_p(p)
 
-## ------------------------------------------------
-## ------------------------------------------------
+###################################################################################
+### Short Variable Declaration
+
+def p_ShortVarDecl(p):
+    """
+    ShortVarDecl : IdentifierList DEFINE ExpressionList
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Goto Statements
+###################################################################################
+
+def p_GotoStmt(p):
+    """
+    GotoStmt :  GOTO Label
+    """
+    p[0] = get_value_p(p)
+
+###################################################################################
+### Return Statements
+###################################################################################
 
 def p_ReturnStmt(p):
     """
@@ -832,12 +857,20 @@ def p_ReturnStmt(p):
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+### Break Statements
+###################################################################################
+
 def p_BreakStmt(p):
     """
     BreakStmt : BREAK Label
                 | BREAK
     """
     p[0] = get_value_p(p)
+
+###################################################################################
+### Continue Statements
+###################################################################################
 
 def p_ContinueStmt(p):
     """
@@ -846,11 +879,9 @@ def p_ContinueStmt(p):
     """
     p[0] = get_value_p(p)
 
-def p_GotoStmt(p):
-    """
-    GotoStmt :  GOTO Label
-    """
-    p[0] = get_value_p(p)
+###################################################################################
+### Fallthrough Statements
+###################################################################################
 
 def p_FallthroughStmt(p):
     """
@@ -858,13 +889,20 @@ def p_FallthroughStmt(p):
     """
     p[0] = get_value_p(p)
 
+###################################################################################
+### Block Statements
+###################################################################################
+
 def p_Block(p):
     """
     Block : LBRACE StatementList RBRACE
     """
     p[0] = get_value_p(p)
 
-## If Else Block -----------------------------------
+###################################################################################
+### If Else Statements
+###################################################################################
+
 def p_IfStmt(p):
     """
     IfStmt : IF Expr Block else_stmt
@@ -880,17 +918,10 @@ def p_else_stmt(p):
     """
     p[0] = get_value_p(p)
 
-# def p_SimpleStmtOpt(p):
-#     """
-#     SimpleStmtOpt : 
-#                   | SimpleStmt SEMICOLON
-#     """
-#     p[0] = get_value_p(p)
+###################################################################################
+### Switch Statements
+###################################################################################
 
-## --------------------------------------------------
-
-
-## Switch Stmt --------------------------------------
 def p_SwitchStmt(p):
     """
     SwitchStmt :  ExprSwitchStmt
@@ -898,7 +929,9 @@ def p_SwitchStmt(p):
     """
     p[0] = get_value_p(p)
 
-## ExprSwitchStmt -----------------------------------
+###################################################################################
+### Expression Switch Statements
+
 def p_ExprSwitchStmt(p):
     """
     ExprSwitchStmt : SWITCH SimpleStmt SEMICOLON Expr LBRACE ExprCaseClauseMult RBRACE
@@ -907,13 +940,6 @@ def p_ExprSwitchStmt(p):
                      | SWITCH LBRACE ExprCaseClauseMult RBRACE
     """
     p[0] = get_value_p(p)
-
-# def p_ExprOpt(p):
-#     """
-#     ExprOpt : Expr
-#               |
-#     """
-#     p[0] = get_value_p(p)
 
 def p_ExprCaseClauseMult(p):
     """
@@ -934,9 +960,10 @@ def p_ExprSwitchCase(p):
                      | DEFAULT
     """
     p[0] = get_value_p(p)
-## -------------------------------------------------
 
-## TypeSwitchStmt ----------------------------------
+###################################################################################
+### Type Switch Statements
+
 def p_TypeSwitchStmt(p):
     """
     TypeSwitchStmt : SWITCH SimpleStmt SEMICOLON TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
@@ -950,13 +977,6 @@ def p_TypeSwitchGuard(p):
                       | PrimaryExpr PERIOD LPAREN TYPE RPAREN
     """
     p[0] = get_value_p(p)
-
-# def p_ShortVarDeclOpt(p):
-#     """
-#     ShortVarDeclOpt :   IDENT DEFINE
-#                         |
-#     """
-#     p[0] = get_value_p(p)
 
 def p_TypeCaseClauseMult(p):
     """
@@ -972,13 +992,6 @@ def p_TypeCaseClause(p):
     """
     p[0] = get_value_p(p)
 
-# def p_TypeSwitchCase(p):
-#     """
-#     TypeSwitchCase : CASE TypeList 
-#                      | DEFAULT
-#     """
-#     p[0] = get_value_p(p)
-
 def p_TypeList(p):
     """
     TypeList : Type
@@ -990,23 +1003,10 @@ def p_TypeList(p):
     """
     p[0] = get_value_p(p)
 
-# def p_TypeOth(p):
-#     """
-#     TypeOth :  COMMA Type TypeOth
-#                 | COMMA IDENT TypeOth
-#                 | COMMA IDENT PERIOD IDENT TypeOth
-#                 |
-#     """
-#     p[0] = get_value_p(p)
+###################################################################################
+### For Statements
+###################################################################################
 
-## -------------------------------------------------
-
-
-## --------------------------------------------------
-
-
-
-## For Stmt -----------------------------------------
 def p_ForStmt(p):
     """
     ForStmt : FOR Condition Block
@@ -1022,7 +1022,9 @@ def p_Condition(p):
     """
     p[0] = get_value_p(p)
 
-## For Clause -------------------------------------
+###################################################################################
+### For Clause
+
 def p_ForClause(p):
     """
     ForClause : InitStmt SEMICOLON Condition SEMICOLON PostStmt
@@ -1036,20 +1038,14 @@ def p_InitStmt(p):
     """
     p[0] = get_value_p(p)
 
-# def p_ConditionOpt(p):
-#     """
-#     ConditionOpt :   Condition
-#                     |
-#     """
-#     p[0] = get_value_p(p)
-
 def p_PostStmt(p):
     """
     PostStmt :   SimpleStmt
     """
     p[0] = get_value_p(p)
 
-## --------------------------------------------------
+###################################################################################
+### Range Clause
 
 def p_RangeClause(p):
     """
@@ -1065,45 +1061,23 @@ def p_RangeList(p):
     """
     p[0] = get_value_p(p)
 
-## --------------------------------------------------
-## --------------------------------------------------
 
-    
-#Type
-
-def p_TypeT(p):
-    """
-    TypeT : ArrayType
-        | StructType
-        | SliceType
-        | MapType
-        | FunctionType
-         | LPAREN TypeT RPAREN
-         | LPAREN IDENT RPAREN
-         | LPAREN IDENT PERIOD IDENT RPAREN
-    """
-    p[0] = get_value_p(p)
-
-def p_Type(p):
-    """
-    Type : TypeT
-         | PointerType
-         | LPAREN PointerType RPAREN
-    """
-    p[0] = get_value_p(p)
-
-# def p_TypeName(p):
-#     """
-#     TypeName : IDENT
-#              | QualifiedIdent
-#     """
-#     p[0] = get_value_p(p)
-
+###################################################################################
+#####################                                        ######################
+######                             ERROR                                   ########
+#####################                                        ######################
+###################################################################################
 
 def p_error(p):
     print("Syntax Error: ", p)
 
-## Build lexer
+
+###################################################################################
+#####################                                        ######################
+######                           BUILD LEXER                               ########
+#####################                                        ######################
+###################################################################################
+
 lexer = lex.lex()
 
 parser, grammar = yacc.yacc(debug = True)
@@ -1120,6 +1094,7 @@ if path_to_root is not None:
             f.writelines(f'{key} : {val}\n')
 
 non_terminals = grammar.Nonterminals
+
 ## Trying to handle input
 with open(sys.argv[1], 'r') as f:
     import pprint

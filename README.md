@@ -3,6 +3,11 @@
 ## [Milestone3](src/Milestone3/)
 
 ### To run the parser on a source file
+- To run all the test cases for Milestone 3, run the following command from root of the project : 
+```bash
+make 
+```
+
 - From project root directory, use
 ```bash
 ./bin/parser tests/Milestone3/test1.go
@@ -18,7 +23,7 @@ python3 tests/Milestone2/test_regex.py
 or 
 
 ```python
-make test
+make test_Milestone2
 ```
 ### To test source code for any program
 
