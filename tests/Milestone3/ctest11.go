@@ -2,18 +2,7 @@ package main
 
 import "fmt"
 
-type Address struct {
-	name    string
-	street  string
-	city    string
-	state   string
-	Pincode int
-}
-
 func main() {
-	var a = Address("Akshay", "PremNagar", "Dehradun", "Uttarakhand", 252636)
-	a.name = "Akshat"
-	var x *Address = &a
-	(*x).city = "Kanpur"
-	fmt.Println(a.name)
+	b := map[string]int{"Yatharth" : 1, "Aditi" : 2, "Sarthak" : 3, "Devanshu" : 4}
+	fmt.Println(b)
 }

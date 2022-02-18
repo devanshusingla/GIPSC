@@ -7,22 +7,21 @@ import sys
 tokens=lexer.tokens
 tokens.remove('COMMENT')
 # tokens.append('MULTP')
-COMPACT = True
+COMPACT = False
 
 precedence = (
     # ('left', 'CONV'),
     ('left', 'LBRACE'),
+    ('right', 'ASSIGN', 'DEFINE'),
     ('left','IDENT'),
-    
     ('left','SEMICOLON'),
     ('left','COLON'),
     ('left','INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING'),
     ('left','BREAK'),
     ('left','CONTINUE'),
-    
     ('left','RETURN'),
     ('left', 'COMMA'),
-    ('right', 'ASSIGN', 'DEFINE', 'NOT', 'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'SHL_ASSIGN', 'SHR_ASSIGN', 'AND_NOT_ASSIGN'),
+    ('right', 'NOT', 'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'SHL_ASSIGN', 'SHR_ASSIGN', 'AND_NOT_ASSIGN'),
     ('left', 'LOR'),
     ('left', 'LAND'),
     ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
@@ -1013,6 +1012,7 @@ def p_ForStmt(p):
     ForStmt : FOR Condition Block
             | FOR ForClause Block
             | FOR RangeClause Block
+            | FOR Block
     """
     p[0] = get_value_p(p)
 
@@ -1106,7 +1106,7 @@ def p_error(p):
 ## Build lexer
 lexer = lex.lex()
 
-parser, grammar = yacc.yacc()
+parser, grammar = yacc.yacc(debug = True)
 
 path_to_root = os.environ.get('PATH_TO_ROOT')
 milestone = os.environ.get('MILESTONE')
@@ -1123,7 +1123,7 @@ non_terminals = grammar.Nonterminals
 ## Trying to handle input
 with open(sys.argv[1], 'r') as f:
     import pprint
-    out = parser.parse(f.read(), lexer = lexer)
+    out = parser.parse(f.read(), lexer = lexer, debug = True)
     if out is None:
         f.close()
         sys.exit(1)
