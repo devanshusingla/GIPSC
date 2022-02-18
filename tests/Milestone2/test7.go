@@ -5,7 +5,7 @@ import (
 )
 
 func main(){
-    var a int = 2 + 3 + 5 + 7;
+    var a int = 2 + 3 + 5 + 7 * 7 * 9 / 13 + 4 / 2;
 	var b int = 2 + 3 - 5 + 7;
 	var c int = 2 + 3 * 5 + 7;
 	var d int = 2 + 3 / 5 + 7;
