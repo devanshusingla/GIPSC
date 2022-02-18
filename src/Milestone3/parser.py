@@ -149,7 +149,7 @@ def p_ConstSpec(p):
 def p_IdentifierList(p):
     """
     IdentifierList : IDENT
-                    | IDENT COMMA IdentifierList
+                   | IDENT COMMA IdentifierList
     """
     p[0] = get_value_p(p)
 
@@ -290,12 +290,12 @@ def p_FunctionType(p):
     """
     p[0] = get_value_p(p)
 
-## Expression related grammar
+## Expression related grammarExpressionList
 
 def p_ExpressionList(p):
     """
     ExpressionList : Expr
-                    | Expr COMMA ExpressionList
+                   | ExpressionList COMMA Expr
     """
     p[0] = get_value_p(p)
 
@@ -303,24 +303,24 @@ def p_Expr(p):
     """
     Expr : UnaryExpr 
          | Expr LOR  Expr
-          | Expr LAND Expr
-          | Expr EQL  Expr
-          | Expr NEQ Expr
-          | Expr LSS Expr
-          | Expr LEQ Expr
-          | Expr GTR Expr
-          | Expr GEQ Expr
-          | Expr ADD  Expr
-          | Expr SUB Expr
-          | Expr OR Expr
-          | Expr XOR Expr
-          | Expr MUL Expr
-          | Expr QUO Expr
-          | Expr REM Expr
-          | Expr SHL Expr
-          | Expr SHR Expr
-          | Expr AND Expr
-          | Expr AND_NOT Expr
+         | Expr LAND Expr
+         | Expr EQL  Expr
+         | Expr NEQ Expr
+         | Expr LSS Expr
+         | Expr LEQ Expr
+         | Expr GTR Expr
+         | Expr GEQ Expr
+         | Expr ADD  Expr
+         | Expr SUB Expr
+         | Expr OR Expr
+         | Expr XOR Expr
+         | Expr MUL Expr
+         | Expr QUO Expr
+         | Expr REM Expr
+         | Expr SHL Expr
+         | Expr SHR Expr
+         | Expr AND Expr
+         | Expr AND_NOT Expr
     """
     p[0] = get_value_p(p)
 
@@ -444,7 +444,7 @@ def p_LiteralValue(p):
 def p_ElementList(p):
     """
     ElementList : KeyedElement 
-                | KeyedElement COMMA ElementList 
+                | ElementList COMMA KeyedElement 
     """
     p[0] = get_value_p(p)
 
@@ -668,7 +668,7 @@ def p_Parameters(p):
     
 def p_ParameterList(p):
     """
-    ParameterList : ParameterDecl COMMA ParameterList 
+    ParameterList : ParameterList COMMA ParameterDecl 
                   | ParameterDecl
     """
     p[0] = get_value_p(p)
