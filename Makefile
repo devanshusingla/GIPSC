@@ -3,6 +3,8 @@ mkfile_dir := $(dir $(mkfile_path))
 
 export ROOT_PATH := $(mkfile_dir)
 
+all: test_Milestone3
+
 test_Milestone3:
 	python3 tests/Milestone3/run_tests.py
 

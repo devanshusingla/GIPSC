@@ -2,15 +2,42 @@
 
 ## [Milestone3](src/Milestone3/)
 
-### To run the parser on a source file
+### Execution
+- Run following command from root directory to run parser on a Go file.
+```bash
+python src/Milestone3/parser.py PATH_TO_FILE
+```
+
+- Run following command from root directory to run lexer on a Go file.
+```bash
+python src/Milestone3/lexer.py PATH_TO_FILE
+```
+
+### Testing
 - To run all the test cases for Milestone 3, run the following command from root of the project : 
 ```bash
 make 
 ```
 
-- From project root directory, use
+- To clean generated file run:
 ```bash
-./bin/parser tests/Milestone3/test1.go
+make clean
+```
+
+### Visualization
+- To obtain dot file, run following commnd from `PROJECT_ROOT/src/Milestone3`:
+```bash
+python gen_automation.py
+```
+
+- To obtain automata, run following command from `PROJECT_ROOT/src/Milestone3`:
+```bash
+dot -Tpdf test.dot -o automaton.pdf
+```
+
+- To obtain parse tree From project root directory, use
+```bash
+./bin/parser tests/Milestone3/ctest1.go
 ```
 
 ## [Milestone2](src/Milestone2)
