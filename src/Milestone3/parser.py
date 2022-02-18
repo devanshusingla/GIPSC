@@ -10,7 +10,7 @@ tokens.remove('COMMENT')
 
 precedence = (
     # ('left', 'CONV'),
-    ('left', 'LBRACE', 'RBRACE'),
+    ('left', 'LBRACE'),
     ('left','IDENT'),
     
     ('left','SEMICOLON'),
@@ -27,7 +27,7 @@ precedence = (
     ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
     ('left', 'ADD', 'SUB','OR','XOR'),
     ('left', 'MUL', 'QUO','REM','AND','AND_NOT','SHL','SHR'),
-    ('left', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'INC', 'DEC', 'PERIOD'),
+    ('left', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'RBRACE', 'INC', 'DEC', 'PERIOD'),
     ('left', 'UMUL'),
 )
 
@@ -229,7 +229,7 @@ def p_StructType(p):
 #extra
 def p_FieldDeclMult(p):
     """
-    FieldDeclMult : FieldDecl SEMICOLON FieldDeclMult 
+    FieldDeclMult : FieldDeclMult FieldDecl SEMICOLON
                   | 
     """
     p[0] = get_value_p(p)
@@ -443,7 +443,7 @@ def p_BasicLit(p):
 
 def p_CompositeLit(p):
     """
-    CompositeLit : StructType LiteralValue
+    CompositeLit : StructType Arguments
                  | ArrayType LiteralValue
                  | SliceType LiteralValue
                  | MapType LiteralValue
@@ -455,8 +455,8 @@ def p_CompositeLit(p):
 def p_LiteralValue(p):
     """
     LiteralValue : LBRACE ElementList COMMA RBRACE 
-                 | LBRACE ElementList RBRACE
-                 | LBRACE RBRACE
+                 | LBRACE ElementList RBRACE 
+                 | LBRACE RBRACE 
     """
     p[0] = get_value_p(p)
 
@@ -525,12 +525,12 @@ def p_Index(p):
 
 # def p_Conversion(p):
 #     """
-#     Conversion : Type LPAREN Expr RPAREN %prec CONV
-#                | Type LPAREN Expr COMMA RPAREN  %prec CONV
-#                | IDENT LPAREN Expr RPAREN %prec CONV
-#                | IDENT LPAREN Expr COMMA RPAREN %prec CONV
-#                | IDENT PERIOD IDENT LPAREN Expr RPAREN %prec CONV
-#                | IDENT PERIOD IDENT LPAREN Expr COMMA RPAREN %prec CONV
+#     Conversion : Type LPAREN Expr RPAREN 
+#                | Type LPAREN Expr COMMA RPAREN  
+#                | IDENT LPAREN Expr RPAREN 
+#                | IDENT LPAREN Expr COMMA RPAREN 
+#                | IDENT PERIOD IDENT LPAREN Expr RPAREN 
+#                | IDENT PERIOD IDENT LPAREN Expr COMMA RPAREN 
 #     """
 #     p[0] = get_value_p(p)
 

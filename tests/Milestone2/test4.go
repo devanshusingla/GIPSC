@@ -14,4 +14,5 @@ func main() {
 	for i, value := range slc{
 		fmt.Printf("\nSymbol: %c, Unicode value: %U, index: %d", value, value, i);
 	}
+	print(a.b.c.d)
 }
