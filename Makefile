@@ -10,4 +10,4 @@ test_Milestone2:
 	python3 tests/Milestone2/test_regex.py
 
 clean:
-	@rm -rf tests/Milestone3/*.dot tests/Milestone3/*.output tests/Milestone3/*.pdf tests/Milestone3/*.out
+	@rm -rf tests/**/*.dot tests/**/*.output tests/**/*.pdf tests/**/*.out
