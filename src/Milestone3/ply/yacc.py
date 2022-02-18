@@ -348,6 +348,7 @@ class LRParser:
 
             if t is not None:
                 if t > 0:
+                    
                     # shift a symbol on the stack
                     statestack.append(t)
                     state = t
@@ -355,7 +356,7 @@ class LRParser:
                     if debug:
                         debug.debug('Action : Shift and goto state %s', t)
 
-                    symstack.append(lookahead)
+                    symstack.append(lookahead)                            
                     lookahead = None
 
                     # Decrease error count on successful shift

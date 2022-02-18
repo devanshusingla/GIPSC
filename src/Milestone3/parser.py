@@ -6,6 +6,7 @@ import sys
 
 tokens=lexer.tokens
 tokens.remove('COMMENT')
+# tokens.append('MULTP')
 
 precedence = (
     # ('left', 'CONV'),
@@ -168,16 +169,16 @@ def p_IdentifierList(p):
 
 # function type remaining
 # Added function type
-def p_TypeLit(p):
-    """
-    TypeLit : ArrayType
-            | StructType
-            | PointerType
-            | SliceType
-            | MapType
-            | FunctionType
-    """
-    p[0] = get_value_p(p)
+# def p_TypeLit(p):
+#     """
+#     TypeLit : ArrayType
+#             | StructType
+#             | PointerType
+#             | SliceType
+#             | MapType
+#             | FunctionType
+#     """
+#     p[0] = get_value_p(p)
 
 #array type
 def p_ArrayType(p):
@@ -302,25 +303,25 @@ def p_ExpressionList(p):
 def p_Expr(p):
     """
     Expr : UnaryExpr 
-         | Expr LOR  Expr
-         | Expr LAND Expr
-         | Expr EQL  Expr
-         | Expr NEQ Expr
-         | Expr LSS Expr
-         | Expr LEQ Expr
-         | Expr GTR Expr
-         | Expr GEQ Expr
-         | Expr ADD  Expr
-         | Expr SUB Expr
-         | Expr OR Expr
-         | Expr XOR Expr
-         | Expr MUL Expr
-         | Expr QUO Expr
-         | Expr REM Expr
-         | Expr SHL Expr
-         | Expr SHR Expr
-         | Expr AND Expr
-         | Expr AND_NOT Expr
+         | Expr LOR   UnaryExpr
+         | Expr LAND  UnaryExpr
+         | Expr EQL   UnaryExpr
+         | Expr NEQ  UnaryExpr
+         | Expr LSS  UnaryExpr
+         | Expr LEQ  UnaryExpr
+         | Expr GTR  UnaryExpr
+         | Expr GEQ  UnaryExpr
+         | Expr ADD   UnaryExpr
+         | Expr SUB  UnaryExpr
+         | Expr OR  UnaryExpr
+         | Expr XOR  UnaryExpr
+         | Expr MUL  UnaryExpr
+         | Expr QUO  UnaryExpr
+         | Expr REM  UnaryExpr
+         | Expr SHL  UnaryExpr
+         | Expr SHR  UnaryExpr
+         | Expr AND  UnaryExpr
+         | Expr AND_NOT  UnaryExpr
     """
     p[0] = get_value_p(p)
 
@@ -537,10 +538,10 @@ def p_Arguments(p):
     Arguments : LPAREN RPAREN
               | LPAREN ExpressionList RPAREN
               | LPAREN ExpressionList COMMA RPAREN
-              | LPAREN Type RPAREN
-              | LPAREN Type COMMA RPAREN
-              | LPAREN Type COMMA ExpressionList RPAREN 
-              | LPAREN Type COMMA ExpressionList COMMA RPAREN 
+              | LPAREN TypeT RPAREN
+              | LPAREN TypeT COMMA RPAREN
+              | LPAREN TypeT COMMA ExpressionList RPAREN 
+              | LPAREN TypeT COMMA ExpressionList COMMA RPAREN 
               | LPAREN IDENT RPAREN
               | LPAREN IDENT COMMA RPAREN
               | LPAREN IDENT COMMA ExpressionList RPAREN 
@@ -760,7 +761,7 @@ def p_ExpressionStmt(p):
 def p_IncDecStmt(p):
     """
     IncDecStmt :  Expr INC
-                | Expr DEC
+                 | Expr DEC
     """
     p[0] = get_value_p(p)
 
@@ -1048,12 +1049,24 @@ def p_RangeList(p):
     
 #Type
 
-def p_Type(p):
+def p_TypeT(p):
     """
-    Type : TypeLit
-         | LPAREN Type RPAREN
+    TypeT : ArrayType
+        | StructType
+        | SliceType
+        | MapType
+        | FunctionType
+         | LPAREN TypeT RPAREN
          | LPAREN IDENT RPAREN
          | LPAREN IDENT PERIOD IDENT RPAREN
+    """
+    p[0] = get_value_p(p)
+
+def p_Type(p):
+    """
+    Type : TypeT
+         | PointerType
+         | LPAREN PointerType RPAREN
     """
     p[0] = get_value_p(p)
 
