@@ -1,5 +1,5 @@
 import sys, os
-PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "ply"))
+PLY_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), "ply"))
 sys.path.append(PLY_PATH)
 from ply.lex import TOKEN
 
