@@ -11,7 +11,7 @@ type Address struct {
 }
 
 func main() {
-	var a = Address{"Akshay", "PremNagar", "Dehradun", "Uttarakhand", 252636}
+	var a = Address("Akshay", "PremNagar", "Dehradun", "Uttarakhand", 252636)
 	a.name = "Akshat"
 	var x *Address = &a
 	(*x).city = "Kanpur"

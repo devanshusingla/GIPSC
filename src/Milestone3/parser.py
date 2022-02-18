@@ -1106,7 +1106,7 @@ def p_error(p):
 ## Build lexer
 lexer = lex.lex()
 
-parser, grammar = yacc.yacc(debug=True)
+parser, grammar = yacc.yacc()
 
 path_to_root = os.environ.get('PATH_TO_ROOT')
 milestone = os.environ.get('MILESTONE')
@@ -1123,7 +1123,7 @@ non_terminals = grammar.Nonterminals
 ## Trying to handle input
 with open(sys.argv[1], 'r') as f:
     import pprint
-    out = parser.parse(f.read(), lexer = lexer, debug=True)
+    out = parser.parse(f.read(), lexer = lexer)
     if out is None:
         f.close()
         sys.exit(1)

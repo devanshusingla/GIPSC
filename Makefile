@@ -1,3 +1,8 @@
+mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+mkfile_dir := $(dir $(mkfile_path))
+
+export ROOT_PATH := $(mkfile_dir)
+
 test_Milestone3:
 	python3 tests/Milestone3/run_tests.py
 
@@ -5,4 +10,4 @@ test_Milestone2:
 	python3 tests/Milestone2/test_regex.py
 
 clean:
-	rm -r *.dot *.output *.error *.log *.pdf *.out
+	@rm -rf tests/Milestone3/*.dot tests/Milestone3/*.output tests/Milestone3/*.pdf tests/Milestone3/*.out
