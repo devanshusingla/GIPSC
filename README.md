@@ -59,6 +59,12 @@ make test_Milestone2
 python3 src/Milestone2/lexer.py PATH-TO-SOURCE-CODE
 ```
 
+## SIT Details
+
+Source Language : GoLang
+Implementation Language : Python
+Target Language : MIPS
+
 ## Group Members
 - Aditi Goyal
 - Devanshu Singla
