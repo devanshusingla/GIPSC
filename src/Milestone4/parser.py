@@ -42,19 +42,29 @@ def setupContext():
     context['currentScope'] = context['nextScopeId'] # Setting current scope id to 0
     context['nextScopeId'] += 1 # Incrementing next scope id
     context['scopeTab'][context['currentScope']] = scope() # Symbol Table
+    context['scopeStack'] = [0] # Stack for active scopes
     context['forDepth'] = 0 # Inside 0 for loops at present
     context['switchDepth'] = 0 # Inside 0 switch statements at present
+    context['structSymbolsList'] = None # List of symbols in current struct
 
 def endContext():
+    # Dump Symbol Table of each function as CSV
+
+    # Dump AST of functions in DOT format
     print(context)
 
 def beginScope():
-    print("Beginning Scope")
-    pass
+    prevScope = context['currentScope']
+    context['currentScope'] = context['nextScopeId']
+    context['scopeStack'].append(context['currentScope'])
+    context['scopeTab'][context['currentScope']] = scope(prevScope)
+    context['scopeTab'][context['currentScope']].inheritTypes(context['scopeTab'][context['prevScope']])
+    context['nextScopeId'] += 1
+
 
 def endScope():
-    print("Ending Scope")
-    pass
+    context['scopeStack'].pop()
+    context['currentScope'] = context['scopeStack'][-1]
 
 ###################################################################################
 #####################                                        ######################
@@ -508,9 +518,21 @@ def p_ElementType(p):
 
 def p_StructType(p):
     """
-    StructType : STRUCT LBRACE FieldDeclMult RBRACE 
+    StructType : STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct 
     """
     p[0] = get_value_p(p)
+
+def p_BeginStruct(p):
+    """
+    BeginStruct : 
+    """
+    context['structSymbolsList'] = []
+
+def p_EndStruct(p):
+    """
+    EndStruct : 
+    """
+    context['structSymbolsList'] = None
 
 #extra
 def p_FieldDeclMult(p):

@@ -11,9 +11,9 @@ class node:
         self.metadata = {}
 
 class scope:
-    def __init__(self):
+    def __init__(self, parentScope=None):
         self.symTable = {}
-        self.parentScope = None
+        self.parentScope = parentScope
         self.avlTypes = basicTypes.copy()
         self.avlTypeSizes = basicTypeSizes.copy()
 
@@ -36,3 +36,12 @@ class scope:
     def setParent(self, parent):
         # Does this store only the reference?
         self.parent = parent
+    
+    def inheritTypes(self, prevScope):
+        for avlType in prevScope.avlTypes:
+            if avlType not in self.avlTypes:
+                self.avlTypes.append(avlType)
+        
+        for avlTypeSize in prevScope.avlTypeSizes:
+            if avlTypeSize not in self.avlTypeSizes:
+                self.avlTypeSizes.append(avlTypeSize)
