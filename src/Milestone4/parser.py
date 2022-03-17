@@ -3,6 +3,7 @@ import ply.lex as lex
 import lexer
 from lexer import *
 import sys
+from scope import *
 
 tokens=lexer.tokens
 tokens.remove('COMMENT')
@@ -36,10 +37,24 @@ ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
 ## Start Semantic Analysis
 context = {}
 def setupContext():
-    context['scopeTab'] = {}
-    context["currentScope"] = 0
-    context["scopeTab"][context["currentScope"]] = None # Symbol Table
+    context['scopeTab'] = {} # Dictionary for Scope Symbol Tables
+    context['nextScopeId'] = 0 # Id for next scope table
+    context['currentScope'] = context['nextScopeId'] # Setting current scope id to 0
+    context['nextScopeId'] += 1 # Incrementing next scope id
+    context['scopeTab'][context['currentScope']] = scope() # Symbol Table
+    context['forDepth'] = 0 # Inside 0 for loops at present
+    context['switchDepth'] = 0 # Inside 0 switch statements at present
+
+def endContext():
     print(context)
+
+def beginScope():
+    print("Beginning Scope")
+    pass
+
+def endScope():
+    print("Ending Scope")
+    pass
 
 ###################################################################################
 #####################                                        ######################
@@ -83,6 +98,7 @@ def p_SourceFile(p):
     SourceFile : SetupContext PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult
     """
     p[0] = get_value_p(p)
+    endContext()
 
 def p_SetupContext(p):
     """
@@ -90,6 +106,20 @@ def p_SetupContext(p):
     """    
     p[0] = []
     setupContext()
+
+def p_BeginScope(p):
+    """
+    BeginScope : 
+    """
+    p[0] = []
+    beginScope()
+
+def p_EndScope(p):
+    """
+    EndScope : 
+    """
+    p[0] = []
+    endScope()
 
 ###################################################################################
 ### Package related grammar
@@ -640,7 +670,7 @@ def p_FunctionLit(p):
 
 def p_FuncDecl(p):
     """
-    FuncDecl : FUNC FunctionName Signature FunctionBody
+    FuncDecl : FUNC FunctionName Signature BeginScope FunctionBody EndScope
              | FUNC FunctionName Signature
     """
     p[0] = get_value_p(p)
@@ -738,7 +768,7 @@ def p_Statement(p):
               | BreakStmt
               | ContinueStmt
               | FallthroughStmt
-              | Block
+              | BeginScope Block EndScope
               | IfStmt
               | SwitchStmt
               | ForStmt
@@ -919,15 +949,15 @@ def p_Block(p):
 
 def p_IfStmt(p):
     """
-    IfStmt : IF Expr Block else_stmt
-           | IF SimpleStmt SEMICOLON Expr else_stmt
+    IfStmt : IF Expr BeginScope Block EndScope else_stmt
+           | IF BeginScope SimpleStmt EndScope SEMICOLON Expr else_stmt
     """
     p[0] = get_value_p(p)
 
 def p_else_stmt(p):
     """
     else_stmt : ELSE IfStmt
-                | ELSE Block
+                | ELSE BeginScope Block EndScope
                 |
     """
     p[0] = get_value_p(p)
@@ -948,12 +978,24 @@ def p_SwitchStmt(p):
 
 def p_ExprSwitchStmt(p):
     """
-    ExprSwitchStmt : SWITCH SimpleStmt SEMICOLON Expr LBRACE ExprCaseClauseMult RBRACE
-                     | SWITCH Expr LBRACE ExprCaseClauseMult RBRACE
-                     | SWITCH SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult RBRACE
-                     | SWITCH LBRACE ExprCaseClauseMult RBRACE
+    ExprSwitchStmt : SWITCH BeginScope SimpleStmt EndScope SEMICOLON BeginScope Expr EndScope LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+                     | SWITCH Expr LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+                     | SWITCH BeginScope SimpleStmt EndScope SEMICOLON LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+                     | SWITCH LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
     """
     p[0] = get_value_p(p)
+
+def p_BeginSwitch(p):
+    """
+    BeginSwitch : 
+    """
+    context['switchDepth'] += 1
+
+def p_EndSwitch(p):
+    """
+    EndSwitch : 
+    """
+    context['switchDepth'] -= 1
 
 def p_ExprCaseClauseMult(p):
     """
@@ -964,7 +1006,7 @@ def p_ExprCaseClauseMult(p):
 
 def p_ExprCaseClause(p):
     """
-    ExprCaseClause : ExprSwitchCase COLON StatementList
+    ExprCaseClause : BeginScope ExprSwitchCase COLON StatementList EndScope
     """
     p[0] = get_value_p(p)
 
@@ -1001,8 +1043,8 @@ def p_TypeCaseClauseMult(p):
 
 def p_TypeCaseClause(p):
     """
-    TypeCaseClause : CASE TypeList COLON StatementList
-                     | DEFAULT COLON StatementList
+    TypeCaseClause : CASE BeginScope TypeList EndScope COLON BeginScope StatementList EndScope
+                     | DEFAULT COLON BeginScope StatementList EndScope
     """
     p[0] = get_value_p(p)
 
@@ -1023,12 +1065,30 @@ def p_TypeList(p):
 
 def p_ForStmt(p):
     """
-    ForStmt : FOR Condition Block
-            | FOR ForClause Block
-            | FOR RangeClause Block
-            | FOR Block
+    ForStmt : FOR BeginFor Condition Block EndFor
+            | FOR BeginFor ForClause Block EndFor
+            | FOR BeginFor RangeClause Block EndFor
+            | FOR BeginFor Block EndFor
     """
     p[0] = get_value_p(p)
+
+def p_BeginFor(p):
+    """
+    BeginFor : 
+    """
+    print("For Begins")
+    beginScope()
+    context['forDepth'] += 1
+    # Add two labels to be used
+    # for code generation
+
+def p_EndFor(p):
+    """
+    EndFor : 
+    """
+    print("For Ends")
+    context['forDepth'] -= 1
+    endScope()
 
 def p_Condition(p):
     """

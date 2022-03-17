@@ -4,8 +4,11 @@ class ScopeTableError(Exception):
     pass
 
 class node:
-    def __init__(self):
-        pass
+    def __init__(self, grammar):
+        self.grammar = grammar
+        self.exprList = []
+        self.exprTypeList = []
+        self.metadata = {}
 
 class scope:
     def __init__(self):
