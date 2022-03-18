@@ -24,6 +24,8 @@ then
     exit 1
 fi
 echo "Compilation Successful!"
+echo "Suspending parse tree generation!"
+exit 0
 python3 $abs_path_to_gen_ast $abs_path_to_output
 if [ $? != 0 ];
 then

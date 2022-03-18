@@ -1,14 +1,19 @@
 basicTypes = ['int', 'float', 'string', 'rune']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
 class ScopeTableError(Exception):
-    pass
+    def __init__(self, message):
+        super().__init__(message)
 
 class node:
-    def __init__(self, grammar):
-        self.grammar = grammar
+    def __init__(self, name):
+        self.name = name
+        self.ast = []
         self.exprList = []
         self.exprTypeList = []
         self.metadata = {}
+    
+    def __repr__(self):
+        return f"Name:{self.name}\nExprList:{self.exprList}\nExprSizeList:{self.exprTypeList}\nMetadata:{self.metadata}\nAST:{self.ast}"
 
 class scope:
     def __init__(self, parentScope=None):
@@ -45,3 +50,6 @@ class scope:
         for avlTypeSize in prevScope.avlTypeSizes:
             if avlTypeSize not in self.avlTypeSizes:
                 self.avlTypeSizes.append(avlTypeSize)
+    
+    def __repr__(self):
+        return f"SymTable: {self.symTable}\nParentScopeId:{self.parentScope}\nAvlTypes:{self.avlTypes}\n"
