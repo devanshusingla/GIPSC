@@ -71,6 +71,14 @@ def endScope():
     context['scopeStack'].pop()
     context['currentScope'] = context['scopeStack'][-1]
 
+def checkExpected():
+    # Check whether unresolved expected tokens are present
+    # Could we show the user all expected errors together
+    # Labels
+    for label in context['labelMap']:
+        if context['labelMap'][label][0] == 'expected':
+            raise ValueError(f"Label {label} not declared anywhere but used at {context['labelMap'][label][1]}")
+
 ###################################################################################
 #####################                                        ######################
 ######                         STARTING GRAMMAR                            ########
@@ -118,6 +126,7 @@ def p_SourceFile(p):
     """
     p[0] = p[5]
     p[0].name = get_nt_name()
+    checkExpected()
     endContext()
     print(p[0])
 
@@ -828,7 +837,7 @@ def p_LabeledStmt(p):
         raise ValueError(f"Label {p[1]} redeclared at line {p.lexer.lineno}.\nIt was previously declared at line {context['labelMap'][p[1]][1]}\n")
     else:
         context['labelMap'][p[1]] = (newLabel(), p.lexer.lineno)
-    p[0].ast = [p[1], p[3].ast]
+    p[0].ast = ['LABEL', [p[1], p[3].ast]]
 
 def p_Label(p):
     """
@@ -878,6 +887,7 @@ def p_IncDecStmt(p):
     IncDecStmt :  Expr INC
                  | Expr DEC
     """
+    # To be analysed later
     p[0] = node(get_nt_name())
 
 ###################################################################################
@@ -887,6 +897,7 @@ def p_Assignment(p):
     """
     Assignment : ExpressionList assign_op ExpressionList
     """
+    # To be analysed later
     p[0] = node(get_nt_name())
 
 def p_assign_op(p):
@@ -896,6 +907,8 @@ def p_assign_op(p):
               | ASSIGN
     """
     p[0] = node(get_nt_name())
+    p[0].exprTypeList.append(p[1])
+    p[0].metadata['op'] = p[1]
 
 def p_add_op_assign(p):
     """
@@ -904,7 +917,7 @@ def p_add_op_assign(p):
                     | OR_ASSIGN
                     | XOR_ASSIGN
     """
-    p[0] = node(get_nt_name())
+    p[0] = p[1]
 
 def p_mul_op_assign(p):
     """
@@ -916,7 +929,7 @@ def p_mul_op_assign(p):
                     | SHR_ASSIGN
                     | AND_NOT_ASSIGN
     """
-    p[0] = node(get_nt_name())
+    p[0] = p[1]
 
 ###################################################################################
 ### Short Variable Declaration
@@ -936,6 +949,18 @@ def p_GotoStmt(p):
     GotoStmt :  GOTO Label
     """
     p[0] = node(get_nt_name())
+    if p[1] in context['labelMap']:
+        # Label seen before somewhere
+        if context['labelMap'][p[1]][0] == 'expected':
+            # It was used before; not declared :(
+            pass
+        else:
+            # It was declared before :)
+            pass
+    else:
+        # Label not seen before
+        context['labelMap'][p[1]] = ('expected', p.lexer.lineno)
+    p[0].ast = ['GOTO', [p[2]]]
 
 ###################################################################################
 ### Return Statements
@@ -1158,13 +1183,15 @@ def p_InitStmt(p):
     """
     InitStmt :   SimpleStmt
     """
-    p[0] = node(get_nt_name())
+    p[0] = p[1]
+    p[0].name = get_nt_name()
 
 def p_PostStmt(p):
     """
     PostStmt :   SimpleStmt
     """
-    p[0] = node(get_nt_name())
+    p[0] = p[1]
+    p[0].name = get_nt_name()
 
 ###################################################################################
 ### Range Clause
