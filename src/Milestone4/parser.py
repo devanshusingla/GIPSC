@@ -215,12 +215,19 @@ def p_TopLevelDeclMult(p):
     TopLevelDeclMult : TopLevelDecl SEMICOLON TopLevelDeclMult 
                      |
     """
+    if len(p)>1:
+        p[3].addChild(*p[1])
+        p[0] = p[3]
+
+    if len(p)==1:
+        p[0] = DeclNode()
 
 def p_TopLevelDecl(p):
     """
     TopLevelDecl : Decl 
                  | FuncDecl
     """
+    p[0] = [p[1]]
 
 def p_Decl(p):
     """
@@ -228,6 +235,7 @@ def p_Decl(p):
          | VarDecl
          | TypeDecl
     """
+    p[0] = p[1]
 
 ###################################################################################
 ### Constant Declarations
@@ -238,12 +246,23 @@ def p_ConstDecl(p):
     ConstDecl : CONST ConstSpec
               | CONST LPAREN ConstSpecMult RPAREN
     """
+    if len(p)==3:
+        p[0]= p[2]
+    
+    else:
+        p[0]=p[3]
 
 def p_ConstSpecMult(p):
     """
     ConstSpecMult : ConstSpec SEMICOLON ConstSpecMult 
                   | 
     """
+    if len(p)>1:
+        p[3].addChild(*[p[0]])
+        p[0] = p[3]
+
+    else:
+        p[0] = Node()
 
 def p_ConstSpec(p):
     """
@@ -251,6 +270,21 @@ def p_ConstSpec(p):
                 | IdentifierList IDENT ASSIGN ExpressionList
                 | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
     """
+    for child in p[1].children:
+        # Check redeclaration for identifier list
+        latest_scope = stm.getScope(child)
+        if latest_scope == stm.id:
+            raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
+        else:
+            # Add to symbol table
+            stm.add(child.val, p[2].dataType)
+
+    if len(p[1].children) != len(p[-1].children):
+        raise NameError("Assignment is not balanced", p.lineno(1))
+
+    for i, expression in zip(p[-1].children):
+        if expression.dataType != p[2].val:
+            raise ("Mismatch of type for identifier: " + p[1].children[i].val)
 
 ###################################################################################
 ### Variable Declarations
@@ -674,6 +708,7 @@ def p_FuncDecl(p):
     FuncDecl : FUNC FunctionName Signature FunctionBody
              | FUNC FunctionName Signature
     """
+    p[0] = Node()
 
 ###################################################################################
 ## Function Name
@@ -1137,8 +1172,8 @@ with open(sys.argv[1], 'r') as f:
 
 def dfs(ast):
     print(f'{ast}')
-    if hasattr(ast, 'child') and ast.child is not None:
-        for c in ast.child:
+    if hasattr(ast, 'children') and ast.children is not None:
+        for c in ast.children:
             dfs(c)
 
 dfs(ast)
