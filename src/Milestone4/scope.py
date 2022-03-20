@@ -23,11 +23,17 @@ class scope:
     def insert(self, id, info):
         self.localsymTable[id] = info
 
+    def getinfo(self, id):
+        return self.localsymTable[id]
+
     def updateAttr(self, id, **kwargs):
         if id not in self.localsymTable:
             raise ScopeTableError("Identifier has not been declared")
         for key, value in kwargs.items():
             self.localsymTable[id][key] = value
+
+    def addType(self, type):
+        self.avlTypes.append(type)
 
     def setParent(self, parent):
         # Does this store only the reference?
@@ -43,9 +49,13 @@ class SymTableMaker:
     def __init__(self):
         self.symTable = {}
         self.symTable[0] = scope()
+        self.functions = {}
         self.stack = [0]
         self.id = 0
         self.nextId = 1
+
+    def addFunction(self, label, info):
+        self.functions[label] = info
     
     def newScope(self):
         self.symTable[self.nextId] = scope(parentScope = self.id)
@@ -59,6 +69,22 @@ class SymTableMaker:
     
     def add(self, ident, info):
         self.symTable[self.id].insert(ident, info)
+
+    def get(self, ident):
+        self.symTable[self.id].getinfo(ident)
+
+    def findType(self, type):
+        i = len(self.stack) - 1
+        while i >= 0:
+            if type in self.symTable[i].avlTypes or type in self.symTable[i].typeDefs:
+                break
+            else:
+                i -= 1
+            
+        if i == -1:
+            return -1 
+        else:
+            return self.stack[i]
     
     def getScope(self, ident):
         i = len(self.stack) - 1
@@ -92,8 +118,19 @@ class FileNode(Node):
 class ImportNode(Node):
     pass
 
+class ResultNode(Node):
+    def __init__(self, dataType = None):
+        super().__init_()
+        self.dataType = dataType
+
 class DeclNode(Node):
     pass
+
+class ParamNode(Node):
+    def __init__(self, dataType, label= None):
+        super().__init()
+        self.dataType = dataType
+        self.label = label
 
 class ImportPathNode(Node):
     def addChild(self, alias, path):
@@ -101,12 +138,13 @@ class ImportPathNode(Node):
         self.children.append(path)
 
 class ExprNode(Node):
-    def __init__(self, dataType, operator, isConst = False):
+    def __init__(self, dataType, label = None, operator = None, isConst = False):
         super().__init__()
         self.children = []
+        self.label = label
         self.dataType = dataType
         self.operator = operator
-        self.isConst = isConst 
+        self.isConst = isConst # For constant folding
 
 class IdentNode(Node):
     def __init__(self, scope, label, dataType = None, val = 0, isConst = False):
@@ -133,3 +171,8 @@ class LitNode(Node):
 
 class FuncDeclNode(Node):
     pass
+
+class OpNode(Node):
+    def __init__(self, operator):
+        super().__init__()
+        self.operator = operator
