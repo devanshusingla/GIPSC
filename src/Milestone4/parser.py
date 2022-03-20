@@ -275,7 +275,7 @@ def p_ConstSpec(p):
     for i, child in enumerate(p[1].children):
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(child.label)
-        if latest_scope == stm.id:
+        if latest_scope == stm.id or child.label in stm.functions:
             raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
         
         # Check for the presence of type
@@ -344,7 +344,7 @@ def p_VarSpec(p):
     for i, child in enumerate(p[1].children):
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(child.label)
-        if latest_scope == stm.id:
+        if latest_scope == stm.id or child.label in stm.functions:
             raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
         
         present = stm.findType(p[2])
@@ -557,9 +557,9 @@ def p_PrimaryExpr(p):
     elif (len(p) == 2):
 
         # Check declaration
-        latest_scope = stm.getScope(p[1])
-        
-        if latest_scope == -1:
+        latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
+
+        if latest_scope == 0:
             ## To be checked for global declarations (TODO)
             print("Expecting global declaration for " + p[1], p.lineno(1))
             
@@ -624,6 +624,21 @@ def p_Arguments(p):
               | LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN   
     """
 
+    p[0] = Node()
+
+    ## Arguments : LPAREN ExpressionList RPAREN or LPAREN ExpressionList
+    if p[2].children != None and len(p[2].children) > 0 and isinstance(p[2].children[0], ExprNode):
+        p[0] = p[2]
+    
+    if len(p) > 3 and isinstance(p[2], str) and p[3] != '.':
+        if stm.findType(p[2]) == -1:
+            raise TypeError("Type " + p[2] + " not defined before", p.lineno(1))
+        else:
+            if len(p) == 4 or len(p) == 5:
+                p[0].addChild(*[TypeNode(datatype = p[2], scope = stm.id)])
+            else:
+                p[4].children.append(TypeNode(datatype = p[2], scope = stm.id))
+                p[0] = p[4]
 
 ###################################################################################
 #####################                                        ######################
