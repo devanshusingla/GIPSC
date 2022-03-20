@@ -24,7 +24,7 @@ class scope:
         self.localsymTable[id] = info
 
     def getinfo(self, id):
-        return self.localsymTable[id]
+        return self.localsymTable.get(id,None)
 
     def updateAttr(self, id, **kwargs):
         if id not in self.localsymTable:
@@ -71,7 +71,7 @@ class SymTableMaker:
         self.symTable[self.id].insert(ident, info)
 
     def get(self, ident):
-        self.symTable[self.id].getinfo(ident)
+        return self.symTable[self.id].getinfo(ident)
 
     def findType(self, type):
         i = len(self.stack) - 1

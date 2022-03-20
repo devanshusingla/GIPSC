@@ -216,19 +216,19 @@ def p_TopLevelDeclMult(p):
     TopLevelDeclMult : TopLevelDecl SEMICOLON TopLevelDeclMult 
                      |
     """
-    if len(p)>1:
-        p[3].addChild(*p[1])
-        p[0] = p[3]
+    # if len(p)>1:
+    #     p[3].addChild(*p[1])
+    #     p[0] = p[3]
 
-    if len(p)==1:
-        p[0] = DeclNode()
+    # if len(p)==1:
+    #     p[0] = DeclNode()
 
 def p_TopLevelDecl(p):
     """
     TopLevelDecl : Decl 
                  | FuncDecl
     """
-    p[0] = p[1]
+    # p[0] = p[1]
 
 def p_Decl(p):
     """
@@ -236,7 +236,7 @@ def p_Decl(p):
          | VarDecl
          | TypeDecl
     """
-    p[0] = p[1]
+    # p[0] = p[1]
 
 ###################################################################################
 ### Constant Declarations
@@ -247,23 +247,23 @@ def p_ConstDecl(p):
     ConstDecl : CONST ConstSpec
               | CONST LPAREN ConstSpecMult RPAREN
     """
-    if len(p)==3:
-        p[0]= [p[2]]
+    # if len(p)==3:
+    #     p[0]= [p[2]]
     
-    else:
-        p[0]=p[3]
+    # else:
+    #     p[0]=p[3]
 
 def p_ConstSpecMult(p):
     """
     ConstSpecMult : ConstSpec SEMICOLON ConstSpecMult 
                   | 
     """
-    if len(p)>1:
-        p[3].addChild(*[p[1]])
-        p[0] = p[3]
+    # if len(p)>1:
+    #     p[3].addChild(*[p[1]])
+    #     p[0] = p[3]
 
-    else:
-        p[0] = [Node()]
+    # else:
+    #     p[0] = [Node()]
 
 def p_ConstSpec(p):
     """
@@ -271,35 +271,35 @@ def p_ConstSpec(p):
                 | IdentifierList IDENT ASSIGN ExpressionList
                 | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
     """
-    p[0] = Node()
-    for i, child in enumerate(p[1].children):
-        # Check redeclaration for identifier list
-        latest_scope = stm.getScope(child.label)
-        if latest_scope == stm.id or child.label in stm.functions:
-            raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
+    # p[0] = Node()
+    # for i, child in enumerate(p[1].children):
+    #     # Check redeclaration for identifier list
+    #     latest_scope = stm.getScope(child.label)
+    #     if latest_scope == stm.id or child.label in stm.functions:
+    #         raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
         
-        # Check for the presence of type
-        present = stm.findType(p[2])
-        if present != -1:
-            # Add to symbol table
-            stm.add(child.label, {'type': p[2], 'isConst': True})
-            p[1].children[i].dataType = p[2]
-        else:
-            raise TypeError('Type not declared/found: ' + p[2], p.lineno(1))
+    #     # Check for the presence of type
+    #     present = stm.findType(p[2])
+    #     if present != -1:
+    #         # Add to symbol table
+    #         stm.add(child.label, {'type': p[2], 'isConst': True})
+    #         p[1].children[i].dataType = p[2]
+    #     else:
+    #         raise TypeError('Type not declared/found: ' + p[2], p.lineno(1))
 
-    if len(p[1].children) != len(p[len(p)-1].children):
-        raise NameError("Assignment is not balanced", p.lineno(1))
+    # if len(p[1].children) != len(p[len(p)-1].children):
+    #     raise NameError("Assignment is not balanced", p.lineno(1))
 
-    for i, expression in enumerate(p[len(p)-1].children):
-        if expression.dataType != p[2]:
-            raise ("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
+    # for i, expression in enumerate(p[len(p)-1].children):
+    #     if expression.dataType != p[2]:
+    #         raise ("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
     
-    for i, expression in enumerate(p[len(p)-1].children):
-        p[0].children.append(ExprNode())
-        p[0].children[i].addChild([p[1].children[i], p[len(p)-1].children[i]])
-        p[0].children[i].operator = 'ASSIGN'
-        p[0].children[i].dataType = p[2]
-        p[1].children[i].isConst = True
+    # for i, expression in enumerate(p[len(p)-1].children):
+    #     p[0].children.append(ExprNode())
+    #     p[0].children[i].addChild([p[1].children[i], p[len(p)-1].children[i]])
+    #     p[0].children[i].operator = 'ASSIGN'
+    #     p[0].children[i].dataType = p[2]
+    #     p[1].children[i].isConst = True
     
 
     
@@ -312,22 +312,22 @@ def p_VarDecl(p):
     VarDecl : VAR VarSpec
             | VAR LPAREN VarMult RPAREN
     """
-    if len(p)==3:
-        p[0]= [p[2]]
+    # if len(p)==3:
+    #     p[0]= [p[2]]
     
-    else:
-        p[0]=p[3]
+    # else:
+    #     p[0]=p[3]
 
 def p_VarMult(p):
     """
     VarMult : VarSpec SEMICOLON VarMult 
             | 
     """
-    if len(p) > 1:
-        p[3].append(p[1])
-        p[0] = p[3]
-    else:
-        p[0] = [Node()] 
+    # if len(p) > 1:
+    #     p[3].append(p[1])
+    #     p[0] = p[3]
+    # else:
+    #     p[0] = [Node()] 
 
 def p_VarSpec(p):
     """
@@ -339,36 +339,36 @@ def p_VarSpec(p):
             | IdentifierList IDENT
             | IdentifierList IDENT PERIOD IDENT
     """
-    p[0] = Node()
+    # p[0] = Node()
 
-    for i, child in enumerate(p[1].children):
-        # Check redeclaration for identifier list
-        latest_scope = stm.getScope(child.label)
-        if latest_scope == stm.id or child.label in stm.functions:
-            raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
+    # for i, child in enumerate(p[1].children):
+    #     # Check redeclaration for identifier list
+    #     latest_scope = stm.getScope(child.label)
+    #     if latest_scope == stm.id or child.label in stm.functions:
+    #         raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
         
-        present = stm.findType(p[2])
-        if present != -1:
-            # Add to symbol table
-            stm.add(child.label, {'type': p[2], 'isConst' : False})
-            p[1].children[i].dataType = p[2]
-        else: 
-            raise TypeError('Type not declared/found: ' + p[2], p.lineno(1))
+    #     present = stm.findType(p[2])
+    #     if present != -1:
+    #         # Add to symbol table
+    #         stm.add(child.label, {'type': p[2], 'isConst' : False})
+    #         p[1].children[i].dataType = p[2]
+    #     else: 
+    #         raise TypeError('Type not declared/found: ' + p[2], p.lineno(1))
 
-    # if assignment is also done
-    if p[-1].children != None and isinstance(p[-1].children[0], ExprNode):
-        if len(p[1].children) != len(p[-1].children):
-            raise NameError("Assignment is not balanced", p.lineno(1))
+    # # if assignment is also done
+    # if p[-1].children != None and isinstance(p[-1].children[0], ExprNode):
+    #     if len(p[1].children) != len(p[-1].children):
+    #         raise NameError("Assignment is not balanced", p.lineno(1))
 
-        for i, expression in enumerate(p[-1].children):
-            if expression.dataType != p[2]:
-                raise ("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
+    #     for i, expression in enumerate(p[-1].children):
+    #         if expression.dataType != p[2]:
+    #             raise ("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
 
-        for i, expression in enumerate(p[-1].children):
-            p[0].children.append(ExprNode())
-            p[0].children[i].addChild([p[1].children[i], p[-1].children[i]])
-            p[0].children[i].operator = 'ASSIGN'
-            p[0].children[i].dataType = p[2]
+    #     for i, expression in enumerate(p[-1].children):
+    #         p[0].children.append(ExprNode())
+    #         p[0].children[i].addChild([p[1].children[i], p[-1].children[i]])
+    #         p[0].children[i].operator = 'ASSIGN'
+    #         p[0].children[i].dataType = p[2]
 
 
 ###################################################################################
@@ -380,22 +380,22 @@ def p_TypeDecl(p):
     TypeDecl : TYPE TypeSpec
              | TYPE LPAREN TypeSpecMult RPAREN
     """
-    if len(p) == 3:
-        p[0] = [p[2]]
-    else:
-        p[0] = p[3]
+    # if len(p) == 3:
+    #     p[0] = [p[2]]
+    # else:
+    #     p[0] = p[3]
 
 def p_TypeSpecMult(p):
     """
     TypeSpecMult : TypeSpec SEMICOLON TypeSpecMult 
                  | 
     """
-    if len(p) > 1:
-        p[3].append(p[1])
-        p[0] = p[3]
+    # if len(p) > 1:
+    #     p[3].append(p[1])
+    #     p[0] = p[3]
 
-    else:
-        p[0] = [Node()]
+    # else:
+    #     p[0] = [Node()]
 
     
 def p_TypeSpec(p):
@@ -403,7 +403,7 @@ def p_TypeSpec(p):
     TypeSpec : AliasDecl
              | Typedef
     """
-    p[0] = p[1]
+    # p[0] = p[1]
 
 def p_AliasDecl(p):
     """
@@ -411,12 +411,12 @@ def p_AliasDecl(p):
                 | IDENT ASSIGN IDENT
                 | IDENT ASSIGN IDENT PERIOD IDENT
     """ 
-    p[0] = Node()
-    if p[1].label in stm[stm.id].typeDefs:
-        raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
+    # p[0] = Node()
+    # if p[1].label in stm[stm.id].typeDefs:
+    #     raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
         
-    else:
-       stm[stm.id].typeDefs[p[1].label] = p[-1].label
+    # else:
+    #    stm[stm.id].typeDefs[p[1].label] = p[-1].label
 
 def p_TypeDef(p):
     """
@@ -425,14 +425,14 @@ def p_TypeDef(p):
               | IDENT IDENT PERIOD IDENT
 
     """
-    p[0] = Node()
-    if p[1].label in stm[stm.id].typeDefs:
-        raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
-    present = stm.findType(p[-1])
-    if present != -1:
-       stm[stm.id].typeDefs[p[1].label] = p[-1].label
-    else:
-        raise TypeError('Base type not found ' + p[-1], p.lineno(1))
+    # p[0] = Node()
+    # if p[1].label in stm[stm.id].typeDefs:
+    #     raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
+    # present = stm.findType(p[-1])
+    # if present != -1:
+    #    stm[stm.id].typeDefs[p[1].label] = p[-1].label
+    # else:
+    #     raise TypeError('Base type not found ' + p[-1], p.lineno(1))
 
 
 ###################################################################################
@@ -445,13 +445,13 @@ def p_IdentifierList(p):
                    | IDENT COMMA IdentifierList
     """
 
-    if len(p) == 2:
-        p[0] = Node()
-        p[0].addChild(*[IdentNode(label = p[1], scope = stm.id)])
+    # if len(p) == 2:
+    #     p[0] = Node()
+    #     p[0].addChild(*[IdentNode(label = p[1], scope = stm.id)])
 
-    else:
-        p[3].addChild(*[IdentNode(label = p[1], scope = stm.id)])
-        p[0] = p[3]
+    # else:
+    #     p[3].addChild(*[IdentNode(label = p[1], scope = stm.id)])
+    #     p[0] = p[3]
 
 
 ###################################################################################
@@ -465,14 +465,14 @@ def p_ExpressionList(p):
     ExpressionList : Expr
                    | ExpressionList COMMA Expr
     """
-    p[0] = Node()
+    # p[0] = Node()
     
-    if len(p) == 2:
-        p[0].addChild(*[p[1]])
+    # if len(p) == 2:
+    #     p[0].addChild(*[p[1]])
         
-    else:
-        p[1].children.append(p[3])
-        p[0] = p[1]
+    # else:
+    #     p[1].children.append(p[3])
+    #     p[0] = p[1]
     
 def p_Expr(p):
     """
@@ -497,20 +497,20 @@ def p_Expr(p):
          | Expr AND Expr
          | Expr AND_NOT Expr
     """
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-        dt1 = p[1].dataType
-        dt2 = p[3].dataType
+    # if len(p) == 2:
+    #     p[0] = p[1]
+    # else:
+    #     dt1 = p[1].dataType
+    #     dt2 = p[3].dataType
 
-        if not checkBinOp(stm, dt1, dt2, p[2], p[3][-1]):
-            raise TypeError("Incompatible operand types", p.lineno(1))
+    #     if not checkBinOp(stm, dt1, dt2, p[2], p[3][-1]):
+    #         raise TypeError("Incompatible operand types", p.lineno(1))
 
-        p[0] = ExprNode(operator = p[2])
-        p[0].addChild(*[p[1], p[3]])
+    #     p[0] = ExprNode(operator = p[2])
+    #     p[0].addChild(*[p[1], p[3]])
 
-        dt = getFinalType(dt1, dt2, p[2])
-        p[0].dataType = dt
+    #     dt = getFinalType(dt1, dt2, p[2])
+    #     p[0].dataType = dt
 
 def p_UnaryExpr(p):
     """
@@ -522,15 +522,15 @@ def p_UnaryExpr(p):
             | MUL UnaryExpr
             | AND UnaryExpr
     """
-    if len(p) == 2:
-        p[0] = p[1]
-    else:
-        if not checkUnOp(stm, p[1], p[2].dataType):
-            raise TypeError("Incompatible operand for Unary Expression", p.lineno(1))
+    # if len(p) == 2:
+    #     p[0] = p[1]
+    # else:
+    #     if not checkUnOp(stm, p[1], p[2].dataType):
+    #         raise TypeError("Incompatible operand for Unary Expression", p.lineno(1))
         
-        p[0] = ExprNode()
-        p[0].addChild(*[p[2]])
-        p[0].dataType = getUnaryType(p[2].dataType, p[1])
+    #     p[0] = ExprNode()
+    #     p[0].addChild(*[p[2]])
+    #     p[0].dataType = getUnaryType(p[2].dataType, p[1])
 
 ###################################################################################
 ### Primary Expression
@@ -548,27 +548,27 @@ def p_PrimaryExpr(p):
                 | PrimaryExpr Arguments
     """
 
-    ## PrimaryExpr -> Lit
-    if len(p) == 2 and isinstance(p[1], LitNode):
-        p[0] = ExprNode(dataType = p[1].dataType)
-        p[0].chilren = p[1].children
+    # ## PrimaryExpr -> Lit
+    # if len(p) == 2 and isinstance(p[1], LitNode):
+    #     p[0] = ExprNode(dataType = p[1].dataType)
+    #     p[0].chilren = p[1].children
 
-    ## Primary Expr -> Ident
-    elif (len(p) == 2):
+    # ## Primary Expr -> Ident
+    # elif (len(p) == 2):
 
-        # Check declaration
-        latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
+    #     # Check declaration
+    #     latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
 
-        if latest_scope == 0:
-            ## To be checked for global declarations (TODO)
-            print("Expecting global declaration for " + p[1], p.lineno(1))
+    #     if latest_scope == 0:
+    #         ## To be checked for global declarations (TODO)
+    #         print("Expecting global declaration for ",p[1], p.lineno(1))
             
-        dt = stm.get(p[1])['type']
-        p[0] = ExprNode(dataType=dt, label = p[1])
+    #     dt = stm.get(p[1])['type']
+    #     p[0] = ExprNode(dataType=dt, label = p[1])
     
-    ## Primary Expr -> LPAREN Expr RPAREN
-    elif len(p) == 4 and isinstance(p[2], ExprNode):
-        p[0] = p[2]
+    # ## Primary Expr -> LPAREN Expr RPAREN
+    # elif len(p) == 4 and isinstance(p[2], ExprNode):
+    #     p[0] = p[2]
 
     ## PrimaryExpr -> PrimaryExpr Selector
     
@@ -624,21 +624,21 @@ def p_Arguments(p):
               | LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN   
     """
 
-    p[0] = Node()
+    # p[0] = Node()
 
-    ## Arguments : LPAREN ExpressionList RPAREN or LPAREN ExpressionList
-    if p[2].children != None and len(p[2].children) > 0 and isinstance(p[2].children[0], ExprNode):
-        p[0] = p[2]
+    # ## Arguments : LPAREN ExpressionList RPAREN or LPAREN ExpressionList
+    # if p[2].children != None and len(p[2].children) > 0 and isinstance(p[2].children[0], ExprNode):
+    #     p[0] = p[2]
     
-    if len(p) > 3 and isinstance(p[2], str) and p[3] != '.':
-        if stm.findType(p[2]) == -1:
-            raise TypeError("Type " + p[2] + " not defined before", p.lineno(1))
-        else:
-            if len(p) == 4 or len(p) == 5:
-                p[0].addChild(*[TypeNode(datatype = p[2], scope = stm.id)])
-            else:
-                p[4].children.append(TypeNode(datatype = p[2], scope = stm.id))
-                p[0] = p[4]
+    # if len(p) > 3 and isinstance(p[2], str) and p[3] != '.':
+    #     if stm.findType(p[2]) == -1:
+    #         raise TypeError("Type " + p[2] + " not defined before", p.lineno(1))
+    #     else:
+    #         if len(p) == 4 or len(p) == 5:
+    #             p[0].addChild(*[TypeNode(datatype = p[2], scope = stm.id)])
+    #         else:
+    #             p[4].children.append(TypeNode(datatype = p[2], scope = stm.id))
+    #             p[0] = p[4]
 
 ###################################################################################
 #####################                                        ######################
@@ -719,13 +719,11 @@ def p_BeginStruct(p):
     """
     BeginStruct : 
     """
-    context['structSymbolsList'] = []
 
 def p_EndStruct(p):
     """
     EndStruct : 
     """
-    context['structSymbolsList'] = None
 
 #extra
 def p_FieldDeclMult(p):
@@ -870,39 +868,39 @@ def p_FunctionLit(p):
 
 def p_FuncDecl(p):
     """
-    FuncDecl : FUNC FunctionName BeginFunc Signature FunctionBody EndFunc
+    FuncDecl : FUNC FunctionName Signature FunctionBody
              | FUNC FunctionName Signature
     """
     
     ## Add entry in stm
-    info = {'params' : [], 'result': []}
-    for i in range(len(p[3].children)):
-        if isinstance(p[3].children[i], ResultNode):
-            info['result'].append(p[3].children[i].dataType)
-        else:
-            info['params'].append([p[3].children[i].label, p[3].children[i].dataType]) 
+    # info = {'params' : [], 'result': []}
+    # for i in range(len(p[3].children)):
+    #     if isinstance(p[3].children[i], ResultNode):
+    #         info['result'].append(p[3].children[i].dataType)
+    #     else:
+    #         info['params'].append([p[3].children[i].label, p[3].children[i].dataType]) 
 
-    stm.addFunction(p[2].label, info)
+    # stm.addFunction(p[2].label, info)
 
-    ## Make node
-    p[0] = FuncDeclNode()
-    for i in range(len(p)):
-        if i == 0:
-            continue
-        else:
-            p[0].children.append(p[i])
+    # ## Make node
+    # p[0] = FuncDeclNode()
+    # for i in range(len(p)):
+    #     if i == 0:
+    #         continue
+    #     else:
+    #         p[0].children.append(p[i])
 
-def p_BeginFunc(p):
-    """
-    BeginFunc : 
-    """
-    stm.newScope()
+# def p_BeginFunc(p):
+#     """
+#     BeginFunc : 
+#     """
+#     stm.newScope()
 
-def p_EndFunc(p):
-    """
-    EndFunc : 
-    """
-    stm.exitScope()
+# def p_EndFunc(p):
+#     """
+#     EndFunc : 
+#     """
+#     stm.exitScope()
 
 ###################################################################################
 ## Function Name
@@ -910,17 +908,17 @@ def p_FunctionName(p):
     """
     FunctionName : IDENT
     """
-    ##  Check redeclaration
-    if p[2].label in stm.functions:
-        raise ("Redeclaration of function " + p[2].label, p.lineno(1))
+    # ##  Check redeclaration
+    # if p[2].label in stm.functions:
+    #     raise ("Redeclaration of function " + p[2].label, p.lineno(1))
     
-    ## Add func type to symbol table
-    stm[stm.id].addType("func")
+    # ## Add func type to symbol table
+    # stm[stm.id].addType("func")
 
-    info = {}
-    stm.addFunction(p[1], info)
+    # info = {}
+    # stm.addFunction(p[1], info)
 
-    p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
+    # p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
 
 ###################################################################################
 ## Function Body
@@ -929,7 +927,7 @@ def p_FunctionBody(p):
     """
     FunctionBody : Block
     """
-    p[0] = p[1]
+    # p[0] = p[1]
 
 ###################################################################################
 ## Function Signature
@@ -939,10 +937,10 @@ def p_Signature(p):
     Signature : Parameters Result
               | Parameters
     """
-    p[0] = Node()
-    p[0].children.append(p[1])
-    if len(p) > 2:
-        p[0].children.append(p[2])
+    # p[0] = Node()
+    # p[0].children.append(p[1])
+    # if len(p) > 2:
+    #     p[0].children.append(p[2])
 
 ###################################################################################
 ## Function Parameters
@@ -953,10 +951,10 @@ def p_Parameters(p):
                | LPAREN ParameterList RPAREN
                | LPAREN ParameterList COMMA RPAREN
     """
-    p[0] = Node()
+    # p[0] = Node()
     
-    if len(p) > 3:
-        p[0].addChild(*p[2])
+    # if len(p) > 3:
+    #     p[0].addChild(*p[2])
 
 def p_ParameterList(p):
     """
@@ -966,18 +964,18 @@ def p_ParameterList(p):
                   | ParameterList COMMA Type
                   | ParameterList COMMA ParameterDecl 
     """
-    if len(p)==2 :
-        p[0] = p[1]
+    # if len(p)==2 :
+    #     p[0] = p[1]
 
-    elif len(p) == 4 and isinstance(p[3], ParamNode):
-        p[1].children.append(p[3])
-        p[0] = p[1]
+    # elif len(p) == 4 and isinstance(p[3], ParamNode):
+    #     p[1].children.append(p[3])
+    #     p[0] = p[1]
 
-    elif len(p) == 4 and isinstance(p[3], str):
-        p[1].children.append(ParamNode(datatype = p[3]))
-        p[0] = p[1]    
-        ## Add types to symbol table
-        stm[stm.id].addType(p[3])
+    # elif len(p) == 4 and isinstance(p[3], str):
+    #     p[1].children.append(ParamNode(datatype = p[3]))
+    #     p[0] = p[1]    
+    #     ## Add types to symbol table
+    #     stm[stm.id].addType(p[3])
 
 def p_ParameterDecl(p):
     """
@@ -985,13 +983,13 @@ def p_ParameterDecl(p):
                   | IdentifierList IDENT
                   | IdentifierList IDENT PERIOD IDENT
     """
-    p[0] = Node()
+    # p[0] = Node()
     
-    if len(p) == 3 and isinstance(p[2], str):
-        stm[stm.id].addType(p[2])
+    # if len(p) == 3 and isinstance(p[2], str):
+    #     stm[stm.id].addType(p[2])
 
-        for i, child in enumerate(p[1].children):
-            p[0].chidren.append(ParamNode(label = child.label, dataType = p[2]))
+    #     for i, child in enumerate(p[1].children):
+    #         p[0].chidren.append(ParamNode(label = child.label, dataType = p[2]))
 
 ###################################################################################
 ## Return Type
@@ -1003,12 +1001,12 @@ def p_Result(p):
            | IDENT
            | IDENT PERIOD IDENT
     """
-    p[0] = ResultNode()
-    if len(p) == 1 and isinstance(p[1], str):
-        p[0].children.append(IdentNode(dataType = p[1]))
+    # p[0] = ResultNode()
+    # if len(p) == 1 and isinstance(p[1], str):
+    #     p[0].children.append(IdentNode(dataType = p[1]))
     
-    elif len(p) == 1:
-        p[0] = p[1]
+    # elif len(p) == 1:
+    #     p[0] = p[1]
 
 ###################################################################################
 #####################                                        ######################
@@ -1231,13 +1229,11 @@ def p_BeginSwitch(p):
     """
     BeginSwitch : 
     """
-    context['switchDepth'] += 1
 
 def p_EndSwitch(p):
     """
     EndSwitch : 
     """
-    context['switchDepth'] -= 1
 
 def p_ExprCaseClauseMult(p):
     """
@@ -1379,38 +1375,33 @@ def p_error(p):
 #####################                                        ######################
 ###################################################################################
 
-lexer = lex.lex()
+def parse():
+    lexer = lex.lex()
 
-parser, grammar = yacc.yacc()
+    parser, grammar = yacc.yacc()
 
-path_to_root = os.environ.get('PATH_TO_ROOT')
-milestone = os.environ.get('MILESTONE')
-if path_to_root is not None:
-    with open(path_to_root + "/src/Milestone" + str(milestone) + "/action.txt", "w") as f:
-        for key, val in parser.action.items():
-            f.writelines(f'{key} : {val}\n')
+    path_to_root = os.environ.get('PATH_TO_ROOT')
+    milestone = os.environ.get('MILESTONE')
+    if path_to_root is not None:
+        with open(path_to_root + "/src/Milestone" + str(milestone) + "/action.txt", "w") as f:
+            for key, val in parser.action.items():
+                f.writelines(f'{key} : {val}\n')
 
-    with open(path_to_root + "/src/Milestone" + str(milestone) + "/goto.txt", "w") as f:
-        for key, val in parser.goto.items():
-            f.writelines(f'{key} : {val}\n')
+        with open(path_to_root + "/src/Milestone" + str(milestone) + "/goto.txt", "w") as f:
+            for key, val in parser.goto.items():
+                f.writelines(f'{key} : {val}\n')
 
-non_terminals = grammar.Nonterminals
+    non_terminals = grammar.Nonterminals
 
-## Trying to handle input
-with open(sys.argv[1], 'r') as f:
-    import pprint
-    out = parser.parse(f.read(), lexer = lexer)
-    if out is None:
-        f.close()
-        sys.exit(1)
-    output_file = sys.argv[1][:-2] + "output"
-    with open(output_file, 'w') as fout:
-        pprint.pprint(out, width=10, stream=fout)
-
-def dfs(ast):
-    print(f'{ast}')
-    if hasattr(ast, 'children') and ast.children is not None:
-        for c in ast.children:
-            dfs(c)
-
-dfs(ast)
+    # Trying to handle input
+    with open(sys.argv[1], 'r') as f:
+        import pprint
+        out = parser.parse(f.read(), lexer = lexer)
+        if out is None:
+            f.close()
+            sys.exit(1)
+        output_file = sys.argv[1][:-2] + "output"
+        with open(output_file, 'w') as fout:
+            pprint.pprint(out, width=10, stream=fout)
+    
+    return ast

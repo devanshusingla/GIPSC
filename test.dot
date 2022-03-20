@@ -1,0 +1,9 @@
+digraph G {
+	0 -> 1;
+	0 -> 2;
+	2 -> 3;
+	3 -> 4;
+	3 -> 5;
+	0 -> 6;
+	0 [label=<scope.FileNode object at 0x7f0a5383a8c0>];	1 [label=<scope.FileNode object at 0x7f0a5383a8c0>];	2 [label=<scope.FileNode object at 0x7f0a5383a8c0>];	3 [label=<scope.ImportNode object at 0x7f0a53839600>];	4 [label=<scope.ImportPathNode object at 0x7f0a5383a590>];	5 [label=<scope.ImportPathNode object at 0x7f0a5383a590>];	6 [label=<scope.FileNode object at 0x7f0a5383a8c0>];
+}
