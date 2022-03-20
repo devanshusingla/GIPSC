@@ -132,6 +132,40 @@ ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
 #     p[0] = []
 #    ()
 
+def isBasicNumeric(dt):
+    if (len(dt) >= 3 and dt[0:3] == "int")  or (len(dt) >= 5 and dt[0:5] == "float") or (len(dt) >= 8 and dt[0:8] == "complex") or dt== 'byte' or dt == 'rune':
+        return True
+    return False
+
+def isBasicInteger(dt):
+    if (len(dt) >= 3 and dt[0:3] == "int") or dt == "byte" or dt == "rune":
+        return True
+    return False
+    
+
+def check(dt1, dt2, binop, firstchar):
+    if binop == '+' or binop == '-' or binop == '*' or binop == '/':
+        if isBasicNumeric(dt1) and isBasicNumeric(dt2) and dt1 == dt2:
+            return True
+        elif binop == '+' and dt1 == dt2 and dt1 == "string":
+             return True 
+        return False 
+    
+    if binop == '%' or binop == '&' or binop == '|' or binop == '^' | binop == '&^':
+        if isBasicInteger(dt1) and isBasicInteger(dt2) and dt1 == dt2:
+            return True
+        return False 
+
+    if binop == '<<' or binop == '>>':
+        if isBasicInteger(dt1) and isBasicInteger(dt2) and firstchar != '-':
+            return True 
+        return False
+
+    if binop == '&&' or binop == '||':
+        if dt1 == 'bool' and dt2 == 'bool':
+            return True
+        return False
+
 stm = SymTableMaker()
 ast = None
     
@@ -152,7 +186,7 @@ def p_PackageClause(p):
     """
     PackageClause : PACKAGE IDENT
     """
-    p[0] = LitNode(DataType.STR, p[2])
+    p[0] = LitNode(dataType = 'string', label = p[2])
 
 ###################################################################################
 ### Import related grammar
@@ -227,7 +261,7 @@ def p_TopLevelDecl(p):
     TopLevelDecl : Decl 
                  | FuncDecl
     """
-    p[0] = [p[1]]
+    p[0] = p[1]
 
 def p_Decl(p):
     """
@@ -247,7 +281,7 @@ def p_ConstDecl(p):
               | CONST LPAREN ConstSpecMult RPAREN
     """
     if len(p)==3:
-        p[0]= p[2]
+        p[0]= [p[2]]
     
     else:
         p[0]=p[3]
@@ -258,11 +292,11 @@ def p_ConstSpecMult(p):
                   | 
     """
     if len(p)>1:
-        p[3].addChild(*[p[0]])
+        p[3].addChild(*[p[1]])
         p[0] = p[3]
 
     else:
-        p[0] = Node()
+        p[0] = [Node()]
 
 def p_ConstSpec(p):
     """
@@ -270,22 +304,34 @@ def p_ConstSpec(p):
                 | IdentifierList IDENT ASSIGN ExpressionList
                 | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
     """
-    for child in p[1].children:
+    p[0] = Node()
+    print(p[2])
+    for i, child in enumerate(p[1].children):
         # Check redeclaration for identifier list
-        latest_scope = stm.getScope(child)
+        latest_scope = stm.getScope(child.label)
         if latest_scope == stm.id:
             raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
         else:
             # Add to symbol table
-            stm.add(child.val, p[2].dataType)
+            stm.add(child.label, {'type': p[2], 'isConst': True})
+            p[1].children[i].dataType = p[2]
 
     if len(p[1].children) != len(p[-1].children):
         raise NameError("Assignment is not balanced", p.lineno(1))
 
-    for i, expression in zip(p[-1].children):
-        if expression.dataType != p[2].val:
-            raise ("Mismatch of type for identifier: " + p[1].children[i].val)
+    for i, expression in enumerate(p[-1].children):
+        if expression.dataType != p[2]:
+            raise ("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
+    
+    for i, expression in enumerate(p[-1].children):
+        p[0].children.append(ExprNode())
+        p[0].children[i].addChild([p[1].children[i], p[-1].children[i]])
+        p[0].children[i].operator = 'ASSIGN'
+        p[0].children[i].dataType = p[2]
+        p[1].children[i].isConst = True
+    
 
+    
 ###################################################################################
 ### Variable Declarations
 ###################################################################################
@@ -295,12 +341,22 @@ def p_VarDecl(p):
     VarDecl : VAR VarSpec
             | VAR LPAREN VarMult RPAREN
     """
+    if len(p)==3:
+        p[0]= [p[2]]
+    
+    else:
+        p[0]=p[3]
 
 def p_VarMult(p):
     """
     VarMult : VarSpec SEMICOLON VarMult 
             | 
     """
+    if len(p) > 1:
+        p[3].append(p[1])
+        p[0] = p[3]
+    else:
+        p[0] = [Node()] 
 
 def p_VarSpec(p):
     """
@@ -312,6 +368,33 @@ def p_VarSpec(p):
             | IdentifierList IDENT
             | IdentifierList IDENT PERIOD IDENT
     """
+    p[0] = Node()
+
+    for i, child in enumerate(p[1].children):
+        # Check redeclaration for identifier list
+        latest_scope = stm.getScope(child.label)
+        if latest_scope == stm.id:
+            raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
+        else:
+            # Add to symbol table
+            stm.add(child.label, {'type': p[2], 'isConst' : False})
+            p[1].children[i].dataType = p[2]
+
+    # if assignment is also done
+    if p[-1].children != None and isinstance(p[-1].children[0], ExprNode):
+        if len(p[1].children) != len(p[-1].children):
+            raise NameError("Assignment is not balanced", p.lineno(1))
+
+        for i, expression in enumerate(p[-1].children):
+            if expression.dataType != p[2]:
+                raise ("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
+
+        for i, expression in enumerate(p[-1].children):
+            p[0].children.append(ExprNode())
+            p[0].children[i].addChild([p[1].children[i], p[-1].children[i]])
+            p[0].children[i].operator = 'ASSIGN'
+            p[0].children[i].dataType = p[2]
+
 
 ###################################################################################
 ### Type Declarations
@@ -322,25 +405,43 @@ def p_TypeDecl(p):
     TypeDecl : TYPE TypeSpec
              | TYPE LPAREN TypeSpecMult RPAREN
     """
+    if len(p) == 3:
+        p[0] = [p[2]]
+    else:
+        p[0] = p[3]
 
 def p_TypeSpecMult(p):
     """
     TypeSpecMult : TypeSpec SEMICOLON TypeSpecMult 
                  | 
     """
+    if len(p) > 1:
+        p[3].append(p[1])
+        p[0] = p[3]
 
+    else:
+        p[0] = [Node()]
+
+    
 def p_TypeSpec(p):
     """
     TypeSpec : AliasDecl
              | Typedef
     """
+    p[0] = p[1]
 
 def p_AliasDecl(p):
     """
     AliasDecl : IDENT ASSIGN Type
                 | IDENT ASSIGN IDENT
                 | IDENT ASSIGN IDENT PERIOD IDENT
-    """
+    """ 
+    p[0] = Node()
+    if p[1].label in stm[stm.id].typeDefs:
+        raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
+        
+    else:
+       stm[stm.id].typeDefs[p[1].label] = p[-1].label
 
 def p_TypeDef(p):
     """
@@ -349,6 +450,13 @@ def p_TypeDef(p):
               | IDENT IDENT PERIOD IDENT
 
     """
+    p[0] = Node()
+    if p[1].label in stm[stm.id].typeDefs:
+        raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
+        
+    else:
+       stm[stm.id].typeDefs[p[1].label] = p[-1].label
+
 
 ###################################################################################
 ### Identifier List
@@ -359,6 +467,14 @@ def p_IdentifierList(p):
     IdentifierList : IDENT
                    | IDENT COMMA IdentifierList
     """
+
+    if len(p) == 2:
+        p[0] = Node()
+        p[0].addChild(*[IdentNode(label = p[1], scope = stm.id)])
+
+    else:
+        p[3].addChild(*[IdentNode(label = p[1], scope = stm.id)])
+        p[0] = p[3]
 
 
 ###################################################################################
@@ -372,7 +488,15 @@ def p_ExpressionList(p):
     ExpressionList : Expr
                    | ExpressionList COMMA Expr
     """
-
+    p[0] = Node()
+    
+    if len(p) == 2:
+        p[0].addChild(*[p[1]])
+        
+    else:
+        p[1].children.append(p[3])
+        p[0] = p[1]
+    
 def p_Expr(p):
     """
     Expr : UnaryExpr 
@@ -396,6 +520,17 @@ def p_Expr(p):
          | Expr AND Expr
          | Expr AND_NOT Expr
     """
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        dt1 = p[1].dataType
+        dt2 = p[3].dataType
+
+        if not check(dt1, dt2, p[3][-1], p[2]):
+            raise TypeError("Incompatible operand types", p.lineno(1))
+
+        p[0] = ExprNode(operator = p[2])
+
 
 def p_UnaryExpr(p):
     """
@@ -644,6 +779,7 @@ def p_BasicLit(p):
              | IMAG
              | RUNE
              | STRING
+             | BOOL
     """
 
 ###################################################################################

@@ -36,7 +36,7 @@ reserved = {
 ## Tokens other than reserved
 tokens = [
     'COMMENT',
-    'IDENT', 'INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING',
+    'IDENT', 'INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING', 'BOOL',
     'ADD', 'SUB', 'MUL', 'QUO', 'REM',
     'AND', 'OR', 'XOR', 'SHL', 'SHR', 'AND_NOT',
     'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN',
@@ -103,6 +103,8 @@ t_RBRACK = r'\]'
 t_RBRACE = r'\}'
 t_SEMICOLON = r';'
 t_COLON = r':'
+
+t_BOOL = r'true|false'
 
 
 d_digit = r"[0-9]"

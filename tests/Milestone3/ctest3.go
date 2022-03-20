@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const a int = 5
+
 func getString(length int) string {
 	b := make([]byte, length)
 	rand.Read(b)

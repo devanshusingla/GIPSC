@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-basicTypes = ['int', 'float', 'string', 'rune']
+basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64' 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
 
 class ScopeTableError(Exception):
@@ -18,10 +18,10 @@ class scope:
         self.localsymTable = {}
         self.parentScope = parentScope
         self.avlTypes = basicTypes.copy()
+        self.typeDefs = {}
 
-    def insert(self, id, typeAttr):
-        self.localsymTable[id] = {}
-        self.localsymTable[id]['type'] = typeAttr
+    def insert(self, id, info):
+        self.localsymTable[id] = info
 
     def updateAttr(self, id, **kwargs):
         if id not in self.localsymTable:
@@ -37,12 +37,6 @@ class scope:
         for avlType in prevScope.avlTypes:
             if avlType not in self.avlTypes:
                 self.avlTypes.append(avlType)
-
-class DataType(Enum):
-    STR = auto()
-    INT = auto()
-    FLOAT = auto()
-    RUNE = auto()
 
 ## Symbol Table Maker
 class SymTableMaker:
@@ -68,13 +62,16 @@ class SymTableMaker:
     
     def getScope(self, ident):
         i = len(self.stack) - 1
-        while self.stack[i] != 0:
-            if ident in self.stack[i].localsymTable:
+        while i >= 0:
+            if ident in self.symTable[i].localsymTable:
                 break
             else:
                 i -= 1
         
-        return self.stack[i]
+        if i == -1:
+            return i
+        else:
+            return self.stack[i]
 
 ## AST Abstract Node Class
 class Node:
@@ -104,32 +101,35 @@ class ImportPathNode(Node):
         self.children.append(path)
 
 class ExprNode(Node):
-    def __init__(self, dataType, operator):
+    def __init__(self, dataType, operator, isConst = False):
         super().__init__()
         self.children = []
         self.dataType = dataType
         self.operator = operator
+        self.isConst = isConst 
 
 class IdentNode(Node):
-    def __init__(self, scope, dataType, val):
+    def __init__(self, scope, label, dataType = None, val = 0, isConst = False):
         super().__init__()
         self.children = None
         self.scope = scope
         self.dataType = dataType
+        self.label = label
         self.val = val
+        self.isConst = isConst
 
 class TypeNode(Node):
     def __init__(self, scope, dataType):
-        self.val = dataType
+        self.label = dataType
         self.children = None
         self.scope = scope
 
 class LitNode(Node):
-    def __init__(self, dataType, val):
+    def __init__(self, dataType, label):
         super().__init__()
         self.children = None
         self.dataType = dataType
-        self.val = val
+        self.label = label
 
 class FuncDeclNode(Node):
     pass
