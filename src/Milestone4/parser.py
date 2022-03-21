@@ -15,67 +15,6 @@ tokens.remove('COMMENT')
 
 precedence = (
     # ('left', 'CONV'),
-    ('left', 'LBRACE'),
-    ('right', 'ASSIGN', 'DEFINE'),
-    ('left','IDENT'),
-    ('left','SEMICOLON'),
-    ('left','COLON'),
-    ('left','INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING'),
-    ('left','BREAK'),
-    ('left','CONTINUE'),
-    ('left','RETURN'),
-    ('left', 'COMMA'),
-    ('right', 'NOT', 'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'SHL_ASSIGN', 'SHR_ASSIGN', 'AND_NOT_ASSIGN'),
-    ('left', 'LOR'),
-    ('left', 'LAND'),
-    ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
-    ('left', 'ADD', 'SUB','OR','XOR'),
-    ('left', 'MUL', 'QUO','REM','AND','AND_NOT','SHL','SHR'),
-    ('left', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'RBRACE', 'INC', 'DEC', 'PERIOD'),
-    ('left', 'UMUL'),
-)
-
-non_terminals = {}
-ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
-
-# ## Start Semantic Analysis
-# context = {}
-# def setupContext():
-#     context['scopeTab'] = {} # Dictionary for Scope Symbol Tables
-#     context['nextScopeId'] = 0 # Id for next scope table
-#     context['currentScope'] = context['nextScopeId'] # Setting current scope id to 0
-#     context['nextScopeId'] += 1 # Incrementing next scope id
-#     context['scopeTab'][context['currentScope']] = scope() # Symbol Table
-#     context['scopeStack'] = [0] # Stack for active scopes
-#     context['forDepth'] = 0 # Inside 0 for loops at present
-#     context['switchDepth'] = 0 # Inside 0 switch statements at present
-#     context['structSymbolsList'] = None # List of symbols in current struct
-
-# def endContext():
-#     # Dump Symbol Table of each function as CSV
-
-#     # Dump AST of functions in DOT format
-#     print(context)
-
-# def beginScope():
-#     prevScope = context['currentScope']
-#     context['currentScope'] = context['nextScopeId']
-#     context['scopeStack'].append(context['currentScope'])
-#     context['scopeTab'][context['currentScope']] = scope(prevScope)
-#     context['scopeTab'][context['currentScope']].inheritTypes(context['scopeTab'][context['prevScope']])
-#     context['nextScopeId'] += 1
-
-
-# def():
-#     context['scopeStack'].pop()
-    # context['currentScope'] = context['scopeStack'][-1]
-
-###################################################################################
-#####################                                        ######################
-######                         STARTING GRAMMAR                            ########
-#####################                                        ######################
-###################################################################################
-
 # COMPACT = False
 # def get_value_p(p):
 #     value = [str(sys._getframe(1).f_code.co_name)[2:]]
@@ -133,6 +72,29 @@ ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
 #     """
 #     p[0] = []
 #    ()
+    ('left','INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING'),
+    ('left','BREAK'),
+    ('left','CONTINUE'),
+    ('left','RETURN'),
+    ('left', 'COMMA'),
+    ('right', 'NOT', 'ADD_ASSIGN', 'SUB_ASSIGN', 'MUL_ASSIGN', 'QUO_ASSIGN', 'REM_ASSIGN', 'AND_ASSIGN', 'OR_ASSIGN', 'XOR_ASSIGN', 'SHL_ASSIGN', 'SHR_ASSIGN', 'AND_NOT_ASSIGN'),
+    ('left', 'LOR'),
+    ('left', 'LAND'),
+    ('left', 'EQL', 'NEQ','LSS','LEQ','GTR','GEQ'),
+    ('left', 'ADD', 'SUB','OR','XOR'),
+    ('left', 'MUL', 'QUO','REM','AND','AND_NOT','SHL','SHR'),
+    ('left', 'LPAREN', 'RPAREN', 'LBRACK', 'RBRACK', 'RBRACE', 'INC', 'DEC', 'PERIOD'),
+    ('left', 'UMUL'),
+)
+
+non_terminals = {}
+ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
+
+###################################################################################
+#####################                                        ######################
+######                         STARTING GRAMMAR                            ########
+#####################                                        ######################
+###################################################################################
 
 stm = SymTableMaker()
 ast = None

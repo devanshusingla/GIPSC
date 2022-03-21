@@ -6,13 +6,6 @@ basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
 class ScopeTableError(Exception):
     pass
 
-# class node:
-#     def __init__(self, grammar):
-#         self.grammar = grammar
-#         self.exprList = []
-#         self.exprTypeList = []
-#         self.metadata = {}
-
 class scope:
     def __init__(self, parentScope=None):
         self.localsymTable = {}
