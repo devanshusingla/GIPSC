@@ -5,5 +5,14 @@ digraph G {
 	3 -> 4;
 	3 -> 5;
 	0 -> 6;
-	0 [label=<scope.FileNode object at 0x7f0a5383a8c0>];	1 [label=<scope.FileNode object at 0x7f0a5383a8c0>];	2 [label=<scope.FileNode object at 0x7f0a5383a8c0>];	3 [label=<scope.ImportNode object at 0x7f0a53839600>];	4 [label=<scope.ImportPathNode object at 0x7f0a5383a590>];	5 [label=<scope.ImportPathNode object at 0x7f0a5383a590>];	6 [label=<scope.FileNode object at 0x7f0a5383a8c0>];
+	6 -> 7;
+	7 -> 8;
+	7 -> 9;
+	7 -> 10;
+	7 -> 11;
+	11 -> 12;
+	6 -> 13;
+	13 -> 14;
+	13 -> 15;
+	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="fmt: \"fmt\""];	4 [label="fmt"];	5 [label="\"fmt\""];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="[]"];	10 [label="None"];	11 [label="BODY"];	12 [label="[<scope.Node object at 0x7fbaedbcb490>]"];	13 [label="[]"];	14 [label="None"];	15 [label="int32"];
 }

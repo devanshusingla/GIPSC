@@ -1,3 +1,4 @@
+from array import ArrayType
 from numpy import iscomplexobj
 import ply.yacc as yacc
 import ply.lex as lex
@@ -141,8 +142,7 @@ def p_SourceFile(p):
     SourceFile : PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult
     """
     global ast
-    p[0] = FileNode()
-    p[0].addChild(p[1], p[3], p[4])
+    p[0] = FileNode(p[1], p[3], p[4])
     ast = p[0]
 
 ###################################################################################
@@ -153,7 +153,7 @@ def p_PackageClause(p):
     """
     PackageClause : PACKAGE IDENT
     """
-    p[0] = LitNode(dataType = 'string', label = p[2])
+    p[0] = LitNode(dataType = 'string', label = f'"{p[2]}"')
 
 ###################################################################################
 ### Import related grammar
@@ -198,8 +198,9 @@ def p_ImportSpec(p):
               | ImportPath 
     """
     if len(p) == 2:
-        p[0] = ImportPathNode()
-        p[0].addChild(p[1][1:-1], p[1])
+        alias = IdentNode(0, p[1][1:-1])
+        path = LitNode("string", p[1])
+        p[0] = ImportPathNode(alias, path)
     
 def p_ImportPath(p):
     """
@@ -216,19 +217,25 @@ def p_TopLevelDeclMult(p):
     TopLevelDeclMult : TopLevelDecl SEMICOLON TopLevelDeclMult 
                      |
     """
-    # if len(p)>1:
-    #     p[3].addChild(*p[1])
-    #     p[0] = p[3]
+    if len(p)>1:
+        if isinstance(p[1], list):
+            p[3].addChild(*p[1])
+        else:
+            p[3].addChild(p[1])
+        p[0] = p[3]
 
-    # if len(p)==1:
-    #     p[0] = DeclNode()
+    if len(p)==1:
+        p[0] = DeclNode()
 
 def p_TopLevelDecl(p):
     """
     TopLevelDecl : Decl 
                  | FuncDecl
     """
-    # p[0] = p[1]
+    if p[1] is not None:
+        p[0] = p[1]
+    else:
+        p[0] = []
 
 def p_Decl(p):
     """
@@ -236,7 +243,8 @@ def p_Decl(p):
          | VarDecl
          | TypeDecl
     """
-    # p[0] = p[1]
+    if p[1] is not None:
+        p[0] = p[1]
 
 ###################################################################################
 ### Constant Declarations
@@ -247,23 +255,23 @@ def p_ConstDecl(p):
     ConstDecl : CONST ConstSpec
               | CONST LPAREN ConstSpecMult RPAREN
     """
-    # if len(p)==3:
-    #     p[0]= [p[2]]
+    if len(p)==3:
+        p[0] = p[2]
     
-    # else:
-    #     p[0]=p[3]
+    else:
+        p[0] = p[3]
 
 def p_ConstSpecMult(p):
     """
     ConstSpecMult : ConstSpec SEMICOLON ConstSpecMult 
-                  | 
+                  | ConstSpec
     """
-    # if len(p)>1:
-    #     p[3].addChild(*[p[1]])
-    #     p[0] = p[3]
+    if len(p) == 4:
+        p[3].addChild(*p[1])
+        p[0] = p[3]
 
-    # else:
-    #     p[0] = [Node()]
+    else:
+        p[0] = []
 
 def p_ConstSpec(p):
     """
@@ -271,24 +279,25 @@ def p_ConstSpec(p):
                 | IdentifierList IDENT ASSIGN ExpressionList
                 | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
     """
-    # p[0] = Node()
-    # for i, child in enumerate(p[1].children):
+    p[0] = [p[2]]
+
+    # if len(p[1].children) != len(p[len(p)-1].children):
+    #     raise NameError("Assignment is not balanced", p.lineno(1))
+
+    # for i, (ident, val) in enumerate(zip(p[1].children, p[len(p)-1].children)):
     #     # Check redeclaration for identifier list
-    #     latest_scope = stm.getScope(child.label)
-    #     if latest_scope == stm.id or child.label in stm.functions:
-    #         raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
+    #     latest_scope = stm.getScope(ident.label)
+    #     if latest_scope == stm.id or ident.label in stm.functions:
+    #         raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
         
     #     # Check for the presence of type
     #     present = stm.findType(p[2])
     #     if present != -1:
     #         # Add to symbol table
-    #         stm.add(child.label, {'type': p[2], 'isConst': True})
+    #         stm.add(ident.label, {'type': p[2], 'isConst': True})
     #         p[1].children[i].dataType = p[2]
     #     else:
     #         raise TypeError('Type not declared/found: ' + p[2], p.lineno(1))
-
-    # if len(p[1].children) != len(p[len(p)-1].children):
-    #     raise NameError("Assignment is not balanced", p.lineno(1))
 
     # for i, expression in enumerate(p[len(p)-1].children):
     #     if expression.dataType != p[2]:
@@ -301,7 +310,6 @@ def p_ConstSpec(p):
     #     p[0].children[i].dataType = p[2]
     #     p[1].children[i].isConst = True
     
-
     
 ###################################################################################
 ### Variable Declarations
@@ -445,13 +453,12 @@ def p_IdentifierList(p):
                    | IDENT COMMA IdentifierList
     """
 
-    # if len(p) == 2:
-    #     p[0] = Node()
-    #     p[0].addChild(*[IdentNode(label = p[1], scope = stm.id)])
+    if len(p) == 2:
+        p[0] = [IdentNode(label = p[1], scope = stm.id)]
 
-    # else:
-    #     p[3].addChild(*[IdentNode(label = p[1], scope = stm.id)])
-    #     p[0] = p[3]
+    else:
+        p[3].append(IdentNode(label = p[1], scope = stm.id))
+        p[0] = p[3]
 
 
 ###################################################################################
@@ -652,6 +659,10 @@ def p_Type(p):
          | PointerType
          | LPAREN PointerType RPAREN
     """
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = ParenTypeNode(p[2])
 
 def p_TypeT(p):
     """
@@ -664,6 +675,11 @@ def p_TypeT(p):
           | LPAREN IDENT RPAREN
           | LPAREN IDENT PERIOD IDENT RPAREN
     """
+    if len(p) == 2:
+        p[0] = p[1]
+    elif len(p) == 4:
+        p[0] = ParenTypeNode(p[2])
+
 
 ###################################################################################
 ### Pointer Type
@@ -675,6 +691,8 @@ def p_PointerType(p):
                | MUL IDENT %prec UMUL
                 | MUL IDENT PERIOD IDENT %prec UMUL
     """
+    if len(p) == 3:
+        p[0] = PointerTypeNode(p[2])
 
 ###################################################################################
 ### Slice Type
@@ -684,6 +702,7 @@ def p_SliceType(p):
     """
     SliceType : LBRACK RBRACK ElementType
     """
+    p[0] = BrackTypeNode(p[3])
 
 ###################################################################################
 ### Array Type
@@ -693,11 +712,13 @@ def p_ArrayType(p):
     """
     ArrayType : LBRACK ArrayLength RBRACK ElementType
     """
+    p[0] = BrackTypeNode(p[4], p[2])
 
 def p_ArrayLength(p):
     """
     ArrayLength : Expr
     """
+    p[0] = p[1]
 
 def p_ElementType(p):
     """
@@ -705,6 +726,7 @@ def p_ElementType(p):
                 | IDENT
                 | IDENT PERIOD IDENT
     """
+    p[0] = p[1]
 
 ###################################################################################
 ### Struct Type
@@ -765,6 +787,7 @@ def p_MapType(p):
     """
     MapType : MAP LBRACK KeyType RBRACK ElementType
     """
+    p[0] = MapTypeNode(p[3], p[5])
     
 def p_KeyType(p):
     """
@@ -772,6 +795,7 @@ def p_KeyType(p):
             | IDENT
             | IDENT PERIOD IDENT
     """
+    p[0] = p[1]
 
 ###################################################################################
 ### Function Type
@@ -794,6 +818,7 @@ def p_Lit(p):
         | CompositeLit
         | FunctionLit
     """
+    p[0] = p[1]
 
 ###################################################################################
 ### Basic Literal
@@ -808,11 +833,13 @@ def p_BasicLit(p):
              | STRING
              | BOOL
     """
+    p[0] = p[1]
 
 ###################################################################################
 ### Composite Literal
 ###################################################################################
 
+## Need to implement checks
 def p_CompositeLit(p):
     """
     CompositeLit : StructType Arguments
@@ -822,6 +849,12 @@ def p_CompositeLit(p):
                  | IDENT LiteralValue
                  | IDENT PERIOD IDENT LiteralValue
     """
+    if isinstance(p[1], BrackTypeNode):
+        return p[2]
+    elif isinstance(p[1], MapTypeNode):
+        return p[2]
+    elif len(p) == 3:
+        return p[2]
 
 def p_LiteralValue(p):
     """
@@ -829,30 +862,45 @@ def p_LiteralValue(p):
                  | LBRACE ElementList RBRACE 
                  | LBRACE RBRACE 
     """
+    if len(p) > 3:
+        p[0] = p[2]
+    else:
+        p[0] = []
 
 def p_ElementList(p):
     """
     ElementList : KeyedElement 
                 | ElementList COMMA KeyedElement 
     """
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[3].append(p[1])
+        p[0] = p[3]
 
 def p_KeyedElement(p):
     """
     KeyedElement : Element
                  | Key COLON Element
     """
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = KeyValNode(p[1], p[3])
 
 def p_Key(p):
     """
     Key : Expr
         | LiteralValue
     """
+    p[0] = p[1]
 
 def p_Element(p):
     """
     Element : Expr
             | LiteralValue
     """
+    p[0] = p[1]
 
 ###################################################################################
 ### Function Literal
@@ -882,13 +930,9 @@ def p_FuncDecl(p):
 
     # stm.addFunction(p[2].label, info)
 
-    # ## Make node
-    # p[0] = FuncDeclNode()
-    # for i in range(len(p)):
-    #     if i == 0:
-    #         continue
-    #     else:
-    #         p[0].children.append(p[i])
+    ## Make node
+    p[0] = FuncNode(p[2], p[3][0], p[3][1], p[4])
+    
 
 # def p_BeginFunc(p):
 #     """
@@ -908,6 +952,7 @@ def p_FunctionName(p):
     """
     FunctionName : IDENT
     """
+    p[0] = p[1]
     # ##  Check redeclaration
     # if p[2].label in stm.functions:
     #     raise ("Redeclaration of function " + p[2].label, p.lineno(1))
@@ -927,7 +972,7 @@ def p_FunctionBody(p):
     """
     FunctionBody : Block
     """
-    # p[0] = p[1]
+    p[0] = FuncBodyNode(p[1])
 
 ###################################################################################
 ## Function Signature
@@ -937,6 +982,11 @@ def p_Signature(p):
     Signature : Parameters Result
               | Parameters
     """
+    if len(p) == 3:
+        p[0] = [p[1], p[2]]
+    else:
+        p[0] = [p[1], None]
+
     # p[0] = Node()
     # p[0].children.append(p[1])
     # if len(p) > 2:
@@ -951,10 +1001,10 @@ def p_Parameters(p):
                | LPAREN ParameterList RPAREN
                | LPAREN ParameterList COMMA RPAREN
     """
-    # p[0] = Node()
-    
-    # if len(p) > 3:
-    #     p[0].addChild(*p[2])
+    if len(p) == 3:
+        p[0] = []
+    else:
+        p[0] = p[2]
 
 def p_ParameterList(p):
     """
@@ -964,18 +1014,18 @@ def p_ParameterList(p):
                   | ParameterList COMMA Type
                   | ParameterList COMMA ParameterDecl 
     """
-    # if len(p)==2 :
-    #     p[0] = p[1]
+    if len(p)==2 :
+        p[0] = p[1]
 
-    # elif len(p) == 4 and isinstance(p[3], ParamNode):
-    #     p[1].children.append(p[3])
-    #     p[0] = p[1]
+    elif len(p) == 4 and isinstance(p[3], ParamNode):
+        p[1].append(p[3])
+        p[0] = p[1]
 
-    # elif len(p) == 4 and isinstance(p[3], str):
-    #     p[1].children.append(ParamNode(datatype = p[3]))
-    #     p[0] = p[1]    
-    #     ## Add types to symbol table
-    #     stm[stm.id].addType(p[3])
+    elif len(p) == 4 and isinstance(p[3], str):
+        p[1].append(ParamNode(datatype = p[3]))
+        p[0] = p[1]    
+        ## Add types to symbol table
+        # stm[stm.id].addType(p[3])
 
 def p_ParameterDecl(p):
     """
@@ -983,6 +1033,7 @@ def p_ParameterDecl(p):
                   | IdentifierList IDENT
                   | IdentifierList IDENT PERIOD IDENT
     """
+    p[0] = p[1]
     # p[0] = Node()
     
     # if len(p) == 3 and isinstance(p[2], str):
@@ -1019,6 +1070,11 @@ def p_StatementList(p):
     StatementList : Statement SEMICOLON StatementList  
                   | 
     """
+    if len(p) == 4:
+        p[3].append(p[1])
+        p[0] = p[3]
+    else:
+        p[0] = []
 
 def p_Statement(p):
     """
@@ -1035,6 +1091,7 @@ def p_Statement(p):
               | SwitchStmt
               | ForStmt
     """
+    p[0] = Node()
 
 ###################################################################################
 ### Labeled Statements
@@ -1186,6 +1243,7 @@ def p_Block(p):
     """
     Block : LBRACE StatementList RBRACE
     """
+    p[0] = p[2]
 
 ###################################################################################
 ### If Else Statements
