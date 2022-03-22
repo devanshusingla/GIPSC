@@ -316,7 +316,7 @@ def p_VarSpec(p):
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(child.label)
         if latest_scope == stm.id or child.label in stm.functions:
-            raise NameError('Redeclaration of identifier: ' + child, p.lineno(1))
+            raise NameError('Redeclaration of identifier: ' + child.label, p.lineno(1))
         
         present = stm.findType(p[2])
         if present != -1:
@@ -474,14 +474,13 @@ def p_Expr(p):
         dt1 = p[1].dataType
         dt2 = p[3].dataType
 
-        if not checkBinOp(stm, dt1, dt2, p[2], p[3][-1]):
+        if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
             raise TypeError("Incompatible operand types", p.lineno(1))
 
-        p[0] = ExprNode(operator = p[2])
-        p[0].addChild(*[p[1], p[3]])
+        dt = getFinalType(stm, dt1, dt2, p[2])
 
-        dt = getFinalType(dt1, dt2, p[2])
-        p[0].dataType = dt
+        p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label + p[2] + p[3].label)
+        p[0].addChild(*[p[1], p[3]])
 
 def p_UnaryExpr(p):
     """
@@ -597,11 +596,14 @@ def p_Arguments(p):
 
     p[0] = Node()
 
+    if len(p) == 3:
+        return
+
     ## Arguments : LPAREN ExpressionList RPAREN or LPAREN ExpressionList
-    if p[2].children != None and len(p[2].children) > 0 and isinstance(p[2].children[0], ExprNode):
+    if not isinstance(p[2], str) and p[2].children != None and len(p[2].children) > 0 and isinstance(p[2].children[0], ExprNode):
         p[0] = p[2]
     
-    if len(p) > 3 and isinstance(p[2], str) and p[3] != '.':
+    elif len(p) > 3 and isinstance(p[2], str) and p[3] != '.':
         if stm.findType(p[2]) == -1:
             raise TypeError("Type " + p[2] + " not defined before", p.lineno(1))
         else:
