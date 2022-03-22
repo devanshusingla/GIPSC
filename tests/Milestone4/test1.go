@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-const a, b int32 = 1 + 2 * 3 - 4, 3 + 4
+var a, b [2]int32 = 1.0, 2
 
 func main() {
 	var x int = 5

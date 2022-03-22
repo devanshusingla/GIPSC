@@ -246,32 +246,45 @@ def p_ConstSpec(p):
     if len(p[1].children) != len(p[len(p)-1].children):
         raise NameError("Assignment is not balanced", p.lineno(1))
 
+    not_base_type = False
+
+    if not isinstance(p[2], str):
+        not_base_type = True
+
     for i, (ident, val) in enumerate(zip(p[1].children, p[len(p)-1].children)):
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(ident.label)
         if latest_scope == stm.id or ident.label in stm.functions:
             raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
         
-        # Check for the presence of type
-        present = stm.findType(p[2])
+        dt = p[2]
+        if not_base_type:
+            if isinstance(dt, BrackTypeNode) or isinstance(dt, MapTypeNode):
+                while not isinstance(dt, str):
+                    dt = dt.children[1]
+
+        present = stm.findType(dt)
         if present != -1:
             # Add to symbol table
-            stm.add(ident.label, {'type': p[2], 'isConst': True})
-            p[1].children[i].dataType = p[2]
-        else:
-            raise TypeError('Type not declared/found: ', p.lineno(1))
+            stm.add(child.label, {'type': dt, 'isConst' : True})
+            p[1].children[i].dataType = dt
+        else: 
+            raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
 
-    for i, expression in enumerate(p[len(p)-1].children):
-        # if expression.dataType != p[2]:
-        if not isTypeCastable(stm, expression.dataType, p[2], expression.label, expression.isConst):
-            raise TypeError("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
-    
-    for i, expression in enumerate(p[len(p)-1].children):
-        p[0].children.append(ExprNode(dataType = expression.dataType))
-        p[0].children[i].addChild(*[p[1].children[i], p[len(p)-1].children[i]])
-        p[0].children[i].operator = 'ASSIGN'
-        p[0].children[i].dataType = p[2]
-        p[1].children[i].isConst = True
+    # if assignment is also done
+    if p[len(p)-1].children != None and isinstance(p[len(p)-1].children[0], ExprNode):
+        if len(p[1].children) != len(p[len(p)-1].children):
+            raise NameError("Assignment is not balanced", p.lineno(1))
+
+        for i, expression in enumerate(p[len(p)-1].children):
+            if not isTypeCastable(stm, dt, expression.dataType, expression.label, expression.isConst):
+                raise TypeError("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
+        
+        for i, expression in enumerate(p[len(p)-1].children):
+            p[0].children.append(ExprNode(dataType = expression.dataType))
+            p[0].children[i].addChild(*[p[1].children[i], p[len(p)-1].children[i]])
+            p[0].children[i].operator = 'ASSIGN'
+            p[0].children[i].dataType = dt
     
     
 ###################################################################################
@@ -311,6 +324,11 @@ def p_VarSpec(p):
             | IdentifierList IDENT PERIOD IDENT
     """
     p[0] = Node(label = "VAR")
+    
+    not_base_type = False
+
+    if not isinstance(p[2], str):
+        not_base_type = True
 
     for i, child in enumerate(p[1].children):
         # Check redeclaration for identifier list
@@ -318,13 +336,19 @@ def p_VarSpec(p):
         if latest_scope == stm.id or child.label in stm.functions:
             raise NameError('Redeclaration of identifier: ' + child.label, p.lineno(1))
         
-        present = stm.findType(p[2])
+        dt = p[2]
+        if not_base_type:
+            if isinstance(dt, BrackTypeNode) or isinstance(dt, MapTypeNode):
+                while not isinstance(dt, str):
+                    dt = dt.children[1]
+
+        present = stm.findType(dt)
         if present != -1:
             # Add to symbol table
-            stm.add(child.label, {'type': p[2], 'isConst' : False})
-            p[1].children[i].dataType = p[2]
+            stm.add(child.label, {'type': dt, 'isConst' : False})
+            p[1].children[i].dataType = dt
         else: 
-            raise TypeError('Type not declared/found: ' + p[2], p.lineno(1))
+            raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
 
     # if assignment is also done
     if p[len(p)-1].children != None and isinstance(p[len(p)-1].children[0], ExprNode):
@@ -332,14 +356,14 @@ def p_VarSpec(p):
             raise NameError("Assignment is not balanced", p.lineno(1))
 
         for i, expression in enumerate(p[len(p)-1].children):
-            if not isTypeCastable(stm, expression.dataType, p[2], expression.label, expression.isConst):
+            if not isTypeCastable(stm, dt, expression.dataType, expression.label, expression.isConst):
                 raise TypeError("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
-        
+
         for i, expression in enumerate(p[len(p)-1].children):
             p[0].children.append(ExprNode(dataType = expression.dataType))
             p[0].children[i].addChild(*[p[1].children[i], p[len(p)-1].children[i]])
             p[0].children[i].operator = 'ASSIGN'
-            p[0].children[i].dataType = p[2]
+            p[0].children[i].dataType = dt
 
 
 ###################################################################################
@@ -479,7 +503,11 @@ def p_Expr(p):
 
         dt = getFinalType(stm, dt1, dt2, p[2])
 
-        p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label + p[2] + p[3].label)
+        isConst = False
+        if (p[1].isConst and p[3].isConst):
+            isConst = True
+
+        p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label + p[2] + p[3].label, isConst = isConst)
         p[0].addChild(*[p[1], p[3]])
 
 def p_UnaryExpr(p):
@@ -498,7 +526,7 @@ def p_UnaryExpr(p):
         if not checkUnOp(stm, p[1], p[2].dataType):
             raise TypeError("Incompatible operand for Unary Expression", p.lineno(1))
         
-        p[0] = ExprNode()
+        p[0] = ExprNode(dataType = p[2].dataType)
         p[0].addChild(*[p[2]])
         p[0].dataType = getUnaryType(p[2].dataType, p[1])
 
@@ -520,7 +548,7 @@ def p_PrimaryExpr(p):
 
     ## PrimaryExpr -> Lit
     if len(p) == 2 and isinstance(p[1], LitNode):
-        p[0] = ExprNode(dataType = p[1].dataType, label = p[1].label)
+        p[0] = ExprNode(dataType = p[1].dataType, label = p[1].label, isConst = True)
         p[0].children = p[1].children
 
     ## Primary Expr -> Ident

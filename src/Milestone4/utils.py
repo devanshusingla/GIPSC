@@ -143,6 +143,7 @@ def isConvertibletoInt(f):
         while f[i] != '.':
             if f[i] != '0':
                 return False 
+            i -= 1
         return True
 
     
@@ -154,7 +155,7 @@ def isTypeCastable(stm, dt1, dt2, val, flag):
         return True
     if isBasicInteger(dt1) and isBasicInteger(dt2):
         return True
-    if flag and (len(dt2) >= 5 and dt2[0:5] == "float") and isConvertibletoInt(val):
+    if flag and (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float") and isConvertibletoInt(val):
         return True
     return False
 
