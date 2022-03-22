@@ -72,6 +72,11 @@ precedence = (
 #     """
 #     p[0] = []
 #    ()
+    ('left', 'LBRACE'),
+    ('right', 'ASSIGN', 'DEFINE'),
+    ('left','IDENT'),
+    ('left','SEMICOLON'),
+    ('left','COLON'),
     ('left','INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING'),
     ('left','BREAK'),
     ('left','CONTINUE'),
