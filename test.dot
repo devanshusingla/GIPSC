@@ -13,6 +13,10 @@ digraph G {
 	11 -> 12;
 	6 -> 13;
 	13 -> 14;
-	13 -> 15;
-	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="\"fmt\""];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="[]"];	10 [label="None"];	11 [label="BODY"];	12 [label="[<scope.Node object at 0x7f32a74c73d0>]"];	13 [label="[]"];	14 [label="None"];	15 [label="int32"];
+	14 -> 15;
+	14 -> 16;
+	13 -> 17;
+	17 -> 18;
+	17 -> 19;
+	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="\"fmt\""];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="[]"];	10 [label="None"];	11 [label="BODY"];	12 [label="[<scope.Node object at 0x7f10f41eee50>]"];	13 [label="VAR"];	14 [label="ASSIGN"];	15 [label="b"];	16 [label="5"];	17 [label="ASSIGN"];	18 [label="a"];	19 [label="8"];
 }

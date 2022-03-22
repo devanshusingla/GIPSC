@@ -97,12 +97,16 @@ class SymTableMaker:
 
 ## AST Abstract Node Class
 class Node:
-    def __init__(self):
+    def __init__(self, label = "Node"):
         self.children = []
+        self.label = label
     
     def addChild(self, *children):
         for child in children:
             self.children.append(child)
+
+    def __str__(self):
+        return self.label 
 
 ## AST Node Classes
 class FileNode(Node):
@@ -162,6 +166,9 @@ class OpNode(Node):
     def __init__(self, operator):
         super().__init__()
         self.operator = operator
+
+    def __str__(self):
+        return self.operator
 
 ### TYPE Nodes
 class TypeNode(Node):
@@ -259,3 +266,9 @@ class ExprNode(Node):
         self.dataType = dataType
         self.operator = operator
         self.isConst = isConst # For constant folding
+
+    def __str__(self):
+        if self.operator is None:
+            return self.label 
+        else:
+            return self.operator
