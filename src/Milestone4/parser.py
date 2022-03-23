@@ -341,12 +341,12 @@ def p_VarSpec(p):
         if len(p) > 4:
             dt = {}
             if isinstance(p[2], str):
-                dt['baseType'] = p[2]
-                dt['level'] = 0
-            else:
-                dt = p[2].dataType
+                p[2] = stm.findType(p[2])
+
+            dt = p[2].dataType
             
             for i, expression in enumerate(p[len(p)-1]):
+                print(dt,expression.dataType)
                 if not isTypeCastable(stm, dt, expression.dataType):
                     raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
 
@@ -1198,8 +1198,8 @@ def p_FunctionLit(p):
 
 def p_FuncDecl(p):
     """
-    FuncDecl : FUNC FunctionName Signature FunctionBody
-             | FUNC FunctionName Signature
+    FuncDecl : FuncSig FunctionBody
+             | FuncSig
     """
     
     ## Add entry in stm
@@ -1214,7 +1214,20 @@ def p_FuncDecl(p):
 
     ## Make node
     p[0] = FuncNode(p[2], p[3][0], p[3][1], p[4])
+    stm.exitScope()
+
+def p_FuncSig(p):
+    """
+    FuncSig : FUNC FunctionName Signature
+    """
     
+    stm.addFunction(p[2], {"params": {i: param for i, param in enumerate(p[3][0])}, "return": p[3][1]})
+    stm.newScope()
+    for i, param in enumerate(p[3][0]):
+        stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
+        p[3][0][i].scope = stm.id
+    
+
 
 # def p_BeginFunc(p):
 #     """
@@ -1234,18 +1247,11 @@ def p_FunctionName(p):
     """
     FunctionName : IDENT
     """
-    p[0] = p[1]
-    # ##  Check redeclaration
-    # if p[2].label in stm.functions:
-    #     raise ("Redeclaration of function " + p[2].label, p.lineno(1))
-    
-    # ## Add func type to symbol table
-    # stm[stm.id].addType("func")
+    ##  Check redeclaration
+    if p[2].label in stm.functions or stm.getScope(p[2].label) >= 0 :
+        raise ("Redeclaration of function " + p[2].label, p.lineno(1))
 
-    # info = {}
-    # stm.addFunction(p[1], info)
-
-    # p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
+    p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
 
 ###################################################################################
 ## Function Body
@@ -1284,27 +1290,41 @@ def p_Parameters(p):
                | LPAREN ParameterList COMMA RPAREN
     """
     if len(p) == 3:
-        p[0] = []
+        p[0] = None
     else:
         p[0] = p[2]
 
 def p_ParameterList(p):
     """
     ParameterList : ParameterDecl
+                  | IDENT
+                  | Type
                   | ParameterList COMMA IDENT
                   | ParameterList COMMA Type
                   | ParameterList COMMA ParameterDecl 
     """
     if len(p)==2 :
-        p[0] = FuncParamNode(p[1])
+        if isinstance(p[1], List):
+            p[0] = FuncParamNode(p[1])
+        elif isinstance(p[1], str):
+            p[0] = FuncParamType()
+            p[0].addChild(stm.findType(p[1]))
+        else:
+            p[0] = FuncParamType()
+            p[0].addChild(p[1])
 
-    elif len(p) == 4 and isinstance(p[3], List):
-        p[1].addChild(*p[3])
-        p[0] = p[1]
+    elif len(p) == 4:
+        if isinstance(p[3], List):
+            if not isinstance(p[1], FuncParamNode):
+                raise SyntaxError("All parameters should be named or unnamed")
+            p[1].addChild(*p[3])
+            p[0] = p[1]
 
-    else:
-        p[0] = FuncParamNode(p[1])
-        p[0].addChild(p[3])
+        else:
+            if isinstance(p[1], FuncParamNode):
+                raise SyntaxError("All parameters should be named or unnamed")
+            p[1].addChild(p[3])
+            p[0] = p[1]
 
 def p_ParameterDecl(p):
     """
@@ -1312,6 +1332,10 @@ def p_ParameterDecl(p):
                   | IdentifierList IDENT
     """
     p[0] = p[1]
+    if isinstance(p[2], str):
+        p[2] = stm.findType(p[2])
+    for i in range(len(p[0])):
+        p[0][i].dataType = p[2].dataType
     # p[0] = Node()
     
     # if len(p) == 3 and isinstance(p[2], str):
@@ -1329,6 +1353,10 @@ def p_Result(p):
            | Type
            | IDENT
     """
+    if isinstance(p[1], str):
+        p[1] = stm.findType(p[1])
+    elif isinstance(p[1], Type):
+        p[1] = [p[1]]
     p[0] = FuncReturnNode(p[1])
     # p[0] = ResultNode()
     # if len(p) == 1 and isinstance(p[1], str):

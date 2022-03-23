@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-var a [2]int32 = [2]int32{1.0, 2}
+var a int = 1
 
 func Print(x int) {}
 

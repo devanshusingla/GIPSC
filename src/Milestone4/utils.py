@@ -233,6 +233,7 @@ def isTypeCastable(stm, dt1, dt2):
         if (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float"):
             return True
         return False
+    print("\n\n\n\n",dt1, dt2, "\n\n\n\n")
 
     if isinstance(dt1, str) or isinstance(dt2, str):
         return False

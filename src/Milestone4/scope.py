@@ -28,17 +28,18 @@ class scope:
         for key, value in kwargs.items():
             self.localsymTable[id][key] = value
 
-    def addType(self, type):
-        self.avlTypes.append(type)
+    def addType(self, type, typeObj):
+        # self.avlTypes.append(type)
+        self.typeDefs[type] = typeObj
 
     def setParent(self, parent):
         # Does this store only the reference?
         self.parent = parent
     
-    def inheritTypes(self, prevScope):
-        for avlType in prevScope.avlTypes:
-            if avlType not in self.avlTypes:
-                self.avlTypes.append(avlType)
+    # def inheritTypes(self, prevScope):
+    #     for avlType in prevScope.avlTypes:
+    #         if avlType not in self.avlTypes:
+    #             self.avlTypes.append(avlType)
 
 ## Symbol Table Maker
 class SymTableMaker:
@@ -52,6 +53,9 @@ class SymTableMaker:
 
     def addFunction(self, label, info):
         self.functions[label] = info
+    
+    def addType(self, type, typeObj):
+        self.symTable[self.id].addType(type, typeObj)
     
     def newScope(self):
         self.symTable[self.nextId] = scope(parentScope = self.id)
@@ -75,15 +79,15 @@ class SymTableMaker:
     def findType(self, type):
         i = len(self.stack) - 1
         while i >= 0:
-            if type in self.symTable[i].avlTypes or type in self.symTable[i].typeDefs:
-                break
+            j = self.stack[i]
+            if type in self.symTable[j].avlTypes:
+                return ElementaryType(dataType={'name':type, 'baseType': type, 'level': 0})
+            if type in self.symTable[j].typeDefs:
+                return self.symTable[j].typeDefs[type]
             else:
                 i -= 1
             
-        if i == -1:
-            return -1 
-        else:
-            return self.stack[i]
+        return -1
     
     def getScope(self, ident):
         i = len(self.stack) - 1
@@ -346,6 +350,58 @@ class ElseNode(Node):
     def __str__(self):
         return f'ELSE'
 
+class SwitchNode(Node):
+    def __init__(self, smtNode, varNode, casesNode):
+        super().__init__()
+        self.addChild(smtNode, varNode, *casesNode)
+    
+    def __str__(self):
+        return "SWITCH"
+
+class CasesNode(Node):
+    def __init__(self, caseValsNode, instrNode):
+        super().__init__()
+        self.addChild(*caseValsNode, instrNode)
+    
+    def __str__(self):
+        return "CASES"
+
+class CaseNode(Node):
+    def __init__(self, caseValNode):
+        super().__init__()
+        self.addChild(caseValNode)
+
+    def __str__(self):
+        return "CASE"
+
+class DefaultNode(Node):
+    def __str__(self):
+        return "DEFAULT"    
+
+class ForNode(Node):
+    def __init__(self, clauseNode, instrNode):
+        super().__init__()
+        self.addChild(clauseNode, instrNode)
+    
+    def __str__(self):
+        return "FOR"
+
+class ForClauseNode(Node):
+    def __init__(self, initNode, condNode, updNode):
+        super().__init__()
+        self.addChild(initNode, condNode, updNode)
+    
+    def __str__(self):
+        return "CLAUSE"
+
+class ForRangeNode(Node):
+    def __init__(self, paramsNode, iterableNode):
+        super().__init__(self)
+        self.addChild(*paramsNode, iterableNode)
+    
+    def __str__():
+        return "RANGE"
+
 ### TYPE Class
 class Type:
     def __init__(self, dataType = {}):
@@ -422,6 +478,19 @@ class FuncType(Type):
     
     def __str__(self):
         return f'FUNC'
+
+class FuncParamType(Type):
+    def __init__(self, dataType={}):
+        super().__init__(dataType)
+        self.id = 0
+    
+    def addChild(self, type):
+        self.dataType[self.id] = type
+        self.children.append(type)
+        self.id += 1
+
+    def __str__(self):
+        return '()'
 
 class ParamType(Type):
     def __init__(self, key, dataType = {}):
