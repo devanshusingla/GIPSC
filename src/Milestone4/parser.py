@@ -246,13 +246,26 @@ def p_ConstSpec(p):
     """
     ConstSpec : IdentifierList Type ASSIGN ExpressionList 
               | IdentifierList IDENT ASSIGN ExpressionList
+              | IdentifierList ASSIGN ExpressionList
     """
     p[0] = []
-    
-    # if len(p[1].children) != len(p[len(p)-1].children):
-    #     raise NameError("Assignment is not balanced", p.lineno(1))
 
-    for (ident, val) in zip(p[1].children, p[len(p)-1].children):
+    if len(p[1]) != len(p[len(p)-1]):
+        raise NameError("Assignment is not balanced", p.lineno(1))
+    
+    if len(p) > 4:
+        dt = {}
+        if isinstance(p[2], str):
+            dt['BaseType'] = p[2]
+            dt['level'] = 0
+        else:
+            dt = p[2].dataType
+        
+        for i, expression in enumerate(p[len(p)-1]):
+            if not isTypeCastable(stm, dt, expression.dataType):
+                raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
+
+    for (ident, val) in zip(p[1], p[len(p)-1]):
         expr = ExprNode(dataType=p[2], label="ASSIGN", operator="=")
         expr.addChild(ident, val)
         p[0].append(expr)
@@ -262,42 +275,27 @@ def p_ConstSpec(p):
     if not isinstance(p[2], str):
         not_base_type = True
 
-    for i, (ident, val) in enumerate(zip(p[1].children, p[len(p)-1].children)):
-    #     # Check redeclaration for identifier list
-    #     latest_scope = stm.getScope(ident.label)
-    #     if latest_scope == stm.id or ident.label in stm.functions:
-    #         raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
+    for i, (ident, val) in enumerate(zip(p[1], p[len(p)-1])):
+
+        # Check redeclaration for identifier list
+        latest_scope = stm.getScope(ident.label)
+        if latest_scope == stm.id or ident.label in stm.functions:
+            raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
         
-        dt = p[2]
+        dt = p[2].dataType
+
         if not_base_type:
-            if isinstance(dt, BrackType) or isinstance(dt, MapType):
-                while not isinstance(dt, str):
-                    dt = dt.children[1]
+            present = checkTypePresence(stm, dt) 
+        else:
+            present = stm.findType(stm, dt)
 
-    #     present = stm.findType(dt)
-    #     if present != -1:
-    #         # Add to symbol table
-    #         stm.add(child.label, {'type': dt, 'isConst' : True})
-    #         p[1].children[i].dataType = dt
-    #     else: 
-    #         raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
-
-    # # if assignment is also done
-    # if p[len(p)-1].children != None and isinstance(p[len(p)-1].children[0], ExprNode):
-    #     if len(p[1].children) != len(p[len(p)-1].children):
-    #         raise NameError("Assignment is not balanced", p.lineno(1))
-
-    #     for i, expression in enumerate(p[len(p)-1].children):
-    #         if not isTypeCastable(stm, dt, expression.dataType, expression.label, expression.isConst):
-    #             raise TypeError("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
-        
-    #     for i, expression in enumerate(p[len(p)-1].children):
-    #         p[0].children.append(ExprNode(dataType = expression.dataType))
-    #         p[0].children[i].addChild(*[p[1].children[i], p[len(p)-1].children[i]])
-    #         p[0].children[i].operator = 'ASSIGN'
-    #         p[0].children[i].dataType = dt
-    
-    
+        if present == -1:
+            raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
+        else:
+            # Add to symbol table
+            stm.add(ident, {'type': p[2].dataType, 'isConst' : True})
+            p[1].children[i].dataType = dt
+ 
 ###################################################################################
 ### Variable Declarations
 ###################################################################################
@@ -333,61 +331,80 @@ def p_VarSpec(p):
             | IdentifierList IDENT
     """
     p[0] = []
-    if p[2] == "=":
-        for (ident, val) in zip(p[1], p[len(p)-1]):
-            expr = ExprNode(dataType=None, label="ASSIGN", operator="=")
-            expr.addChild(ident, val)
-            p[0].append(expr)
-    elif p[3] == '=':
+
+    if len(p) >= 4:
+        if len(p[1]) != len(p[len(p)-1]):
+            raise NameError("Assignment is not balanced", p.lineno(1))
+        
+        if len(p) > 4:
+            dt = {}
+            if isinstance(p[2], str):
+                dt['BaseType'] = p[2]
+                dt['level'] = 0
+            else:
+                dt = p[2].dataType
+            
+            for i, expression in enumerate(p[len(p)-1]):
+                if not isTypeCastable(stm, dt, expression.dataType):
+                    raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
+
         for (ident, val) in zip(p[1], p[len(p)-1]):
             expr = ExprNode(dataType=p[2], label="ASSIGN", operator="=")
             expr.addChild(ident, val)
             p[0].append(expr)
+
+        not_base_type = False
+
+        if not isinstance(p[2], str):
+            not_base_type = True
+
+        for i, (ident, val) in enumerate(zip(p[1], p[len(p)-1])):
+
+            # Check redeclaration for identifier list
+            latest_scope = stm.getScope(ident.label)
+            if latest_scope == stm.id or ident.label in stm.functions:
+                raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
+            
+            dt = p[2].dataType
+
+            if not_base_type:
+                present = checkTypePresence(stm, dt) 
+            else:
+                present = stm.findType(stm, dt)
+
+            if present == -1:
+                raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
+            else:
+                # Add to symbol table
+                stm.add(ident, {'type': p[2].dataType, 'isConst' : False})
+                p[1].children[i].dataType = dt
     else:
-        # Add variables to symbol table
-        pass
+        not_base_type = False
 
-    # p[0] = Node(label = "VAR")
-    
-    # not_base_type = False
+        if not isinstance(p[2], str):
+            not_base_type = True
 
-    # if not isinstance(p[2], str):
-    #     not_base_type = True
+        for i, ident in enumerate(p[1]):
 
-    # for i, child in enumerate(p[1].children):
-    #     # Check redeclaration for identifier list
-    #     latest_scope = stm.getScope(child.label)
-    #     if latest_scope == stm.id or child.label in stm.functions:
-    #         raise NameError('Redeclaration of identifier: ' + child.label, p.lineno(1))
-        
-    #     dt = p[2]
-    #     if not_base_type:
-    #         if isinstance(dt, BrackType) or isinstance(dt, MapType):
-    #             while not isinstance(dt, str):
-    #                 dt = dt.children[1]
+            # Check redeclaration for identifier list
+            latest_scope = stm.getScope(ident.label)
+            if latest_scope == stm.id or ident.label in stm.functions:
+                raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
 
-    #     present = stm.findType(dt)
-    #     if present != -1:
-    #         # Add to symbol table
-    #         stm.add(child.label, {'type': dt, 'isConst' : False})
-    #         p[1].children[i].dataType = dt
-    #     else: 
-    #         raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
+            dt = p[2].dataType
 
-    # # if assignment is also done
-    # if p[len(p)-1].children != None and isinstance(p[len(p)-1].children[0], ExprNode):
-    #     if len(p[1].children) != len(p[len(p)-1].children):
-    #         raise NameError("Assignment is not balanced", p.lineno(1))
+            if not_base_type:
+                present = checkTypePresence(stm, dt) 
+            else:
+                present = stm.findType(stm, dt)
 
-    #     for i, expression in enumerate(p[len(p)-1].children):
-    #         if not isTypeCastable(stm, dt, expression.dataType, expression.label, expression.isConst):
-    #             raise TypeError("Mismatch of type for identifier: " + p[1].children[i].label, p.lineno(1))
+            if present == -1:
+                raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
+            else:
+                # Add to symbol table
+                stm.add(ident, {'type': p[2].dataType, 'isConst' : False})
+                p[1].children[i].dataType = dt
 
-    #     for i, expression in enumerate(p[len(p)-1].children):
-    #         p[0].children.append(ExprNode(dataType = expression.dataType))
-    #         p[0].children[i].addChild(*[p[1].children[i], p[len(p)-1].children[i]])
-    #         p[0].children[i].operator = 'ASSIGN'
-    #         p[0].children[i].dataType = dt
 
 
 ###################################################################################
@@ -418,11 +435,21 @@ def p_AliasDecl(p):
     AliasDecl : IDENT ASSIGN Type
                 | IDENT ASSIGN IDENT
     """ 
-    if p[1].label in stm[stm.id].typeDefs:
-        raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
+    dt = {}
+    if isinstance(p[3], str):
+        dt['baseType'] = p[3]
+        dt['level'] = 0
+    else:
+        dt = p[3].dataType
+
+    if checkTypePresence(stm, dt) == -1:
+        raise TypeError("BaseType " + dt + " not declared yet")
+
+    if p[1] in stm[stm.id].typeDefs:
+        raise TypeError("Redeclaration of Alias " + p[1], p.lineno(1))
         
     else:
-       stm[stm.id].typeDefs[p[1].label] = p[len(p)-1].label
+       stm[stm.id].typeDefs[p[1]] = dt['baseType']
 
 def p_TypeDef(p):
     """
@@ -430,8 +457,7 @@ def p_TypeDef(p):
               | IDENT IDENT
 
     """
-    p[0] = Node()
-    if p[1].label in stm[stm.id].typeDefs:
+    if p[1] in stm[stm.id].typeDefs:
         raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
     present = stm.findType(p[len(p)-1])
     if present != -1:
@@ -717,7 +743,6 @@ def p_TypeT(p):
           | StructType
           | SliceType
           | MapType
-          | FunctionType
           | LPAREN TypeT RPAREN
           | LPAREN IDENT RPAREN
     """
@@ -800,6 +825,8 @@ def p_ElementType(p):
     else:
         p[0].dataType['baseType'] = p[1]
         p[0].dataType['level'] = 0
+
+    p[0].dataType['name'] = 'elementary'
 
 ###################################################################################
 ### Struct Type
@@ -925,18 +952,7 @@ def p_KeyType(p):
         p[0].dataType['level'] = 0
 
     p[0].dataType['name'] = 'key'
-###################################################################################
-### Function Type
-###################################################################################
 
-def p_FunctionType(p):
-    """
-    FunctionType : FUNC Signature 
-    """
-    p[0] = FuncType(p[2][0], p[2][1], dataType = {'name' : 'func', 'params':  p[2][0].dataType})
-
-    if p[2][1] != None:
-        p[0].dataType['result'] = p[2][1].dataType
 
 ###################################################################################
 #####################                                        ######################

@@ -145,19 +145,76 @@ def isConvertibletoInt(f):
                 return False 
             i -= 1
         return True
-
     
-def isTypeCastable(stm, dt1, dt2, val, flag):
-    dt1 = getBaseType(stm, dt1)
-    dt2 = getBaseType(stm, dt2)
+def isTypeCastable(stm, dt1, dt2):
+    if dt1['name']!=dt2['name']:
+        return False
 
-    if dt1 == dt2:
-        return True
-    if isBasicInteger(dt1) and isBasicInteger(dt2):
-        return True
-    if flag and (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float") and isConvertibletoInt(val):
-        return True
-    return False
+    while 'name' in dt1 and (dt1['name'] == 'array' or dt1['name'] == 'slice' or dt1['name'] == 'pointer' or dt1['name'] == 'elementary'):
+        if dt1['name']!= dt2['name']:
+            return False
 
+        dt1 = dt1['baseType']
+        dt2 = dt2['baseType']
 
+    if isinstance(dt1, str) and isinstance(dt2, str):
+        dt1 = getBaseType(stm, dt1)
+        dt2 = getBaseType(stm, dt2)
 
+        if dt1 == dt2:
+            return True
+        if isBasicInteger(dt1) and isBasicInteger(dt2):
+            return True
+        if (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float"):
+            return True
+        return False
+
+    if isinstance(dt1, str) or isinstance(dt2, str):
+        return False
+    
+    if 'name' in dt1 and dt1['name'] != dt2['name']:
+        return False
+
+    if 'name' in dt1 and dt1['name'] == 'struct':
+        for i in dt1:
+            tmp = dt1[i]
+            if tmp == 'name':
+                continue 
+            else:
+                if i in dt2:
+                    if not isTypeCastable(dt1[i], dt2[i]):
+                        return False 
+                else:
+                    return False 
+        return True 
+
+    if dt1['name'] == 'map':
+        return isTypeCastable(dt1['KeyType'], dt2['KeyType']) and isTypeCastable(dt1['ValueType'], dt2['ValueType'])
+
+def checkTypePresence(stm, dt):
+    while ('name' in dt) and (dt['name'] == 'array' or dt['name'] == 'slice' or dt['name'] == 'pointer' or dt['name'] == 'elementary'):
+        dt = dt['baseType']
+
+    if isinstance(dt, str):
+        return stm.findType(dt)
+
+    elif 'name' in dt and dt['name'] == 'struct':
+        for i in dt:
+            tmp = dt[i]
+            if tmp == 'name':
+                continue
+            else:
+                flag = checkTypePresence(stm, tmp)
+                if flag == -1:
+                    return -1
+        return 1
+                        
+    elif 'name' in dt and dt['name'] == 'map':
+        flag = checkTypePresence(stm, dt['KeyType'])
+        if flag == -1:
+            return -1
+        else:
+            flag = checkTypePresence(stm, dt['ValueType'])
+            if flag == -1:
+                return -1
+        return 1
