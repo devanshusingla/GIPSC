@@ -9,17 +9,17 @@ def getBaseType(stm, dt):
         return dt
 
 def isBasicNumeric(dt):
-    if (len(dt) >= 3 and dt[0:3] == "int")  or (len(dt) >= 5 and dt[0:5] == "float") or (len(dt) >= 8 and dt[0:8] == "complex") or dt== 'byte' or dt == 'rune':
+    if (len(dt) >= 4 and dt[0:4] == "uint") or (len(dt) >= 3 and dt[0:3] == "int")  or (len(dt) >= 5 and dt[0:5] == "float") or (len(dt) >= 8 and dt[0:8] == "complex") or dt== 'byte' or dt == 'rune':
         return True
     return False
 
 def isBasicInteger(dt):
-    if (len(dt) >= 3 and dt[0:3] == "int") or dt == "byte" or dt == "rune":
+    if (len(dt) >= 4 and dt[0:4] == "uint") or (len(dt) >= 3 and dt[0:3] == "int") or dt == "byte" or dt == "rune":
         return True
     return False
 
 def isOrdered(dt):
-    if (len(dt) >= 3 and dt[0:3] == "int")  or (len(dt) >= 5 and dt[0:5] == "float") or dt == "string" or dt == 'byte' or dt == 'rune':
+    if (len(dt) >= 4 and dt[0:4] == "uint") or (len(dt) >= 3 and dt[0:3] == "int")  or (len(dt) >= 5 and dt[0:5] == "float") or dt == "string" or dt == 'byte' or dt == 'rune':
         return True
     return False
     
@@ -27,14 +27,17 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
 
-    if 'baseType' in dt1:
-        dt1 = dt1['baseType']
-    else:
-        return False
-    if 'baseType' in dt2:
-        dt2 = dt2['baseType']
-    else:
-        return False
+    if not isinstance(dt1, str):
+        if 'baseType' in dt1:
+            dt1 = dt1['baseType']
+        else:
+            return False
+    
+    if not isinstance(dt2, str):
+        if 'baseType' in dt2:
+            dt2 = dt2['baseType']
+        else:
+            return False
 
     if dt1 == None or dt2 == None or dt1 not in stm[stm.id].avlTypes or dt2 not in stm[stm.id].avlTypes:
         return False
@@ -75,31 +78,68 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
             return False
 
 def getFinalType(stm, dt1, dt2, binop):
+    dt1_copy = dt1
+    
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
 
+    if not isinstance(dt1, str):
+        if 'baseType' in dt1:
+            dt1 = dt1['baseType']
+    
+    if not isinstance(dt2, str):
+        if 'baseType' in dt2:
+            dt2 = dt2['baseType']
+
     if binop == '+' or binop == '-' or binop == '*' or binop == '/':
         if dt1 == 'byte' or dt1 == 'rune':
-            return 'int32'
-        return dt1
+            return {'baseType' : 'int32', 'level' : 0}
+        return dt1_copy
     
     if binop == '%' or binop == '&' or binop == '|' or binop == '^' | binop == '&^':
         if dt1 == 'byte' or dt1 == 'rune':
-            return 'int32'
-        return dt1
+            return {'baseType' : 'int32', 'level' : 0}
+        return dt1_copy
 
     if binop == '<<' or binop == '>>':
         if dt1 == 'byte':
-            return 'uint8'
+            return {'baseType' : 'uint8', 'level' : 0}
         if dt1 == 'rune':
-            return 'int32'
-        return dt1
+            return {'baseType' : 'int32', 'level' : 0}
+        return dt1_copy
 
     if binop == '&&' or binop == '||' or binop == '<' or binop == '<=' or binop == '>' or binop == '>=' or binop == '==' or binop == '!=':
-        return 'bool'
+        return {'baseType' : 'bool', 'level' : 0}
 
-def checkUnOp(stm, dt, unOp):
+def checkUnOp(stm, dt, unOp, isConst):
     dt = getBaseType(stm, dt)
+
+    if unOp == '*':
+        if isinstance(dt, str):
+            return False
+        
+        if 'name' not in dt:
+            return False
+
+        if dt['name']== 'pointer' or dt['name']=='array' or dt['name'] =='slice':
+            return True
+        else:
+            return False
+
+    if unOp == '&':
+        if not isConst:
+            return True
+        else:
+            return False
+
+    if not isinstance(dt, str):
+        if 'baseType' in dt:
+            dt = dt['baseType']
+        else:
+            return False
+
+    if dt == None or dt not in stm[stm.id].avlTypes:
+        return False
 
     if unOp == '+' or unOp == '-':
         return isBasicNumeric(dt)
@@ -110,20 +150,36 @@ def checkUnOp(stm, dt, unOp):
     if unOp == '^':
         return isBasicInteger(dt)
 
-    # if unOp == '*':
-    
-    # if unOp == '&':
 
 def getUnaryType(stm, dt, unOp):
+    dt_copy = dt
     dt = getBaseType(stm, dt)
+
+    if unOp == '*':
+        dt_copy['level'] -= 1
+        if dt_copy['level'] == 0:
+            return dt_copy['baseType']
+        return dt_copy
+
+    if unOp == '&':
+        if isinstance(dt_copy, str):
+            return {'baseType': dt, 'level': 1, 'name': 'pointer'}
+        dt_copy['level'] += 1
+        if dt_copy['level'] == 1:
+            dt_copy['name'] = 'pointer'
+        return dt_copy
+
+    if not isinstance(dt, str):
+        if 'baseType' in dt:
+            dt = dt['baseType']
 
     if unOp != '*' and unOp != '&':
         if dt == 'byte':
-            return 'uint8'
+            return {'baseType': 'uint8', 'level': 0}
         if dt == 'rune':
-            return 'uint32'
+            return {'baseType': 'uint32', 'level': 0}
         else: 
-            return dt
+            return dt_copy
 
 ## Returns if n is in range of integers
 def check_int(n):

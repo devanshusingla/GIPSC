@@ -256,7 +256,7 @@ def p_ConstSpec(p):
     if len(p) > 4:
         dt = {}
         if isinstance(p[2], str):
-            dt['BaseType'] = p[2]
+            dt['baseType'] = p[2]
             dt['level'] = 0
         else:
             dt = p[2].dataType
@@ -339,7 +339,7 @@ def p_VarSpec(p):
         if len(p) > 4:
             dt = {}
             if isinstance(p[2], str):
-                dt['BaseType'] = p[2]
+                dt['baseType'] = p[2]
                 dt['level'] = 0
             else:
                 dt = p[2].dataType
@@ -443,7 +443,7 @@ def p_AliasDecl(p):
         dt = p[3].dataType
 
     if checkTypePresence(stm, dt) == -1:
-        raise TypeError("BaseType " + dt + " not declared yet")
+        raise TypeError("baseType " + dt + " not declared yet")
 
     if p[1] in stm[stm.id].typeDefs:
         raise TypeError("Redeclaration of Alias " + p[1], p.lineno(1))
@@ -454,7 +454,6 @@ def p_AliasDecl(p):
     elif isinstance(p[3], str):
         stm[stm.id].typeDefs[p[1]] = stm[stm.id].typeDefs[p[3]]
 
-    # TODO -> For mixed types (how to set type?)
     else:
         stm[stm.id].typeDefs[p[1]] = dt
 
@@ -472,7 +471,7 @@ def p_TypeDef(p):
         dt = p[2].dataType
 
     if checkTypePresence(stm, dt) == -1:
-        raise TypeError("BaseType " + dt + " not declared yet")
+        raise TypeError("baseType " + dt + " not declared yet")
 
     if p[1] in stm[stm.id].typeDefs:
         raise TypeError("Redeclaration of Alias " + p[1], p.lineno(1))
@@ -483,7 +482,6 @@ def p_TypeDef(p):
     elif isinstance(p[2], str):
         stm[stm.id].typeDefs[p[1]] = stm[stm.id].typeDefs[p[2]]
 
-    # TODO -> For mixed types (how to set type?)
     else:
         stm[stm.id].typeDefs[p[1]] = dt
 
@@ -578,8 +576,8 @@ def p_UnaryExpr(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        # if not checkUnOp(stm, p[1], p[2].dataType):
-        #     raise TypeError("Incompatible operand for Unary Expression", p.lineno(1))
+        if not checkUnOp(stm, p[1], p[2].dataType, p[2].isConst):
+            raise TypeError("Incompatible operand for Unary Expression", p.lineno(1))
         
         p[0] = ExprNode(dataType = getUnaryType(p[2].dataType, p[1]), operator=p[1])
         p[0].addChild(p[2])
@@ -603,41 +601,123 @@ def p_PrimaryExpr(p):
     if len(p) == 2 and isinstance(p[1], LitNode):
         p[0] = p[1]
 
-    # ## Primary Expr -> Ident
+    ## Primary Expr -> Ident
     elif (len(p) == 2):
 
-        # # Check declaration
-        # latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
+        # Check declaration
+        latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
 
-        # if latest_scope == 0:
-        #     ## To be checked for global declarations (TODO)
-        #     print("Expecting global declaration for ",p[1], p.lineno(1))
+        if latest_scope == 0:
+            ## To be checked for global declarations (TODO)
+            print("Expecting global declaration for ",p[1], p.lineno(1))
             
-        # dt = stm.get(p[1])['type']
-        p[0] = ExprNode(dataType=None, label = p[1])
+        dt = stm.get(p[1])['dataType']
+        p[0] = ExprNode(dataType=dt, label = p[1])
     
     ## Primary Expr -> LPAREN Expr RPAREN
     elif len(p) == 4:
         p[0] = p[2]
 
     else:
+        dt = None
         ## PrimaryExpr -> PrimaryExpr Selector
         if isinstance(p[2], DotNode):
+            if 'name' not in p[1].dataType or p[1].dataType['name'] != 'struct':
+                raise TypeError("Expecting struct type but found different one", p.lineno(1))
+            
+            field = p[2].chidren[0]
+            found = False
+            idx = -1
+            for i in p[1].dataType:
+                if i == 'name':
+                    continue
+                if p[1].dataType[i]['field']==field:
+                    found = True
+                    idx = i
+                    
+            if not found:
+                raise NameError("No such field found in " + p[1].label, p.lineno(1))                
+
             p[2].addChild(p[1])
+            dt = p[2].dataType[idx]
 
         ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
+            if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'array' and p[1].dataType['name']!= 'map') :
+                raise TypeError("Expecting array or map type but found different one", p.lineno(1))
+
+            if p[1].dataType['name'] == 'array':
+                if isinstance(p[2].dataType, str):
+                    if not isBasicInteger(p[2].dataType):
+                        raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
+                else:
+                    if isinstance(p[2].dataType['baseType'], str) and p[2].dataType['level'] == 0:
+                        if not isBasicInteger(p[2].dataType):
+                            raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
+                    else:
+                        raise TypeError("Index type incorrect", p.lineno(1))
+
+                dt = p[1].dataType
+                dt.dataType['level']-=1
+
+                if dt.dataType['level']==0:
+                    dt = {'baseType': dt.dataType['baseType'], 'level': 0}
+
+            if p[1].dataType['name'] == 'map':
+                if not isTypeCastable(p[2].dataType, p[1].dataType['KeyType']):
+                    raise TypeError("Incorrect type for map " + p.lineno(1))
+                dt = p[1].dataType['ValueType']
+
             p[2].children[0] = p[1]
+            
 
         ## PrimaryExpr -> PrimaryExpr Slice
         elif isinstance(p[2], SliceNode):
+            if 'name' not in p[1].dataType or p[1].dataType['name'] != 'slice' :
+                raise TypeError("Expecting a slice type but found different one", p.lineno(1))
+
+            if  p[2].lIndexNode != None: 
+                if not isBasicInteger(p[2].lIndexNode.dataType['baseType']):
+                    raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
+            
+            if  p[2].rIndexNode != None: 
+                if not isBasicInteger(p[2].rIndexNode.dataType['baseType']):
+                    raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
+
+            else:
+                if isinstance(p[2].lIndexNode.dataType, str):
+                    if not isBasicInteger(p[2].lIndexNode.dataType):
+                        raise TypeError("Index cannot be of type " + p[2].lIndexNode.dataType, p.lineno(1))
+                else:
+                    if isinstance(p[2].lIndexNode.dataType['baseType'], str) and p[2].lIndexNode.dataType['level'] == 0:
+                        if not isBasicInteger(p[2].lIndexNode.dataType):
+                            raise TypeError("Index cannot be of type " + p[2].lIndexNode.dataType, p.lineno(1))
+                    else:
+                        raise TypeError("Index type incorrect", p.lineno(1))
+                
+                if isinstance(p[2].rIndexNode.dataType, str):
+                    if not isBasicInteger(p[2].rIndexNode.dataType):
+                        raise TypeError("Index cannot be of type " + p[2].rIndexNode.dataType, p.lineno(1))
+                else:
+                    if isinstance(p[2].rIndexNode.dataType['baseType'], str) and p[2].rIndexNode.dataType['level'] == 0:
+                        if not isBasicInteger(p[2].rIndexNode.dataType):
+                            raise TypeError("Index cannot be of type " + p[2].rIndexNode.dataType, p.lineno(1))
+                    else:
+                        raise TypeError("Index type incorrect", p.lineno(1))
+
+            dt = p[1].dataType
             p[2].children[0] = p[1]
 
         ## PrimaryExpr -> PrimaryExpr Arguments
         elif isinstance(p[2], List):
+            if p[1].label not in stm.functions:
+                raise NameError("No such function declared ", p.lineno(1))
+
+            
             p[2] = FuncCallNode(p[1], p[2])
         
         p[0] = p[2]
+        p[0].dataType = dt
     
 
 ###################################################################################
@@ -794,9 +874,6 @@ def p_PointerType(p):
     
     p[0].dataType['name'] = 'pointer'
 
-    
-
-
 ###################################################################################
 ### Slice Type
 ###################################################################################
@@ -894,9 +971,6 @@ def p_FieldDecl(p):
     FieldDecl : IdentifierList Type 
               | IdentifierList IDENT
               | EmbeddedField
-              | IdentifierList Type Tag
-              | IdentifierList IDENT Tag
-              | EmbeddedField Tag
     """
     if len(p) == 2:
         p[0] = [StructFieldType(None, p[1], None)]
@@ -912,28 +986,13 @@ def p_FieldDecl(p):
             for key in p[1]:
                 p[0].append(StructFieldType(key, p[2], None))
                 if isinstance(p[2], str):
-                    p[0].dataType.append({'baseType': p[2], 'level' : 0})   
+                    p[0].dataType.append({'baseType': p[2], 'level' : 0, 'field': key})   
                 else:
-                    p[0].dataType.append(p[2].dataType)         
-        else:
-            p[0] = [StructFieldType(None, p[1], p[2])]
-
-    elif len(p) == 4:
-        p[0] = []
-        for key in p[1]:
-            p[0].append(StructFieldType(key, p[2], p[3]))
-            if isinstance(p[2], str):
-                p[0].dataType.append({'baseType': p[2], 'level' : 0})   
-            else:
-                p[0].dataType.append(p[2].dataType)
+                    p[0].dataType.append(p[2].dataType)
+                    p[0].dataType[-1]['field'] = key         
                     
     p[0].dataType['name'] = 'field'
     
-def p_Tag(p):
-    """
-    Tag : STRING
-    """
-    p[0] = p[1]
 
 def p_EmbeddedField(p):
     """
@@ -1009,11 +1068,10 @@ def p_IntLit(p):
     """
     IntLit : INT
     """
-    p[0] = LitNode(dataType = 'int', label = p[1])
-    # if check_int(p[1]):
-    #     p[0] = LitNode(dataType = 'int', label = p[1])
-    # else:
-    #     raise ("Integer Overflow detected", p.lineno(1))
+    if check_int(p[1]):
+        p[0] = LitNode(dataType = 'int', label = p[1])
+    else:
+        raise ("Integer Overflow detected", p.lineno(1))
 
 def p_FloatLit(p):
     """
