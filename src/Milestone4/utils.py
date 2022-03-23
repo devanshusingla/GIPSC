@@ -3,7 +3,7 @@ from scope import *
 def getBaseType(stm, dt):
     curr = dt
     
-    if curr in stm.symTable[stm.id].typeDefs:
+    if isinstance(curr, str) and curr in stm.symTable[stm.id].typeDefs:
         return stm.symTable[stm.id].typeDefs[curr]
     else:
         return dt
@@ -39,7 +39,7 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
         else:
             return False
 
-    if dt1 == None or dt2 == None or dt1 not in stm[stm.id].avlTypes or dt2 not in stm[stm.id].avlTypes:
+    if dt1 == None or dt2 == None or dt1 not in stm.symTable[stm.id].avlTypes or dt2 not in stm.symTable[stm.id].avlTypes:
         return False
 
     if binop == '+' or binop == '-' or binop == '*' or binop == '/':
@@ -210,12 +210,14 @@ def isConvertibletoInt(f):
         return True
     
 def isTypeCastable(stm, dt1, dt2):
-    if dt1['name']!=dt2['name']:
+    if 'name' in dt1 and 'name' in dt2 and dt1['name']!=dt2['name']:
         return False
 
     while 'name' in dt1 and (dt1['name'] == 'array' or dt1['name'] == 'slice' or dt1['name'] == 'pointer' or dt1['name'] == 'elementary'):
-        if dt1['name']!= dt2['name']:
+        if 'name' in dt2 and dt1['name']!= dt2['name']:
             return False
+        elif 'name' not in dt2:
+            return False 
 
         dt1 = dt1['baseType']
         dt2 = dt2['baseType']

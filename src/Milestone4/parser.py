@@ -248,6 +248,7 @@ def p_ConstSpec(p):
               | IdentifierList IDENT ASSIGN ExpressionList
               | IdentifierList ASSIGN ExpressionList
     """
+    global stm
     p[0] = []
 
     if len(p[1]) != len(p[len(p)-1]):
@@ -293,7 +294,7 @@ def p_ConstSpec(p):
             raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
         else:
             # Add to symbol table
-            stm.add(ident, {'type': p[2].dataType, 'isConst' : True})
+            stm.add(ident.label, {'dataType': p[2].dataType, 'isConst' : True})
             p[1].children[i].dataType = dt
  
 ###################################################################################
@@ -330,6 +331,7 @@ def p_VarSpec(p):
             | IdentifierList Type
             | IdentifierList IDENT
     """
+    global stm
     p[0] = []
 
     if len(p) >= 4:
@@ -376,8 +378,8 @@ def p_VarSpec(p):
                 raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
             else:
                 # Add to symbol table
-                stm.add(ident, {'type': p[2].dataType, 'isConst' : False})
-                p[1].children[i].dataType = dt
+                stm.add(ident.label, {'dataType': p[2].dataType, 'isConst' : False})
+                p[1][i].dataType = dt
     else:
         not_base_type = False
 
@@ -402,8 +404,8 @@ def p_VarSpec(p):
                 raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
             else:
                 # Add to symbol table
-                stm.add(ident, {'type': p[2].dataType, 'isConst' : False})
-                p[1].children[i].dataType = dt
+                stm.add(ident.label, {'dataType': p[2].dataType, 'isConst' : False})
+                p[1][i].dataType = dt
 
 
 
@@ -435,6 +437,7 @@ def p_AliasDecl(p):
     AliasDecl : IDENT ASSIGN Type
                 | IDENT ASSIGN IDENT
     """ 
+    global stm
     dt = {}
     if isinstance(p[3], str):
         dt['baseType'] = p[3]
@@ -463,6 +466,7 @@ def p_TypeDef(p):
               | IDENT IDENT
 
     """
+    global stm
     dt = {}
     if isinstance(p[2], str):
         dt['baseType'] = p[2]
@@ -495,7 +499,7 @@ def p_IdentifierList(p):
     IdentifierList : IDENT
                    | IDENT COMMA IdentifierList
     """
-
+    global stm
     if len(p) == 2:
         p[0] = [IdentNode(label = p[1], scope = stm.id)]
 
@@ -545,6 +549,7 @@ def p_Expr(p):
          | Expr AND Expr
          | Expr AND_NOT Expr
     """
+    global stm
     if len(p) == 2:
         p[0] = p[1]
     else:
@@ -557,8 +562,8 @@ def p_Expr(p):
         dt = getFinalType(stm, dt1, dt2, p[2])
 
         isConst = False
-        if (p[1].isConst and p[3].isConst):
-            isConst = True
+        # if (p[1].isConst and p[3].isConst):
+        #     isConst = True
 
         p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label+p[2]+p[3].label, isConst = isConst)
         p[0].addChild(p[1], p[3])
@@ -573,6 +578,7 @@ def p_UnaryExpr(p):
             | MUL UnaryExpr
             | AND UnaryExpr
     """
+    global stm
     if len(p) == 2:
         p[0] = p[1]
     else:
@@ -596,7 +602,7 @@ def p_PrimaryExpr(p):
                 | PrimaryExpr Slice
                 | PrimaryExpr Arguments
     """
-
+    global stm
     ## PrimaryExpr -> Lit
     if len(p) == 2 and isinstance(p[1], LitNode):
         p[0] = p[1]
@@ -658,10 +664,10 @@ def p_PrimaryExpr(p):
                         raise TypeError("Index type incorrect", p.lineno(1))
 
                 dt = p[1].dataType
-                dt.dataType['level']-=1
+                dt['level']-=1
 
-                if dt.dataType['level']==0:
-                    dt = {'baseType': dt.dataType['baseType'], 'level': 0}
+                if dt['level']==0:
+                    dt = {'baseType': dt['baseType'], 'level': 0}
 
             if p[1].dataType['name'] == 'map':
                 if not isTypeCastable(p[2].dataType, p[1].dataType['KeyType']):
@@ -737,7 +743,7 @@ def p_Index(p):
     """
     Index : LBRACK Expr RBRACK
     """
-    p[0] = IndexNode(None, p[2])
+    p[0] = IndexNode(None, p[2], dataType = p[2].dataType)
 
 ###################################################################################
 ## Slice
@@ -1116,7 +1122,7 @@ def p_CompositeLit(p):
                  | MapType LiteralValue
                  | IDENT LiteralValue
     """
-    p[0] = p[2]
+    p[0] = LitNode(label = None)
     if not isinstance(p[1], str):
         p[0].dataType = p[1].dataType
     else:
@@ -1148,9 +1154,9 @@ def p_ElementList(p):
                 | ElementList COMMA KeyedElement 
     """
     if len(p) == 2:
-        p[0] = p[1]
+        p[0] = [p[1]]
     else:
-        p[3].append(p[1])
+        p[1].append(p[3])
         p[0] = p[3]
 
 def p_KeyedElement(p):

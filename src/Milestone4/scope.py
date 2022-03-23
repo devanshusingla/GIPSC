@@ -1,4 +1,7 @@
+from curses import init_color
 from enum import Enum, auto
+from mimetypes import init
+from re import L
 
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64' 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
@@ -147,7 +150,7 @@ class IdentNode(Node):
         return f'{self.label}'
 
 class LitNode(Node):
-    def __init__(self, dataType, label):
+    def __init__(self, label, dataType = None):
         super().__init__()
         self.children = None
         self.dataType = dataType
@@ -159,9 +162,10 @@ class LitNode(Node):
     def __str__(self):
         if self.dataType == "string":
             return f'\\\"{self.label}\\\"'
-        else:
+        elif self.label != None:
             return self.label
-
+        else:
+            return "COMPOSITE"
 class OpNode(Node):
     def __init__(self, operator):
         super().__init__()
@@ -233,10 +237,10 @@ class DotNode(Node):
         return f'DOT'
 
 class IndexNode(Node):
-    def __init__(self, arrNode, indexNode, label="Node"):
+    def __init__(self, arrNode, indexNode, dataType = None, label="Node"):
         super().__init__(label)
         self.addChild(arrNode, indexNode)
-    
+        self.dataType = dataType
     def __str__(self):
         return f'[]'
 
