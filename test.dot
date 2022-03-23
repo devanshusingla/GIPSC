@@ -11,12 +11,18 @@ digraph G {
 	7 -> 10;
 	7 -> 11;
 	11 -> 12;
-	6 -> 13;
-	13 -> 14;
-	14 -> 15;
-	14 -> 16;
-	13 -> 17;
+	12 -> 13;
+	12 -> 14;
+	12 -> 15;
+	12 -> 16;
+	11 -> 17;
 	17 -> 18;
 	17 -> 19;
-	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="\"fmt\""];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="[]"];	10 [label="None"];	11 [label="BODY"];	12 [label="[<scope.Node object at 0x7feb0e6ffd68>]"];	13 [label="VAR"];	14 [label="ASSIGN"];	15 [label="b"];	16 [label="1.0"];	17 [label="ASSIGN"];	18 [label="a"];	19 [label="2"];
+	6 -> 20;
+	20 -> 21;
+	20 -> 22;
+	6 -> 23;
+	23 -> 24;
+	23 -> 25;
+	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="\"fmt\""];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="[]"];	10 [label="None"];	11 [label="{}"];	12 [label="func()"];	13 [label="."];	14 [label="a"];	15 [label="None"];	16 [label="None"];	17 [label="="];	18 [label="x"];	19 [label="None"];	20 [label="="];	21 [label="b"];	22 [label="None"];	23 [label="="];	24 [label="a"];	25 [label="None"];
 }

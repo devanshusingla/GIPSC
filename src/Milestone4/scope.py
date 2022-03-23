@@ -102,8 +102,8 @@ class Node:
         self.label = label
     
     def addChild(self, *children):
-        for child in children:
-            self.children.append(child)
+        if children:
+            self.children.extend(children)
 
     def __str__(self):
         return self.label 
@@ -170,54 +170,6 @@ class OpNode(Node):
     def __str__(self):
         return self.operator
 
-### TYPE Nodes
-class TypeNode(Node):
-    pass
-
-class ElementaryTypeNode(TypeNode):
-    def __init__(self, type):
-        super().__init__()
-        self.type = type
-        self.children = None
-    
-    def __str__(self):
-        super().__init__()
-        return self.type
-
-class PointerTypeNode(TypeNode):
-    def __init__(self, typeNode):
-        super().__init__()
-        self.typeNode = typeNode
-        self.children = typeNode.children
-    
-    def __str__(self):
-        return f'*{self.typeNode}'
-
-class ParenTypeNode(TypeNode):
-    def __init__(self, typeNode):
-        super().__init__()
-        self.typeNode = typeNode
-        self.children = typeNode.children
-    
-    def __str__(self):
-        return f'({self.typeNode})'
-
-class BrackTypeNode(TypeNode):
-    def __init__(self, typeNode, length=None):
-        super().__init__()
-        self.addChild(length, typeNode)
-    
-    def __str__(self):
-        return f'[]'
-
-class MapTypeNode(TypeNode):
-    def __init__(self, keyTypeNode, valueTypeNode):
-        super().__init__()
-        self.children = [keyTypeNode, valueTypeNode]
-    
-    def __str__(self):
-        return f'MAP'
-
 class KeyValNode(Node):
     def __init__(self, key, val):
         super().__init__()
@@ -235,9 +187,9 @@ class FuncNode(Node):
         return "FUNC"
 
 class FuncParamNode(Node):
-    def __init__(self, *params):
+    def __init__(self, params):
         super().__init__()
-        self.addChild(params)
+        self.addChild(*params)
     
     def __str__(self):
         return "PARAMS"
@@ -250,13 +202,13 @@ class FuncReturnNode(Node):
     def __str__(self):
         return "RETURN"
 
-class FuncBodyNode(Node):
+class BlockNode(Node):
     def __init__(self, statements):
         super().__init__()
-        self.addChild(statements)
+        self.addChild(*statements)
     
     def __str__(self):
-        return "BODY"
+        return "{}"
 
 class ExprNode(Node):
     def __init__(self, dataType, label = None, operator = None, isConst = False):
@@ -272,3 +224,204 @@ class ExprNode(Node):
             return self.label 
         else:
             return self.operator
+
+class DotNode(Node):
+    def __init__(self, label="Node"):
+        super().__init__(label)
+    
+    def __str__(self):
+        return f'DOT'
+
+class IndexNode(Node):
+    def __init__(self, arrNode, indexNode, label="Node"):
+        super().__init__(label)
+        self.addChild(arrNode, indexNode)
+    
+    def __str__(self):
+        return f'[]'
+
+class SliceNode(Node):
+    def __init__(self, arrNode, lIndexNode, rIndexNode, maxIndexNode, label="Node"):
+        super().__init__(label)
+        self.addChild(arrNode, lIndexNode, rIndexNode, maxIndexNode)
+    
+    def __str__(self):
+        return f'[:]'
+
+class FuncCallNode(Node):
+    def __init__(self, funcNode, paramsNode):
+        super().__init__()
+        self.addChild(funcNode, *paramsNode)
+    
+    def __str__(self):
+        return f'func()'
+
+class LabelNode(Node):
+    def __init__(self, labelNode, statementNode):
+        super().__init__()
+        self.addChild(labelNode, statementNode)
+    
+    def __str__(self):
+        return f'LABEL'
+
+class GotoNode(Node):
+    def __init__(self, labelNode):
+        super().__init__()
+        self.addChild(labelNode)
+    
+    def __str__(self):
+        return "GOTO"
+
+class ReturnNode(Node):
+    def __init__(self, valsNode):
+        super().__init__()
+        self.addChild(*valsNode)
+    
+    def __str__(self):
+        return "RETURN"
+
+class BreakNode(Node):
+    def __init__(self, labelNode=None):
+        super().__init__()
+        if labelNode:
+            self.addChild(labelNode)
+    
+    def __str__(self):
+        return "BREAK"
+
+class ContinueNode(Node):
+    def __init__(self, labelNode=None):
+        super().__init__()
+        if labelNode:
+            self.addChild(labelNode)
+    
+    def __str__(self):
+        return "CONTINUE"
+
+class FallthroughNode(Node):
+    def __str__(self):
+        return "FALLTHROUGH"
+
+class IncNode(Node):
+    def __init__(self, exprNode):
+        super().__init__()
+        self.addChild(exprNode)
+    
+    def __str__(self):
+        return f'++'
+
+class DecNode(Node):
+    def __init__(self, exprNode):
+        super().__init__()
+        self.addChild(exprNode)
+    
+    def __str__(self):
+        return f'--'
+
+class IfNode(Node):
+    def __init__(self, initNode, condNode, thenNode, elseNode):
+        super().__init__()
+        self.addChild(initNode, condNode, thenNode, elseNode)
+
+    def __str__(self):
+        return f'IF'
+
+class ThenNode(Node):
+    def __init__(self, blockNode):
+        super().__init__()
+        self.addChild(blockNode)
+    
+    def __str__(self):
+        return f'THEN'
+
+class ElseNode(Node):
+    def __init__(self, blockNode):
+        super().__init__()
+        self.addChild(blockNode)
+    
+    def __str__(self):
+        return f'ELSE'
+
+### TYPE Class
+class Type:
+    def __init__(self):
+        self.children = []
+    
+    def addChild(self, *children):
+        if children:
+            self.children.extend(children)
+
+class ElementaryType(Type):
+    def __init__(self, type):
+        super().__init__()
+        self.type = type
+        self.children = None
+    
+    def __str__(self):
+        return self.type
+
+class PointerType(Type):
+    def __init__(self, type):
+        super().__init__()
+        self.type = type
+        self.children = type.children
+    
+    def __str__(self):
+        return f'*{self.type}'
+
+class ParenType(Type):
+    def __init__(self, type):
+        super().__init__()
+        self.type = type
+        self.children = type.children
+    
+    def __str__(self):
+        return f'({self.type})'
+
+class BrackType(Type):
+    def __init__(self, type, length=None):
+        super().__init__()
+        self.addChild(length, type)
+    
+    def __str__(self):
+        return f'[]'
+
+class MapType(Type):
+    def __init__(self, keyType, valueType):
+        super().__init__()
+        self.children = [keyType, valueType]
+    
+    def __str__(self):
+        return f'MAP'
+
+class StructType(Type):
+    def __init__(self, elList):
+        super().__init__()
+        self.addChild(elList)
+    
+    def __str__(self):
+        return f'STRUCT'
+
+class StructFieldType(Type):
+    def __init__(self, key, type, tag):
+        super().__init__()
+        self.addChild(key, type, tag)
+    
+    def __str__(self):
+        return f':'
+
+class FuncType(Type):
+    def __init__(self, paramsType, returnType):
+        super().init()
+        self.addChild(returnType, *paramsType)
+    
+    def __str__(self):
+        return f'FUNC'
+
+class ParamType(Type):
+    def __init__(self, key, type):
+        super().__init__()
+        self.addChild(key, type)
+    
+    def __str__(self):
+        return f'='
