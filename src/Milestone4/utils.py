@@ -2,13 +2,11 @@ from scope import *
 
 def getBaseType(stm, dt):
     curr = dt
-    while (curr not in stm.symTable[stm.id].avlTypes) and (curr in stm.symTable[stm.id].typeDefs):
-        curr = stm.symTable[stm.id].typeDefs[curr]
     
-    if curr in stm.symTable[stm.id].avlTypes:
-        return curr 
+    if curr in stm.symTable[stm.id].typeDefs:
+        return stm.symTable[stm.id].typeDefs[curr]
     else:
-        return None
+        return dt
 
 def isBasicNumeric(dt):
     if (len(dt) >= 3 and dt[0:3] == "int")  or (len(dt) >= 5 and dt[0:5] == "float") or (len(dt) >= 8 and dt[0:8] == "complex") or dt== 'byte' or dt == 'rune':
@@ -29,7 +27,16 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
 
-    if dt1 == None or dt2 == None:
+    if 'baseType' in dt1:
+        dt1 = dt1['baseType']
+    else:
+        return False
+    if 'baseType' in dt2:
+        dt2 = dt2['baseType']
+    else:
+        return False
+
+    if dt1 == None or dt2 == None or dt1 not in stm[stm.id].avlTypes or dt2 not in stm[stm.id].avlTypes:
         return False
 
     if binop == '+' or binop == '-' or binop == '*' or binop == '/':

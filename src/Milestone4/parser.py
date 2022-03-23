@@ -448,8 +448,15 @@ def p_AliasDecl(p):
     if p[1] in stm[stm.id].typeDefs:
         raise TypeError("Redeclaration of Alias " + p[1], p.lineno(1))
         
+    elif isinstance(p[3], str) and p[3] in stm[stm.id].avlTypes:
+        stm[stm.id].typeDefs[p[1]] = p[3]
+    
+    elif isinstance(p[3], str):
+        stm[stm.id].typeDefs[p[1]] = stm[stm.id].typeDefs[p[3]]
+
+    # TODO -> For mixed types (how to set type?)
     else:
-       stm[stm.id].typeDefs[p[1]] = dt['baseType']
+        stm[stm.id].typeDefs[p[1]] = dt
 
 def p_TypeDef(p):
     """
@@ -457,13 +464,28 @@ def p_TypeDef(p):
               | IDENT IDENT
 
     """
-    if p[1] in stm[stm.id].typeDefs:
-        raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
-    present = stm.findType(p[len(p)-1])
-    if present != -1:
-       stm[stm.id].typeDefs[p[1].label] = p[len(p)-1].label
+    dt = {}
+    if isinstance(p[2], str):
+        dt['baseType'] = p[2]
+        dt['level'] = 0
     else:
-        raise TypeError('Base type not found ' + p[len(p)-1], p.lineno(1))
+        dt = p[2].dataType
+
+    if checkTypePresence(stm, dt) == -1:
+        raise TypeError("BaseType " + dt + " not declared yet")
+
+    if p[1] in stm[stm.id].typeDefs:
+        raise TypeError("Redeclaration of Alias " + p[1], p.lineno(1))
+        
+    elif isinstance(p[2], str) and p[2] in stm[stm.id].avlTypes:
+        stm[stm.id].typeDefs[p[1]] = p[2]
+    
+    elif isinstance(p[2], str):
+        stm[stm.id].typeDefs[p[1]] = stm[stm.id].typeDefs[p[2]]
+
+    # TODO -> For mixed types (how to set type?)
+    else:
+        stm[stm.id].typeDefs[p[1]] = dt
 
 
 ###################################################################################
@@ -531,8 +553,8 @@ def p_Expr(p):
         dt1 = p[1].dataType
         dt2 = p[3].dataType
 
-        # if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
-        #     raise TypeError("Incompatible operand types", p.lineno(1))
+        if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
+            raise TypeError("Incompatible operand types", p.lineno(1))
 
         dt = getFinalType(stm, dt1, dt2, p[2])
 
@@ -1505,8 +1527,8 @@ def p_else_stmt(p):
 def p_SwitchStmt(p):
     """
     SwitchStmt :  ExprSwitchStmt
-                 | TypeSwitchStmt
     """
+                #  | TypeSwitchStmt
     p[0] = p[1]
 
 ###################################################################################
@@ -1519,7 +1541,23 @@ def p_ExprSwitchStmt(p):
                      | SWITCH SimpleStmt SEMICOLON LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
                      | SWITCH LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
     """
-
+    smtNode = None
+    varNode = None
+    casesNode = []
+    if len(p) == 7:
+        casesNode = p[4]
+    elif len(p) == 8:
+        varNode = p[2]
+        casesNode = p[5]
+    elif len(p) == 9:
+        smtNode = p[2]
+        casesNode = p[6]
+    else:
+        smtNode = p[2]
+        varNode = p[4]
+        casesNode = p[7]
+    
+    p[0] = SwitchNode(smtNode, varNode, casesNode)
 
 def p_BeginSwitch(p):
     """
@@ -1536,52 +1574,64 @@ def p_ExprCaseClauseMult(p):
     ExprCaseClauseMult : ExprCaseClause ExprCaseClauseMult 
                          |
     """
+    if len(p) == 2:
+        return []
+    else:
+        p[2].append(p[1])
+        p[0] = p[2]
 
 def p_ExprCaseClause(p):
     """
     ExprCaseClause : ExprSwitchCase COLON StatementList
     """
+    p[0] = CasesNode(p[1], p[3])
 
 def p_ExprSwitchCase(p):
     """
     ExprSwitchCase : CASE ExpressionList
                      | DEFAULT
     """
+    if len(p) == 3:
+        p[0] = []
+        for expr in p[2]:
+            p[0].append(CaseNode(expr))
+    else:
+        p[0] = [DefaultNode()]
 
 ###################################################################################
 ### Type Switch Statements
 
-def p_TypeSwitchStmt(p):
-    """
-    TypeSwitchStmt : SWITCH SimpleStmt SEMICOLON TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
-                     | SWITCH TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
-    """
+# def p_TypeSwitchStmt(p):
+#     """
+#     TypeSwitchStmt : SWITCH SimpleStmt SEMICOLON TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
+#                      | SWITCH TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
+#     """
 
-def p_TypeSwitchGuard(p):
-    """
-    TypeSwitchGuard : IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE RPAREN
-                      | PrimaryExpr PERIOD LPAREN TYPE RPAREN
-    """
+# def p_TypeSwitchGuard(p):
+#     """
+#     TypeSwitchGuard : IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE RPAREN
+#                       | PrimaryExpr PERIOD LPAREN TYPE RPAREN
+#     """
 
-def p_TypeCaseClauseMult(p):
-    """
-    TypeCaseClauseMult : TypeCaseClause TypeCaseClauseMult 
-                        |
-    """
+# def p_TypeCaseClauseMult(p):
+#     """
+#     TypeCaseClauseMult : TypeCaseClause TypeCaseClauseMult 
+#                         |
+#     """
 
-def p_TypeCaseClause(p):
-    """
-    TypeCaseClause : CASE TypeList COLON StatementList
-                     | DEFAULT COLON StatementList
-    """
+# def p_TypeCaseClause(p):
+#     """
+#     TypeCaseClause : CASE TypeList COLON StatementList
+#                      | DEFAULT COLON StatementList
+#     """
 
-def p_TypeList(p):
-    """
-    TypeList : Type
-                | IDENT 
-                | Type COMMA TypeList
-                | IDENT COMMA TypeList
-    """
+# def p_TypeList(p):
+#     """
+#     TypeList : Type
+#                 | IDENT 
+#                 | Type COMMA TypeList
+#                 | IDENT COMMA TypeList
+#     """
 
 ###################################################################################
 ### For Statements
@@ -1594,6 +1644,10 @@ def p_ForStmt(p):
             | FOR BeginFor RangeClause Block EndFor
             | FOR BeginFor Block EndFor
     """
+    if len(p) == 5:
+        p[0] = ForNode(None, p[3])
+    else:
+        p[0] = ForNode(p[3], p[4])
 
 def p_BeginFor(p):
     """
@@ -1617,6 +1671,7 @@ def p_Condition(p):
     """
     Condition : Expr
     """
+    p[0] = ForClauseNode(None, p[1], None)
 
 ###################################################################################
 ### For Clause
@@ -1626,16 +1681,22 @@ def p_ForClause(p):
     ForClause : InitStmt SEMICOLON Condition SEMICOLON PostStmt
                 | InitStmt SEMICOLON SEMICOLON PostStmt
     """
+    if len(p) == 6:
+        p[0] = ForClauseNode(p[1], p[3], p[5])
+    else:
+        p[0] = ForClauseNode(p[1], None, p[4])
 
 def p_InitStmt(p):
     """
     InitStmt :   SimpleStmt
     """
+    p[0] = p[1]
 
 def p_PostStmt(p):
     """
     PostStmt :   SimpleStmt
     """
+    p[0] = p[1]
 
 ###################################################################################
 ### Range Clause
@@ -1644,6 +1705,7 @@ def p_RangeClause(p):
     """
     RangeClause : RangeList RANGE Expr
     """
+    p[0] = ForRangeNode(p[1], p[3])
 
 def p_RangeList(p):
     """
@@ -1651,6 +1713,11 @@ def p_RangeList(p):
                 | IdentifierList DEFINE
                 | 
     """
+    if len(p) == 1:
+        return []
+    else:
+        return p[1]
+
 
 
 ###################################################################################
