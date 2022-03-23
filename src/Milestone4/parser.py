@@ -245,34 +245,34 @@ def p_ConstSpecMult(p):
 def p_ConstSpec(p):
     """
     ConstSpec : IdentifierList Type ASSIGN ExpressionList 
-                | IdentifierList IDENT ASSIGN ExpressionList
-                | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
+              | IdentifierList IDENT ASSIGN ExpressionList
     """
     p[0] = []
+    
+    # if len(p[1].children) != len(p[len(p)-1].children):
+    #     raise NameError("Assignment is not balanced", p.lineno(1))
+
     for (ident, val) in zip(p[1].children, p[len(p)-1].children):
         expr = ExprNode(dataType=p[2], label="ASSIGN", operator="=")
         expr.addChild(ident, val)
         p[0].append(expr)
 
-    # if len(p[1].children) != len(p[len(p)-1].children):
-    #     raise NameError("Assignment is not balanced", p.lineno(1))
+    not_base_type = False
 
-    # not_base_type = False
+    if not isinstance(p[2], str):
+        not_base_type = True
 
-    # if not isinstance(p[2], str):
-    #     not_base_type = True
-
-    # for i, (ident, val) in enumerate(zip(p[1].children, p[len(p)-1].children)):
+    for i, (ident, val) in enumerate(zip(p[1].children, p[len(p)-1].children)):
     #     # Check redeclaration for identifier list
     #     latest_scope = stm.getScope(ident.label)
     #     if latest_scope == stm.id or ident.label in stm.functions:
     #         raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
         
-    #     dt = p[2]
-    #     if not_base_type:
-    #         if isinstance(dt, BrackType) or isinstance(dt, MapType):
-    #             while not isinstance(dt, str):
-    #                 dt = dt.children[1]
+        dt = p[2]
+        if not_base_type:
+            if isinstance(dt, BrackType) or isinstance(dt, MapType):
+                while not isinstance(dt, str):
+                    dt = dt.children[1]
 
     #     present = stm.findType(dt)
     #     if present != -1:
@@ -328,11 +328,9 @@ def p_VarSpec(p):
     """
     VarSpec : IdentifierList Type ASSIGN ExpressionList
             | IdentifierList IDENT ASSIGN ExpressionList
-            | IdentifierList IDENT PERIOD IDENT ASSIGN ExpressionList
             | IdentifierList ASSIGN ExpressionList
             | IdentifierList Type
             | IdentifierList IDENT
-            | IdentifierList IDENT PERIOD IDENT
     """
     p[0] = []
     if p[2] == "=":
@@ -401,22 +399,12 @@ def p_TypeDecl(p):
     TypeDecl : TYPE TypeSpec
              | TYPE LPAREN TypeSpecMult RPAREN
     """
-    # if len(p) == 3:
-    #     p[0] = p[2]
-    # else:
-    #     p[0] = p[3]
 
 def p_TypeSpecMult(p):
     """
     TypeSpecMult : TypeSpec SEMICOLON TypeSpecMult 
                  | 
     """
-    # if len(p) > 1:
-    #     p[3].append(p[1])
-    #     p[0] = p[3]
-
-    # else:
-    #     p[0] = []
 
     
 def p_TypeSpec(p):
@@ -424,36 +412,32 @@ def p_TypeSpec(p):
     TypeSpec : AliasDecl
              | Typedef
     """
-    # p[0] = p[1]
 
 def p_AliasDecl(p):
     """
     AliasDecl : IDENT ASSIGN Type
                 | IDENT ASSIGN IDENT
-                | IDENT ASSIGN IDENT PERIOD IDENT
     """ 
-    # p[0] = Node()
-    # if p[1].label in stm[stm.id].typeDefs:
-    #     raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
+    if p[1].label in stm[stm.id].typeDefs:
+        raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
         
-    # else:
-    #    stm[stm.id].typeDefs[p[1].label] = p[len(p)-1].label
+    else:
+       stm[stm.id].typeDefs[p[1].label] = p[len(p)-1].label
 
 def p_TypeDef(p):
     """
     Typedef : IDENT Type
               | IDENT IDENT
-              | IDENT IDENT PERIOD IDENT
 
     """
-    # p[0] = Node()
-    # if p[1].label in stm[stm.id].typeDefs:
-    #     raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
-    # present = stm.findType(p[len(p)-1])
-    # if present != -1:
-    #    stm[stm.id].typeDefs[p[1].label] = p[len(p)-1].label
-    # else:
-    #     raise TypeError('Base type not found ' + p[len(p)-1], p.lineno(1))
+    p[0] = Node()
+    if p[1].label in stm[stm.id].typeDefs:
+        raise ("Redeclaration of Alias " + p[1].label, p.lineno(1))
+    present = stm.findType(p[len(p)-1])
+    if present != -1:
+       stm[stm.id].typeDefs[p[1].label] = p[len(p)-1].label
+    else:
+        raise TypeError('Base type not found ' + p[len(p)-1], p.lineno(1))
 
 
 ###################################################################################
@@ -524,13 +508,13 @@ def p_Expr(p):
         # if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
         #     raise TypeError("Incompatible operand types", p.lineno(1))
 
-        # dt = getFinalType(stm, dt1, dt2, p[2])
+        dt = getFinalType(stm, dt1, dt2, p[2])
 
-        # isConst = False
-        # if (p[1].isConst and p[3].isConst):
-        #     isConst = True
+        isConst = False
+        if (p[1].isConst and p[3].isConst):
+            isConst = True
 
-        p[0] = ExprNode(operator = p[2], dataType = None)
+        p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label+p[2]+p[3].label, isConst = isConst)
         p[0].addChild(p[1], p[3])
 
 def p_UnaryExpr(p):
@@ -549,9 +533,8 @@ def p_UnaryExpr(p):
         # if not checkUnOp(stm, p[1], p[2].dataType):
         #     raise TypeError("Incompatible operand for Unary Expression", p.lineno(1))
         
-        p[0] = ExprNode(dataType = p[2].dataType, operator=p[1])
+        p[0] = ExprNode(dataType = getUnaryType(p[2].dataType, p[1]), operator=p[1])
         p[0].addChild(p[2])
-        # p[0].dataType = getUnaryType(p[2].dataType, p[1])
 
 ###################################################################################
 ### Primary Expression
@@ -561,7 +544,6 @@ def p_PrimaryExpr(p):
     """
     PrimaryExpr :  Lit
                 | IDENT
-                | IDENT PERIOD IDENT
                 | LPAREN Expr RPAREN
                 | PrimaryExpr Selector
                 | PrimaryExpr Index
@@ -570,39 +552,44 @@ def p_PrimaryExpr(p):
     """
 
     ## PrimaryExpr -> Lit
-    if len(p) == 2:
-        return p[1]
+    if len(p) == 2 and isinstance(p[1], LitNode):
+        p[0] = p[1]
 
     # ## Primary Expr -> Ident
-    # elif (len(p) == 2):
+    elif (len(p) == 2):
 
-    #     # Check declaration
-    #     latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
+        # # Check declaration
+        # latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
 
-    #     if latest_scope == 0:
-    #         ## To be checked for global declarations (TODO)
-    #         print("Expecting global declaration for ",p[1], p.lineno(1))
+        # if latest_scope == 0:
+        #     ## To be checked for global declarations (TODO)
+        #     print("Expecting global declaration for ",p[1], p.lineno(1))
             
-    #     dt = stm.get(p[1])['type']
-    #     p[0] = ExprNode(dataType=dt, label = p[1])
+        # dt = stm.get(p[1])['type']
+        p[0] = ExprNode(dataType=None, label = p[1])
     
     ## Primary Expr -> LPAREN Expr RPAREN
     elif len(p) == 4:
         p[0] = p[2]
-    
+
     else:
+        ## PrimaryExpr -> PrimaryExpr Selector
         if isinstance(p[2], DotNode):
             p[2].addChild(p[1])
+
+        ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
             p[2].children[0] = p[1]
+
+        ## PrimaryExpr -> PrimaryExpr Slice
         elif isinstance(p[2], SliceNode):
             p[2].children[0] = p[1]
+
+        ## PrimaryExpr -> PrimaryExpr Arguments
         elif isinstance(p[2], List):
             p[2] = FuncCallNode(p[1], p[2])
         
         p[0] = p[2]
-
-    # PrimaryExpr -> PrimaryExpr Selector
     
 
 ###################################################################################
@@ -673,10 +660,6 @@ def p_Arguments(p):
               | LPAREN IDENT COMMA RPAREN
               | LPAREN IDENT COMMA ExpressionList RPAREN 
               | LPAREN IDENT COMMA ExpressionList COMMA RPAREN 
-              | LPAREN IDENT PERIOD IDENT RPAREN
-              | LPAREN IDENT PERIOD IDENT COMMA RPAREN
-              | LPAREN IDENT PERIOD IDENT COMMA ExpressionList RPAREN 
-              | LPAREN IDENT PERIOD IDENT COMMA ExpressionList COMMA RPAREN   
     """
     p[0] = []
     if len(p) == 4:
@@ -726,7 +709,7 @@ def p_Type(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = ParenType(p[2])
+        p[0] = ParenType(p[2], dataType = p[2].dataType)
 
 def p_TypeT(p):
     """
@@ -737,12 +720,11 @@ def p_TypeT(p):
           | FunctionType
           | LPAREN TypeT RPAREN
           | LPAREN IDENT RPAREN
-          | LPAREN IDENT PERIOD IDENT RPAREN
     """
     if len(p) == 2:
         p[0] = p[1]
     elif len(p) == 4:
-        p[0] = ParenType(p[2])
+        p[0] = ParenType(p[2], dataType = p[2].dataType)
 
 
 ###################################################################################
@@ -753,10 +735,20 @@ def p_PointerType(p):
     """
     PointerType : MUL Type %prec UMUL
                | MUL IDENT %prec UMUL
-                | MUL IDENT PERIOD IDENT %prec UMUL
     """
-    if len(p) == 3:
-        p[0] = PointerType(p[2])
+    p[0] = PointerType(p[2])
+
+    if isinstance(p[2], str):
+         p[0].dataType['baseType'] = p[2]
+         p[0].dataType['level'] = 1
+    else:
+        p[0].dataType['baseType'] = p[2].dataType['baseType']
+        p[0].dataType['level'] = p[2].dataType['level'] + 1
+    
+    p[0].dataType['name'] = 'pointer'
+
+    
+
 
 ###################################################################################
 ### Slice Type
@@ -767,6 +759,12 @@ def p_SliceType(p):
     SliceType : LBRACK RBRACK ElementType
     """
     p[0] = BrackType(p[3])
+        
+    p[0].dataType['baseType'] = p[3].dataType['baseType']
+    p[0].dataType['level'] = p[3].dataType['level'] + 1
+   
+
+    p[0].dataType['name'] = 'slice'
 
 ###################################################################################
 ### Array Type
@@ -776,7 +774,12 @@ def p_ArrayType(p):
     """
     ArrayType : LBRACK ArrayLength RBRACK ElementType
     """
-    p[0] = BrackType(p[4], p[2])
+    p[0] = BrackType(p[2], p[4])
+
+    p[0].dataType['baseType'] = p[4].dataType['baseType']
+    p[0].dataType['level'] = p[4].dataType['level'] + 1
+    
+    p[0].dataType['name'] = 'array'
 
 def p_ArrayLength(p):
     """
@@ -784,13 +787,19 @@ def p_ArrayLength(p):
     """
     p[0] = p[1]
 
+
 def p_ElementType(p):
     """
     ElementType : Type
                 | IDENT
-                | IDENT PERIOD IDENT
     """
-    p[0] = p[1]
+    p[0] = ElementaryType()
+    
+    if not isinstance(p[1], str):
+        p[0].dataType = p[1].dataType 
+    else:
+        p[0].dataType['baseType'] = p[1]
+        p[0].dataType['level'] = 0
 
 ###################################################################################
 ### Struct Type
@@ -801,6 +810,12 @@ def p_StructType(p):
     StructType : STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct 
     """
     p[0] = StructType(p[4])
+    p[0].dataType = {}
+
+    for i, item in enumerate(p[4]):
+        p[0].dataType[i] = item.dataType
+
+    p[0].dataType['name'] = 'struct'
 
 def p_BeginStruct(p):
     """
@@ -824,24 +839,33 @@ def p_FieldDeclMult(p):
         p[1].append(p[2])
         p[0] = p[1]
 
+
 def p_FieldDecl(p):
     """
     FieldDecl : IdentifierList Type 
               | IdentifierList IDENT
-              | IdentifierList IDENT PERIOD IDENT
               | EmbeddedField
               | IdentifierList Type Tag
               | IdentifierList IDENT Tag
-              | IdentifierList IDENT PERIOD IDENT Tag
               | EmbeddedField Tag
     """
     if len(p) == 2:
         p[0] = [StructFieldType(None, p[1], None)]
+        if isinstance(p[1], str):
+            p[0].dataType['baseType'] = p[1]
+            p[0].dataType['level'] = 0
+        else:
+            p[0].dataType = p[1].dataType 
+
     elif len(p) == 3:
         if isinstance(p[1], List):
             p[0] = []
             for key in p[1]:
                 p[0].append(StructFieldType(key, p[2], None))
+                if isinstance(p[2], str):
+                    p[0].dataType.append({'baseType': p[2], 'level' : 0})   
+                else:
+                    p[0].dataType.append(p[2].dataType)         
         else:
             p[0] = [StructFieldType(None, p[1], p[2])]
 
@@ -849,6 +873,12 @@ def p_FieldDecl(p):
         p[0] = []
         for key in p[1]:
             p[0].append(StructFieldType(key, p[2], p[3]))
+            if isinstance(p[2], str):
+                p[0].dataType.append({'baseType': p[2], 'level' : 0})   
+            else:
+                p[0].dataType.append(p[2].dataType)
+                    
+    p[0].dataType['name'] = 'field'
     
 def p_Tag(p):
     """
@@ -860,13 +890,14 @@ def p_EmbeddedField(p):
     """
     EmbeddedField : MUL IDENT
                   | IDENT
-                  | MUL IDENT PERIOD IDENT
-                  | IDENT PERIOD IDENT
     """
     if len(p) == 2:
         p[0] = p[1]
     else:
         p[0] = PointerType(p[2])
+        p[0].dataType['baseType'] = p[2]
+        p[0].dataType['level'] = 1
+    p[0].dataType['name'] = 'embedded'
 
 ###################################################################################
 ### Map Type
@@ -877,15 +908,23 @@ def p_MapType(p):
     MapType : MAP LBRACK KeyType RBRACK ElementType
     """
     p[0] = MapType(p[3], p[5])
-    
+
+    p[0].dataType = {'name' : 'map'}
+    p[0].dataType['KeyType'] = p[2].dataType
+    p[0].dataType['ValueType'] = p[4].dataType
+
 def p_KeyType(p):
     """
     KeyType : Type
             | IDENT
-            | IDENT PERIOD IDENT
     """
     p[0] = p[1]
 
+    if isinstance(p[1], str):
+        p[0].dataType['baseType'] = p[1]
+        p[0].dataType['level'] = 0
+
+    p[0].dataType['name'] = 'key'
 ###################################################################################
 ### Function Type
 ###################################################################################
@@ -894,7 +933,10 @@ def p_FunctionType(p):
     """
     FunctionType : FUNC Signature 
     """
-    p[0] = FuncType(p[2][0], p[2][1])
+    p[0] = FuncType(p[2][0], p[2][1], dataType = {'name' : 'func', 'params':  p[2][0].dataType})
+
+    if p[2][1] != None:
+        p[0].dataType['result'] = p[2][1].dataType
 
 ###################################################################################
 #####################                                        ######################
@@ -977,14 +1019,21 @@ def p_CompositeLit(p):
                  | SliceType LiteralValue
                  | MapType LiteralValue
                  | IDENT LiteralValue
-                 | IDENT PERIOD IDENT LiteralValue
     """
-    if isinstance(p[1], BrackType):
-        return p[2]
-    elif isinstance(p[1], MapType):
-        return p[2]
-    elif len(p) == 3:
-        return p[2]
+    p[0] = p[2]
+    if not isinstance(p[1], str):
+        p[0].dataType = p[1].dataType
+    else:
+        p[0].dataType['baseType'] = p[1]
+        p[0].dataType['level'] = 0
+
+    # if isinstance(p[1], BrackType):
+    #     return p[2]
+    # elif isinstance(p[1], MapType):
+    #     return p[2]
+    # elif len(p) == 3:
+    #     return p[2]
+
 
 def p_LiteralValue(p):
     """
@@ -1141,7 +1190,6 @@ def p_ParameterList(p):
     """
     ParameterList : ParameterDecl
                   | ParameterList COMMA IDENT
-                  | ParameterList COMMA IDENT PERIOD IDENT
                   | ParameterList COMMA Type
                   | ParameterList COMMA ParameterDecl 
     """
@@ -1149,8 +1197,8 @@ def p_ParameterList(p):
         p[0] = FuncParamNode(p[1])
 
     elif len(p) == 4 and isinstance(p[3], List):
-        p[3].addChild(*p[1])
-        p[0] = p[3]
+        p[1].addChild(*p[3])
+        p[0] = p[1]
 
     else:
         p[0] = FuncParamNode(p[1])
@@ -1160,7 +1208,6 @@ def p_ParameterDecl(p):
     """
     ParameterDecl : IdentifierList Type
                   | IdentifierList IDENT
-                  | IdentifierList IDENT PERIOD IDENT
     """
     p[0] = p[1]
     # p[0] = Node()
@@ -1179,7 +1226,6 @@ def p_Result(p):
     Result : Parameters 
            | Type
            | IDENT
-           | IDENT PERIOD IDENT
     """
     p[0] = FuncReturnNode(p[1])
     # p[0] = ResultNode()
@@ -1517,10 +1563,8 @@ def p_TypeList(p):
     """
     TypeList : Type
                 | IDENT 
-                | IDENT PERIOD IDENT
                 | Type COMMA TypeList
                 | IDENT COMMA TypeList
-                | IDENT PERIOD IDENT COMMA TypeList
     """
 
 ###################################################################################
@@ -1612,7 +1656,7 @@ def p_error(p):
 def parse():
     lexer = lex.lex()
 
-    parser, grammar = yacc.yacc()
+    parser, grammar = yacc.yacc(debug = True)
 
     path_to_root = os.environ.get('PATH_TO_ROOT')
     milestone = os.environ.get('MILESTONE')

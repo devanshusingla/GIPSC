@@ -134,7 +134,7 @@ class DeclNode(Node):
         return "GLOBAL"
 
 class IdentNode(Node):
-    def __init__(self, scope, label, dataType = None, val = 0, isConst = False):
+    def __init__(self, scope, label, dataType = {}, val = 0, isConst = False):
         super().__init__()
         self.children = None
         self.scope = scope
@@ -344,44 +344,45 @@ class ElseNode(Node):
 
 ### TYPE Class
 class Type:
-    def __init__(self):
+    def __init__(self, dataType = {}):
         self.children = []
+        self.dataType = dataType
     
     def addChild(self, *children):
         if children:
             self.children.extend(children)
 
 class ElementaryType(Type):
-    def __init__(self, type):
+    def __init__(self, dataType = {}):
         super().__init__()
-        self.type = type
+        self.dataType = dataType
         self.children = None
     
     def __str__(self):
-        return self.type
+        return self.dataType.baseType + "  " + self.dataType.level
 
 class PointerType(Type):
-    def __init__(self, type):
+    def __init__(self, dataType = {}):
         super().__init__()
-        self.type = type
+        self.dataType = dataType
         self.children = type.children
     
     def __str__(self):
-        return f'*{self.type}'
+        return f'*{self.dataType.baseType + "  " + self.dataType.level}'
 
 class ParenType(Type):
-    def __init__(self, type):
+    def __init__(self, dataType = {}):
         super().__init__()
-        self.type = type
+        self.dataType = dataType
         self.children = type.children
     
     def __str__(self):
-        return f'({self.type})'
+        return f'({self.dataType.baseType + "  " + self.dataType.level})'
 
 class BrackType(Type):
-    def __init__(self, type, length=None):
+    def __init__(self, dataType = {}, length=None):
         super().__init__()
-        self.addChild(length, type)
+        self.addChild(length, dataType)
     
     def __str__(self):
         return f'[]'
@@ -403,9 +404,9 @@ class StructType(Type):
         return f'STRUCT'
 
 class StructFieldType(Type):
-    def __init__(self, key, type, tag):
+    def __init__(self, key, tag, dataType = {}):
         super().__init__()
-        self.addChild(key, type, tag)
+        self.addChild(key, dataType, tag)
     
     def __str__(self):
         return f':'
@@ -419,9 +420,9 @@ class FuncType(Type):
         return f'FUNC'
 
 class ParamType(Type):
-    def __init__(self, key, type):
+    def __init__(self, key, dataType = {}):
         super().__init__()
-        self.addChild(key, type)
+        self.addChild(key, dataType)
     
     def __str__(self):
         return f'='
