@@ -521,7 +521,8 @@ def p_ExpressionList(p):
     """
     if len(p) == 2:
         p[0] = [p[1]]
-        
+        if isinstance(p[1], FuncCallNode):
+            print(stm.functions[p[1].label].dataType)
     else:
         p[1].append(p[3])
         p[0] = p[1]
@@ -1217,6 +1218,7 @@ def p_FuncDecl(p):
 
     ## Make node
     p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
+    stm.currentReturnType = None
     stm.exitScope()
 
 def p_FuncSig(p):
@@ -1224,10 +1226,12 @@ def p_FuncSig(p):
     FuncSig : FUNC FunctionName Signature
     """
     if p[3][0] == None:
-        stm.addFunction(p[2].label, {"params": None , "return": p[3][1], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
+        stm.addFunction(p[2].label, {"params": [] , "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
+        stm.currentReturnType = p[3][1]
         stm.newScope()
     else:
-        stm.addFunction(p[2].label, {"params": {i: param for i, param in enumerate(p[3][0].children)}, "return": p[3][1], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
+        stm.addFunction(p[2].label, {"params": p[3][0].dataType, "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
+        stm.currentReturnType = p[3][1]
         stm.newScope()
         for i, param in enumerate(p[3][0].children):
             stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
@@ -1279,7 +1283,7 @@ def p_Signature(p):
     if len(p) == 3:
         p[0] = [p[1], p[2]]
     else:
-        p[0] = [p[1], None]
+        p[0] = [p[1], FuncReturnNode([])]
 
     # p[0] = Node()
     # p[0].children.append(p[1])
@@ -1296,37 +1300,21 @@ def p_Parameters(p):
                | LPAREN ParameterList COMMA RPAREN
     """
     if len(p) == 3:
-        p[0] = None
+        p[0] = []
     else:
         p[0] = p[2]
 
 def p_ParameterList(p):
     """
     ParameterList : ParameterDecl
-                  | ParameterList COMMA ParameterDecl 
+                  | ParameterList COMMA ParameterDecl
     """
     if len(p)==2 :
-        if isinstance(p[1], List):
-            p[0] = FuncParamNode(p[1])
-        elif isinstance(p[1], str):
-            p[0] = FuncParamType()
-            p[0].addChild(stm.findType(p[1]))
-        else:
-            p[0] = FuncParamType()
-            p[0].addChild(p[1])
+        p[0] = FuncParamNode(p[1])
 
     elif len(p) == 4:
-        if isinstance(p[3], List):
-            if not isinstance(p[1], FuncParamNode):
-                raise SyntaxError("All parameters should be named or unnamed")
-            p[1].addChild(*p[3])
-            p[0] = p[1]
-
-        else:
-            if isinstance(p[1], FuncParamNode):
-                raise SyntaxError("All parameters should be named or unnamed")
-            p[1].addChild(p[3])
-            p[0] = p[1]
+        p[1].addChild(*p[3])
+        p[0] = p[1]
 
 def p_ParameterDecl(p):
     """
@@ -1351,13 +1339,14 @@ def p_ParameterDecl(p):
 
 def p_Result(p):
     """
-    Result : Parameters 
+    Result : Parameters
+           | ParametersType
            | Type
            | IDENT
     """
     if isinstance(p[1], str):
         p[1] = stm.findType(p[1])
-    elif isinstance(p[1], Type):
+    if isinstance(p[1], Type):
         p[1] = [p[1]]
     p[0] = FuncReturnNode(p[1])
     # p[0] = ResultNode()
@@ -1366,6 +1355,24 @@ def p_Result(p):
     
     # elif len(p) == 1:
     #     p[0] = p[1]
+
+def p_ParametersType(p):
+    """
+    ParametersType : IDENT
+                   | Type
+                   | ParameterList COMMA IDENT
+                   | ParameterList COMMA Type
+    """
+    if len(p) == 2:
+        if isinstance(p[1], str):
+            p[0] = FuncParamType()
+            p[0].addChild(stm.findType(p[1]))
+        else:
+            p[0] = FuncParamType()
+            p[0].addChild(p[1])
+    else:
+        p[1].addChild(p[3])
+        p[0] = p[1]
 
 ###################################################################################
 #####################                                        ######################
@@ -1390,10 +1397,8 @@ def p_StatementList(p):
 def p_Statement(p):
     """
     Statement : Decl
-              | LabeledStmt
               | SimpleStmt
               | GotoStmt
-              | ReturnStmt
               | BreakStmt
               | ContinueStmt
               | FallthroughStmt
@@ -1408,17 +1413,17 @@ def p_Statement(p):
 ### Labeled Statements
 ###################################################################################
 
-def p_LabeledStmt(p):
-    """
-    LabeledStmt : Label COLON Statement
-    """
-    p[0] = LabelNode(p[1], p[3])
+# def p_LabeledStmt(p):
+#     """
+#     LabeledStmt : Label COLON Statement
+#     """
+#     p[0] = LabelNode(p[1], p[3])
 
-def p_Label(p):
-    """
-    Label : IDENT
-    """
-    p[0] = p[1]
+# def p_Label(p):
+#     """
+#     Label : IDENT
+#     """
+#     p[0] = p[1]
 
 ###################################################################################
 ### Simple Statements
@@ -1441,6 +1446,7 @@ def p_EmptyStmt(p):
     """
     EmptyStmt : 
     """
+    p[0] = EmptyNode()
 
 ###################################################################################
 ### Expression Statements
@@ -1449,6 +1455,22 @@ def p_ExpressionStmt(p):
     """
     ExpressionStmt : Expr
     """
+    # Check if builtin function definitions are added in STM
+    builtInFuncsToAvoid = [
+        'append',
+        'cap',
+        'complex',
+        'imag',
+        'len',
+        'make',
+        'new',
+        'real'
+    ]
+    if hasattr(stm, 'builtInFuncs') and isinstance(p[1], FuncCallNode):
+        funcName =  p[1].children[0].children[0]
+        if funcName in builtInFuncsToAvoid and funcName not in stm.functions:
+            funcReturnType = stm.builtInFuncs[funcName]['return']
+            raise ValueNotUsedError(f"{p.lineno(1)}: Value of type {funcReturnType} is not used.")
     p[0] = p[1]
 
 ###################################################################################
@@ -1459,6 +1481,10 @@ def p_IncDecStmt(p):
     IncDecStmt :  Expr INC
                  | Expr DEC
     """
+    if p[1].isAddressable == False:
+        raise LogicalError(f"{p.lineno(1)}: Expression is not addressable.")
+    if not isBasicNumeric(p[1].dataType):
+        raise LogicalError(f"{p.lineno(1)}: Non-numeric type can't be incremented or decremented.")
     if p[2] == '++':
         p[0] = IncNode(p[1])
     else:
@@ -1471,8 +1497,15 @@ def p_Assignment(p):
     """
     Assignment : ExpressionList assign_op ExpressionList
     """
+    if len(p[1]) != len(p[3]):
+        if len(p[3]) == 1 and isinstance(p[3][0], FuncCallNode):
+            pass 
+        else:
+            raise LogicalError(f"{p.lineno(1)}: Imbalanced assignment with {len(p[1])} identifiers and {len(p[3])} expressions.")
     p[0] = []
     for key, val in zip(p[1], p[3]):
+        if key.dataType != val.dataType:
+            raise TypeError(f"{p.lineno(1)}: Type of {key.label} and {val.label} doesn't match.")
         exprNode = ExprNode(None, operator=p[2])
         exprNode.addChild(key, val)
         p[0].append(exprNode)
@@ -1513,6 +1546,8 @@ def p_ShortVarDecl(p):
     """
     ShortVarDecl : IdentifierList DEFINE ExpressionList
     """
+    if len(p[1]) != len(p[3]):
+        raise LogicalError(f"{p.lineno(1)}: Imbalanced declaration with {len(p[1])} identifiers and {len(p[3])} expressions.")
     p[0] = []
     for key, val in zip(p[1], p[3]):
         exprNode = ExprNode(None, label="DEFINE", operator="=")
@@ -1523,11 +1558,11 @@ def p_ShortVarDecl(p):
 ### Goto Statements
 ###################################################################################
 
-def p_GotoStmt(p):
-    """
-    GotoStmt :  GOTO Label
-    """
-    p[0] = GotoNode(p[2])
+# def p_GotoStmt(p):
+#     """
+#     GotoStmt :  GOTO Label
+#     """
+#     p[0] = GotoNode(p[2])
 
 ###################################################################################
 ### Return Statements
@@ -1538,6 +1573,10 @@ def p_ReturnStmt(p):
     ReturnStmt : RETURN ExpressionList
                 | RETURN
     """
+    # This case should never arise
+    if stm.currentReturnType is None:
+        raise LogicalError(f"{p.lineno(1)}: Return statement outside of a function.")
+    # if len(stm.currentReturnType)
     if len(p) == 2:
         p[0] = ReturnNode([])
     else:

@@ -50,6 +50,8 @@ class SymTableMaker:
         self.stack = [0]
         self.id = 0
         self.nextId = 1
+        self.currentReturnType = None
+        self.addBuiltInFuncs()
 
     def addFunction(self, label, info):
         self.functions[label] = info
@@ -106,6 +108,9 @@ class SymTableMaker:
             return i
         else:
             return self.stack[i]
+    
+    def addBuiltInFuncs(self):
+        print("TODO: Add builtin function definitions by parsing or by hard coding")
 
 ## AST Abstract Node Class
 class Node:
@@ -202,18 +207,26 @@ class FuncNode(Node):
 class FuncParamNode(Node):
     def __init__(self, params):
         super().__init__()
+        self.dataType = []
         self.addChild(*params)
+        for param in params:
+            self.dataType.append(param.dataType)
     
+    def addChild(self, *children):
+        super().addChild(*children)
+        for child in children:
+            self.dataType.append(child.dataType)
+
     def __str__(self):
         return "PARAMS"
 
 class FuncReturnNode(Node):
-    def __init__(self, returnNode):
+    def __init__(self, retNode):
         super().__init__()
-        self.returnNode = returnNode
+        self.addChild(*retNode)
     
     def __str__(self):
-        return "RETURN"
+        return "RETURN-TYPE"
 
 class BlockNode(Node):
     def __init__(self, statements):
@@ -315,6 +328,10 @@ class ContinueNode(Node):
 class FallthroughNode(Node):
     def __str__(self):
         return "FALLTHROUGH"
+
+class EmptyNode(Node):
+    def __str__(self):
+        return ""
 
 class IncNode(Node):
     def __init__(self, exprNode):
@@ -486,14 +503,12 @@ class FuncType(Type):
         return f'FUNC'
 
 class FuncParamType(Type):
-    def __init__(self, dataType={}):
+    def __init__(self, dataType=[]):
         super().__init__(dataType)
-        self.id = 0
     
     def addChild(self, type):
-        self.dataType[self.id] = type
+        self.dataType.append(type.dataType)
         self.children.append(type)
-        self.id += 1
 
     def __str__(self):
         return '()'
@@ -505,3 +520,19 @@ class ParamType(Type):
     
     def __str__(self):
         return f'='
+
+class ValueNotUsedError(Exception):
+    def __init__(self, message):
+        super().__init__()
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message) 
+
+class LogicalError(Exception):
+    def __init__(self, message):
+        super().__init__()
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)

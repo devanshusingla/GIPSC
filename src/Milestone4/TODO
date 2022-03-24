@@ -9,3 +9,4 @@ tags in structType -> Done
 typechecking for & operator
 negative indices in array
 Type arguments in p_Arguments
+Add definitions of builtin functions
