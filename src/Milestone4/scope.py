@@ -72,7 +72,8 @@ class SymTableMaker:
 
     def get(self, ident, scope=None):
         if scope is None:
-            return self.symTable[self.id].getinfo(ident)
+            scope = self.getScope(ident)
+            return self.symTable[scope].getinfo(ident)
         else:
             return self.symTable[scope].getinfo(ident)
 

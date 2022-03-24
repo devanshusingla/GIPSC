@@ -616,7 +616,7 @@ def p_PrimaryExpr(p):
         if latest_scope == 0:
             ## To be checked for global declarations (TODO)
             print("Expecting global declaration for ",p[1], p.lineno(1))
-            
+                    
         dt = stm.get(p[1])['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1])
     
@@ -1213,21 +1213,24 @@ def p_FuncDecl(p):
     # stm.addFunction(p[2].label, info)
 
     ## Make node
-    p[0] = FuncNode(p[2], p[3][0], p[3][1], p[4])
+    p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
     stm.exitScope()
 
 def p_FuncSig(p):
     """
     FuncSig : FUNC FunctionName Signature
     """
+    if p[3][0] == None:
+        stm.addFunction(p[2], {"params": None , "return": p[3][1]})
+        stm.newScope()
+    else:
+        stm.addFunction(p[2], {"params": {i: param for i, param in enumerate(p[3][0].children)}, "return": p[3][1]})
+        stm.newScope()
+        for i, param in enumerate(p[3][0].children):
+            stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
+            p[3][0].children[i].scope = stm.id
     
-    stm.addFunction(p[2], {"params": {i: param for i, param in enumerate(p[3][0])}, "return": p[3][1]})
-    stm.newScope()
-    for i, param in enumerate(p[3][0]):
-        stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
-        p[3][0][i].scope = stm.id
-    
-
+    p[0] = [p[2], p[3]]
 
 # def p_BeginFunc(p):
 #     """
@@ -1248,8 +1251,8 @@ def p_FunctionName(p):
     FunctionName : IDENT
     """
     ##  Check redeclaration
-    if p[2].label in stm.functions or stm.getScope(p[2].label) >= 0 :
-        raise ("Redeclaration of function " + p[2].label, p.lineno(1))
+    if p[1] in stm.functions or stm.getScope(p[1]) >= 0 :
+        raise ("Redeclaration of function " + p[1], p.lineno(1))
 
     p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
 

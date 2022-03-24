@@ -28,5 +28,5 @@ digraph G {
 	6 -> 27;
 	27 -> 28;
 	27 -> 29;
-	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="string"];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="[]"];	10 [label="None"];	11 [label="{}"];	12 [label="="];	13 [label="c"];	14 [label="+"];	15 [label="[]"];	16 [label="a"];	17 [label="0"];	18 [label="[]"];	19 [label="a"];	20 [label="1"];	21 [label="FUNC"];	22 [label="Print"];	23 [label="PARAMS"];	24 [label="x"];	25 [label="None"];	26 [label="{}"];	27 [label="="];	28 [label="a"];	29 [label="COMPOSITE"];
+	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="string"];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="None"];	10 [label="None"];	11 [label="{}"];	12 [label="="];	13 [label="c"];	14 [label="+"];	15 [label="[]"];	16 [label="a"];	17 [label="0"];	18 [label="[]"];	19 [label="a"];	20 [label="1"];	21 [label="FUNC"];	22 [label="Print"];	23 [label="PARAMS"];	24 [label="x"];	25 [label="None"];	26 [label="{}"];	27 [label="="];	28 [label="a"];	29 [label="COMPOSITE"];
 }

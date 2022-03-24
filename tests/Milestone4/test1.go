@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-var a int = 1
+var a [2]int = [2]int{1, 3}
 
 func Print(x int) {}
 
