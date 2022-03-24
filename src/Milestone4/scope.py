@@ -73,6 +73,8 @@ class SymTableMaker:
     def get(self, ident, scope=None):
         if scope is None:
             scope = self.getScope(ident)
+            if ident in self.functions:
+                return self.functions[ident]
             return self.symTable[scope].getinfo(ident)
         else:
             return self.symTable[scope].getinfo(ident)
@@ -92,8 +94,10 @@ class SymTableMaker:
     
     def getScope(self, ident):
         i = len(self.stack) - 1
+        if ident in self.functions:
+            return 0
         while i >= 0:
-            if ident in self.symTable[i].localsymTable:
+            if ident in self.symTable[self.stack[i]].localsymTable:
                 break
             else:
                 i -= 1
@@ -220,13 +224,14 @@ class BlockNode(Node):
         return "{}"
 
 class ExprNode(Node):
-    def __init__(self, dataType, label = None, operator = None, isConst = False):
+    def __init__(self, dataType, label = None, operator = None, isConst = False, isAddressable = False):
         super().__init__()
         self.children = []
         self.label = label
         self.dataType = dataType
         self.operator = operator
         self.isConst = isConst # For constant folding
+        self.isAddressable = isAddressable
 
     def __str__(self):
         if self.operator is None:

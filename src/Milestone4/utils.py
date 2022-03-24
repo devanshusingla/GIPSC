@@ -78,7 +78,7 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
             return False
 
 def getFinalType(stm, dt1, dt2, binop):
-    dt1_copy = dt1
+    dt1_copy = dt1.copy()
     
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
@@ -93,25 +93,25 @@ def getFinalType(stm, dt1, dt2, binop):
 
     if binop == '+' or binop == '-' or binop == '*' or binop == '/':
         if dt1 == 'byte' or dt1 == 'rune':
-            return {'baseType' : 'int32', 'level' : 0}
+            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0}
         return dt1_copy
     
     if binop == '%' or binop == '&' or binop == '|' or binop == '^' | binop == '&^':
         if dt1 == 'byte' or dt1 == 'rune':
-            return {'baseType' : 'int32', 'level' : 0}
+            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0}
         return dt1_copy
 
     if binop == '<<' or binop == '>>':
         if dt1 == 'byte':
-            return {'baseType' : 'uint8', 'level' : 0}
+            return {'name': 'uint8', 'baseType' : 'uint8', 'level' : 0}
         if dt1 == 'rune':
-            return {'baseType' : 'int32', 'level' : 0}
+            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0}
         return dt1_copy
 
     if binop == '&&' or binop == '||' or binop == '<' or binop == '<=' or binop == '>' or binop == '>=' or binop == '==' or binop == '!=':
-        return {'baseType' : 'bool', 'level' : 0}
+        return {'name': 'bool', 'baseType' : 'bool', 'level' : 0}
 
-def checkUnOp(stm, dt, unOp, isConst):
+def checkUnOp(stm, dt, unOp, flag):
     dt = getBaseType(stm, dt)
 
     if unOp == '*':
@@ -127,7 +127,7 @@ def checkUnOp(stm, dt, unOp, isConst):
             return False
 
     if unOp == '&':
-        if not isConst:
+        if flag:
             return True
         else:
             return False
@@ -138,7 +138,7 @@ def checkUnOp(stm, dt, unOp, isConst):
         else:
             return False
 
-    if dt == None or dt not in stm[stm.id].avlTypes:
+    if dt == None or dt not in stm.symTable[stm.id].avlTypes:
         return False
 
     if unOp == '+' or unOp == '-':
@@ -152,7 +152,7 @@ def checkUnOp(stm, dt, unOp, isConst):
 
 
 def getUnaryType(stm, dt, unOp):
-    dt_copy = dt
+    dt_copy = dt.copy()
     dt = getBaseType(stm, dt)
 
     if unOp == '*':
@@ -175,9 +175,9 @@ def getUnaryType(stm, dt, unOp):
 
     if unOp != '*' and unOp != '&':
         if dt == 'byte':
-            return {'baseType': 'uint8', 'level': 0}
+            return {'name': 'uint8', 'baseType': 'uint8', 'level': 0}
         if dt == 'rune':
-            return {'baseType': 'uint32', 'level': 0}
+            return {'name': 'uint32', 'baseType': 'uint32', 'level': 0}
         else: 
             return dt_copy
 
@@ -213,7 +213,10 @@ def isTypeCastable(stm, dt1, dt2):
     if 'name' in dt1 and 'name' in dt2 and dt1['name']!=dt2['name']:
         return False
 
-    while 'name' in dt1 and (dt1['name'] == 'array' or dt1['name'] == 'slice' or dt1['name'] == 'pointer' or dt1['name'] == 'elementary'):
+    if 'name' not in dt1 or 'name'not in dt2:
+        return False
+
+    while 'name' in dt1 and (dt1['name'] == 'array' or dt1['name'] == 'slice' or dt1['name'] == 'pointer' or dt1['name'] == 'elementary' or dt1['name'] in basicTypes):
         if 'name' in dt2 and dt1['name']!= dt2['name']:
             return False
         elif 'name' not in dt2:
@@ -238,7 +241,7 @@ def isTypeCastable(stm, dt1, dt2):
     if isinstance(dt1, str) or isinstance(dt2, str):
         return False
     
-    if 'name' in dt1 and dt1['name'] != dt2['name']:
+    if 'name' in dt1 and 'name' in dt2 and dt1['name'] != dt2['name']:
         return False
 
     if 'name' in dt1 and dt1['name'] == 'struct':

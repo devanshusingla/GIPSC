@@ -346,7 +346,7 @@ def p_VarSpec(p):
             dt = p[2].dataType
             
             for i, expression in enumerate(p[len(p)-1]):
-                print(dt,expression.dataType)
+                # print(dt,expression.dataType)
                 if not isTypeCastable(stm, dt, expression.dataType):
                     raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
 
@@ -440,6 +440,7 @@ def p_AliasDecl(p):
     global stm
     dt = {}
     if isinstance(p[3], str):
+        dt['name'] = p[3]
         dt['baseType'] = p[3]
         dt['level'] = 0
     else:
@@ -469,6 +470,7 @@ def p_TypeDef(p):
     global stm
     dt = {}
     if isinstance(p[2], str):
+        dt['name'] = p[3]
         dt['baseType'] = p[2]
         dt['level'] = 0
     else:
@@ -500,12 +502,10 @@ def p_IdentifierList(p):
                    | IDENT COMMA IdentifierList
     """
     global stm
-    if len(p) == 2:
-        p[0] = [IdentNode(label = p[1], scope = stm.id)]
+    p[0] = [IdentNode(label = p[1], scope = stm.id)]
 
-    else:
-        p[3].append(IdentNode(label = p[1], scope = stm.id))
-        p[0] = p[3]
+    if len(p) > 2:
+        p[0].extend(p[3])
 
 
 ###################################################################################
@@ -562,8 +562,8 @@ def p_Expr(p):
         dt = getFinalType(stm, dt1, dt2, p[2])
 
         isConst = False
-        # if (p[1].isConst and p[3].isConst):
-        #     isConst = True
+        if isinstance(p[1], ExprNode) and isinstance(p[3], ExprNode) and p[1].isConst and p[3].isConst:
+            isConst = True
 
         p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label+p[2]+p[3].label, isConst = isConst)
         p[0].addChild(p[1], p[3])
@@ -582,10 +582,13 @@ def p_UnaryExpr(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        if not checkUnOp(stm, p[1], p[2].dataType, p[2].isConst):
+        flag = False
+        if not isinstance(p[2], str) and hasattr(p[2], 'isAddressable'):
+            flag = p[2].isAddressable 
+        if not checkUnOp(stm, p[2].dataType, p[1], flag):
             raise TypeError("Incompatible operand for Unary Expression", p.lineno(1))
         
-        p[0] = ExprNode(dataType = getUnaryType(p[2].dataType, p[1]), operator=p[1])
+        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1])
         p[0].addChild(p[2])
 
 ###################################################################################
@@ -618,7 +621,7 @@ def p_PrimaryExpr(p):
             print("Expecting global declaration for ",p[1], p.lineno(1))
                     
         dt = stm.get(p[1])['dataType']
-        p[0] = ExprNode(dataType=dt, label = p[1])
+        p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True)
     
     ## Primary Expr -> LPAREN Expr RPAREN
     elif len(p) == 4:
@@ -658,16 +661,16 @@ def p_PrimaryExpr(p):
                         raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
                 else:
                     if isinstance(p[2].dataType['baseType'], str) and p[2].dataType['level'] == 0:
-                        if not isBasicInteger(p[2].dataType):
+                        if not isBasicInteger(p[2].dataType['baseType']):
                             raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
                     else:
                         raise TypeError("Index type incorrect", p.lineno(1))
 
-                dt = p[1].dataType
+                dt = p[1].dataType.copy()
                 dt['level']-=1
 
                 if dt['level']==0:
-                    dt = {'baseType': dt['baseType'], 'level': 0}
+                    dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
 
             if p[1].dataType['name'] == 'map':
                 if not isTypeCastable(p[2].dataType, p[1].dataType['KeyType']):
@@ -711,7 +714,7 @@ def p_PrimaryExpr(p):
                     else:
                         raise TypeError("Index type incorrect", p.lineno(1))
 
-            dt = p[1].dataType
+            dt = p[1].dataType.copy()
             p[2].children[0] = p[1]
 
         ## PrimaryExpr -> PrimaryExpr Arguments
@@ -719,12 +722,38 @@ def p_PrimaryExpr(p):
             if p[1].label not in stm.functions:
                 raise NameError("No such function declared ", p.lineno(1))
 
-            
+            info = stm.get(p[1].label)
+            params = info['params']
+            dt = None
+            if info['return'] != None:
+                dt = info['return'].dataType
+
+            paramList = []
+            for key in params:
+                curr = params[key]
+                if not isinstance(curr, list):
+                    paramList.append(curr)
+                    continue
+                for node in curr:
+                    paramList.append(node)
+
+            if len(paramList) != len(p[2]):
+                raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + len(paramList) + " number of arguments but got " + len(p[2]), p.lineno(1))
+
+            for i, argument in enumerate(p[2]):
+                dt1 = argument.dataType
+                dt2 = paramList[i].dataType
+
+                if not isTypeCastable(stm, dt1, dt2):
+                    raise TypeError("Type mismatch on argument number: " + i, p.lineno(1))
+
             p[2] = FuncCallNode(p[1], p[2])
         
         p[0] = p[2]
         p[0].dataType = dt
-    
+        p[0].isAddressable = True
+        if isinstance(p[2], list):
+            p[0].isAddressable = False
 
 ###################################################################################
 ## Selector
@@ -786,14 +815,6 @@ def p_Arguments(p):
     Arguments : LPAREN RPAREN
               | LPAREN ExpressionList RPAREN
               | LPAREN ExpressionList COMMA RPAREN
-              | LPAREN TypeT RPAREN
-              | LPAREN TypeT COMMA RPAREN
-              | LPAREN TypeT COMMA ExpressionList RPAREN 
-              | LPAREN TypeT COMMA ExpressionList COMMA RPAREN 
-              | LPAREN IDENT RPAREN
-              | LPAREN IDENT COMMA RPAREN
-              | LPAREN IDENT COMMA ExpressionList RPAREN 
-              | LPAREN IDENT COMMA ExpressionList COMMA RPAREN 
     """
     p[0] = []
     if len(p) == 4:
@@ -806,27 +827,6 @@ def p_Arguments(p):
             p[0] = p[2]
         else:
             p[0] = [p[2]]
-    elif len(p) == 6 or len(p) == 7:
-        p[0] = [p[2]] + p[4]
-
-    # p[0] = Node()
-
-    # if len(p) == 3:
-    #     return
-
-    # ## Arguments : LPAREN ExpressionList RPAREN or LPAREN ExpressionList
-    # if not isinstance(p[2], str) and p[2].children != None and len(p[2].children) > 0 and isinstance(p[2].children[0], ExprNode):
-    #     p[0] = p[2]
-    
-    # elif len(p) > 3 and isinstance(p[2], str) and p[3] != '.':
-    #     if stm.findType(p[2]) == -1:
-    #         raise TypeError("Type " + p[2] + " not defined before", p.lineno(1))
-    #     else:
-    #         if len(p) == 4 or len(p) == 5:
-    #             p[0].addChild(*[Type(datatype = p[2], scope = stm.id)])
-    #         else:
-    #             p[4].children.append(Type(datatype = p[2], scope = stm.id))
-    #             p[0] = p[4]
 
 ###################################################################################
 #####################                                        ######################
@@ -872,8 +872,8 @@ def p_PointerType(p):
     p[0] = PointerType(p[2])
 
     if isinstance(p[2], str):
-         p[0].dataType['baseType'] = p[2]
-         p[0].dataType['level'] = 1
+        p[0].dataType['baseType'] = p[2]
+        p[0].dataType['level'] = 1
     else:
         p[0].dataType['baseType'] = p[2].dataType['baseType']
         p[0].dataType['level'] = p[2].dataType['level'] + 1
@@ -1075,7 +1075,7 @@ def p_IntLit(p):
     IntLit : INT
     """
     if check_int(p[1]):
-        p[0] = LitNode(dataType = 'int', label = p[1])
+        p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0}, label = p[1])
     else:
         raise ("Integer Overflow detected", p.lineno(1))
 
@@ -1083,37 +1083,38 @@ def p_FloatLit(p):
     """
     FloatLit : FLOAT
     """
-    p[0] = LitNode(dataType = 'float64', label = p[1])
+    p[0] = LitNode(dataType = {'name': 'float64', 'baseType': 'float64', 'level': 0}, label = p[1])
     
 def p_ImagLit(p):
     """
     ImagLit : IMAG
     """
-    p[0] = LitNode(dataType = 'complex128', label = p[1])
+    p[0] = LitNode(dataType = {'name': 'complex128', 'baseType': 'complex128', 'level': 0}, label = p[1])
 
 def p_RuneLit(p):
     """
     RuneLit : RUNE
     """
-    p[0] = LitNode(dataType = 'rune', label = p[1])
+    p[0] = LitNode(dataType = {'name': 'rune', 'baseType': 'rune', 'level': 0}, label = p[1])
 
 def p_StringLit(p):
     """
     StringLit : STRING
     """
-    p[0] = LitNode(dataType = 'string', label = p[1])
+    p[0] = LitNode(dataType = {'name': 'string', 'baseType': 'string', 'level': 0}, label = p[1])
 
 def p_BoolLit(p):
     """
     BoolLit : BOOL
     """
-    p[0] = LitNode(dataType = 'bool', label = p[1])
+    p[0] = LitNode(dataType = {'name': 'bool', 'baseType': 'bool', 'level': 0}, label = p[1])
 
 ###################################################################################
 ### Composite Literal
 ###################################################################################
 
 ## Need to implement checks
+# TODO: Remove arguments
 def p_CompositeLit(p):
     """
     CompositeLit : StructType Arguments
@@ -1126,6 +1127,7 @@ def p_CompositeLit(p):
     if not isinstance(p[1], str):
         p[0].dataType = p[1].dataType
     else:
+        p[0].dataType['name'] = p[1]
         p[0].dataType['baseType'] = p[1]
         p[0].dataType['level'] = 0
 
@@ -1156,8 +1158,9 @@ def p_ElementList(p):
     if len(p) == 2:
         p[0] = [p[1]]
     else:
+        # print(p[1], p[3])
         p[1].append(p[3])
-        p[0] = p[3]
+        p[0] = p[1]
 
 def p_KeyedElement(p):
     """
@@ -1221,10 +1224,10 @@ def p_FuncSig(p):
     FuncSig : FUNC FunctionName Signature
     """
     if p[3][0] == None:
-        stm.addFunction(p[2], {"params": None , "return": p[3][1]})
+        stm.addFunction(p[2].label, {"params": None , "return": p[3][1], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
         stm.newScope()
     else:
-        stm.addFunction(p[2], {"params": {i: param for i, param in enumerate(p[3][0].children)}, "return": p[3][1]})
+        stm.addFunction(p[2].label, {"params": {i: param for i, param in enumerate(p[3][0].children)}, "return": p[3][1], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
         stm.newScope()
         for i, param in enumerate(p[3][0].children):
             stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
@@ -1300,10 +1303,6 @@ def p_Parameters(p):
 def p_ParameterList(p):
     """
     ParameterList : ParameterDecl
-                  | IDENT
-                  | Type
-                  | ParameterList COMMA IDENT
-                  | ParameterList COMMA Type
                   | ParameterList COMMA ParameterDecl 
     """
     if len(p)==2 :
