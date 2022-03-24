@@ -250,40 +250,79 @@ def p_ConstSpec(p):
     """
     global stm
     p[0] = []
+    length = len(p)-1
 
-    if len(p[1]) != len(p[len(p)-1]):
+    count_0 = 0
+    count_1 = 0
+
+    expression_datatypes = []
+
+    for i in range(len(p[length])):
+        if isinstance(p[length][i], FuncCallNode):
+            func_name = p[length][i].children[0].label
+            dt_return = stm.functions[func_name]["return"]
+            expression_datatypes.extend(dt_return)
+            if len(dt_return) == 0:
+                raise TypeError("Function does not return anything!")
+            elif len(dt_return) == 1:
+                count_0+=1
+            else:
+                count_1+=1
+    
+    if count_1 > 0:
+        if len(p[length]) > 1:
+            raise TypeError("Function with more than one return values should be assigned alone!")
+
+    
+
+    if len(p[1]) != len(expression_datatypes):
         raise NameError("Assignment is not balanced", p.lineno(1))
     
+    dt = {}
+
     if len(p) > 4:
-        dt = {}
         if isinstance(p[2], str):
-            dt['baseType'] = p[2]
-            dt['level'] = 0
+            p[2] = stm.findType(p[2])
+
+        if isinstance(p[2], str):
+            dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
         else:
             dt = p[2].dataType
         
-        for i, expression in enumerate(p[len(p)-1]):
-            if not isTypeCastable(stm, dt, expression.dataType):
+        for i, expression in enumerate(expression_datatypes):
+            
+            #print("Datatypes being compared:", dt, temp)
+            if not isTypeCastable(stm, dt, expression):
                 raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
 
-    for (ident, val) in zip(p[1], p[len(p)-1]):
-        expr = ExprNode(dataType=p[2], label="ASSIGN", operator="=")
-        expr.addChild(ident, val)
+    if count_1 > 0:
+        expr = ExprNode(dataType = dt, label = "ASSIGN", operator = "=")
+        for child in p[1]:
+            expr.addChild(child)
+        expr.addChild(p[length][0])
         p[0].append(expr)
+    else:
+        for (ident, val) in zip(p[1], p[len(p)-1]):
+            expr = ExprNode(dataType=p[2], label="ASSIGN", operator="=")
+            expr.addChild(ident, val)
+            p[0].append(expr)
 
     not_base_type = False
 
     if not isinstance(p[2], str):
         not_base_type = True
 
-    for i, (ident, val) in enumerate(zip(p[1], p[len(p)-1])):
+    for i, ident in enumerate(p[1]):
 
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(ident.label)
         if latest_scope == stm.id or ident.label in stm.functions:
             raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
         
-        dt = p[2].dataType
+        if not not_base_type:
+            dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+        else:
+            dt = p[2].dataType
 
         if not_base_type:
             present = checkTypePresence(stm, dt) 
@@ -294,8 +333,8 @@ def p_ConstSpec(p):
             raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
         else:
             # Add to symbol table
-            stm.add(ident.label, {'dataType': p[2].dataType, 'isConst' : True})
-            p[1].children[i].dataType = dt
+            stm.add(ident.label, {'dataType': dt, 'isConst' : True})
+            p[1][i].dataType = dt
  
 ###################################################################################
 ### Variable Declarations
@@ -333,42 +372,83 @@ def p_VarSpec(p):
     """
     global stm
     p[0] = []
+    length = len(p)-1
 
     if len(p) >= 4:
-        if len(p[1]) != len(p[len(p)-1]):
+
+        count_0 = 0
+        count_1 = 0
+
+        expression_datatypes = []
+
+        for i in range(len(p[length])):
+            if isinstance(p[length][i], FuncCallNode):
+                func_name = p[length][i].children[0].label
+                dt_return = stm.functions[func_name]["return"]
+                expression_datatypes.extend(dt_return)
+                if len(dt_return) == 0:
+                    raise TypeError("Function does not return anything!")
+                elif len(dt_return) == 1:
+                    count_0+=1
+                else:
+                    count_1+=1
+            else:
+                expression_datatypes.append(p[length][i].dataType)
+        
+        if count_1 > 0:
+            if len(p[length]) > 1:
+                raise TypeError("Function with more than one return values should be assigned alone!")
+
+        print(p[1], expression_datatypes)
+
+        if len(p[1]) != len(expression_datatypes):
             raise NameError("Assignment is not balanced", p.lineno(1))
         
+        dt = {}
+
         if len(p) > 4:
-            dt = {}
             if isinstance(p[2], str):
                 p[2] = stm.findType(p[2])
 
-            dt = p[2].dataType
+            if isinstance(p[2], str):
+                dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+            else:
+                dt = p[2].dataType
             
-            for i, expression in enumerate(p[len(p)-1]):
-                temp = expression.dataType.copy()
-                print("Datatypes being compared:", dt, temp)
-                if not isTypeCastable(stm, dt, temp):
+            for i, expression in enumerate(expression_datatypes):
+               
+                #print("Datatypes being compared:", dt, temp)
+                if not isTypeCastable(stm, dt, expression):
                     raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
 
-        for (ident, val) in zip(p[1], p[len(p)-1]):
-            expr = ExprNode(dataType=p[2], label="ASSIGN", operator="=")
-            expr.addChild(ident, val)
+        if count_1 > 0:
+            expr = ExprNode(dataType = dt, label = "ASSIGN", operator = "=")
+            for child in p[1]:
+                expr.addChild(child)
+            expr.addChild(p[length][0])
             p[0].append(expr)
+        else:
+            for (ident, val) in zip(p[1], p[len(p)-1]):
+                expr = ExprNode(dataType=dt, label="ASSIGN", operator="=")
+                expr.addChild(ident, val)
+                p[0].append(expr)
 
         not_base_type = False
 
         if not isinstance(p[2], str):
             not_base_type = True
 
-        for i, (ident, val) in enumerate(zip(p[1], p[len(p)-1])):
+        for i, ident in enumerate(p[1]):
 
             # Check redeclaration for identifier list
             latest_scope = stm.getScope(ident.label)
             if latest_scope == stm.id or ident.label in stm.functions:
                 raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
             
-            dt = p[2].dataType
+            if not not_base_type:
+                dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+            else:
+                dt = p[2].dataType
 
             if not_base_type:
                 present = checkTypePresence(stm, dt) 
@@ -379,7 +459,7 @@ def p_VarSpec(p):
                 raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
             else:
                 # Add to symbol table
-                stm.add(ident.label, {'dataType': p[2].dataType, 'isConst' : False})
+                stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                 p[1][i].dataType = dt
     else:
         not_base_type = False
@@ -394,7 +474,10 @@ def p_VarSpec(p):
             if latest_scope == stm.id or ident.label in stm.functions:
                 raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
 
-            dt = p[2].dataType
+            if not not_base_type:
+                dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+            else:
+                dt = p[2].dataType
 
             if not_base_type:
                 present = checkTypePresence(stm, dt) 
@@ -405,7 +488,7 @@ def p_VarSpec(p):
                 raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
             else:
                 # Add to symbol table
-                stm.add(ident.label, {'dataType': p[2].dataType, 'isConst' : False})
+                stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                 p[1][i].dataType = dt
 
 
@@ -508,6 +591,7 @@ def p_IdentifierList(p):
     if len(p) > 2:
         p[0].extend(p[3])
 
+    print("p[0]: ", p[0])
 
 ###################################################################################
 #####################                                        ######################
@@ -558,6 +642,8 @@ def p_Expr(p):
     else:
         dt1 = p[1].dataType
         dt2 = p[3].dataType
+
+        print(p[1].label, p[3].label)
 
         if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
             raise TypeError("Incompatible operand types", p.lineno(1))
@@ -725,13 +811,13 @@ def p_PrimaryExpr(p):
             if p[1].label not in stm.functions:
                 raise NameError("No such function declared ", p.lineno(1))
 
-            info = stm.get(p[1].label)
+            info = stm.functions[p[1].label]
             paramList = info['params']
             dt = None
             if info['return'] != None:
                 dt = info['return']
 
-            print(paramList, p[2])
+            print("paramlist: ", paramList, p[2])
             for i in p[2]:
                 print(i.label)
 
@@ -763,7 +849,7 @@ def p_Selector(p):
     p[0] = DotNode()
     p[0].addChild(p[2])
 
-###################################################################################
+#########################FuncCallNo##########################################################
 ## Index
 
 def p_Index(p):
@@ -1227,17 +1313,31 @@ def p_FuncSig(p):
     FuncSig : FUNC FunctionName Signature
     """
     print("sig: ", p[3][0].dataType)
-    if p[3][0] == None:
-        stm.addFunction(p[2].label, {"params": [] , "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
-        stm.currentReturnType = p[3][1]
-        stm.newScope()
+    if p[3][1] == None:
+        if p[3][0] == None:
+            stm.addFunction(p[2].label, {"params": [] , "return": [], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
+            stm.currentReturnType = p[3][1]
+            stm.newScope()
+        else:
+            stm.addFunction(p[2].label, {"params": p[3][0].dataType, "return": [], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
+            stm.currentReturnType = p[3][1]
+            stm.newScope()
+            for i, param in enumerate(p[3][0].children):
+                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
+                p[3][0].children[i].scope = stm.id
+
     else:
-        stm.addFunction(p[2].label, {"params": p[3][0].dataType, "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
-        stm.currentReturnType = p[3][1]
-        stm.newScope()
-        for i, param in enumerate(p[3][0].children):
-            stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
-            p[3][0].children[i].scope = stm.id
+        if p[3][0] == None:
+            stm.addFunction(p[2].label, {"params": [] , "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
+            stm.currentReturnType = p[3][1]
+            stm.newScope()
+        else:
+            stm.addFunction(p[2].label, {"params": p[3][0].dataType, "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
+            stm.currentReturnType = p[3][1]
+            stm.newScope()
+            for i, param in enumerate(p[3][0].children):
+                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
+                p[3][0].children[i].scope = stm.id
     
     p[0] = [p[2], p[3]]
 
@@ -1375,7 +1475,10 @@ def p_ParametersType(p):
             p[0] = FuncParamType()
             p[0].addChild(p[1])
     else:
-        p[1].addChild(p[3])
+        if isinstance(p[3], str):
+            p[1].addChild(ElementaryType(dataType={'name':p[3], 'baseType': p[3], 'level': 0}))
+        else:
+            p[1].addChild(p[3])
         p[0] = p[1]
 
 ###################################################################################

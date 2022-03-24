@@ -14,8 +14,8 @@ func Print(x, y int, z int) (int, int) {
 
 func main() {
 	var b, c, d int = a[0], a[1], a[2]
-	var e, f int = Print(b, c, d)
-	a := [5]int{1, 2, 3, 4, 5}
-	s := a[1:4]
-	add(3, 5)
+	var e, f int = Print(b, c, d) 
+	// a := [5]int{1, 2, 3, 4, 5}
+	// s := a[1:4]
+	// add(3, 5)
 }

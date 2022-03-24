@@ -24,8 +24,12 @@ def isOrdered(dt):
     return False
     
 def checkBinOp(stm, dt1, dt2, binop, firstchar):
+    print("Old: ", dt1, dt2)
+    
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
+
+    print("New: ", dt1, dt2)
 
     if not isinstance(dt1, str):
         if 'baseType' in dt1:

@@ -231,7 +231,7 @@ class FuncReturnNode(Node):
     def addChild(self, *children):
         super().addChild(*children)
         for child in children:
-            self.dataType.append(child.dataType)
+            self.dataType.extend(child.dataType)
 
     def __str__(self):
         return "RETURN-TYPE"
@@ -451,7 +451,7 @@ class ElementaryType(Type):
         self.children = None
     
     def __str__(self):
-        return self.dataType.baseType + "  " + self.dataType.level
+        return self.dataType['baseType']
 
 class PointerType(Type):
     def __init__(self, dataType = {}):
@@ -460,7 +460,8 @@ class PointerType(Type):
         self.children = type.children
     
     def __str__(self):
-        return f'*{self.dataType.baseType + "  " + self.dataType.level}'
+        x = self.dataType['baseType'] 
+        return f'*{x}'
 
 class ParenType(Type):
     def __init__(self, dataType = {}):
@@ -469,7 +470,8 @@ class ParenType(Type):
         self.children = type.children
     
     def __str__(self):
-        return f'({self.dataType.baseType + "  " + self.dataType.level})'
+        x = self.dataType['baseType'] 
+        return f'({x})'
 
 class BrackType(Type):
     def __init__(self, dataType = {}, length=None):
