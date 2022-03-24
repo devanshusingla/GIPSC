@@ -346,8 +346,9 @@ def p_VarSpec(p):
             dt = p[2].dataType
             
             for i, expression in enumerate(p[len(p)-1]):
-                # print(dt,expression.dataType)
-                if not isTypeCastable(stm, dt, expression.dataType):
+                temp = expression.dataType.copy()
+                print("Datatypes being compared:", dt, temp)
+                if not isTypeCastable(stm, dt, temp):
                     raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
 
         for (ident, val) in zip(p[1], p[len(p)-1]):
@@ -521,8 +522,9 @@ def p_ExpressionList(p):
     """
     if len(p) == 2:
         p[0] = [p[1]]
-        if isinstance(p[1], FuncCallNode):
-            print(stm.functions[p[1].label].dataType)
+        # print(p[1])
+        # if isinstance(p[1], FuncCallNode):
+            # print(stm.functions[p[1].label].dataType)
     else:
         p[1].append(p[3])
         p[0] = p[1]
@@ -724,26 +726,21 @@ def p_PrimaryExpr(p):
                 raise NameError("No such function declared ", p.lineno(1))
 
             info = stm.get(p[1].label)
-            params = info['params']
+            paramList = info['params']
             dt = None
             if info['return'] != None:
-                dt = info['return'].dataType
+                dt = info['return']
 
-            paramList = []
-            for key in params:
-                curr = params[key]
-                if not isinstance(curr, list):
-                    paramList.append(curr)
-                    continue
-                for node in curr:
-                    paramList.append(node)
+            print(paramList, p[2])
+            for i in p[2]:
+                print(i.label)
 
             if len(paramList) != len(p[2]):
                 raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + len(paramList) + " number of arguments but got " + len(p[2]), p.lineno(1))
 
             for i, argument in enumerate(p[2]):
                 dt1 = argument.dataType
-                dt2 = paramList[i].dataType
+                dt2 = paramList[i]
 
                 if not isTypeCastable(stm, dt1, dt2):
                     raise TypeError("Type mismatch on argument number: " + i, p.lineno(1))
@@ -858,7 +855,11 @@ def p_TypeT(p):
     if len(p) == 2:
         p[0] = p[1]
     elif len(p) == 4:
-        p[0] = ParenType(p[2], dataType = p[2].dataType)
+        dt = None
+        if isinstance(p[2], str):
+            p[0] = stm.findType(p[2])
+        else:
+            p[0] = p[2]
 
 
 ###################################################################################
@@ -1225,6 +1226,7 @@ def p_FuncSig(p):
     """
     FuncSig : FUNC FunctionName Signature
     """
+    print("sig: ", p[3][0].dataType)
     if p[3][0] == None:
         stm.addFunction(p[2].label, {"params": [] , "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
         stm.currentReturnType = p[3][1]
@@ -1300,9 +1302,10 @@ def p_Parameters(p):
                | LPAREN ParameterList COMMA RPAREN
     """
     if len(p) == 3:
-        p[0] = []
+        p[0] = FuncParamNode([])
     else:
         p[0] = p[2]
+    
 
 def p_ParameterList(p):
     """
@@ -1339,16 +1342,17 @@ def p_ParameterDecl(p):
 
 def p_Result(p):
     """
-    Result : Parameters
-           | ParametersType
-           | Type
-           | IDENT
+    Result : LPAREN ParametersType RPAREN
+           | LPAREN RPAREN
     """
-    if isinstance(p[1], str):
-        p[1] = stm.findType(p[1])
-    if isinstance(p[1], Type):
-        p[1] = [p[1]]
-    p[0] = FuncReturnNode(p[1])
+    if len(p) > 3:
+        if isinstance(p[2], str):
+            p[2] = stm.findType(p[2])
+        if isinstance(p[2], Type):
+            p[2] = [p[2]]
+        p[0] = FuncReturnNode(p[2])
+    else:
+        p[0] = FuncReturnNode([])
     # p[0] = ResultNode()
     # if len(p) == 1 and isinstance(p[1], str):
     #     p[0].children.append(IdentNode(dataType = p[1]))
@@ -1360,8 +1364,8 @@ def p_ParametersType(p):
     """
     ParametersType : IDENT
                    | Type
-                   | ParameterList COMMA IDENT
-                   | ParameterList COMMA Type
+                   | ParametersType COMMA IDENT
+                   | ParametersType COMMA Type
     """
     if len(p) == 2:
         if isinstance(p[1], str):
@@ -1398,7 +1402,6 @@ def p_Statement(p):
     """
     Statement : Decl
               | SimpleStmt
-              | GotoStmt
               | BreakStmt
               | ContinueStmt
               | FallthroughStmt
@@ -1406,6 +1409,7 @@ def p_Statement(p):
               | IfStmt
               | SwitchStmt
               | ForStmt
+              | ReturnStmt
     """
     p[0] = p[1]
 
@@ -1588,8 +1592,7 @@ def p_ReturnStmt(p):
 
 def p_BreakStmt(p):
     """
-    BreakStmt : BREAK Label
-                | BREAK
+    BreakStmt : BREAK 
     """
     if len(p) == 2:
         p[0] = BreakNode()
@@ -1602,8 +1605,7 @@ def p_BreakStmt(p):
 
 def p_ContinueStmt(p):
     """
-    ContinueStmt :  CONTINUE Label
-                    | CONTINUE
+    ContinueStmt :  CONTINUE
     """
     if len(p) == 2:
         p[0] = ContinueNode()

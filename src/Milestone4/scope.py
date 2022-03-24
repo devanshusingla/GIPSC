@@ -209,8 +209,8 @@ class FuncParamNode(Node):
         super().__init__()
         self.dataType = []
         self.addChild(*params)
-        for param in params:
-            self.dataType.append(param.dataType)
+        # for param in params:
+        #     self.dataType.append(param.dataType)
     
     def addChild(self, *children):
         super().addChild(*children)
@@ -221,12 +221,21 @@ class FuncParamNode(Node):
         return "PARAMS"
 
 class FuncReturnNode(Node):
-    def __init__(self, retNode):
+    def __init__(self, params):
         super().__init__()
-        self.addChild(*retNode)
+        self.dataType = []
+        self.addChild(*params)
+        # for param in params:
+        #     self.dataType.append(param.dataType)
     
+    def addChild(self, *children):
+        super().addChild(*children)
+        for child in children:
+            self.dataType.append(child.dataType)
+
     def __str__(self):
         return "RETURN-TYPE"
+
 
 class BlockNode(Node):
     def __init__(self, statements):
