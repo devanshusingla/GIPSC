@@ -1,7 +1,4 @@
-from array import ArrayType
-from tkinter import E
 from typing import List
-from numpy import iscomplexobj
 import ply.yacc as yacc
 import ply.lex as lex
 import lexer
@@ -1030,12 +1027,6 @@ def p_StructType(p):
     StructType : STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct 
     """
     p[0] = StructType(p[4])
-    p[0].dataType = {}
-
-    for i, item in enumerate(p[4]):
-        p[0].dataType[i] = item.dataType
-
-    p[0].dataType['name'] = 'struct'
 
 def p_BeginStruct(p):
     """
@@ -1056,7 +1047,7 @@ def p_FieldDeclMult(p):
     if len(p) == 1:
         return []
     else:
-        p[1].append(p[2])
+        p[1].extend(p[2])
         p[0] = p[1]
 
 
@@ -1067,25 +1058,14 @@ def p_FieldDecl(p):
               | EmbeddedField
     """
     if len(p) == 2:
-        p[0] = [StructFieldType(None, p[1], None)]
-        if isinstance(p[1], str):
-            p[0].dataType['baseType'] = p[1]
-            p[0].dataType['level'] = 0
-        else:
-            p[0].dataType = p[1].dataType 
+        p[0] = [StructFieldType(p[1], p[1])]
 
     elif len(p) == 3:
-        if isinstance(p[1], List):
-            p[0] = []
-            for key in p[1]:
-                p[0].append(StructFieldType(key, p[2], None))
-                if isinstance(p[2], str):
-                    p[0].dataType.append({'baseType': p[2], 'level' : 0, 'field': key})   
-                else:
-                    p[0].dataType.append(p[2].dataType)
-                    p[0].dataType[-1]['field'] = key         
-                    
-    p[0].dataType['name'] = 'field'
+        p[0] = []
+        if isinstance(p[2], str):
+            p[2] = stm.findType(p[2])
+        for key in p[1]:
+            p[0].append(StructFieldType(key, p[2], None))
     
 
 def p_EmbeddedField(p):
@@ -1094,8 +1074,13 @@ def p_EmbeddedField(p):
                   | IDENT
     """
     if len(p) == 2:
-        p[0] = p[1]
+        t = stm.findType(p[1])
+        t.label = p[1]
+        p[0] = t
     else:
+        t = stm.findType(p[2])
+        t.label = p[2]
+        p[2] = t
         p[0] = PointerType(p[2])
         p[0].dataType['baseType'] = p[2]
         p[0].dataType['level'] = 1
@@ -1205,19 +1190,16 @@ def p_BoolLit(p):
 # TODO: Remove arguments
 def p_CompositeLit(p):
     """
-    CompositeLit : StructType Arguments
+    CompositeLit : StructType LiteralValue
                  | ArrayType LiteralValue
                  | SliceType LiteralValue
                  | MapType LiteralValue
                  | IDENT LiteralValue
     """
-    p[0] = LitNode(label = None)
     if not isinstance(p[1], str):
-        p[0].dataType = p[1].dataType
-    else:
-        p[0].dataType['name'] = p[1]
-        p[0].dataType['baseType'] = p[1]
-        p[0].dataType['level'] = 0
+        p[1] = stm.findType(p[1])
+    
+    p[0] = CompositeLitNode(p[1], p[2])
 
     # if isinstance(p[1], BrackType):
     #     return p[2]
@@ -1246,7 +1228,6 @@ def p_ElementList(p):
     if len(p) == 2:
         p[0] = [p[1]]
     else:
-        # print(p[1], p[3])
         p[1].append(p[3])
         p[0] = p[1]
 

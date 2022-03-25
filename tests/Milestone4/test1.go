@@ -8,4 +8,5 @@ func Print(x int) {}
 
 func main() {
 	c := a[0] + a[1]
+	d := "praveen ki pp cchoti"
 }
