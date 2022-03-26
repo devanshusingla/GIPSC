@@ -1,0 +1,12 @@
+Handling type of IDENT PERIOD IDENT in  -> Done 
+Constant folding inside p_Expr
+Handling of unary expressions corresponding to addressing and dereferencing -> Done
+Correct ParameterDecl grammar
+Handle Type label (to be done in ParameterDecl, Result and ParameterList after p_Type is done) 
+TypeT rules not done in p_Arguments
+uint type checking -> Done
+tags in structType -> Done
+typechecking for & operator
+negative indices in array
+Type arguments in p_Arguments
+Add definitions of builtin functions
