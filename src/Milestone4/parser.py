@@ -1,79 +1,18 @@
-from array import ArrayType
-from tkinter import E
 from typing import List
-from numpy import iscomplexobj
+
+from numpy import source
 import ply.yacc as yacc
 import ply.lex as lex
 import lexer
 from lexer import *
 import sys
-# from scope import *
+import pprint
 from scope import *
 from utils import *
 
 tokens=lexer.tokens
 tokens.remove('COMMENT')
-# tokens.append('MULTP')
-
 precedence = (
-    # ('left', 'CONV'),
-# COMPACT = False
-# def get_value_p(p):
-#     value = [str(sys._getframe(1).f_code.co_name)[2:]]
-#     # value = []
-#     for i in range(1, len(p)):
-#         if isinstance(p[i], str):
-#             if p[i] in ignored_tokens:
-#                 continue
-#             if p[i] not in non_terminals:
-#                 value.append([p[i]])
-#         elif len(p[i]) > 0:
-#             if COMPACT:
-#                 if p[i][0] == value[0]:
-#                     value.extend(p[i][1:])
-#                 else:
-#                     value.append(p[i])
-#             else:
-#                 value.append(p[i])
-#     if not isinstance(value, str) and COMPACT:
-#         if len(value) == 2:
-#             return value[1]
-#         if len(value) == 1:
-#             return []
-#         if len(value) > 2:
-#             if value[0] == 'Expr':
-#                 value = value[2] + [value[1]] + value[3:]
-#             elif value[0] == 'UnaryExpr':
-#                 value = value[1] + [value[2]]
-#                 # print(value, value[2] + [value[1]] + value[3:])
-#     return value
-    
-# def p_SourceFile(p):
-#     """
-#     SourceFile : SetupContext PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult
-#     """(p)
-#     endContext()
-
-# def p_SetupContext(p):
-#     """
-#     SetupContext :
-#     """    
-#     p[0] = []
-#     setupContext()
-
-# def p_BeginScope(p):
-#     """
-#     : 
-#     """
-#     p[0] = []
-#     beginScope()
-
-# def p_EndScope(p):
-#     """
-#     : 
-#     """
-#     p[0] = []
-#    ()
     ('left', 'LBRACE'),
     ('right', 'ASSIGN', 'DEFINE'),
     ('left','IDENT'),
@@ -399,8 +338,6 @@ def p_VarSpec(p):
             if len(p[length]) > 1:
                 raise TypeError("Function with more than one return values should be assigned alone!")
 
-        print(p[1], expression_datatypes)
-
         if len(p[1]) != len(expression_datatypes):
             raise NameError("Assignment is not balanced", p.lineno(1))
         
@@ -417,7 +354,6 @@ def p_VarSpec(p):
             
             for i, expression in enumerate(expression_datatypes):
                
-                #print("Datatypes being compared:", dt, temp)
                 if not isTypeCastable(stm, dt, expression):
                     raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
 
@@ -591,7 +527,6 @@ def p_IdentifierList(p):
     if len(p) > 2:
         p[0].extend(p[3])
 
-    print("p[0]: ", p[0])
 
 ###################################################################################
 #####################                                        ######################
@@ -606,9 +541,7 @@ def p_ExpressionList(p):
     """
     if len(p) == 2:
         p[0] = [p[1]]
-        # print(p[1])
-        # if isinstance(p[1], FuncCallNode):
-            # print(stm.functions[p[1].label].dataType)
+
     else:
         p[1].append(p[3])
         p[0] = p[1]
@@ -642,8 +575,6 @@ def p_Expr(p):
     else:
         dt1 = p[1].dataType
         dt2 = p[3].dataType
-
-        print(p[1].label, p[3].label)
 
         if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
             raise TypeError("Incompatible operand types", p.lineno(1))
@@ -816,10 +747,6 @@ def p_PrimaryExpr(p):
             dt = None
             if info['return'] != None:
                 dt = info['return']
-
-            print("paramlist: ", paramList, p[2])
-            for i in p[2]:
-                print(i.label)
 
             if len(paramList) != len(p[2]):
                 raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + len(paramList) + " number of arguments but got " + len(p[2]), p.lineno(1))
@@ -1246,7 +1173,6 @@ def p_ElementList(p):
     if len(p) == 2:
         p[0] = [p[1]]
     else:
-        # print(p[1], p[3])
         p[1].append(p[3])
         p[0] = p[1]
 
@@ -1312,7 +1238,6 @@ def p_FuncSig(p):
     """
     FuncSig : FUNC FunctionName Signature
     """
-    print("sig: ", p[3][0].dataType)
     if p[3][1] == None:
         if p[3][0] == None:
             stm.addFunction(p[2].label, {"params": [] , "return": [], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
@@ -1891,19 +1816,13 @@ def p_BeginFor(p):
     """
     BeginFor : 
     """
-    # print("For Begins")
-    # beginScope()
-    # context['forDepth'] += 1
-    # Add two labels to be used
-    # for code generation
+    
 
 def p_EndFor(p):
     """
     EndFor : 
     """
-    # print("For Ends")
-#     context['forDepth'] -= 1
-#    ()
+    
 
 def p_Condition(p):
     """
@@ -1967,18 +1886,13 @@ def p_RangeList(p):
 def p_error(p):
     print("Syntax Error: ", p)
 
-
 ###################################################################################
 #####################                                        ######################
 ######                           BUILD LEXER                               ########
 #####################                                        ######################
 ###################################################################################
 
-def parse():
-    lexer = lex.lex()
-
-    parser, grammar = yacc.yacc(debug = True)
-
+def genAutomaton(parser):
     path_to_root = os.environ.get('PATH_TO_ROOT')
     milestone = os.environ.get('MILESTONE')
     if path_to_root is not None:
@@ -1990,17 +1904,28 @@ def parse():
             for key, val in parser.goto.items():
                 f.writelines(f'{key} : {val}\n')
 
-    non_terminals = grammar.Nonterminals
-
+def parse(parser, lexer, source_code):
     # Trying to handle input
-    with open(sys.argv[1], 'r') as f:
-        import pprint
-        out = parser.parse(f.read(), lexer = lexer)
-        if out is None:
-            f.close()
-            sys.exit(1)
-        output_file = sys.argv[1][:-2] + "output"
-        with open(output_file, 'w') as fout:
-            pprint.pprint(out, width=10, stream=fout)
-    
-    return ast
+    return parser.parse(source_code, lexer = lexer)
+
+def writeOutput(parser_out, output_file):
+    if parser_out is None:
+        raise ValueError("Invalid output from parser.")
+    with open(output_file, 'w') as fout:
+        pprint.pprint(parser_out, width=10, stream=fout)
+
+def buildAndCompile():
+    source_code = None
+    path_to_source_code = sys.argv[1]
+    output_file = path_to_source_code[:-2] + "output"
+    with open(path_to_source_code, 'r') as f:
+        source_code = f.read()
+    lexer = lex.lex()
+    parser, _ = yacc.yacc(debug = True)
+    genAutomaton(parser)
+    parser_out = parse(parser, lexer, source_code)
+    writeOutput(parser_out, output_file)
+    return parser_out
+
+if __name__ == '__main__':
+    buildAndCompile()

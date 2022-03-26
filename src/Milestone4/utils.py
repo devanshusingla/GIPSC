@@ -1,5 +1,36 @@
 from scope import *
 
+# COMPACT = False
+# def get_value_p(p):
+#     value = [str(sys._getframe(1).f_code.co_name)[2:]]
+#     # value = []
+#     for i in range(1, len(p)):
+#         if isinstance(p[i], str):
+#             if p[i] in ignored_tokens:
+#                 continue
+#             if p[i] not in non_terminals:
+#                 value.append([p[i]])
+#         elif len(p[i]) > 0:
+#             if COMPACT:
+#                 if p[i][0] == value[0]:
+#                     value.extend(p[i][1:])
+#                 else:
+#                     value.append(p[i])
+#             else:
+#                 value.append(p[i])
+#     if not isinstance(value, str) and COMPACT:
+#         if len(value) == 2:
+#             return value[1]
+#         if len(value) == 1:
+#             return []
+#         if len(value) > 2:
+#             if value[0] == 'Expr':
+#                 value = value[2] + [value[1]] + value[3:]
+#             elif value[0] == 'UnaryExpr':
+#                 value = value[1] + [value[2]]
+#                 # print(value, value[2] + [value[1]] + value[3:])
+#     return value
+
 def getBaseType(stm, dt):
     curr = dt
     
@@ -24,12 +55,9 @@ def isOrdered(dt):
     return False
     
 def checkBinOp(stm, dt1, dt2, binop, firstchar):
-    print("Old: ", dt1, dt2)
     
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
-
-    print("New: ", dt1, dt2)
 
     if not isinstance(dt1, str):
         if 'baseType' in dt1:
@@ -240,7 +268,6 @@ def isTypeCastable(stm, dt1, dt2):
         if (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float"):
             return True
         return False
-    print("\n\n\n\n",dt1, dt2, "\n\n\n\n")
 
     if isinstance(dt1, str) or isinstance(dt2, str):
         return False

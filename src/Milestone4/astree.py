@@ -1,16 +1,16 @@
-from parser import parse
+from parser import buildAndCompile
+import sys
 
-ast = parse()
+ast = buildAndCompile()
+path_to_source_file = sys.argv[1][:-3]
 node_ids = [f'\t0 [label={ast}];']
-with open("test.dot", 'w') as f:
+print(f"Saving to {path_to_source_file}.dot ...")
+with open(f"{path_to_source_file}.dot", 'w') as f:
     f.write("digraph G {\n")
     def dfs(node, id):
         global node_ids
-        # print(node_ids)
         if hasattr(node, 'children') and node.children is not None:
-            # print(f'{node.children}')
             for c in node.children:
-                # print(c)
                 node_ids.append(f'\t{len(node_ids)} [label="{c}"];')
                 f.write(f'\t{id} -> {len(node_ids)-1};\n')
                 dfs(c, len(node_ids)-1)
