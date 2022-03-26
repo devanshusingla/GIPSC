@@ -145,7 +145,7 @@ Rule 135   ImagLit -> IMAG
 Rule 136   RuneLit -> RUNE
 Rule 137   StringLit -> STRING
 Rule 138   BoolLit -> BOOL
-Rule 139   CompositeLit -> StructType Arguments
+Rule 139   CompositeLit -> StructType LiteralValue
 Rule 140   CompositeLit -> ArrayType LiteralValue
 Rule 141   CompositeLit -> SliceType LiteralValue
 Rule 142   CompositeLit -> MapType LiteralValue
@@ -337,7 +337,7 @@ error                :
 Nonterminals, with rules where they appear
 
 AliasDecl            : 40
-Arguments            : 83 139
+Arguments            : 83
 ArrayLength          : 107
 ArrayType            : 98 140
 Assignment           : 191
@@ -397,7 +397,7 @@ Key                  : 150
 KeyType              : 121
 KeyedElement         : 147 148
 Lit                  : 77
-LiteralValue         : 140 141 142 143 152 154
+LiteralValue         : 139 140 141 142 143 152 154
 MapType              : 101 142
 PackageClause        : 1
 ParameterDecl        : 166 167
@@ -946,7 +946,7 @@ state 31
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -1531,7 +1531,7 @@ state 72
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -1746,7 +1746,7 @@ state 76
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -1885,7 +1885,7 @@ state 78
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -2010,7 +2010,7 @@ state 80
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -2146,7 +2146,7 @@ state 82
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -2225,7 +2225,7 @@ state 83
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -2304,7 +2304,7 @@ state 84
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -2383,7 +2383,7 @@ state 85
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -2462,7 +2462,7 @@ state 86
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -2665,7 +2665,7 @@ state 89
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -3210,14 +3210,14 @@ state 99
 
 state 100
 
-    (139) CompositeLit -> StructType . Arguments
-    (92) Arguments -> . LPAREN RPAREN
-    (93) Arguments -> . LPAREN ExpressionList RPAREN
-    (94) Arguments -> . LPAREN ExpressionList COMMA RPAREN
+    (139) CompositeLit -> StructType . LiteralValue
+    (144) LiteralValue -> . LBRACE ElementList COMMA RBRACE
+    (145) LiteralValue -> . LBRACE ElementList RBRACE
+    (146) LiteralValue -> . LBRACE RBRACE
 
-    LPAREN          shift and go to state 207
+    LBRACE          shift and go to state 200
 
-    Arguments                      shift and go to state 209
+    LiteralValue                   shift and go to state 209
 
 state 101
 
@@ -3617,7 +3617,7 @@ state 112
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -3751,7 +3751,7 @@ state 117
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -4036,7 +4036,7 @@ state 131
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -4379,7 +4379,7 @@ state 144
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -4663,7 +4663,7 @@ state 150
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -4763,7 +4763,7 @@ state 151
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -4863,7 +4863,7 @@ state 152
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -4963,7 +4963,7 @@ state 153
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5063,7 +5063,7 @@ state 154
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5163,7 +5163,7 @@ state 155
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5263,7 +5263,7 @@ state 156
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5363,7 +5363,7 @@ state 157
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5463,7 +5463,7 @@ state 158
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5563,7 +5563,7 @@ state 159
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5663,7 +5663,7 @@ state 160
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5763,7 +5763,7 @@ state 161
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5863,7 +5863,7 @@ state 162
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -5963,7 +5963,7 @@ state 163
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -6063,7 +6063,7 @@ state 164
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -6163,7 +6163,7 @@ state 165
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -6263,7 +6263,7 @@ state 166
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -6363,7 +6363,7 @@ state 167
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -6463,7 +6463,7 @@ state 168
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -6590,7 +6590,7 @@ state 169
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -6823,7 +6823,7 @@ state 173
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -6924,7 +6924,7 @@ state 174
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -7407,7 +7407,7 @@ state 190
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -7884,7 +7884,7 @@ state 200
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -8200,7 +8200,7 @@ state 206
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -8305,7 +8305,7 @@ state 207
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -8409,51 +8409,51 @@ state 208
 
 state 209
 
-    (139) CompositeLit -> StructType Arguments .
+    (139) CompositeLit -> StructType LiteralValue .
 
-    PERIOD          reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    LBRACK          reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    LPAREN          reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    INC             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    DEC             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    LOR             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    LAND            reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    EQL             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    NEQ             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    LSS             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    LEQ             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    GTR             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    GEQ             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    ADD             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    SUB             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    OR              reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    XOR             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    MUL             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    QUO             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    REM             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    SHL             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    SHR             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    AND             reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    AND_NOT         reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    SEMICOLON       reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    COMMA           reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    ASSIGN          reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    ADD_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    SUB_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    OR_ASSIGN       reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    XOR_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    MUL_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    QUO_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    REM_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    AND_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    SHL_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    SHR_ASSIGN      reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    AND_NOT_ASSIGN  reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    LBRACE          reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    RPAREN          reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    RBRACK          reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    COLON           reduce using rule 139 (CompositeLit -> StructType Arguments .)
-    RBRACE          reduce using rule 139 (CompositeLit -> StructType Arguments .)
+    PERIOD          reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    LBRACK          reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    LPAREN          reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    INC             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    DEC             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    LOR             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    LAND            reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    EQL             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    NEQ             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    LSS             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    LEQ             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    GTR             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    GEQ             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    ADD             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    SUB             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    OR              reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    XOR             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    MUL             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    QUO             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    REM             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    SHL             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    SHR             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    AND             reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    AND_NOT         reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    SEMICOLON       reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    COMMA           reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    ASSIGN          reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    ADD_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    SUB_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    OR_ASSIGN       reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    XOR_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    MUL_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    QUO_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    REM_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    AND_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    SHL_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    SHR_ASSIGN      reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    AND_NOT_ASSIGN  reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    LBRACE          reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    RPAREN          reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    RBRACK          reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    COLON           reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
+    RBRACE          reduce using rule 139 (CompositeLit -> StructType LiteralValue .)
 
 
 state 210
@@ -8819,7 +8819,7 @@ state 221
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -8932,7 +8932,7 @@ state 223
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -9147,7 +9147,7 @@ state 233
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -9260,7 +9260,7 @@ state 235
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -9541,7 +9541,7 @@ state 249
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -11556,7 +11556,7 @@ state 283
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -11925,7 +11925,7 @@ state 295
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -12515,7 +12515,7 @@ state 332
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -12617,7 +12617,7 @@ state 333
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -12746,7 +12746,7 @@ state 335
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -12956,7 +12956,7 @@ state 342
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -13074,7 +13074,7 @@ state 344
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -13234,7 +13234,7 @@ state 346
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -13388,7 +13388,7 @@ state 348
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -13635,7 +13635,7 @@ state 352
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -13928,7 +13928,7 @@ state 366
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -14239,7 +14239,7 @@ state 375
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -14601,7 +14601,7 @@ state 384
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -14758,11 +14758,10 @@ state 387
     (111) StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE . EndStruct
     (113) EndStruct -> .
 
-    LPAREN          reduce using rule 113 (EndStruct -> .)
+    LBRACE          reduce using rule 113 (EndStruct -> .)
     ASSIGN          reduce using rule 113 (EndStruct -> .)
     SEMICOLON       reduce using rule 113 (EndStruct -> .)
     RPAREN          reduce using rule 113 (EndStruct -> .)
-    LBRACE          reduce using rule 113 (EndStruct -> .)
     RBRACK          reduce using rule 113 (EndStruct -> .)
     COMMA           reduce using rule 113 (EndStruct -> .)
 
@@ -14951,7 +14950,7 @@ state 399
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -15110,7 +15109,7 @@ state 405
     (130) BasicLit -> . RuneLit
     (131) BasicLit -> . StringLit
     (132) BasicLit -> . BoolLit
-    (139) CompositeLit -> . StructType Arguments
+    (139) CompositeLit -> . StructType LiteralValue
     (140) CompositeLit -> . ArrayType LiteralValue
     (141) CompositeLit -> . SliceType LiteralValue
     (142) CompositeLit -> . MapType LiteralValue
@@ -15262,11 +15261,10 @@ state 408
 
     (111) StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .
 
-    LPAREN          reduce using rule 111 (StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .)
+    LBRACE          reduce using rule 111 (StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .)
     ASSIGN          reduce using rule 111 (StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .)
     SEMICOLON       reduce using rule 111 (StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .)
     RPAREN          reduce using rule 111 (StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .)
-    LBRACE          reduce using rule 111 (StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .)
     RBRACK          reduce using rule 111 (StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .)
     COMMA           reduce using rule 111 (StructType -> STRUCT BeginStruct LBRACE FieldDeclMult RBRACE EndStruct .)
 

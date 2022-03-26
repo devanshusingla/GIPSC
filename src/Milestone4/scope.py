@@ -3,8 +3,14 @@ from enum import Enum, auto
 from mimetypes import init
 from re import L
 
+from pyparsing import ParseExpression
+
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64' 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
+compositeTypes = ['struct', 'array', 'slice', 'map']
+
+def zeroLit(dataType):
+    return 0
 
 class ScopeTableError(Exception):
     pass
@@ -176,10 +182,137 @@ class LitNode(Node):
     def __str__(self):
         if self.dataType == "string":
             return f'\\\"{self.label}\\\"'
-        elif self.label != None:
-            return self.label
         else:
-            return "COMPOSITE"
+            return self.label
+
+class CompositeLitNode(Node):
+    def  __init__(self, dataType, elList):
+        super().__init__()
+        self.dataType = dataType
+        self.children = []
+        if not isinstance(elList, list):
+            raise NameError("Expected List of values")
+        if self.dataType.name == 'struct':
+            hasKey = False
+            hasNotKey = False
+            for el in elList:
+                if isinstance(KeyValNode):
+                    hasKey = True
+                else:
+                    hasNotKey = True
+            
+            if hasKey and hasNotKey:
+                raise NameError("all elements should have key or not have key")
+            
+            if hasKey:
+                kv = {}
+                for el in elList:
+                    if el.key in kv:
+                        raise NameError("field key repeated")
+                    if el.key not in dataType.keyTypes:
+                        raise NameError("Unknown field key")
+                    kv[el.key] = el.val
+                
+                for key, t in dataType.keyTypes.items():
+                    if key in kv:
+                        val = kv[key]
+                    else:
+                        val = zeroLit(t)
+                    if t.name in compositeTypes:
+                        self.children.append(StructFieldNode(key, CompositeLitNode(t, val)))
+                    else:
+                        self.children.append(StructFieldNode(key, LitNode(val, t)))
+            
+            else:
+                if len(elList) != len(dataType.keyTypes):
+                    raise NameError("too few arguments for structure")
+                for (key, t), val in zip(dataType.keyTypes.items(), elList):
+                    if t.name in compositeTypes:
+                        self.children.append(StructFieldNode(key, CompositeLitNode(t, val)))
+                    else:
+                        self.children.append(StructFieldNode(key, LitNode(val, t)))
+
+        elif self.dataType.name == 'array':
+            if len(elList) > dataType.length:
+                raise "Too many arguments"
+            vis = [False]*dataType.length
+            self.children = [None]*dataType.length
+            prevKey = -1
+            for el in elList:
+                if isinstance(el, KeyValNode):
+                    if not isinstance(el.key, int):
+                        raise NameError("index should be of type int for arrays")
+                    prevKey = el.key
+                else:
+                    prevKey += 1
+
+                if prevKey >= dataType.length:
+                    raise "index overflow"
+                if vis[prevKey]:
+                    raise NameError("Duplicate index in array")
+                vis[prevKey] = True
+                if dataType.baseType in compositeTypes:
+                    self.children[prevKey] = CompositeLitNode(dataType.baseType, el)
+                else:
+                    self.children[prevKey] = LitNode(el, dataType.baseType)
+
+            for i in range(dataType.length):
+                if not vis[i]:
+                    self.children[i] = zeroLit(dataType.baseType)
+
+        elif self.dataType.name == 'slice':
+            vis = []
+            self.children = []
+            prevKey = -1
+            for el in elList:
+                if isinstance(el, KeyValNode):
+                    if not isinstance(el.key, int):
+                        raise NameError("index should be of type int for arrays")
+                    prevKey = el.key
+                else:
+                    prevKey += 1
+                
+                if prevKey >= len(self.children):
+                    self.children.extend([None]*(prevKey+1-len(self.children)))
+                    self.vis.extend([False]*(prevKey+1-len(self.children)))
+                if vis[prevKey]:
+                    raise NameError("Duplicate index in array")
+                vis[prevKey] = True
+                if dataType.baseType in compositeTypes:
+                    self.children[prevKey] = CompositeLitNode(dataType.baseType, el)
+                else:
+                    self.children[prevKey] = LitNode(el, dataType.baseType)
+
+            for i in range(len(self.children)):
+                if not vis[i]:
+                    self.children[i] = zeroLit(dataType.baseType)
+            
+
+        elif self.dataType.name == 'map':
+            pass
+                    
+    
+    def __str__(self):
+        if self.dataType.name == 'struct':
+            return f'STRUCT'
+        elif self.dataType.name == 'array':
+            return f'ARRAY[{self.dataType.length}]'
+        elif self.dataType.name == 'slice':
+            return f'SLICE[{self.dataType.length}:{self.dataType.capacity}]'
+        elif self.dataType.name == 'map':
+            return f'MAP[{self.KeyType.name}:{self.ValueType.name}]'
+
+class StructFieldNode(Node):
+    def __init__(self, key, type, dataType):
+        super().__init__()
+        self.key = key
+        self.type = type
+        self.dataType = dataType
+        self.addChildren(key, type)
+
+    def __str__(self):
+        return ":"
+
 class OpNode(Node):
     def __init__(self, operator):
         super().__init__()
@@ -191,6 +324,8 @@ class OpNode(Node):
 class KeyValNode(Node):
     def __init__(self, key, val):
         super().__init__()
+        self.key = key.label
+        self.val = val
         self.children.append(key, val)
     
     def __str__(self):
@@ -490,17 +625,25 @@ class MapType(Type):
         return f'MAP'
 
 class StructType(Type):
-    def __init__(self, elList):
+    def __init__(self, fieldList):
         super().__init__()
-        self.addChild(elList)
+        self.dataType = {'name': "struct", 'keyTypes': {}}
+        for field in fieldList:
+            if field.dataType.key in self.dataType.keyTypes:
+                raise NameError("Can not have same key names in two fields of structure")
+            else:
+                self.dataType.keyTypes[field.dataType.key] = field.dataType.dataType
+
+        self.addChild(*fieldList)
     
     def __str__(self):
         return f'STRUCT'
 
 class StructFieldType(Type):
-    def __init__(self, key, tag, dataType = {}):
+    def __init__(self, key, type):
         super().__init__()
-        self.addChild(key, dataType, tag)
+        self.dataType = {'name': "field", 'key': key.label, 'dataType': type.dataType}
+        self.addChild(key, type)
     
     def __str__(self):
         return f':'
@@ -532,6 +675,7 @@ class ParamType(Type):
     def __str__(self):
         return f'='
 
+## Exceptions
 class ValueNotUsedError(Exception):
     def __init__(self, message):
         super().__init__()
@@ -547,3 +691,8 @@ class LogicalError(Exception):
 
     def __str__(self):
         return repr(self.message)
+
+## Wrapper class
+class Wrapper:
+    def __init__(self, val):
+        self.val = val
