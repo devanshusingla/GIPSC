@@ -318,3 +318,79 @@ def checkTypePresence(stm, dt):
             if flag == -1:
                 return -1
         return 1
+
+def Not(operand, dataType: str):
+    if dataType.startswith('float'):
+        operand = int(operand)
+    known_bits = dataType[-2:].isnumeric()
+    bits = (1<<32) - 1
+    if known_bits:
+        bits = (1<<(int(dataType[-2]))) - 1
+    if dataType.startswith('float'):
+        return float(bits^operand)
+    else:
+        return bits^operand
+
+def Operate(operator, operand1, operand2, lineno, dt2):
+    # Operator is a string while operands are values
+    # TODO : Check for overflow issues
+    # Do type checks
+    if operand1 == None:
+        if operator == '^':
+            return Not(operand2, dt2)
+        else:
+            operand1 = 0
+    if operator == '+':
+        return operand1 + operand2  
+    elif operator == '-':
+        return operand1 - operand2
+    elif operator == '*':
+        return operand1 + operand2  
+    elif operator == '/':
+        if operand2 == 0:
+            raise LogicalError(f"{lineno}: Trying to divide by 0.")
+        return operand1 - operand2
+    elif operator == '||':
+        return 'true' if operand1 == 'true' or operand2 == 'true' else 'false'  
+    elif operator == '&&':
+        return 'true' if operand1 == 'true' and operand2 == 'true' else 'false'
+    elif operator == '==':
+        return operand1 == operand2  
+    elif operator == '!=':
+        return operand1 != operand2
+    elif operator == '<':
+        return 'true' if operand1 < operand2 else 'false'  
+    elif operator == '<=':
+        return 'true' if operand1 < operand2 else 'false'
+    elif operator == '>':
+        return 'true' if operand1 < operand2 else 'false' 
+    elif operator == '>=':
+        return 'true' if operand1 < operand2 else 'false'
+    elif operator == '|':
+        return operand1 | operand2  
+    elif operator == '^':
+        return operand1 ^ operand2
+    elif operator == '%':
+        if operand2 <= 0:
+            raise LogicalError(f"{lineno}: Trying to get remainder with non-positive divisor.")
+        return operand1 % operand2  
+    elif operator == '<<':
+        return operand1 << operand2
+    elif operator == '>>':
+        return operand1 >> operand2  
+    elif operator == '&':
+        return operand1 & operand2
+    elif operator == '&^':
+        return operand1 & Not(operand2, dt2)
+    elif operator == '!':
+        return 'false' if operand2 == 'true' else 'true'
+    
+# def getComplex(val):
+#     if '+' not in val:
+#         if 'i' not in val:
+#             return (float(val), 0.0)
+#         else:
+#             return (0.0, float(val.strip('i')))
+#     else:
+#         parts = float.split('+')
+#         return (float(parts[0]), float(parts[1].strip('i')))

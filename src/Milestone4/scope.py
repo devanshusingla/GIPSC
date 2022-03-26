@@ -1,10 +1,3 @@
-from curses import init_color
-from enum import Enum, auto
-from mimetypes import init
-from re import L
-
-from pyparsing import ParseExpression
-
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64' 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
@@ -170,10 +163,12 @@ class IdentNode(Node):
         return f'{self.label}'
 
 class LitNode(Node):
-    def __init__(self, label, dataType = None):
+    def __init__(self, label, dataType = None, isConst = False, val=None):
         super().__init__()
         self.children = None
         self.dataType = dataType
+        self.isConst = isConst
+        self.val = val
         if self.dataType == "string":
             self.label = label[1:-1]
         else:
@@ -183,16 +178,19 @@ class LitNode(Node):
         if self.dataType == "string":
             return f'\\\"{self.label}\\\"'
         else:
+            if not isinstance(self.label, str):
+                print(self.label.__dict__)
+                return "LABEL"
             return self.label
 
 class CompositeLitNode(Node):
-    def  __init__(self, dataType, elList):
+    def  __init__(self, compositeLitType, elList):
         super().__init__()
-        self.dataType = dataType
+        self.dataType = compositeLitType.dataType
         self.children = []
         if not isinstance(elList, list):
             raise NameError("Expected List of values")
-        if self.dataType.name == 'struct':
+        if self.dataType['name'] == 'struct':
             hasKey = False
             hasNotKey = False
             for el in elList:
@@ -209,11 +207,11 @@ class CompositeLitNode(Node):
                 for el in elList:
                     if el.key in kv:
                         raise NameError("field key repeated")
-                    if el.key not in dataType.keyTypes:
+                    if el.key not in self.dataType.keyTypes:
                         raise NameError("Unknown field key")
                     kv[el.key] = el.val
                 
-                for key, t in dataType.keyTypes.items():
+                for key, t in self.dataType.keyTypes.items():
                     if key in kv:
                         val = kv[key]
                     else:
@@ -224,19 +222,19 @@ class CompositeLitNode(Node):
                         self.children.append(StructFieldNode(key, LitNode(val, t)))
             
             else:
-                if len(elList) != len(dataType.keyTypes):
+                if len(elList) != len(self.dataType.keyTypes):
                     raise NameError("too few arguments for structure")
-                for (key, t), val in zip(dataType.keyTypes.items(), elList):
+                for (key, t), val in zip(self.dataType.keyTypes.items(), elList):
                     if t.name in compositeTypes:
                         self.children.append(StructFieldNode(key, CompositeLitNode(t, val)))
                     else:
                         self.children.append(StructFieldNode(key, LitNode(val, t)))
 
-        elif self.dataType.name == 'array':
-            if len(elList) > dataType.length:
+        elif self.dataType['name'] == 'array':
+            if len(elList) > int(self.dataType['length']):
                 raise "Too many arguments"
-            vis = [False]*dataType.length
-            self.children = [None]*dataType.length
+            vis = [False]*self.dataType['length']
+            self.children = [None]*self.dataType['length']
             prevKey = -1
             for el in elList:
                 if isinstance(el, KeyValNode):
@@ -246,21 +244,21 @@ class CompositeLitNode(Node):
                 else:
                     prevKey += 1
 
-                if prevKey >= dataType.length:
+                if prevKey >= self.dataType['length']:
                     raise "index overflow"
                 if vis[prevKey]:
                     raise NameError("Duplicate index in array")
                 vis[prevKey] = True
-                if dataType.baseType in compositeTypes:
-                    self.children[prevKey] = CompositeLitNode(dataType.baseType, el)
+                if self.dataType['baseType'] in compositeTypes:
+                    self.children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
                 else:
-                    self.children[prevKey] = LitNode(el, dataType.baseType)
+                    self.children[prevKey] = LitNode(el, self.dataType['baseType'])
 
-            for i in range(dataType.length):
+            for i in range(self.dataType['length']):
                 if not vis[i]:
-                    self.children[i] = zeroLit(dataType.baseType)
+                    self.children[i] = zeroLit(self.dataType['baseType'])
 
-        elif self.dataType.name == 'slice':
+        elif self.dataType['name'] == 'slice':
             vis = []
             self.children = []
             prevKey = -1
@@ -278,28 +276,29 @@ class CompositeLitNode(Node):
                 if vis[prevKey]:
                     raise NameError("Duplicate index in array")
                 vis[prevKey] = True
-                if dataType.baseType in compositeTypes:
-                    self.children[prevKey] = CompositeLitNode(dataType.baseType, el)
+                if self.dataType['baseType'] in compositeTypes:
+                    self.children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
                 else:
-                    self.children[prevKey] = LitNode(el, dataType.baseType)
+                    self.children[prevKey] = LitNode(el, self.dataType['baseType'])
 
             for i in range(len(self.children)):
                 if not vis[i]:
-                    self.children[i] = zeroLit(dataType.baseType)
-            
+                    self.children[i] = zeroLit(self.dataType['baseType'])
+            self.dataType['capacity'] = self.dataType['length']
 
-        elif self.dataType.name == 'map':
+        elif self.dataType['name'] == 'map':
+            print("TODO: Map not implemented in CompositeLitNode")
             pass
                     
     
     def __str__(self):
-        if self.dataType.name == 'struct':
+        if self.dataType['name'] == 'struct':
             return f'STRUCT'
-        elif self.dataType.name == 'array':
-            return f'ARRAY[{self.dataType.length}]'
-        elif self.dataType.name == 'slice':
-            return f'SLICE[{self.dataType.length}:{self.dataType.capacity}]'
-        elif self.dataType.name == 'map':
+        elif self.dataType['name'] == 'array':
+            return f'ARRAY[{self.dataType["length"]}]'
+        elif self.dataType['name'] == 'slice':
+            return f'SLICE[{self.dataType["length"]}:{self.dataType["capacity"]}]'
+        elif self.dataType['name'] == 'map':
             return f'MAP[{self.KeyType.name}:{self.ValueType.name}]'
 
 class StructFieldNode(Node):
@@ -381,18 +380,19 @@ class BlockNode(Node):
         return "{}"
 
 class ExprNode(Node):
-    def __init__(self, dataType, label = None, operator = None, isConst = False, isAddressable = False):
+    def __init__(self, dataType, label = None, operator = None, isConst = False, isAddressable = False, val = None):
         super().__init__()
         self.children = []
         self.label = label
         self.dataType = dataType
         self.operator = operator
         self.isConst = isConst # For constant folding
+        self.val = val # For saving the value returned by constant folding
         self.isAddressable = isAddressable
 
     def __str__(self):
         if self.operator is None:
-            return self.label 
+            return self.label
         else:
             return self.operator
 
@@ -609,9 +609,17 @@ class ParenType(Type):
         return f'({x})'
 
 class BrackType(Type):
-    def __init__(self, dataType = {}, length=None):
+    def __init__(self, elementType = {}, length=None):
         super().__init__()
-        self.addChild(length, dataType)
+        # Not storing the node about constant length of array type further
+        self.length = None
+        self.dataType = {
+            'baseType' : elementType
+        }
+        if length:
+            self.dataType['length'] = length.val
+            self.length = length.val
+        self.addChild(elementType, length)
     
     def __str__(self):
         return f'[]'

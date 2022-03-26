@@ -185,7 +185,6 @@ def p_ConstSpec(p):
               | IdentifierList IDENT ASSIGN ExpressionList
               | IdentifierList ASSIGN ExpressionList
     """
-    global stm
     p[0] = []
     length = len(p)-1
 
@@ -205,15 +204,16 @@ def p_ConstSpec(p):
                 count_0+=1
             else:
                 count_1+=1
+        else:
+            expression_datatypes.append(p[length][i].dataType)
     
     if count_1 > 0:
+        raise TypeError(f"{p.lexer.lineno}: Functions with multi-valued return type can't be allowed in single-value context!.")
         if len(p[length]) > 1:
             raise TypeError("Function with more than one return values should be assigned alone!")
 
-    
-
     if len(p[1]) != len(expression_datatypes):
-        raise NameError("Assignment is not balanced", p.lineno(1))
+        raise NameError("Assignment is not balanced", p.lexer.lineno)
     
     dt = {}
 
@@ -230,7 +230,7 @@ def p_ConstSpec(p):
             
             #print("Datatypes being compared:", dt, temp)
             if not isTypeCastable(stm, dt, expression):
-                raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
+                raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lexer.lineno)
 
     if count_1 > 0:
         expr = ExprNode(dataType = dt, label = "ASSIGN", operator = "=")
@@ -254,7 +254,7 @@ def p_ConstSpec(p):
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(ident.label)
         if latest_scope == stm.id or ident.label in stm.functions:
-            raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
+            raise NameError('Redeclaration of identifier: ' + ident, p.lexer.lineno)
         
         if not not_base_type:
             dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
@@ -267,10 +267,16 @@ def p_ConstSpec(p):
             present = stm.findType(stm, dt)
 
         if present == -1:
-            raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
+            raise TypeError('Type not declared/found: ' + dt, p.lexer.lineno)
         else:
+            val = None
             # Add to symbol table
-            stm.add(ident.label, {'dataType': dt, 'isConst' : True})
+            if dt['name'].startswith('int'):
+                val = int(p[length][i].label)
+            elif dt['name'].startswith('float'):
+                val = float(p[length][i].label)
+            ## Write conditions for rune and other types
+            stm.add(ident.label, {'dataType': dt, 'isConst' : True, 'val': val})
             p[1][i].dataType = dt
  
 ###################################################################################
@@ -307,7 +313,7 @@ def p_VarSpec(p):
             | IdentifierList Type
             | IdentifierList IDENT
     """
-    global stm
+    
     p[0] = []
     length = len(p)-1
 
@@ -337,7 +343,7 @@ def p_VarSpec(p):
                 raise TypeError("Function with more than one return values should be assigned alone!")
 
         if len(p[1]) != len(expression_datatypes):
-            raise NameError("Assignment is not balanced", p.lineno(1))
+            raise NameError("Assignment is not balanced", p.lexer.lineno)
         
         dt = {}
 
@@ -353,7 +359,7 @@ def p_VarSpec(p):
             for i, expression in enumerate(expression_datatypes):
                
                 if not isTypeCastable(stm, dt, expression):
-                    raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lineno(1))
+                    raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lexer.lineno)
 
         if count_1 > 0:
             expr = ExprNode(dataType = dt, label = "ASSIGN", operator = "=")
@@ -377,7 +383,7 @@ def p_VarSpec(p):
             # Check redeclaration for identifier list
             latest_scope = stm.getScope(ident.label)
             if latest_scope == stm.id or ident.label in stm.functions:
-                raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
+                raise NameError('Redeclaration of identifier: ' + ident, p.lexer.lineno)
             
             if not not_base_type:
                 dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
@@ -390,7 +396,7 @@ def p_VarSpec(p):
                 present = stm.findType(stm, dt)
 
             if present == -1:
-                raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
+                raise TypeError('Type not declared/found: ' + dt, p.lexer.lineno)
             else:
                 # Add to symbol table
                 stm.add(ident.label, {'dataType': dt, 'isConst' : False})
@@ -406,7 +412,7 @@ def p_VarSpec(p):
             # Check redeclaration for identifier list
             latest_scope = stm.getScope(ident.label)
             if latest_scope == stm.id or ident.label in stm.functions:
-                raise NameError('Redeclaration of identifier: ' + ident, p.lineno(1))
+                raise NameError('Redeclaration of identifier: ' + ident, p.lexer.lineno)
 
             if not not_base_type:
                 dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
@@ -419,7 +425,7 @@ def p_VarSpec(p):
                 present = stm.findType(stm, dt)
 
             if present == -1:
-                raise TypeError('Type not declared/found: ' + dt, p.lineno(1))
+                raise TypeError('Type not declared/found: ' + dt, p.lexer.lineno)
             else:
                 # Add to symbol table
                 stm.add(ident.label, {'dataType': dt, 'isConst' : False})
@@ -455,7 +461,7 @@ def p_AliasDecl(p):
     AliasDecl : IDENT ASSIGN Type
                 | IDENT ASSIGN IDENT
     """ 
-    global stm
+    
     dt = {}
     if isinstance(p[3], str):
         dt['name'] = p[3]
@@ -468,7 +474,7 @@ def p_AliasDecl(p):
         raise TypeError("baseType " + dt + " not declared yet")
 
     if p[1] in stm[stm.id].typeDefs:
-        raise TypeError("Redeclaration of Alias " + p[1], p.lineno(1))
+        raise TypeError("Redeclaration of Alias " + p[1], p.lexer.lineno)
         
     elif isinstance(p[3], str) and p[3] in stm[stm.id].avlTypes:
         stm[stm.id].typeDefs[p[1]] = p[3]
@@ -485,7 +491,7 @@ def p_TypeDef(p):
               | IDENT IDENT
 
     """
-    global stm
+    
     dt = {}
     if isinstance(p[2], str):
         dt['name'] = p[3]
@@ -498,7 +504,7 @@ def p_TypeDef(p):
         raise TypeError("baseType " + dt + " not declared yet")
 
     if p[1] in stm[stm.id].typeDefs:
-        raise TypeError("Redeclaration of Alias " + p[1], p.lineno(1))
+        raise TypeError("Redeclaration of Alias " + p[1], p.lexer.lineno)
         
     elif isinstance(p[2], str) and p[2] in stm[stm.id].avlTypes:
         stm[stm.id].typeDefs[p[1]] = p[2]
@@ -519,7 +525,7 @@ def p_IdentifierList(p):
     IdentifierList : IDENT
                    | IDENT COMMA IdentifierList
     """
-    global stm
+    
     p[0] = [IdentNode(label = p[1], scope = stm.id)]
 
     if len(p) > 2:
@@ -567,7 +573,6 @@ def p_Expr(p):
          | Expr AND Expr
          | Expr AND_NOT Expr
     """
-    global stm
     if len(p) == 2:
         p[0] = p[1]
     else:
@@ -575,15 +580,17 @@ def p_Expr(p):
         dt2 = p[3].dataType
 
         if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
-            raise TypeError("Incompatible operand types", p.lineno(1))
+            raise TypeError("Incompatible operand types", p.lexer.lineno)
 
         dt = getFinalType(stm, dt1, dt2, p[2])
 
         isConst = False
+        val = None
         if isinstance(p[1], ExprNode) and isinstance(p[3], ExprNode) and p[1].isConst and p[3].isConst:
             isConst = True
+            val = Operate(p[2], p[1].val, p[3].val, p.lexer.lineno, p[3].dataType['name'])
 
-        p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label+p[2]+p[3].label, isConst = isConst)
+        p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label+p[2]+p[3].label, isConst = isConst, val=val)
         p[0].addChild(p[1], p[3])
 
 def p_UnaryExpr(p):
@@ -596,7 +603,6 @@ def p_UnaryExpr(p):
             | MUL UnaryExpr
             | AND UnaryExpr
     """
-    global stm
     if len(p) == 2:
         p[0] = p[1]
     else:
@@ -604,9 +610,17 @@ def p_UnaryExpr(p):
         if not isinstance(p[2], str) and hasattr(p[2], 'isAddressable'):
             flag = p[2].isAddressable 
         if not checkUnOp(stm, p[2].dataType, p[1], flag):
-            raise TypeError("Incompatible operand for Unary Expression", p.lineno(1))
-        
-        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1])
+            raise TypeError("Incompatible operand for Unary Expression", p.lexer.lineno)
+        val = None
+        isConst = p[2].isConst
+        if isConst:
+            if p[1] == '*' or p[1] == '&':
+                # Referencing or dereferencing a constant in compile time is not possible
+                isConst = False
+                val = None
+            else:
+                val = Operate(p[1], None, p[2].val, p.lexer.lineno, p[2].dataType['name'])
+        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isConst=isConst, val=val)
         p[0].addChild(p[2])
 
 ###################################################################################
@@ -623,23 +637,22 @@ def p_PrimaryExpr(p):
                 | PrimaryExpr Slice
                 | PrimaryExpr Arguments
     """
-    global stm
+    
     ## PrimaryExpr -> Lit
-    if len(p) == 2 and isinstance(p[1], LitNode):
+    if len(p) == 2 and (isinstance(p[1], LitNode) or isinstance(p[1], CompositeLitNode)):
         p[0] = p[1]
 
     ## Primary Expr -> Ident
     elif (len(p) == 2):
-
         # Check declaration
         latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
 
         if latest_scope == 0:
             ## To be checked for global declarations (TODO)
-            print("Expecting global declaration for ",p[1], p.lineno(1))
-                    
-        dt = stm.get(p[1])['dataType']
-        p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True)
+            print("Expecting global declaration for ",p[1], p.lexer.lineno)
+        stm_entry = stm.get(p[1])       
+        dt = stm_entry['dataType']
+        p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
     
     ## Primary Expr -> LPAREN Expr RPAREN
     elif len(p) == 4:
@@ -650,7 +663,7 @@ def p_PrimaryExpr(p):
         ## PrimaryExpr -> PrimaryExpr Selector
         if isinstance(p[2], DotNode):
             if 'name' not in p[1].dataType or p[1].dataType['name'] != 'struct':
-                raise TypeError("Expecting struct type but found different one", p.lineno(1))
+                raise TypeError("Expecting struct type but found different one", p.lexer.lineno)
             
             field = p[2].chidren[0]
             found = False
@@ -663,7 +676,7 @@ def p_PrimaryExpr(p):
                     idx = i
                     
             if not found:
-                raise NameError("No such field found in " + p[1].label, p.lineno(1))                
+                raise NameError("No such field found in " + p[1].label, p.lexer.lineno)                
 
             p[2].addChild(p[1])
             dt = p[2].dataType[idx]
@@ -671,18 +684,18 @@ def p_PrimaryExpr(p):
         ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
             if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'array' and p[1].dataType['name']!= 'map') :
-                raise TypeError("Expecting array or map type but found different one", p.lineno(1))
+                raise TypeError("Expecting array or map type but found different one", p.lexer.lineno)
 
             if p[1].dataType['name'] == 'array':
                 if isinstance(p[2].dataType, str):
                     if not isBasicInteger(p[2].dataType):
-                        raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
+                        raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
                 else:
                     if isinstance(p[2].dataType['baseType'], str) and p[2].dataType['level'] == 0:
                         if not isBasicInteger(p[2].dataType['baseType']):
-                            raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
+                            raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
                     else:
-                        raise TypeError("Index type incorrect", p.lineno(1))
+                        raise TypeError("Index type incorrect", p.lexer.lineno)
 
                 dt = p[1].dataType.copy()
                 dt['level']-=1
@@ -692,7 +705,7 @@ def p_PrimaryExpr(p):
 
             if p[1].dataType['name'] == 'map':
                 if not isTypeCastable(p[2].dataType, p[1].dataType['KeyType']):
-                    raise TypeError("Incorrect type for map " + p.lineno(1))
+                    raise TypeError("Incorrect type for map " + p.lexer.lineno)
                 dt = p[1].dataType['ValueType']
 
             p[2].children[0] = p[1]
@@ -701,36 +714,36 @@ def p_PrimaryExpr(p):
         ## PrimaryExpr -> PrimaryExpr Slice
         elif isinstance(p[2], SliceNode):
             if 'name' not in p[1].dataType or p[1].dataType['name'] != 'slice' :
-                raise TypeError("Expecting a slice type but found different one", p.lineno(1))
+                raise TypeError("Expecting a slice type but found different one", p.lexer.lineno)
 
             if  p[2].lIndexNode != None: 
                 if not isBasicInteger(p[2].lIndexNode.dataType['baseType']):
-                    raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
+                    raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
             
             if  p[2].rIndexNode != None: 
                 if not isBasicInteger(p[2].rIndexNode.dataType['baseType']):
-                    raise TypeError("Index cannot be of type " + p[2].dataType, p.lineno(1))
+                    raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
 
             else:
                 if isinstance(p[2].lIndexNode.dataType, str):
                     if not isBasicInteger(p[2].lIndexNode.dataType):
-                        raise TypeError("Index cannot be of type " + p[2].lIndexNode.dataType, p.lineno(1))
+                        raise TypeError("Index cannot be of type " + p[2].lIndexNode.dataType, p.lexer.lineno)
                 else:
                     if isinstance(p[2].lIndexNode.dataType['baseType'], str) and p[2].lIndexNode.dataType['level'] == 0:
                         if not isBasicInteger(p[2].lIndexNode.dataType):
-                            raise TypeError("Index cannot be of type " + p[2].lIndexNode.dataType, p.lineno(1))
+                            raise TypeError("Index cannot be of type " + p[2].lIndexNode.dataType, p.lexer.lineno)
                     else:
-                        raise TypeError("Index type incorrect", p.lineno(1))
+                        raise TypeError("Index type incorrect", p.lexer.lineno)
                 
                 if isinstance(p[2].rIndexNode.dataType, str):
                     if not isBasicInteger(p[2].rIndexNode.dataType):
-                        raise TypeError("Index cannot be of type " + p[2].rIndexNode.dataType, p.lineno(1))
+                        raise TypeError("Index cannot be of type " + p[2].rIndexNode.dataType, p.lexer.lineno)
                 else:
                     if isinstance(p[2].rIndexNode.dataType['baseType'], str) and p[2].rIndexNode.dataType['level'] == 0:
                         if not isBasicInteger(p[2].rIndexNode.dataType):
-                            raise TypeError("Index cannot be of type " + p[2].rIndexNode.dataType, p.lineno(1))
+                            raise TypeError("Index cannot be of type " + p[2].rIndexNode.dataType, p.lexer.lineno)
                     else:
-                        raise TypeError("Index type incorrect", p.lineno(1))
+                        raise TypeError("Index type incorrect", p.lexer.lineno)
 
             dt = p[1].dataType.copy()
             p[2].children[0] = p[1]
@@ -738,7 +751,7 @@ def p_PrimaryExpr(p):
         ## PrimaryExpr -> PrimaryExpr Arguments
         elif isinstance(p[2], List):
             if p[1].label not in stm.functions:
-                raise NameError("No such function declared ", p.lineno(1))
+                raise NameError("No such function declared ", p.lexer.lineno)
 
             info = stm.functions[p[1].label]
             paramList = info['params']
@@ -747,14 +760,14 @@ def p_PrimaryExpr(p):
                 dt = info['return']
 
             if len(paramList) != len(p[2]):
-                raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + len(paramList) + " number of arguments but got " + len(p[2]), p.lineno(1))
+                raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + len(paramList) + " number of arguments but got " + len(p[2]), p.lexer.lineno)
 
             for i, argument in enumerate(p[2]):
                 dt1 = argument.dataType
                 dt2 = paramList[i]
 
                 if not isTypeCastable(stm, dt1, dt2):
-                    raise TypeError("Type mismatch on argument number: " + i, p.lineno(1))
+                    raise TypeError("Type mismatch on argument number: " + i, p.lexer.lineno)
 
             p[2] = FuncCallNode(p[1], p[2])
         
@@ -905,8 +918,6 @@ def p_SliceType(p):
         
     p[0].dataType['baseType'] = p[3].dataType['baseType']
     p[0].dataType['level'] = p[3].dataType['level'] + 1
-   
-
     p[0].dataType['name'] = 'slice'
 
 ###################################################################################
@@ -917,7 +928,7 @@ def p_ArrayType(p):
     """
     ArrayType : LBRACK ArrayLength RBRACK ElementType
     """
-    p[0] = BrackType(p[2], p[4])
+    p[0] = BrackType(p[4], p[2])
 
     p[0].dataType['baseType'] = p[4].dataType['baseType']
     p[0].dataType['level'] = p[4].dataType['level'] + 1
@@ -928,8 +939,17 @@ def p_ArrayLength(p):
     """
     ArrayLength : Expr
     """
-    p[0] = p[1]
+    if p[1].dataType['name'] != 'int':
+        raise TypeError(f"{p.lexer.lineno}: ArrayLength must be of Integer Type")
+    # Golang requires that array size be constant representable
+    # const int x = 2
+    # var a [x+x]int = [x+x]int{2, 3} works
+    # var int x = 2
+    # var a [x+x]int = [x+x]int{2, 3} doesn't work
+    if p[1].isConst != True:
+        raise TypeError(f"{p.lexer.lineno}: ArrayLength is not a constant.")
 
+    p[0] = p[1]
 
 def p_ElementType(p):
     """
@@ -1076,39 +1096,39 @@ def p_IntLit(p):
     IntLit : INT
     """
     if check_int(p[1]):
-        p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0}, label = p[1])
+        p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0}, label = p[1], isConst=True, val=int(p[1]))
     else:
-        raise ("Integer Overflow detected", p.lineno(1))
+        raise ("Integer Overflow detected", p.lexer.lineno)
 
 def p_FloatLit(p):
     """
     FloatLit : FLOAT
     """
-    p[0] = LitNode(dataType = {'name': 'float64', 'baseType': 'float64', 'level': 0}, label = p[1])
+    p[0] = LitNode(dataType = {'name': 'float64', 'baseType': 'float64', 'level': 0}, label = p[1], isConst=True, val=float(p[1]))
     
 def p_ImagLit(p):
     """
     ImagLit : IMAG
     """
-    p[0] = LitNode(dataType = {'name': 'complex128', 'baseType': 'complex128', 'level': 0}, label = p[1])
+    p[0] = LitNode(dataType = {'name': 'complex128', 'baseType': 'complex128', 'level': 0}, label = p[1], isConst=True, val=float(p[1].strip('i')))
 
 def p_RuneLit(p):
     """
     RuneLit : RUNE
     """
-    p[0] = LitNode(dataType = {'name': 'rune', 'baseType': 'rune', 'level': 0}, label = p[1])
+    p[0] = LitNode(dataType = {'name': 'rune', 'baseType': 'rune', 'level': 0}, label = p[1], isConst=True, val=p[1])
 
 def p_StringLit(p):
     """
     StringLit : STRING
     """
-    p[0] = LitNode(dataType = {'name': 'string', 'baseType': 'string', 'level': 0}, label = p[1])
+    p[0] = LitNode(dataType = {'name': 'string', 'baseType': 'string', 'level': 0}, label = p[1], isConst=True, val=p[1])
 
 def p_BoolLit(p):
     """
     BoolLit : BOOL
     """
-    p[0] = LitNode(dataType = {'name': 'bool', 'baseType': 'bool', 'level': 0}, label = p[1])
+    p[0] = LitNode(dataType = {'name': 'bool', 'baseType': 'bool', 'level': 0}, label = p[1], isConst=True, val = p[1])
 
 ###################################################################################
 ### Composite Literal
@@ -1124,9 +1144,8 @@ def p_CompositeLit(p):
                  | MapType LiteralValue
                  | IDENT LiteralValue
     """
-    if not isinstance(p[1], str):
+    if isinstance(p[1], str):
         p[1] = stm.findType(p[1])
-    
     p[0] = CompositeLitNode(p[1], p[2])
 
     # if isinstance(p[1], BrackType):
@@ -1201,17 +1220,6 @@ def p_FuncDecl(p):
     FuncDecl : FuncSig FunctionBody
              | FuncSig
     """
-    
-    ## Add entry in stm
-    # info = {'params' : [], 'result': []}
-    # for i in range(len(p[3].children)):
-    #     if isinstance(p[3].children[i], ResultNode):
-    #         info['result'].append(p[3].children[i].dataType)
-    #     else:
-    #         info['params'].append([p[3].children[i].label, p[3].children[i].dataType]) 
-
-    # stm.addFunction(p[2].label, info)
-
     ## Make node
     p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
     stm.currentReturnType = None
@@ -1269,7 +1277,7 @@ def p_FunctionName(p):
     """
     ##  Check redeclaration
     if p[1] in stm.functions or stm.getScope(p[1]) >= 0 :
-        raise ("Redeclaration of function " + p[1], p.lineno(1))
+        raise ("Redeclaration of function " + p[1], p.lexer.lineno)
 
     p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
 
@@ -1485,7 +1493,7 @@ def p_ExpressionStmt(p):
         funcName =  p[1].children[0].children[0]
         if funcName in builtInFuncsToAvoid and funcName not in stm.functions:
             funcReturnType = stm.builtInFuncs[funcName]['return']
-            raise ValueNotUsedError(f"{p.lineno(1)}: Value of type {funcReturnType} is not used.")
+            raise ValueNotUsedError(f"{p.lexer.lineno}: Value of type {funcReturnType} is not used.")
     p[0] = p[1]
 
 ###################################################################################
@@ -1497,9 +1505,9 @@ def p_IncDecStmt(p):
                  | Expr DEC
     """
     if p[1].isAddressable == False:
-        raise LogicalError(f"{p.lineno(1)}: Expression is not addressable.")
+        raise LogicalError(f"{p.lexer.lineno}: Expression is not addressable.")
     if not isBasicNumeric(p[1].dataType):
-        raise LogicalError(f"{p.lineno(1)}: Non-numeric type can't be incremented or decremented.")
+        raise LogicalError(f"{p.lexer.lineno}: Non-numeric type can't be incremented or decremented.")
     if p[2] == '++':
         p[0] = IncNode(p[1])
     else:
@@ -1516,11 +1524,11 @@ def p_Assignment(p):
         if len(p[3]) == 1 and isinstance(p[3][0], FuncCallNode):
             pass 
         else:
-            raise LogicalError(f"{p.lineno(1)}: Imbalanced assignment with {len(p[1])} identifiers and {len(p[3])} expressions.")
+            raise LogicalError(f"{p.lexer.lineno}: Imbalanced assignment with {len(p[1])} identifiers and {len(p[3])} expressions.")
     p[0] = []
     for key, val in zip(p[1], p[3]):
         if key.dataType != val.dataType:
-            raise TypeError(f"{p.lineno(1)}: Type of {key.label} and {val.label} doesn't match.")
+            raise TypeError(f"{p.lexer.lineno}: Type of {key.label} and {val.label} doesn't match.")
         exprNode = ExprNode(None, operator=p[2])
         exprNode.addChild(key, val)
         p[0].append(exprNode)
@@ -1562,7 +1570,7 @@ def p_ShortVarDecl(p):
     ShortVarDecl : IdentifierList DEFINE ExpressionList
     """
     if len(p[1]) != len(p[3]):
-        raise LogicalError(f"{p.lineno(1)}: Imbalanced declaration with {len(p[1])} identifiers and {len(p[3])} expressions.")
+        raise LogicalError(f"{p.lexer.lineno}: Imbalanced declaration with {len(p[1])} identifiers and {len(p[3])} expressions.")
     p[0] = []
     for key, val in zip(p[1], p[3]):
         exprNode = ExprNode(None, label="DEFINE", operator="=")
@@ -1590,7 +1598,7 @@ def p_ReturnStmt(p):
     """
     # This case should never arise
     if stm.currentReturnType is None:
-        raise LogicalError(f"{p.lineno(1)}: Return statement outside of a function.")
+        raise LogicalError(f"{p.lexer.lineno}: Return statement outside of a function.")
     # if len(stm.currentReturnType)
     if len(p) == 2:
         p[0] = ReturnNode([])

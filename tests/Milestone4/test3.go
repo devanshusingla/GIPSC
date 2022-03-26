@@ -2,7 +2,8 @@ package main
 
 import "fmt"
 
-var temp int = 3
+const temp int = 3
+var b [temp+temp]int = [temp+temp]int{4, 5}
 var a [5]int = [5]int{temp + 1, temp + 2, temp / temp, temp + temp, temp * temp}
 func Print(x, y int, z int) (int, int) {
 	return x
