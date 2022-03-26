@@ -627,6 +627,7 @@ def p_UnaryExpr(p):
 ### Primary Expression
 ###################################################################################
 
+
 def p_PrimaryExpr(p):
     """
     PrimaryExpr :  Lit
@@ -640,7 +641,14 @@ def p_PrimaryExpr(p):
     
     ## PrimaryExpr -> Lit
     if len(p) == 2 and (isinstance(p[1], LitNode) or isinstance(p[1], CompositeLitNode)):
-        p[0] = p[1]
+        if isinstance(p[1], LitNode):
+            p[0] = ExprNode(p[1].dataType, p[1].label, None, p[1].isConst, False, p[1].val)
+            if p[1].children:
+                for child in p[1].children:
+                    p[0].children.append(child)
+        else:
+            # Ig Composite Literal is only used for assignment
+            p[0] = p[1]
 
     ## Primary Expr -> Ident
     elif (len(p) == 2):

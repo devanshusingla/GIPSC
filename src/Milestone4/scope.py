@@ -3,7 +3,10 @@ basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 
 def zeroLit(dataType):
-    return 0
+    if dataType == 'int':
+        return LitNode('0', dataType, isConst=True, val=0)
+    else:
+        raise NotImplementedError
 
 class ScopeTableError(Exception):
     pass
@@ -175,13 +178,12 @@ class LitNode(Node):
             self.label = label
     
     def __str__(self):
+        if self.isConst:
+            return str(self.val)
         if self.dataType == "string":
             return f'\\\"{self.label}\\\"'
         else:
-            if not isinstance(self.label, str):
-                print(self.label.__dict__)
-                return "LABEL"
-            return self.label
+            return str(self.label)
 
 class CompositeLitNode(Node):
     def  __init__(self, compositeLitType, elList):
@@ -249,10 +251,11 @@ class CompositeLitNode(Node):
                 if vis[prevKey]:
                     raise NameError("Duplicate index in array")
                 vis[prevKey] = True
-                if self.dataType['baseType'] in compositeTypes:
-                    self.children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
-                else:
-                    self.children[prevKey] = LitNode(el, self.dataType['baseType'])
+                self.children[prevKey] = el
+                # if self.dataType['baseType'] in compositeTypes:
+                #     self.children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
+                # else:
+                #     self.children[prevKey] = LitNode(el, self.dataType['baseType'])
 
             for i in range(self.dataType['length']):
                 if not vis[i]:
@@ -391,6 +394,8 @@ class ExprNode(Node):
         self.isAddressable = isAddressable
 
     def __str__(self):
+        if self.isConst:
+            return str(self.val)
         if self.operator is None:
             return self.label
         else:
