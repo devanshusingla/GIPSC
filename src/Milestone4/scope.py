@@ -4,7 +4,9 @@ compositeTypes = ['struct', 'array', 'slice', 'map']
 
 def zeroLit(dataType):
     if dataType == 'int':
-        return LitNode('0', dataType, isConst=True, val=0)
+        dt = {'name' : 'int', 'baseType' : 'int', 'level' : 0}
+        return ExprNode(dt, label='0', operator=None, isConst=True, isAddressable=False, val=0)
+        # return LitNode('0', dataType, isConst=True, val=0)
     else:
         raise NotImplementedError
 
@@ -332,12 +334,12 @@ class CompositeLitNode(Node):
             return f'MAP[{self.KeyType.name}:{self.ValueType.name}]'
 
 class StructFieldNode(Node):
-    def __init__(self, key, type):
+    def __init__(self, key, val):
         super().__init__()
         self.key = key
-        self.type = type
-        self.dataType = type.dataType
-        self.addChild(key, type)
+        self.type = val
+        self.dataType = val.dataType
+        self.addChild(key, val)
 
     def __str__(self):
         return ":"

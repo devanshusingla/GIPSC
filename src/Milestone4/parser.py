@@ -330,12 +330,9 @@ def p_VarSpec(p):
             | IdentifierList Type
             | IdentifierList IDENT
     """
-    
     p[0] = []
     length = len(p)-1
-
     if len(p) >= 4:
-
         count_0 = 0
         count_1 = 0
 
@@ -354,11 +351,9 @@ def p_VarSpec(p):
                     count_1+=1
             else:
                 expression_datatypes.append(p[length][i].dataType)
-        
         if count_1 > 0:
             if len(p[length]) > 1:
                 raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
-
         if len(p[1]) != len(expression_datatypes):
             raise NameError(f"{p.lexer.lineno}: Assignment is not balanced", p.lexer.lineno)
         
@@ -372,7 +367,6 @@ def p_VarSpec(p):
                 dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
             else:
                 dt = p[2].dataType
-            
             for i, expression in enumerate(expression_datatypes):
                 if not isTypeCastable(stm, dt, expression):
                     raise TypeError(f"{p.lexer.lineno}: Mismatch of type for identifier: " + p[1][i].label)
@@ -791,7 +785,9 @@ def p_PrimaryExpr(p):
                     raise TypeError(f'Not of type struct')
                 p[2] = CompositeLitNode(dt, p[2])
                 p[0] = p[2]
+                p[0].dataType = dt.dataType
                 p[0].isAddressable = False
+                return
             else:
                 if p[1].label not in stm.functions:
                     raise NameError("No such function declared ", p.lexer.lineno)
@@ -814,11 +810,11 @@ def p_PrimaryExpr(p):
 
                 p[2] = FuncCallNode(p[1], p[2])
         
-                p[0] = p[2]
-                p[0].dataType = dt
-                p[0].isAddressable = True
+        p[0] = p[2]       
+        p[0].isAddressable = True
+        p[0].dataType = dt
         if isinstance(p[2], list):
-            p[0].isAddressable = False
+            p[0].isAddressable = False            
 
 ###################################################################################
 ## Selector
@@ -1976,6 +1972,13 @@ def writeOutput(parser_out, output_file):
     with open(output_file, 'w') as fout:
         pprint.pprint(parser_out, width=10, stream=fout)
 
+
+def df(root, level):
+    print('    '*level + str(root) +  " - " +  str(type(root)))
+    if hasattr(root, 'children') and root.children:
+        for child in root.children:
+            df(child, level+1)
+
 def buildAndCompile():
     source_code = None
     path_to_source_code = sys.argv[1]
@@ -1986,8 +1989,12 @@ def buildAndCompile():
     parser, _ = yacc.yacc(debug=True)
     genAutomaton(parser)
     parser_out = parse(parser, lexer, source_code)
+    # df(parser_out, 0)
     writeOutput(parser_out, output_file)
     return parser_out
 
+
 if __name__ == '__main__':
     buildAndCompile()
+
+
