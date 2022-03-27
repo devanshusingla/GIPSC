@@ -1880,14 +1880,16 @@ def p_BeginFor(p):
     """
     BeginFor : 
     """
-    
+    stm.newScope()
+    stm.forDepth += 1
 
 def p_EndFor(p):
     """
     EndFor : 
     """
+    stm.forDepth -= 1
+    stm.exitScope()
     
-
 def p_Condition(p):
     """
     Condition : Expr
@@ -1903,9 +1905,16 @@ def p_ForClause(p):
                 | InitStmt SEMICOLON SEMICOLON PostStmt
     """
     if len(p) == 6:
-        p[0] = ForClauseNode(p[1], p[3], p[5])
+        p[0] = ForClauseNode(p[1], p[3].children[1], p[5])
     else:
-        p[0] = ForClauseNode(p[1], None, p[4])
+        dt = {
+            'name' : 'bool',
+            'baseType': 'bool',
+            'level' : 0
+        }
+        trueNode = ExprNode(dt, label='true', operator=None, isConst=True, isAddressable=False, val='true')
+        # Absence of condition is equivalent to a FOR true statement
+        p[0] = ForClauseNode(p[1], trueNode, p[4])
 
 def p_InitStmt(p):
     """
@@ -1917,6 +1926,8 @@ def p_PostStmt(p):
     """
     PostStmt :   SimpleStmt
     """
+    if isinstance(p[1], ExprNode) and p[1].label == 'DEFINE':
+        raise LogicalError("Short Variable Declaration not allowed in post statement of for loop.")
     p[0] = p[1]
 
 ###################################################################################
@@ -1926,6 +1937,8 @@ def p_RangeClause(p):
     """
     RangeClause : RangeList RANGE Expr
     """
+    if not (p[3].dataType['name'] in ['array', 'slice', 'map'] or (p[3].dataType['name'] == 'pointer' and p[3].dataType['baseType'] == 'array')): 
+        raise TypeError(f"{p.lexer.lineno}: Core Type of range clause must be array, pointer to an array, slice or map")
     p[0] = ForRangeNode(p[1], p[3])
 
 def p_RangeList(p):
@@ -1937,6 +1950,12 @@ def p_RangeList(p):
     if len(p) == 1:
         return []
     else:
+        if p[2] == '=':
+            for expr in p[1]:
+                if expr.isAddressable is False:
+                    raise TypeError(f"{p.lexer.lineno}: Operands in expression list must be addressable or map index expressions.")
+        if len(p[1]) > 2:
+            raise LogicalError(f"{p.lexer.lineno}: Atmost two iteration values may be provided to the range expression.")
         return p[1]
 
 

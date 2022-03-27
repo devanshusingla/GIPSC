@@ -58,6 +58,7 @@ class SymTableMaker:
         self.id = 0
         self.nextId = 1
         self.currentReturnType = None
+        self.forDepth = 0
         self.addBuiltInFuncs()
 
     def addFunction(self, label, info):
