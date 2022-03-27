@@ -1,4 +1,4 @@
-basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64' 'string', 'rune', 'bool']
+basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 
@@ -9,6 +9,9 @@ def zeroLit(dataType):
         raise NotImplementedError
 
 class ScopeTableError(Exception):
+    pass
+
+class DuplicateKeyError(Exception):
     pass
 
 class scope:
@@ -180,11 +183,14 @@ class LitNode(Node):
     def __str__(self):
         if self.isConst:
             return str(self.val)
-        if self.dataType == "string":
+        if isinstance(self.dataType, str) and self.dataType == "string":
+            return f'\\\"{self.label}\\\"'
+        elif 'name' in self.dataType and self.dataType['name'] == 'string':
             return f'\\\"{self.label}\\\"'
         else:
             return str(self.label)
 
+import utils
 class CompositeLitNode(Node):
     def  __init__(self, compositeLitType, elList):
         super().__init__()
@@ -262,7 +268,7 @@ class CompositeLitNode(Node):
                     self.children[i] = zeroLit(self.dataType['baseType'])
 
         elif self.dataType['name'] == 'slice':
-            vis = []
+            self.vis = []
             self.children = []
             prevKey = -1
             for el in elList:
@@ -273,27 +279,48 @@ class CompositeLitNode(Node):
                 else:
                     prevKey += 1
                 
+                print(prevKey, len(self.children))
                 if prevKey >= len(self.children):
                     self.children.extend([None]*(prevKey+1-len(self.children)))
                     self.vis.extend([False]*(prevKey+1-len(self.children)))
-                if vis[prevKey]:
+                
+                if self.vis[prevKey]:
                     raise NameError("Duplicate index in array")
-                vis[prevKey] = True
+                self.vis[prevKey] = True
                 if self.dataType['baseType'] in compositeTypes:
                     self.children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
                 else:
                     self.children[prevKey] = LitNode(el, self.dataType['baseType'])
 
             for i in range(len(self.children)):
-                if not vis[i]:
+                if not self.vis[i]:
                     self.children[i] = zeroLit(self.dataType['baseType'])
             self.dataType['capacity'] = self.dataType['length']
 
         elif self.dataType['name'] == 'map':
-            print("TODO: Map not implemented in CompositeLitNode")
-            pass
-                    
-    
+            # print("TODO: Map not implemented in CompositeLitNode")
+            # Working with elList
+            keys = []
+
+            for element in elList:
+                if not isinstance(element, KeyValNode):
+                    raise TypeError("All the elements should be of key : val type")
+                key = element.key
+                val = element.val
+
+                ## TODO: Check type for key
+
+                if key in keys:
+                    raise DuplicateKeyError("Key " + key + "already assigned")
+                else:
+                    keys.append(key)
+
+                if not utils.isTypeCastable(self.dataType['ValType'], val.dataType):
+                    raise TypeError("Value cannot be typecasted to required datatype for key: " + key)
+
+
+                self.children.append(element)    
+
     def __str__(self):
         if self.dataType['name'] == 'struct':
             return f'STRUCT'
@@ -395,8 +422,12 @@ class ExprNode(Node):
 
     def __str__(self):
         if self.isConst:
+            if 'name' in self.dataType and self.dataType['name'] == 'string':
+                return f'\\\"{self.label[1:-1]}\\\"'
             return str(self.val)
         if self.operator is None:
+            if 'name' in self.dataType and self.dataType['name'] == 'string':
+                return f'\\\"{self.label}\\\"'
             return self.label
         else:
             return self.operator
@@ -642,10 +673,10 @@ class StructType(Type):
         super().__init__()
         self.dataType = {'name': "struct", 'keyTypes': {}}
         for field in fieldList:
-            if field.dataType.key in self.dataType.keyTypes:
+            if field.dataType['key'] in self.dataType['keyTypes']:
                 raise NameError("Can not have same key names in two fields of structure")
             else:
-                self.dataType.keyTypes[field.dataType.key] = field.dataType.dataType
+                self.dataType['keyTypes'][field.dataType['key']] = field.dataType['dataType']
 
         self.addChild(*fieldList)
     

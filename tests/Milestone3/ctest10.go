@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+// import "fmt"
 
 type Address struct {
 	name    string
@@ -11,9 +11,9 @@ type Address struct {
 }
 
 func main() {
-	var a = Address("Akshay", "PremNagar", "Dehradun", "Uttarakhand", 252636)
+	// var a = Address{"Akshay", "PremNagar", "Dehradun", "Uttarakhand", 252636}
+	var a Address
 	a.name = "Akshat"
 	var x *Address = &a
 	(*x).city = "Kanpur"
-	fmt.Println(a.name)
 }

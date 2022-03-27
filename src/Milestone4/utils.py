@@ -39,17 +39,50 @@ def getBaseType(stm, dt):
     else:
         return dt
 
-def isBasicNumeric(dt):
+def isBasicNumeric(stm, dt):
+
+    dt = getBaseType(stm, dt)
+
+    if not isinstance(dt, str):
+        if 'baseType' in dt:
+            dt = dt['baseType']
+            if 'level' in dt and dt['level'] != 0:
+                return False 
+        else:
+            return False 
+
     if (len(dt) >= 4 and dt[0:4] == "uint") or (len(dt) >= 3 and dt[0:3] == "int")  or (len(dt) >= 5 and dt[0:5] == "float") or (len(dt) >= 8 and dt[0:8] == "complex") or dt== 'byte' or dt == 'rune':
         return True
     return False
 
-def isBasicInteger(dt):
+def isBasicInteger(stm, dt):
+
+    dt = getBaseType(stm, dt)
+
+    if not isinstance(dt, str):
+        if 'baseType' in dt:
+            dt = dt['baseType']
+            if 'level' in dt and dt['level'] != 0:
+                return False 
+        else:
+            return False 
+
     if (len(dt) >= 4 and dt[0:4] == "uint") or (len(dt) >= 3 and dt[0:3] == "int") or dt == "byte" or dt == "rune":
         return True
     return False
 
-def isOrdered(dt):
+def isOrdered(stm, dt):
+
+    dt = getBaseType(stm, dt)
+
+    if not isinstance(dt, str):
+        if 'baseType' in dt:
+            dt = dt['baseType']
+            if 'level' in dt and dt['level'] != 0:
+                return False 
+        else:
+            return False 
+
     if (len(dt) >= 4 and dt[0:4] == "uint") or (len(dt) >= 3 and dt[0:3] == "int")  or (len(dt) >= 5 and dt[0:5] == "float") or dt == "string" or dt == 'byte' or dt == 'rune':
         return True
     return False
@@ -70,24 +103,24 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
             dt2 = dt2['baseType']
         else:
             return False
-
+    
     if dt1 == None or dt2 == None or dt1 not in stm.symTable[stm.id].avlTypes or dt2 not in stm.symTable[stm.id].avlTypes:
         return False
 
     if binop == '+' or binop == '-' or binop == '*' or binop == '/':
-        if isBasicNumeric(dt1) and isBasicNumeric(dt2) and dt1 == dt2:
+        if isBasicNumeric(stm, dt1) and isBasicNumeric(stm, dt2) and dt1 == dt2:
             return True
         elif binop == '+' and dt1 == dt2 and dt1 == "string":
              return True 
         return False 
     
     if binop == '%' or binop == '&' or binop == '|' or binop == '^' | binop == '&^':
-        if isBasicInteger(dt1) and isBasicInteger(dt2) and dt1 == dt2:
+        if isBasicInteger(stm, dt1) and isBasicInteger(stm, dt2) and dt1 == dt2:
             return True
         return False 
 
     if binop == '<<' or binop == '>>':
-        if isBasicInteger(dt1) and isBasicInteger(dt2) and firstchar != '-':
+        if isBasicInteger(stm, dt1) and isBasicInteger(stm, dt2) and firstchar != '-':
             return True 
         return False
 
@@ -97,14 +130,14 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
         return False
     
     if binop == '==' or binop == '!=':
-        if isBasicNumeric(dt1) and isBasicNumeric(dt2) and dt1 == dt2:
+        if isBasicNumeric(stm, dt1) and isBasicNumeric(stm, dt2) and dt1 == dt2:
             return True
         elif dt1 == dt2 and (dt1 == "string" or dt1== "bool" ):
              return True 
         return False 
 
     if binop == '<' or binop == '<=' or binop == '>' or binop == '>=':
-        if isOrdered(dt1) and isOrdered(dt2) and dt1 == dt2:
+        if isOrdered(stm, dt1) and isOrdered(stm, dt2) and dt1 == dt2:
             return True
         else:
             return False
@@ -174,13 +207,13 @@ def checkUnOp(stm, dt, unOp, flag):
         return False
 
     if unOp == '+' or unOp == '-':
-        return isBasicNumeric(dt)
+        return isBasicNumeric(stm, dt)
         
     if unOp == '!':    
         return dt == "bool"
 
     if unOp == '^':
-        return isBasicInteger(dt)
+        return isBasicInteger(stm, dt)
 
 
 def getUnaryType(stm, dt, unOp):
@@ -263,7 +296,7 @@ def isTypeCastable(stm, dt1, dt2):
 
         if dt1 == dt2:
             return True
-        if isBasicInteger(dt1) and isBasicInteger(dt2):
+        if isBasicInteger(stm, dt1) and isBasicInteger(stm, dt2):
             return True
         if (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float"):
             return True
@@ -301,7 +334,7 @@ def checkTypePresence(stm, dt):
     elif 'name' in dt and dt['name'] == 'struct':
         for i in dt:
             tmp = dt[i]
-            if tmp == 'name':
+            if i == 'name':
                 continue
             else:
                 flag = checkTypePresence(stm, tmp)
