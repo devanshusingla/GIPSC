@@ -1669,8 +1669,13 @@ def p_ReturnStmt(p):
         raise LogicalError(f"{p.lexer.lineno}: Return statement outside of a function.")
     # if len(stm.currentReturnType)
     if len(p) == 2:
+        if stm.currentReturnType:
+            raise LogicalError(f"{p.lexer.lineno}: Current function doesn't return nothing.")
         p[0] = ReturnNode([])
     else:
+        for returnDataType, ExprNode in zip(stm.currentReturnType.dataType, p[2]):
+            if returnDataType != ExprNode.dataType:
+                return LogicalError(f"{p.lexer.lineno}: Return type of current function and the return statement doesn't match.")
         p[0] = ReturnNode(p[2])
 
 ###################################################################################
