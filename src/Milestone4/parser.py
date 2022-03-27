@@ -1156,14 +1156,6 @@ def p_CompositeLit(p):
         p[1] = stm.findType(p[1])
     p[0] = CompositeLitNode(p[1], p[2])
 
-    # if isinstance(p[1], BrackType):
-    #     return p[2]
-    # elif isinstance(p[1], MapType):
-    #     return p[2]
-    # elif len(p) == 3:
-    #     return p[2]
-
-
 def p_LiteralValue(p):
     """
     LiteralValue : LBRACE ElementList COMMA RBRACE 
@@ -1311,11 +1303,6 @@ def p_Signature(p):
     else:
         p[0] = [p[1], FuncReturnNode([])]
 
-    # p[0] = Node()
-    # p[0].children.append(p[1])
-    # if len(p) > 2:
-    #     p[0].children.append(p[2])
-
 ###################################################################################
 ## Function Parameters
 
@@ -1353,13 +1340,6 @@ def p_ParameterDecl(p):
         p[2] = stm.findType(p[2])
     for i in range(len(p[0])):
         p[0][i].dataType = p[2].dataType
-    # p[0] = Node()
-    
-    # if len(p) == 3 and isinstance(p[2], str):
-    #     stm[stm.id].addType(p[2])
-
-    #     for i, child in enumerate(p[1].children):
-    #         p[0].chidren.append(ParamNode(label = child.label, dataType = p[2]))
 
 ###################################################################################
 ## Return Type
@@ -1377,12 +1357,6 @@ def p_Result(p):
         p[0] = FuncReturnNode(p[2])
     else:
         p[0] = FuncReturnNode([])
-    # p[0] = ResultNode()
-    # if len(p) == 1 and isinstance(p[1], str):
-    #     p[0].children.append(IdentNode(dataType = p[1]))
-    
-    # elif len(p) == 1:
-    #     p[0] = p[1]
 
 def p_ParametersType(p):
     """
@@ -1873,7 +1847,6 @@ def p_RangeList(p):
         return []
     else:
         return p[1]
-
 
 
 ###################################################################################
