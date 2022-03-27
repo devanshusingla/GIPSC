@@ -3,12 +3,12 @@ package main
 import "fmt"
 
 func main() {
-	mylabel : 
+	// mylabel : 
 	// Testing for string literals inside format strings
-	fmt.Println("Hello World! -CS335 Project\n\n\x31 Does this thing even work ''\"MikeTesting\" ``\t--")
+	// fmt.Println("Hello World! -CS335 Project\n\n\x31 Does this thing even work ''\"MikeTesting\" ``\t--")
 	var x int = 5
 	x++
-	fmt.Printf("The value of x: %d\n", x)
+	// fmt.Printf("The value of x: %d\n", x)
 	_ = "Random String\n\n"
 	y := "ABC!!"
 	y = y + ("123" + "1212")
@@ -23,10 +23,10 @@ func main() {
 		sentence += word
 		x = -x/-2 - -(2/-x)
 	}
-	fmt.Println(sentence)
-	fmt.Printf("value of x := %d\n", x)
-	if 1 > 2 {
-		goto mylabel
-	}
+	// Print(sentence)
+	// Print("value of x := %d\n", x)
+	// if 1 > 2 {
+	// 	goto mylabel
+	// }
 
 }
