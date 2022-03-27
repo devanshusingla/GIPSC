@@ -79,9 +79,9 @@ class SymTableMaker:
 
     def get(self, ident, scope=None):
         if scope is None:
-            scope = self.getScope(ident)
             if ident in self.functions:
                 return self.functions[ident]
+            scope = self.getScope(ident)
             return self.symTable[scope].getinfo(ident)
         else:
             return self.symTable[scope].getinfo(ident)
@@ -202,7 +202,7 @@ class CompositeLitNode(Node):
             hasKey = False
             hasNotKey = False
             for el in elList:
-                if isinstance(KeyValNode):
+                if isinstance(el, KeyValNode):
                     hasKey = True
                 else:
                     hasNotKey = True
@@ -215,11 +215,11 @@ class CompositeLitNode(Node):
                 for el in elList:
                     if el.key in kv:
                         raise NameError("field key repeated")
-                    if el.key not in self.dataType.keyTypes:
+                    if el.key not in self.dataType['keyTypes']:
                         raise NameError("Unknown field key")
                     kv[el.key] = el.val
                 
-                for key, t in self.dataType.keyTypes.items():
+                for key, t in self.dataType['keyTypes'].items():
                     if key in kv:
                         val = kv[key]
                     else:
@@ -230,10 +230,10 @@ class CompositeLitNode(Node):
                         self.children.append(StructFieldNode(key, LitNode(val, t)))
             
             else:
-                if len(elList) != len(self.dataType.keyTypes):
+                if len(elList) != len(self.dataType['keyTypes']):
                     raise NameError("too few arguments for structure")
-                for (key, t), val in zip(self.dataType.keyTypes.items(), elList):
-                    if t.name in compositeTypes:
+                for (key, t), val in zip(self.dataType['keyTypes'].items(), elList):
+                    if t['name'] in compositeTypes:
                         self.children.append(StructFieldNode(key, CompositeLitNode(t, val)))
                     else:
                         self.children.append(StructFieldNode(key, LitNode(val, t)))
@@ -332,12 +332,12 @@ class CompositeLitNode(Node):
             return f'MAP[{self.KeyType.name}:{self.ValueType.name}]'
 
 class StructFieldNode(Node):
-    def __init__(self, key, type, dataType):
+    def __init__(self, key, type):
         super().__init__()
         self.key = key
         self.type = type
-        self.dataType = dataType
-        self.addChildren(key, type)
+        self.dataType = type.dataType
+        self.addChild(key, type)
 
     def __str__(self):
         return ":"

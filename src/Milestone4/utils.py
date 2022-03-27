@@ -275,6 +275,8 @@ def isConvertibletoInt(f):
         return True
     
 def isTypeCastable(stm, dt1, dt2):
+    if (dt1 == dt2):
+        return True
     if 'name' in dt1 and 'name' in dt2 and dt1['name']!=dt2['name']:
         return False
 
@@ -315,7 +317,7 @@ def isTypeCastable(stm, dt1, dt2):
                 continue 
             else:
                 if i in dt2:
-                    if not isTypeCastable(dt1[i], dt2[i]):
+                    if not isTypeCastable(stm, dt1[i], dt2[i]):
                         return False 
                 else:
                     return False 

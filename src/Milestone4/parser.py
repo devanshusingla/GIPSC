@@ -357,10 +357,10 @@ def p_VarSpec(p):
         
         if count_1 > 0:
             if len(p[length]) > 1:
-                raise TypeError("Function with more than one return values should be assigned alone!")
+                raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
 
         if len(p[1]) != len(expression_datatypes):
-            raise NameError("Assignment is not balanced", p.lexer.lineno)
+            raise NameError(f"{p.lexer.lineno}: Assignment is not balanced", p.lexer.lineno)
         
         dt = {}
 
@@ -374,9 +374,8 @@ def p_VarSpec(p):
                 dt = p[2].dataType
             
             for i, expression in enumerate(expression_datatypes):
-               
                 if not isTypeCastable(stm, dt, expression):
-                    raise TypeError("Mismatch of type for identifier: " + p[1][i].label)
+                    raise TypeError(f"{p.lexer.lineno}: Mismatch of type for identifier: " + p[1][i].label)
 
         if count_1 > 0:
             expr = ExprNode(dataType = dt, label = "ASSIGN", operator = "=")
@@ -514,20 +513,15 @@ def p_TypeDef(p):
               | IDENT IDENT
 
     """
-    
-    dt = {}
     if isinstance(p[2], str):
-        dt['name'] = p[3]
-        dt['baseType'] = p[2]
-        dt['level'] = 0
-    else:
-        dt = p[2].dataType
+        p[2] = stm.findType(p[2])
+    dt = p[2].dataType
 
     if checkTypePresence(stm, dt) == -1:
         raise TypeError("baseType " + dt + " not declared yet")
 
     if p[1] in stm.symTable[stm.id].typeDefs:
-        raise TypeError("Redeclaration of Alias " + p[1], p.lexer.lineno)
+        raise TypeError("Redeclaration of type " + p[1], p.lexer.lineno)
         
     elif isinstance(p[2], str) and p[2] in stm.symTable[stm.id].avlTypes:
         stm.symTable[stm.id].typeDefs[p[1]] = p[2]
@@ -536,8 +530,11 @@ def p_TypeDef(p):
         stm.symTable[stm.id].typeDefs[p[1]] = stm.symTable[stm.id].typeDefs[p[2]]
 
     else:
-        stm.symTable[stm.id].typeDefs[p[1]] = dt
-
+        stm.symTable[stm.id].typeDefs[p[1]] = p[2]
+        # params = []
+        # for key in dt['keyTypes']:
+        #     params.append(dt['keyTypes'][key])
+        # stm.addFunction(p[1], {"params": params , "return": [p[2]], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
 
 ###################################################################################
 ### Identifier List
@@ -673,21 +670,26 @@ def p_PrimaryExpr(p):
             # Ig Composite Literal is only used for assignment
             p[0] = p[1]
 
-    ## Primary Expr -> Ident
+    ## PrimaryExpr -> Ident
     elif (len(p) == 2):
+        if p[1] in stm.symTable[0].typeDefs:
+            # Type Declaration Found
+            # Assuming Constructor Initialisation
+            dt = stm.symTable[0].typeDefs[p[1]]
+            p[0] = ExprNode(dataType=dt, label=p[1], isAddressable=False, isConst=False, val=None)
+            return
+
         # Check declaration
         latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
 
         if latest_scope == 0:
             ## To be checked for global declarations (TODO)
             print("Expecting global declaration for ",p[1], p.lexer.lineno)
-
-        print("Searching for: ", p[1])
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
     
-    ## Primary Expr -> LPAREN Expr RPAREN
+    ## PrimaryExpr -> LPAREN Expr RPAREN
     elif len(p) == 4:
         p[0] = p[2]
 
@@ -783,30 +785,38 @@ def p_PrimaryExpr(p):
 
         ## PrimaryExpr -> PrimaryExpr Arguments
         elif isinstance(p[2], List):
-            if p[1].label not in stm.functions:
-                raise NameError("No such function declared ", p.lexer.lineno)
+            dt = stm.findType(p[1].label)
+            if dt != -1:
+                if not isinstance(dt, StructType):
+                    raise TypeError(f'Not of type struct')
+                p[2] = CompositeLitNode(dt, p[2])
+                p[0] = p[2]
+                p[0].isAddressable = False
+            else:
+                if p[1].label not in stm.functions:
+                    raise NameError("No such function declared ", p.lexer.lineno)
 
-            info = stm.functions[p[1].label]
-            paramList = info['params']
-            dt = None
-            if info['return'] != None:
-                dt = info['return']
+                info = stm.functions[p[1].label]
+                paramList = info['params']
+                dt = None
+                if info['return'] != None:
+                    dt = info['return']
 
-            if len(paramList) != len(p[2]):
-                raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + len(paramList) + " number of arguments but got " + len(p[2]), p.lexer.lineno)
+                if len(paramList) != len(p[2]):
+                    raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + str(len(paramList)) + " number of arguments but got " + str(len(p[2])), p.lexer.lineno)
 
-            for i, argument in enumerate(p[2]):
-                dt1 = argument.dataType
-                dt2 = paramList[i]
+                for i, argument in enumerate(p[2]):
+                    dt1 = argument.dataType
+                    dt2 = paramList[i]
 
-                if not isTypeCastable(stm, dt1, dt2):
-                    raise TypeError("Type mismatch on argument number: " + i, p.lexer.lineno)
+                    if not isTypeCastable(stm, dt1, dt2):
+                        raise TypeError("Type mismatch on argument number: " + i, p.lexer.lineno)
 
-            p[2] = FuncCallNode(p[1], p[2])
+                p[2] = FuncCallNode(p[1], p[2])
         
-        p[0] = p[2]
-        p[0].dataType = dt
-        p[0].isAddressable = True
+                p[0] = p[2]
+                p[0].dataType = dt
+                p[0].isAddressable = True
         if isinstance(p[2], list):
             p[0].isAddressable = False
 
@@ -1377,6 +1387,8 @@ def p_Result(p):
     """
     Result : LPAREN ParametersType RPAREN
            | LPAREN RPAREN
+           | IDENT
+           | Type
     """
     if len(p) > 3:
         if isinstance(p[2], str):
@@ -1971,7 +1983,7 @@ def buildAndCompile():
     with open(path_to_source_code, 'r') as f:
         source_code = f.read()
     lexer = lex.lex()
-    parser, _ = yacc.yacc()
+    parser, _ = yacc.yacc(debug=True)
     genAutomaton(parser)
     parser_out = parse(parser, lexer, source_code)
     writeOutput(parser_out, output_file)
