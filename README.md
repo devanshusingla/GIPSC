@@ -1,5 +1,19 @@
 # CS335 Compilers Project - Group 20
 
+## [Milestone4](src/Milestone4/)
+
+### Execution
+- Run following command from root directory to generate AST for a Go file.
+```bash
+./bin/parser PATH_TO_FILE
+```
+
+### Testing
+- To run all the test cases for Milestone 4, run the following command from root of the project : 
+```bash
+make 
+```
+
 ## [Milestone3](src/Milestone3/)
 
 ### Execution
