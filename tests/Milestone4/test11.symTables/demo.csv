@@ -1,4 +1,0 @@
-ident,scope,info
-a,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'val': 0, 'isConst': False, 'isArg': True}"
-b,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'val': 0, 'isConst': False, 'isArg': True}"
-c,1,"{'dataType': {'name': 'float32', 'baseType': 'float32', 'level': 0}, 'val': 0, 'isConst': False, 'isArg': True}"

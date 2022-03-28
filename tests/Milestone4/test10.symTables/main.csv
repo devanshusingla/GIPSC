@@ -1,7 +1,0 @@
-ident,scope,info
-i,1,"{'dataType': {'baseType': 'int', 'name': 'int', 'level': 0}, 'isConst': False}"
-j,1,"{'dataType': {'baseType': 'int', 'name': 'int', 'level': 0}, 'isConst': False}"
-n,1,"{'dataType': {'baseType': 'int', 'name': 'int', 'level': 0}, 'isConst': False}"
-m,1,"{'dataType': {'baseType': 'int', 'name': 'int', 'level': 0}, 'isConst': False}"
-state,1,"{'dataType': {'baseType': 'string', 'name': 'string', 'level': 0}, 'isConst': False}"
-a,1,"{'dataType': {'baseType': 'int', 'length': 5, 'level': 2, 'name': 'array'}, 'isConst': False}"

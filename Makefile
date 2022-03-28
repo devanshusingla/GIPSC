@@ -15,4 +15,4 @@ test_Milestone2:
 	python3 tests/Milestone2/test_regex.py
 
 clean:
-	@rm -rf tests/**/*.dot tests/**/*.output tests/**/*.pdf tests/**/*.out
+	@rm -rf tests/**/*.dot tests/**/*.output tests/**/*.pdf tests/**/*.out tests/**/*.debug tests/**/*.symTables tests/**/*.png

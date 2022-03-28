@@ -1,2 +1,0 @@
-ident,scope,info
-m,2,"{'dataType': {'name': 'map', 'KeyType': {'name': 'string', 'baseType': 'string', 'level': 0}, 'ValueType': {'name': 'struct', 'keyTypes': {'Lat': {'name': 'float64', 'baseType': 'float64', 'level': 0}, 'Long': {'name': 'float64', 'baseType': 'float64', 'level': 0}}, 'level': 0, 'baseType': 'Vertex'}}, 'isConst': False}"

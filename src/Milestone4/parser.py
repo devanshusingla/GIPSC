@@ -2352,7 +2352,7 @@ def buildAndCompile(input_file):
     with open(path_to_source_code, 'r') as f:
         source_code = f.read()
     lexer = lex.lex()
-    parser, _ = yacc.yacc(debug=True)
+    parser, _ = yacc.yacc()
     genAutomaton(parser)
     parser_out = parse(parser, lexer, source_code)
     # df(parser_out, 0)

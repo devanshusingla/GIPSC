@@ -1,9 +1,0 @@
-ident,scope,info
-b,2,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
-c,2,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
-d,2,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
-e,2,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
-f,2,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
-x,2,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
-a,2,"{'dataType': {'baseType': 'int', 'length': 5, 'level': 1, 'name': 'array'}, 'isConst': False}"
-s,2,"{'dataType': {'baseType': 'int', 'length': 5, 'level': 1, 'name': 'array'}, 'isConst': False}"
