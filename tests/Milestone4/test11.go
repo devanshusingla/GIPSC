@@ -13,16 +13,16 @@ type Address struct {
 	Pincode int
 }
 
-func hello() Address {
+func hello() (Address) {
 	return Address("n", "s", "c", "st", 13244)
 }
 
 func main() {
 	var a Address = Address("Akshay", "PremNagar", "Dehradun", "Uttarakhand", 252636)
-	// var b = hello()
+	var b Address = hello()
 
 	// var a Address
-	// a.name = "Akshat"
-	// var x *Address = &a
-	// (*x).city = "Kanpur"
+	a.name = "Akshat"
+	var x *Address = &a
+	(*x).city = "Kanpur"
 }
