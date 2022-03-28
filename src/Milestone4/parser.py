@@ -8,6 +8,8 @@ import sys
 import pprint
 from scope import *
 from utils import *
+import os
+
 
 tokens=lexer.tokens
 tokens.remove('COMMENT')
@@ -42,7 +44,7 @@ ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
 ##################################################################################
 
 stm = SymTableMaker()
-ast = None
+target_folder = ''
 
 _symbol = '_'
 stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0}})
@@ -51,15 +53,14 @@ def p_SourceFile(p):
     """
     SourceFile : PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult
     """
-    global ast
     # Check if any label has expecting key set
     for label in stm.labels:
         if stm.labels[label]['expecting'] == True:
             assert(len(stm.labels[label]['prevGotos']) > 0)
             goto = stm.labels[label]['prevGotos'][0]
             raise LogicalError(f"{goto[1]}: Goto declared without declaring any label {label}.")
-    p[0] = FileNode(p[1], p[3], p[4])
-    ast = p[0]
+    p[4].children = p[3][1] + p[4].children
+    p[0] = FileNode(p[1], p[3][0], p[4])
 
 ###################################################################################
 ### Package related grammar
@@ -77,14 +78,15 @@ def p_PackageClause(p):
 
 def p_ImportDeclMult(p):
     """
-    ImportDeclMult : ImportDecl SEMICOLON ImportDeclMult
+    ImportDeclMult : ImportDeclMult ImportDecl SEMICOLON
                    |  
     """
     if len(p) > 1:
-        p[3].addChild(*p[1])
-        p[0] = p[3]
+        p[1][0].addChild(*p[2][0])
+        p[1][1].extend(p[2][1])
+        p[0] = p[1]
     else:
-        p[0] = ImportNode()
+        p[0] = (ImportNode(), [])
 
 def p_ImportDecl(p):
     """
@@ -92,7 +94,7 @@ def p_ImportDecl(p):
                | IMPORT LPAREN ImportSpecMult RPAREN
     """
     if len(p) == 3:
-        p[0] = [p[2]]
+        p[0] = p[2]
     elif len(p) == 5:
         p[0] = p[3]
 
@@ -102,9 +104,10 @@ def p_ImportMult(p):
                |
     """
     if len(p) == 1:
-        p[0] = []
+        p[0] = ([], [])
     elif len(p) == 4:
-        p[3].append(p[1])
+        p[3][0].extend(p[1][0])
+        p[3][1].extend(p[1][1])
         p[0] = p[3]
 
 def p_ImportSpec(p):
@@ -113,11 +116,39 @@ def p_ImportSpec(p):
               | IDENT ImportPath
               | ImportPath 
     """
-    if len(p) == 2:
+
+    global stm, target_folder
+    if p[1] != '.':
         alias = IdentNode(0, p[1][1:-1])
+    else:
+        alias = IdentNode(0, p[2][1:-1])
+    if len(p) == 2:
+        pathname = getPath(p[1][1:-1]+'.go', target_folder)
         path = LitNode(dataType = "string", label = p[1])
-        p[0] = ImportPathNode(alias, path)
+    else:
+        pathname = getPath(p[2][1:-1]+'.go', target_folder)
+        path = LitNode(dataType = "string", label = p[2])
+
+    if alias.label in stm.pkgs:
+        raise NameError("Cyclic import not supported")
     
+    tmp_target_folder = target_folder
+    if p[1] != '.':
+        temp_stm = stm
+        stm = SymTableMaker()
+        stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0}})
+
+        astNode = buildAndCompile(pathname)
+        temp_stm.pkgs[alias.label] = stm
+        stm = temp_stm
+        p[0] = ([ImportPathNode(alias, path, astNode)], [])
+    else:
+        astNode = buildAndCompile(pathname)
+        stm.pkgs[alias.label] = None
+        p[0] = (astNode.children[1].children, astNode.children[2].children)
+    
+    target_folder = tmp_target_folder
+
 def p_ImportPath(p):
     """
     ImportPath : STRING
@@ -673,6 +704,9 @@ def p_PrimaryExpr(p):
 
     ## PrimaryExpr -> Ident
     elif (len(p) == 2):
+        if p[1] in stm.pkgs and stm.pkgs[p[1]] != None:
+            p[0] = IdentNode(0, p[1], dataType={'name': 'package'})
+            return
         if p[1] in stm.symTable[0].typeDefs:
             # Type Declaration Found
             # Assuming Constructor Initialisation
@@ -698,6 +732,14 @@ def p_PrimaryExpr(p):
         dt = None
         ## PrimaryExpr -> PrimaryExpr Selector
         if isinstance(p[2], DotNode):
+            if isinstance(p[1], IdentNode) and 'name' in p[1].dataType and p[1].dataType['name'] == 'package':
+                pkg_stm = stm.pkgs[p[1].label]
+                stm_entry = pkg_stm.get(p[2].children[0])
+                if stm_entry is None:
+                    raise NameError(f"{p.lexer.lineno}: No such variable or function in package {p[1].label}")
+                p[0] = ExprNode(dataType=stm_entry['dataType'], label=p[2].children[0], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None), pkg=p[1].label)
+                p[0].addChild(p[1],p[2].children[0])
+                return
             if 'name' not in p[1].dataType or p[1].dataType['name'] != 'struct':
                 raise TypeError("Expecting struct type but found different one", p.lexer.lineno)
             
@@ -786,20 +828,24 @@ def p_PrimaryExpr(p):
 
         ## PrimaryExpr -> PrimaryExpr Arguments
         elif isinstance(p[2], List):
-            dt = stm.findType(p[1].label)
+            if hasattr(p[1], "pkg"):
+                new_stm = stm.pkgs[p[1].pkg]
+            else:
+                new_stm = stm
+            dt = new_stm.findType(p[1].label)
             if dt != -1:
                 if not isinstance(dt, StructType):
                     raise TypeError(f'Not of type struct')
-                p[2] = CompositeLitNode(stm, dt, p[2])
+                p[2] = CompositeLitNode(new_stm, dt, p[2])
                 p[0] = p[2]
                 p[0].dataType = dt.dataType
                 p[0].isAddressable = False
                 return
             else:
-                if p[1].label not in stm.functions:
+                if p[1].label not in new_stm.functions:
                     raise NameError("No such function declared ", p.lexer.lineno)
 
-                info = stm.functions[p[1].label]
+                info = new_stm.functions[p[1].label]
                 paramList = info['params']
                 dt = None
                 if info['return'] != None:
@@ -812,7 +858,7 @@ def p_PrimaryExpr(p):
                     dt1 = argument.dataType
                     dt2 = paramList[i]
 
-                    if not isTypeCastable(stm, dt1, dt2):
+                    if not isTypeCastable(new_stm, dt1, dt2):
                         raise TypeError("Type mismatch on argument number: " + i, p.lexer.lineno)
 
                 p[2] = FuncCallNode(p[1], p[2])
@@ -830,8 +876,7 @@ def p_Selector(p):
     """
     Selector : PERIOD IDENT
     """
-    p[0] = DotNode()
-    p[0].addChild(p[2])
+    p[0] = DotNode(p[2])
 
 #########################FuncCallNo##########################################################
 ## Index
@@ -2123,9 +2168,12 @@ def df(root, level):
         for child in root.children:
             df(child, level+1)
 
-def buildAndCompile():
+def buildAndCompile(input_file):
+    global target_folder
+
+    target_folder = os.path.dirname(os.path.join(os.getcwd(),input_file))
     source_code = None
-    path_to_source_code = sys.argv[1]
+    path_to_source_code = input_file
     output_file = path_to_source_code[:-2] + "output"
     with open(path_to_source_code, 'r') as f:
         source_code = f.read()
@@ -2139,6 +2187,6 @@ def buildAndCompile():
 
 
 if __name__ == '__main__':
-    buildAndCompile()
+    buildAndCompile(sys.argv[1])
 
 

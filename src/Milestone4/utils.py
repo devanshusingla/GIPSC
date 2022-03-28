@@ -1,4 +1,6 @@
+from tokenize import Name
 from scope import *
+import os
 
 # COMPACT = False
 # def get_value_p(p):
@@ -30,6 +32,19 @@ from scope import *
 #                 value = value[1] + [value[2]]
 #                 # print(value, value[2] + [value[1]] + value[3:])
 #     return value
+
+LIBPATH = os.path.dirname(os.path.realpath(__file__)) + "/lib"
+
+def getPath(filename, target_folder):
+    for root, dirs, files in os.walk(LIBPATH):
+        if filename in files:
+            return os.path.join(root, filename)
+
+    for root, dirs, files in os.walk(target_folder):
+        if filename in files:
+            return os.path.join(root, filename)
+    
+    raise NameError(f"Invalid import: {filename}")
 
 def getBaseType(stm, dt):
     curr = dt

@@ -1,7 +1,7 @@
 from parser import buildAndCompile
 import sys
 
-ast = buildAndCompile()
+ast = buildAndCompile(sys.argv[1])
 path_to_source_file = sys.argv[1][:-3]
 node_ids = [f'\t0 [label={ast}];']
 print(f"Saving to {path_to_source_file}.dot ...")
