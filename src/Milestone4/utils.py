@@ -434,34 +434,42 @@ def Operate(operator, operand1, operand2, lineno, dt2):
 #         parts = float.split('+')
 #         return (float(parts[0]), float(parts[1].strip('i')))
 
+def checkAncestor(stm : SymTableMaker, lid, gid, noSkipVar=False):
+    flag = False
+    # Check if scope id of goto scope symbol table is 
+    # an ancestor of label scope symbol table
+    while True:
+        if lid == gid:
+            if noSkipVar:
+                if len(stm.symTable[lid].localsymTable) > len(stm.symTable[gid].localsymTable):
+                    return False
+                if len(stm.symTable[lid].avlTypes) < len(stm.symTable[gid].avlTypes):
+                    return False
+                if len(stm.symTable[lid].typeDefs) < len(stm.symTable[gid].typeDefs):
+                    return False
+            flag = True
+            break
+        if lid == 0:
+            break
+        else:
+            lid = stm.symTable[lid].parentScope
+    if not flag:
+        return False
+    else:
+        return True    
+
 def isValidGoto(stm : SymTableMaker, labelST : scope, gotoST : scope, checkNoSkipVar=False):
     if checkNoSkipVar:
-        if labelST.id != gotoST.id:
-            return False
-        if len(gotoST.localsymTable) > len(labelST.localsymTable):
-            return False
-        if len(gotoST.avlTypes) > len(labelST.avlTypes):
-            return False
-        if len(gotoST.typeDefs) > len(labelST.typeDefs):
-            return False
-        return True
+        return checkAncestor(stm, gotoST.id, labelST.id, checkNoSkipVar)
+        # if  < len(labelST.localsymTable):
+        #     return False
+        # if len(gotoST.avlTypes) < len(labelST.avlTypes):
+        #     return False
+        # if len(gotoST.typeDefs) < len(labelST.typeDefs):
+        #     return False
+        # return True
     else:
-        flag = False
-        lid = labelST.id
-        # Check if scope id of goto scope symbol table is 
-        # an ancestor of label scope symbol table
-        while True:
-            if lid == gotoST.id:
-                flag = True
-                break
-            if lid == 0:
-                break
-            else:
-                lid = stm.symTable[lid].parentScope
-        if not flag:
-            return False
-        else:
-            return True
+        return checkAncestor(stm, labelST.id, gotoST.id)
             
 def constructDataType(baseType):
     return {

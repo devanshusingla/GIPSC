@@ -9,6 +9,9 @@ func main() {
 	if a < 5 {
 		goto mylabel
 	}
+	if a > 5 {
+		var b int  = 7
+	}
 	// fmt.Println("Hello World", a)
 	mylabel:
 	a += 7
