@@ -600,7 +600,11 @@ def p_Expr(p):
         dt1 = p[1].dataType
         dt2 = p[3].dataType
 
-        if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
+        firstChar = None
+        if hasattr(p[3], 'label') and  p[3].label != None:
+            firstChar = p[3].label[0]
+
+        if not checkBinOp(stm, dt1, dt2, p[2], firstChar):
             raise TypeError("Incompatible operand types", p.lexer.lineno)
 
         dt = getFinalType(stm, dt1, dt2, p[2])
@@ -611,7 +615,7 @@ def p_Expr(p):
             isConst = True
             val = Operate(p[2], p[1].val, p[3].val, p.lexer.lineno, p[3].dataType['name'])
 
-        p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label+p[2]+p[3].label, isConst = isConst, val=val)
+        p[0] = ExprNode(operator = p[2], dataType = dt, isConst = isConst, val=val)
         p[0].addChild(p[1], p[3])
 
 def p_UnaryExpr(p):
@@ -641,7 +645,8 @@ def p_UnaryExpr(p):
                 val = None
             else:
                 val = Operate(p[1], None, p[2].val, p.lexer.lineno, p[2].dataType['name'])
-        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isConst=isConst, val=val)
+        isAddressable = flag and (p[1] == '*' or p[1] =='&')
+        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isAddressable = isAddressable, isConst=isConst, val=val)
         p[0].addChild(p[2])
 
 ###################################################################################
@@ -1374,7 +1379,6 @@ def p_ParameterDecl(p):
     p[0] = p[1]
     if isinstance(p[2], str):
         p[2] = stm.findType(p[2])
-        print(p[2])
     for i in range(len(p[0])):
         p[0][i].dataType = p[2].dataType
 

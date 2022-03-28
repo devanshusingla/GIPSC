@@ -308,11 +308,9 @@ class CompositeLitNode(Node):
                 else:
                     prevKey += 1
                 
-                print("first: ",prevKey, self.children, self.vis)
                 if prevKey >= len(self.children)-1:
                     self.children.extend([None]*(prevKey+1-len(self.children)))
                     self.vis.extend([False]*(prevKey+1-len(self.vis)))
-                print("second: ",prevKey, self.children, self.vis)
 
                 if self.vis[prevKey]:
                     raise NameError("Duplicate index in array")
@@ -343,8 +341,6 @@ class CompositeLitNode(Node):
 
                 ## TODO: Check type for key
                 keytype = element.keytype 
-                print("Actual: ", keytype)
-                print("Expected ", self.dataType['KeyType'])
 
                 if not utils.isTypeCastable(stm, keytype, self.dataType['KeyType']):
                     raise TypeError("Key not typecastable to map's key dataType")
@@ -353,9 +349,6 @@ class CompositeLitNode(Node):
                     raise DuplicateKeyError("Key " + key + "already assigned")
                 else:
                     keys.append(key)
-
-                print("Actual: ", val.dataType)
-                print("Expected ", self.dataType['ValueType'])
 
                 if not utils.isTypeCastable(stm, self.dataType['ValueType'], val.dataType):
                     raise TypeError("Value cannot be typecasted to required datatype for key: " + key)
