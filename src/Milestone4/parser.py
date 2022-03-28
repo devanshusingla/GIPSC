@@ -1877,6 +1877,7 @@ def p_FallthroughStmt(p):
     """
     p[0] = FallthroughNode()
 
+
 ###################################################################################
 ### Block Statements
 ###################################################################################
@@ -1970,6 +1971,9 @@ def p_ExprSwitchStmt(p):
             else:
                 lst.append(case.children[0].children[0].label) 
         casesNode = p[4]
+        for statement in casesNode[-1].instrNode:
+            if isinstance(statement, FallthroughNode):
+                raise LogicalError(f"{p.lexer.lineno}: Fallthrough statement can't be used in the last case of the switch statement.")
     elif len(p) == 8:
         
         ## Check if dataType is supported
@@ -1985,6 +1989,9 @@ def p_ExprSwitchStmt(p):
                 lst.append(case.children[0].children[0].label) 
         varNode = p[2]
         casesNode = p[5]
+        for statement in casesNode[-1].instrNode:
+            if isinstance(statement, FallthroughNode):
+                raise LogicalError(f"{p.lexer.lineno}: Fallthrough statement can't be used in the last case of the switch statement.")
     elif len(p) == 9:
         ## Check if a case has been repeated
         lst = []
@@ -1996,6 +2003,9 @@ def p_ExprSwitchStmt(p):
 
         smtNode = p[2]
         casesNode = p[6]
+        for statement in casesNode[-1].instrNode:
+            if isinstance(statement, FallthroughNode):
+                raise LogicalError(f"{p.lexer.lineno}: Fallthrough statement can't be used in the last case of the switch statement.")
     else:
         if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
             raise TypeError("Unsupported type in switch condition!")
@@ -2010,6 +2020,9 @@ def p_ExprSwitchStmt(p):
         smtNode = p[2]
         varNode = p[4]
         casesNode = p[7]
+        for statement in casesNode[-1].instrNode:
+            if isinstance(statement, FallthroughNode):
+                raise LogicalError(f"{p.lexer.lineno}: Fallthrough statement can't be used in the last case of the switch statement.")
     
     p[0] = SwitchNode(smtNode, varNode, casesNode)
 

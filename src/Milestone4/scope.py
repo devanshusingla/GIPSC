@@ -637,6 +637,7 @@ class SwitchNode(Node):
 class CasesNode(Node):
     def __init__(self, caseValsNode, instrNode):
         super().__init__()
+        self.instrNode = instrNode
         self.addChild(*caseValsNode, *instrNode)
     
     def __str__(self):
