@@ -114,7 +114,7 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
              return True 
         return False 
     
-    if binop == '%' or binop == '&' or binop == '|' or binop == '^' | binop == '&^':
+    if binop == '%' or binop == '&' or binop == '|' or binop == '^' or binop == '&^':
         if isBasicInteger(stm, dt1) and isBasicInteger(stm, dt2) and dt1 == dt2:
             return True
         return False 
@@ -161,7 +161,7 @@ def getFinalType(stm, dt1, dt2, binop):
             return {'name': 'int32', 'baseType' : 'int32', 'level' : 0}
         return dt1_copy
     
-    if binop == '%' or binop == '&' or binop == '|' or binop == '^' | binop == '&^':
+    if binop == '%' or binop == '&' or binop == '|' or binop == '^' or binop == '&^':
         if dt1 == 'byte' or dt1 == 'rune':
             return {'name': 'int32', 'baseType' : 'int32', 'level' : 0}
         return dt1_copy
@@ -429,3 +429,32 @@ def Operate(operator, operand1, operand2, lineno, dt2):
 #     else:
 #         parts = float.split('+')
 #         return (float(parts[0]), float(parts[1].strip('i')))
+
+def isValidGoto(stm : SymTableMaker, labelST : scope, gotoST : scope, checkNoSkipVar=False):
+    if checkNoSkipVar:
+        if labelST.id != gotoST.id:
+            return False
+        if len(gotoST.localsymTable) > len(labelST.localsymTable):
+            return False
+        if len(gotoST.avlTypes) > len(labelST.avlTypes):
+            return False
+        if len(gotoST.typeDefs) > len(labelST.typeDefs):
+            return False
+        return True
+    else:
+        flag = False
+        lid = labelST.id
+        # Check if scope id of goto scope symbol table is 
+        # an ancestor of label scope symbol table
+        while True:
+            if lid == gotoST.id:
+                flag = True
+                break
+            if lid == 0:
+                break
+            else:
+                lid = stm.symTable[lid].parentScope
+        if not flag:
+            return False
+        else:
+            return True

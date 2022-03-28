@@ -1,4 +1,5 @@
 from typing import List
+from copy import deepcopy
 import ply.yacc as yacc
 import ply.lex as lex
 import lexer
@@ -51,6 +52,12 @@ def p_SourceFile(p):
     SourceFile : PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult
     """
     global ast
+    # Check if any label has expecting key set
+    for label in stm.labels:
+        if stm.labels[label]['expecting'] == True:
+            assert(len(stm.labels[label]['prevGotos']) > 0)
+            goto = stm.labels[label]['prevGotos'][0]
+            raise LogicalError(f"{goto[1]}: Goto declared without declaring any label {label}.")
     p[0] = FileNode(p[1], p[3], p[4])
     ast = p[0]
 
@@ -1445,6 +1452,8 @@ def p_Statement(p):
               | ContinueStmt
               | FallthroughStmt
               | Block
+              | GotoStmt
+              | LabeledStmt
               | IfStmt
               | SwitchStmt
               | ForStmt
@@ -1456,17 +1465,41 @@ def p_Statement(p):
 ### Labeled Statements
 ###################################################################################
 
-# def p_LabeledStmt(p):
-#     """
-#     LabeledStmt : Label COLON Statement
-#     """
-#     p[0] = LabelNode(p[1], p[3])
+def p_LabeledStmt(p):
+    """
+    LabeledStmt : Label COLON Statement
+    """
 
-# def p_Label(p):
-#     """
-#     Label : IDENT
-#     """
-#     p[0] = p[1]
+    labelScopeTab = deepcopy(stm.symTable[stm.getCurrentScope()])
+    if p[1] not in stm.labels:
+        # Create a new label and need not set expecting to true; set it to false
+        stm.labels[p[1]] = {
+            'scopeTab': labelScopeTab,
+            'mappedName' : stm.getNewLabel(),
+            'expecting' : False ,
+            'lineno' : p.lexer.lineno,
+            'prevGotos': []
+        }
+    elif p[1] in stm.labels:
+        # Analyse previous gotos (if any), and set expecting to False
+        if stm.labels[p[1]]['expecting'] == True:
+            for goto in stm.labels[p[1]]['prevGotos']:
+                gotoScopeTab, gotoLineno = goto
+                if not isValidGoto(stm, labelScopeTab, gotoScopeTab, checkNoSkipVar=True):
+                    raise LogicalError(f"{p.lexer.lineno}: Invalid placement of Goto at {gotoLineno} - Goto statement outside of a block can't jump inside a block and variable declarations can't be skipped.")
+            stm.labels[p[1]]['expecting'] = False
+            stm.labels[p[1]]['scopeTab'] = labelScopeTab
+            stm.labels[p[1]]['lineno'] = p.lexer.lineno
+        else:
+            # Redeclaration of label - Error
+            raise LogicalError(f"{p.lexer.lineno}: Label declared earlier at {stm.labels[p[1]]['lineno']}.")
+    p[0] = LabelNode(p[1], LabelStatementNode(p[3], p.lexer.lineno))
+
+def p_Label(p):
+    """
+    Label : IDENT
+    """
+    p[0] = p[1]
 
 ###################################################################################
 ### Simple Statements
@@ -1649,11 +1682,42 @@ def p_ShortVarDecl(p):
 ### Goto Statements
 ###################################################################################
 
-# def p_GotoStmt(p):
-#     """
-#     GotoStmt :  GOTO Label
-#     """
-#     p[0] = GotoNode(p[2])
+def p_GotoStmt(p):
+    """
+    GotoStmt :  GOTO Label
+    """
+    gotoScopeTab = deepcopy(stm.symTable[stm.getCurrentScope()])
+    if p[2] in stm.labels:
+        # Label has been seen before
+        if stm.labels[p[2]]['expecting']:
+            # Currently not seen the labeled statement
+            # Label has been created earlier by previous goto
+            stm.labels[p[2]]['prevGotos'].append(
+                (gotoScopeTab, p.lexer.lineno)
+            )
+        else:
+            # Label already declared before (backward jump)
+            # Check parent condition
+            if not isValidGoto(stm, stm.labels[p[2]]['scopeTab'], gotoScopeTab):
+                raise LogicalError(f"{p.lexer.lineno}: Invalid placement of goto wrt label at {stm.labels[p[2]]['lineno']} - Goto statement outside of a block can't jump inside a block.")
+            # No need to append gotos as semantic analysis is complete
+    else:
+        # Label not declared before; expecting label; (forward jump)
+        # Semantic analysis to be done when corresponding Label is parsed
+
+        # Will shallow copy work or do we need deepcopy?
+        # Label is created for the first time from goto
+        stm.labels[p[2]] = {
+            'scopeTab': None,
+            'mappedName' : stm.getNewLabel(),
+            'expecting' : True ,
+            'lineno' : None,
+            'prevGotos': [
+                (gotoScopeTab, p.lexer.lineno)
+            ]
+        }
+            
+    p[0] = GotoNode(p[2])
 
 ###################################################################################
 ### Return Statements
@@ -1685,6 +1749,7 @@ def p_ReturnStmt(p):
 def p_BreakStmt(p):
     """
     BreakStmt : BREAK 
+              | BREAK Label
     """
     if len(p) == 2:
         p[0] = BreakNode()
@@ -1698,6 +1763,7 @@ def p_BreakStmt(p):
 def p_ContinueStmt(p):
     """
     ContinueStmt :  CONTINUE
+                 |  CONTINUE Label
     """
     if len(p) == 2:
         p[0] = ContinueNode()

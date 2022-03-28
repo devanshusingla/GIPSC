@@ -17,8 +17,9 @@ class DuplicateKeyError(Exception):
     pass
 
 class scope:
-    def __init__(self, parentScope=None):
+    def __init__(self, currentScopeId, parentScope=None):
         self.localsymTable = {}
+        self.id = currentScopeId
         self.parentScope = parentScope
         self.avlTypes = basicTypes.copy()
         self.typeDefs = {}
@@ -51,14 +52,25 @@ class scope:
 ## Symbol Table Maker
 class SymTableMaker:
     def __init__(self):
-        self.symTable = {}
-        self.symTable[0] = scope()
+        self.symTable : dict[int, scope] = {}
+        self.symTable[0] = scope(0)
         self.functions = {}
         self.stack = [0]
         self.id = 0
         self.nextId = 1
         self.currentReturnType = None
         self.forDepth = 0
+        self.labels = {}
+        # self.labels: dict[str] -> dict[]
+        # self.labels[label] = {
+        # 'scopeTab' : _ , 
+        # 'mappedName' : _, 
+        # 'expecting' : _, 
+        # 'lineno' : _
+        # 'prevGotos' : [
+        #  (scopeTab, lineno), (scopeTab, lineno) ...
+        # ]}
+        self.nextLabel = 0
         self.addBuiltInFuncs()
 
     def addFunction(self, label, info):
@@ -68,7 +80,7 @@ class SymTableMaker:
         self.symTable[self.id].addType(type, typeObj)
     
     def newScope(self):
-        self.symTable[self.nextId] = scope(parentScope = self.id)
+        self.symTable[self.nextId] = scope(self.nextId, parentScope = self.id)
         self.stack.append(self.nextId)
         self.id = self.nextId
         self.nextId += 1
@@ -116,6 +128,13 @@ class SymTableMaker:
             return i
         else:
             return self.stack[i]
+    
+    def getCurrentScope(self):
+        return self.stack[-1]
+    
+    def getNewLabel(self):
+        self.nextLabel += 1
+        return f"label_{self.nextLabel-1}"
     
     def addBuiltInFuncs(self):
         print("TODO: Add builtin function definitions by parsing or by hard coding")
@@ -473,6 +492,15 @@ class LabelNode(Node):
     
     def __str__(self):
         return f'LABEL'
+    
+class LabelStatementNode(Node):
+    def __init__(self, statementNode, lineno):
+        super().__init__()
+        self.statementNode = statementNode
+        self.statementLabel = lineno
+
+    def __str__(self):
+        return f'LINE:{self.statementLabel}'
 
 class GotoNode(Node):
     def __init__(self, labelNode):
