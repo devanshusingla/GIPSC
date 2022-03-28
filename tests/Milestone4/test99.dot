@@ -60,8 +60,13 @@ digraph G {
 	57 -> 59;
 	54 -> 60;
 	60 -> 61;
-	11 -> 62;
+	39 -> 62;
 	62 -> 63;
-	62 -> 64;
-	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="\"fmt\""];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="PARAMS"];	10 [label="RETURN-TYPE"];	11 [label="{}"];	12 [label="LABEL"];	13 [label="OuterLoop"];	14 [label="LINE:20"];	15 [label="FOR"];	16 [label="CLAUSE"];	17 [label="LIST"];	18 [label="="];	19 [label="i"];	20 [label="0"];	21 [label="<"];	22 [label="i"];	23 [label="n"];	24 [label="++"];	25 [label="i"];	26 [label="{}"];	27 [label="FOR"];	28 [label="CLAUSE"];	29 [label="LIST"];	30 [label="="];	31 [label="j"];	32 [label="0"];	33 [label="<"];	34 [label="j"];	35 [label="m"];	36 [label="++"];	37 [label="j"];	38 [label="{}"];	39 [label="SWITCH"];	40 [label="None"];	41 [label="[]"];	42 [label="[]"];	43 [label="a"];	44 [label="i"];	45 [label="j"];	46 [label="CASES"];	47 [label="CASE"];	48 [label="2"];	49 [label="="];	50 [label="\"state\""];	51 [label="\"Error\""];	52 [label="BREAK"];	53 [label="OuterLoop"];	54 [label="CASES"];	55 [label="CASE"];	56 [label="4"];	57 [label="="];	58 [label="\"state\""];	59 [label="\"Found\""];	60 [label="BREAK"];	61 [label="OuterLoop"];	62 [label="="];	63 [label="\"state\""];	64 [label="\"state\""];
+	63 -> 64;
+	62 -> 65;
+	65 -> 66;
+	11 -> 67;
+	67 -> 68;
+	67 -> 69;
+	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="\"fmt\""];	6 [label="GLOBAL"];	7 [label="FUNC"];	8 [label="main"];	9 [label="PARAMS"];	10 [label="RETURN-TYPE"];	11 [label="{}"];	12 [label="LABEL"];	13 [label="OuterLoop"];	14 [label="LINE:22"];	15 [label="FOR"];	16 [label="CLAUSE"];	17 [label="LIST"];	18 [label="="];	19 [label="i"];	20 [label="0"];	21 [label="<"];	22 [label="i"];	23 [label="n"];	24 [label="++"];	25 [label="i"];	26 [label="{}"];	27 [label="FOR"];	28 [label="CLAUSE"];	29 [label="LIST"];	30 [label="="];	31 [label="j"];	32 [label="0"];	33 [label="<"];	34 [label="j"];	35 [label="m"];	36 [label="++"];	37 [label="j"];	38 [label="{}"];	39 [label="SWITCH"];	40 [label="None"];	41 [label="[]"];	42 [label="[]"];	43 [label="a"];	44 [label="i"];	45 [label="j"];	46 [label="CASES"];	47 [label="CASE"];	48 [label="2"];	49 [label="="];	50 [label="\"state\""];	51 [label="\"Error\""];	52 [label="BREAK"];	53 [label="OuterLoop"];	54 [label="CASES"];	55 [label="CASE"];	56 [label="4"];	57 [label="="];	58 [label="\"state\""];	59 [label="\"Found\""];	60 [label="BREAK"];	61 [label="OuterLoop"];	62 [label="CASES"];	63 [label="CASE"];	64 [label="6"];	65 [label="CONTINUE"];	66 [label="OuterLoop"];	67 [label="="];	68 [label="\"state\""];	69 [label="\"state\""];
 }

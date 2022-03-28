@@ -15,6 +15,8 @@ func main() {
 			case 4:
 				state = "Found"
 				break OuterLoop
+			case 6: 
+				continue OuterLoop
 			}
 		}
 	}

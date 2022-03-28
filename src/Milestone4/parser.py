@@ -1289,7 +1289,6 @@ def p_FuncSig(p):
             for i, param in enumerate(p[3][0].children):
                 stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
                 p[3][0].children[i].scope = stm.id
-    
     p[0] = [p[2], p[3]]
 
 # def p_BeginFunc(p):
@@ -1392,8 +1391,14 @@ def p_Result(p):
         if isinstance(p[2], Type):
             p[2] = [p[2]]
         p[0] = FuncReturnNode(p[2])
-    else:
+    elif len(p) == 3:
         p[0] = FuncReturnNode([])
+    else:
+        if isinstance(p[1], str):
+            p[1] = stm.findType(p[1])
+        if isinstance(p[1], Type):
+            p[1] = [p[1]]
+        p[0] = FuncReturnNode(p[1])
 
 def p_ParametersType(p):
     """
@@ -1744,7 +1749,7 @@ def p_ReturnStmt(p):
     else:
         for returnDataType, ExprNode in zip(stm.currentReturnType.dataType, p[2]):
             if returnDataType != ExprNode.dataType:
-                return LogicalError(f"{p.lexer.lineno}: Return type of current function and the return statement doesn't match.")
+                raise LogicalError(f"{p.lexer.lineno}: Return type of current function and the return statement doesn't match.")
         p[0] = ReturnNode(p[2])
 
 ###################################################################################
