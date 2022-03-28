@@ -29,7 +29,7 @@
 28 : {'TopLevelDecl': 10, 'TopLevelDeclMult': 51, 'Decl': 11, 'FuncDecl': 12, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'FuncSig': 16}
 29 : {}
 30 : {}
-31 : {'StatementList': 52, 'Statement': 53, 'Decl': 54, 'SimpleStmt': 55, 'BreakStmt': 56, 'ContinueStmt': 57, 'FallthroughStmt': 58, 'Block': 59, 'GotoStmt': 60, 'LabeledStmt': 61, 'IfStmt': 62, 'SwitchStmt': 63, 'ForStmt': 64, 'ReturnStmt': 65, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'Label': 72, 'Expr': 77, 'ExprSwitchStmt': 78, 'ExpressionList': 81, 'IdentifierList': 83, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
+31 : {'StatementList': 52, 'Statement': 53, 'Decl': 54, 'SimpleStmt': 55, 'BreakStmt': 56, 'ContinueStmt': 57, 'FallthroughStmt': 58, 'Block': 59, 'GotoStmt': 60, 'LabeledStmt': 61, 'IfStmt': 62, 'SwitchStmt': 63, 'ForStmt': 64, 'ReturnStmt': 65, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'Label': 75, 'Expr': 77, 'ExprSwitchStmt': 78, 'ExpressionList': 81, 'IdentifierList': 83, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
 32 : {}
 33 : {'ConstSpecMult': 118, 'ConstSpec': 119, 'IdentifierList': 34}
 34 : {'Type': 120, 'TypeT': 123, 'PointerType': 124, 'ArrayType': 126, 'StructType': 127, 'SliceType': 128, 'MapType': 129}
@@ -69,11 +69,11 @@
 68 : {}
 69 : {}
 70 : {}
-71 : {'Label': 149}
-72 : {}
-73 : {'Label': 152}
-74 : {}
-75 : {'Label': 153}
+71 : {'JumpLabel': 149}
+72 : {'JumpLabel': 151}
+73 : {}
+74 : {'JumpLabel': 152}
+75 : {}
 76 : {'BeginIf': 154}
 77 : {}
 78 : {}
@@ -146,12 +146,12 @@
 145 : {}
 146 : {'ImportSpec': 48, 'ImportSpecMult': 256, 'ImportPath': 25}
 147 : {}
-148 : {'Statement': 53, 'StatementList': 257, 'Decl': 54, 'SimpleStmt': 55, 'BreakStmt': 56, 'ContinueStmt': 57, 'FallthroughStmt': 58, 'Block': 59, 'GotoStmt': 60, 'LabeledStmt': 61, 'IfStmt': 62, 'SwitchStmt': 63, 'ForStmt': 64, 'ReturnStmt': 65, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'Label': 72, 'Expr': 77, 'ExprSwitchStmt': 78, 'ExpressionList': 81, 'IdentifierList': 83, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
+148 : {'Statement': 53, 'StatementList': 257, 'Decl': 54, 'SimpleStmt': 55, 'BreakStmt': 56, 'ContinueStmt': 57, 'FallthroughStmt': 58, 'Block': 59, 'GotoStmt': 60, 'LabeledStmt': 61, 'IfStmt': 62, 'SwitchStmt': 63, 'ForStmt': 64, 'ReturnStmt': 65, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'Label': 75, 'Expr': 77, 'ExprSwitchStmt': 78, 'ExpressionList': 81, 'IdentifierList': 83, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
 149 : {}
 150 : {}
-151 : {'Label': 72, 'Statement': 258, 'Decl': 54, 'SimpleStmt': 55, 'BreakStmt': 56, 'ContinueStmt': 57, 'FallthroughStmt': 58, 'Block': 59, 'GotoStmt': 60, 'LabeledStmt': 61, 'IfStmt': 62, 'SwitchStmt': 63, 'ForStmt': 64, 'ReturnStmt': 65, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'Expr': 77, 'ExprSwitchStmt': 78, 'ExpressionList': 81, 'IdentifierList': 83, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
+151 : {}
 152 : {}
-153 : {}
+153 : {'Label': 75, 'Statement': 258, 'Decl': 54, 'SimpleStmt': 55, 'BreakStmt': 56, 'ContinueStmt': 57, 'FallthroughStmt': 58, 'Block': 59, 'GotoStmt': 60, 'LabeledStmt': 61, 'IfStmt': 62, 'SwitchStmt': 63, 'ForStmt': 64, 'ReturnStmt': 65, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'Expr': 77, 'ExprSwitchStmt': 78, 'ExpressionList': 81, 'IdentifierList': 83, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
 154 : {'Expr': 259, 'SimpleStmt': 260, 'UnaryExpr': 86, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'PrimaryExpr': 92, 'ExpressionList': 81, 'IdentifierList': 83, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
 155 : {}
 156 : {}
@@ -416,7 +416,7 @@
 415 : {'EndSwitch': 431, 'ExprCaseClause': 389, 'ExprSwitchCase': 390}
 416 : {}
 417 : {}
-418 : {'StatementList': 433, 'Statement': 53, 'Decl': 54, 'SimpleStmt': 55, 'BreakStmt': 56, 'ContinueStmt': 57, 'FallthroughStmt': 58, 'Block': 59, 'GotoStmt': 60, 'LabeledStmt': 61, 'IfStmt': 62, 'SwitchStmt': 63, 'ForStmt': 64, 'ReturnStmt': 65, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'Label': 72, 'Expr': 77, 'ExprSwitchStmt': 78, 'ExpressionList': 81, 'IdentifierList': 83, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
+418 : {'StatementList': 433, 'Statement': 53, 'Decl': 54, 'SimpleStmt': 55, 'BreakStmt': 56, 'ContinueStmt': 57, 'FallthroughStmt': 58, 'Block': 59, 'GotoStmt': 60, 'LabeledStmt': 61, 'IfStmt': 62, 'SwitchStmt': 63, 'ForStmt': 64, 'ReturnStmt': 65, 'ConstDecl': 13, 'VarDecl': 14, 'TypeDecl': 15, 'EmptyStmt': 66, 'ExpressionStmt': 67, 'IncDecStmt': 68, 'Assignment': 69, 'ShortVarDecl': 70, 'Label': 75, 'Expr': 77, 'ExprSwitchStmt': 78, 'ExpressionList': 81, 'IdentifierList': 83, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
 419 : {}
 420 : {'Expr': 434, 'UnaryExpr': 86, 'PrimaryExpr': 92, 'Lit': 94, 'BasicLit': 95, 'CompositeLit': 96, 'FunctionLit': 97, 'IntLit': 98, 'FloatLit': 99, 'ImagLit': 100, 'RuneLit': 101, 'StringLit': 102, 'BoolLit': 103, 'StructType': 104, 'ArrayType': 105, 'SliceType': 106, 'MapType': 107}
 421 : {}

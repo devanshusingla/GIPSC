@@ -63,7 +63,9 @@ class SymTableMaker:
         self.nextId = 1
         self.currentReturnType = None
         self.forDepth = 0
+        self.switchDepth = 0
         self.labels = {}
+        self.currentLabel = None
         # self.labels: dict[str] -> dict[]
         # self.labels[label] = {
         # 'scopeTab' : _ , 
@@ -105,6 +107,8 @@ class SymTableMaker:
             return self.symTable[scope].getinfo(ident)
 
     def findType(self, type):
+        if isinstance(type, dict):
+            type = type['name']
         i = len(self.stack) - 1
         while i >= 0:
             j = self.stack[i]

@@ -445,7 +445,7 @@ def p_VarSpec(p):
             if not_base_type:
                 present = checkTypePresence(stm, dt) 
             else:
-                present = stm.findType(stm, dt)
+                present = stm.findType(dt)
 
             if present == -1:
                 raise TypeError('Type not declared/found: ' + dt, p.lexer.lineno)
@@ -1462,7 +1462,21 @@ def p_LabeledStmt(p):
     """
     LabeledStmt : Label COLON Statement
     """
+    print(type(p[3]))
+    stm.labels[p[1]]['statementType'] = type(p[3])
+    p[0] = LabelNode(p[1], LabelStatementNode(p[3], p.lexer.lineno))
+    stm.currentLabel = None
 
+def p_JumpLabel(p):
+    """
+    JumpLabel : IDENT
+    """
+    p[0] = p[1]
+
+def p_Label(p):
+    """
+    Label : IDENT
+    """
     labelScopeTab = deepcopy(stm.symTable[stm.getCurrentScope()])
     if p[1] not in stm.labels:
         # Create a new label and need not set expecting to true; set it to false
@@ -1471,27 +1485,25 @@ def p_LabeledStmt(p):
             'mappedName' : stm.getNewLabel(),
             'expecting' : False ,
             'lineno' : p.lexer.lineno,
+            'statementType' : None,
             'prevGotos': []
         }
-    elif p[1] in stm.labels:
-        # Analyse previous gotos (if any), and set expecting to False
-        if stm.labels[p[1]]['expecting'] == True:
+    else: 
+        if stm.labels[p[1]]['expecting'] == False:
+            # Redeclaration of label - Error
+            raise LogicalError(f"{p.lexer.lineno}: Label declared earlier at {stm.labels[p[1]]['lineno']}.")
+        else:
+            # Expecting = True; 
+            # Analyse previous gotos (if any), and set expecting to False
             for goto in stm.labels[p[1]]['prevGotos']:
                 gotoScopeTab, gotoLineno = goto
                 if not isValidGoto(stm, labelScopeTab, gotoScopeTab, checkNoSkipVar=True):
                     raise LogicalError(f"{p.lexer.lineno}: Invalid placement of Goto at {gotoLineno} - Goto statement outside of a block can't jump inside a block and variable declarations can't be skipped.")
+            stm.labels[p[1]]['scopeTab'] = labelScopeTab
             stm.labels[p[1]]['expecting'] = False
             stm.labels[p[1]]['scopeTab'] = labelScopeTab
             stm.labels[p[1]]['lineno'] = p.lexer.lineno
-        else:
-            # Redeclaration of label - Error
-            raise LogicalError(f"{p.lexer.lineno}: Label declared earlier at {stm.labels[p[1]]['lineno']}.")
-    p[0] = LabelNode(p[1], LabelStatementNode(p[3], p.lexer.lineno))
-
-def p_Label(p):
-    """
-    Label : IDENT
-    """
+    stm.currentLabel = p[1]
     p[0] = p[1]
 
 ###################################################################################
@@ -1677,7 +1689,7 @@ def p_ShortVarDecl(p):
 
 def p_GotoStmt(p):
     """
-    GotoStmt :  GOTO Label
+    GotoStmt :  GOTO JumpLabel
     """
     gotoScopeTab = deepcopy(stm.symTable[stm.getCurrentScope()])
     if p[2] in stm.labels:
@@ -1705,6 +1717,7 @@ def p_GotoStmt(p):
             'mappedName' : stm.getNewLabel(),
             'expecting' : True ,
             'lineno' : None,
+            'statementType' : None,
             'prevGotos': [
                 (gotoScopeTab, p.lexer.lineno)
             ]
@@ -1742,11 +1755,17 @@ def p_ReturnStmt(p):
 def p_BreakStmt(p):
     """
     BreakStmt : BREAK 
-              | BREAK Label
+              | BREAK JumpLabel
     """
+    if stm.forDepth == 0 and stm.switchDepth == 0:
+        raise LogicalError(f"{p.lexer.lineno}: Break can only be used inside for loops and switch statements.")
     if len(p) == 2:
         p[0] = BreakNode()
     else:
+        if p[2] not in stm.labels:
+            raise LogicalError(f"{p.lexer.lineno}: Label for the break statement must have been declared beforehand.")
+        if not stm.labels[p[2]]['statementType'] or stm.labels[p[2]]['statementType'] not in ['FOR', 'SWITCH']:
+            raise LogicalError(f"{p.lexer.lineno}: Label used with break statement must be used on a for loop statement or switch node statement.")
         p[0] = BreakNode(p[2])
 
 ###################################################################################
@@ -1756,11 +1775,17 @@ def p_BreakStmt(p):
 def p_ContinueStmt(p):
     """
     ContinueStmt :  CONTINUE
-                 |  CONTINUE Label
+                 |  CONTINUE JumpLabel
     """
+    if stm.forDepth == 0:
+        raise LogicalError(f"{p.lexer.lineno}: Continue can only be called inside a for loop.")
     if len(p) == 2:
         p[0] = ContinueNode()
     else:
+        if p[2] not in stm.labels:
+            raise LogicalError(f"{p.lexer.lineno}: Label for the continue statement must have been declared beforehand.")
+        if not stm.labels[p[2]]['statementType'] or stm.labels[p[2]]['statementType'] not in ['FOR']:
+            raise LogicalError(f"{p.lexer.lineno}: Label used with continue statement must be used on a for loop statement.")
         p[0] = ContinueNode(p[2])
 
 ###################################################################################
@@ -1904,12 +1929,17 @@ def p_BeginSwitch(p):
     """
     BeginSwitch : 
     """
+    if stm.currentLabel and stm.labels[stm.currentLabel]['lineno'] == p.lexer.lineno:
+        stm.labels[stm.currentLabel] = 'SWITCH'
+        stm.currentLabel = None
     stm.newScope()
+    stm.switchDepth += 1
 
 def p_EndSwitch(p):
     """
     EndSwitch : 
     """
+    stm.switchDepth -= 1
     stm.exitScope()
 
 def p_ExprCaseClauseMult(p):
@@ -1998,6 +2028,10 @@ def p_BeginFor(p):
     """
     BeginFor : 
     """
+    print(stm.currentLabel, p.lexer.lineno, stm.labels)
+    if stm.currentLabel and stm.labels[stm.currentLabel]['lineno'] == p.lexer.lineno:
+        stm.labels[stm.currentLabel]['statementType'] = 'FOR'
+        stm.currentLabel = None
     stm.newScope()
     stm.forDepth += 1
 
