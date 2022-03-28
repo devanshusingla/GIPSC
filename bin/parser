@@ -24,13 +24,6 @@ then
     exit 1
 fi
 echo "Compilation and AST generation Successful!"
-# python3 $abs_path_to_gen_ast $abs_path_to_output
-# if [ $? != 0 ];
-# then
-#     echo "Parse Tree Generation failed!"
-#     exit 1
-# fi
-# echo "Parse Tree Generated Successfully!"
 dot -Tpng $abs_path_to_dot -o $abs_path_to_png
 if [ $? != 0 ];
 then

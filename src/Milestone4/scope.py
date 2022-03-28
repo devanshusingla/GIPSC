@@ -4,7 +4,9 @@ compositeTypes = ['struct', 'array', 'slice', 'map']
 
 def zeroLit(dataType):
     if dataType == 'int':
-        return LitNode('0', dataType, isConst=True, val=0)
+        dt = {'name' : 'int', 'baseType' : 'int', 'level' : 0}
+        return ExprNode(dt, label='0', operator=None, isConst=True, isAddressable=False, val=0)
+        # return LitNode('0', dataType, isConst=True, val=0)
     else:
         raise NotImplementedError
 
@@ -14,9 +16,13 @@ class ScopeTableError(Exception):
 class DuplicateKeyError(Exception):
     pass
 
+class SwitchCaseError(Exception):
+    pass
+
 class scope:
-    def __init__(self, parentScope=None):
+    def __init__(self, currentScopeId, parentScope=None):
         self.localsymTable = {}
+        self.id = currentScopeId
         self.parentScope = parentScope
         self.avlTypes = basicTypes.copy()
         self.typeDefs = {}
@@ -49,13 +55,25 @@ class scope:
 ## Symbol Table Maker
 class SymTableMaker:
     def __init__(self):
-        self.symTable = {}
-        self.symTable[0] = scope()
+        self.symTable : dict[int, scope] = {}
+        self.symTable[0] = scope(0)
         self.functions = {}
         self.stack = [0]
         self.id = 0
         self.nextId = 1
         self.currentReturnType = None
+        self.forDepth = 0
+        self.labels = {}
+        # self.labels: dict[str] -> dict[]
+        # self.labels[label] = {
+        # 'scopeTab' : _ , 
+        # 'mappedName' : _, 
+        # 'expecting' : _, 
+        # 'lineno' : _
+        # 'prevGotos' : [
+        #  (scopeTab, lineno), (scopeTab, lineno) ...
+        # ]}
+        self.nextLabel = 0
         self.addBuiltInFuncs()
 
     def addFunction(self, label, info):
@@ -65,7 +83,7 @@ class SymTableMaker:
         self.symTable[self.id].addType(type, typeObj)
     
     def newScope(self):
-        self.symTable[self.nextId] = scope(parentScope = self.id)
+        self.symTable[self.nextId] = scope(self.nextId, parentScope = self.id)
         self.stack.append(self.nextId)
         self.id = self.nextId
         self.nextId += 1
@@ -79,9 +97,9 @@ class SymTableMaker:
 
     def get(self, ident, scope=None):
         if scope is None:
-            scope = self.getScope(ident)
             if ident in self.functions:
                 return self.functions[ident]
+            scope = self.getScope(ident)
             return self.symTable[scope].getinfo(ident)
         else:
             return self.symTable[scope].getinfo(ident)
@@ -113,6 +131,13 @@ class SymTableMaker:
             return i
         else:
             return self.stack[i]
+    
+    def getCurrentScope(self):
+        return self.stack[-1]
+    
+    def getNewLabel(self):
+        self.nextLabel += 1
+        return f"label_{self.nextLabel-1}"
     
     def addBuiltInFuncs(self):
         print("TODO: Add builtin function definitions by parsing or by hard coding")
@@ -192,7 +217,7 @@ class LitNode(Node):
 
 import utils
 class CompositeLitNode(Node):
-    def  __init__(self, compositeLitType, elList):
+    def  __init__(self, stm, compositeLitType, elList):
         super().__init__()
         self.dataType = compositeLitType.dataType
         self.children = []
@@ -202,7 +227,7 @@ class CompositeLitNode(Node):
             hasKey = False
             hasNotKey = False
             for el in elList:
-                if isinstance(KeyValNode):
+                if isinstance(el, KeyValNode):
                     hasKey = True
                 else:
                     hasNotKey = True
@@ -215,11 +240,11 @@ class CompositeLitNode(Node):
                 for el in elList:
                     if el.key in kv:
                         raise NameError("field key repeated")
-                    if el.key not in self.dataType.keyTypes:
+                    if el.key not in self.dataType['keyTypes']:
                         raise NameError("Unknown field key")
                     kv[el.key] = el.val
                 
-                for key, t in self.dataType.keyTypes.items():
+                for key, t in self.dataType['keyTypes'].items():
                     if key in kv:
                         val = kv[key]
                     else:
@@ -232,7 +257,7 @@ class CompositeLitNode(Node):
                         self.children.append(StructFieldNode(key, LitNode(val, t)))
             
             else:
-                if len(elList) != len(self.dataType.keyTypes):
+                if len(elList) != len(self.dataType['keyTypes']):
                     raise NameError("too few arguments for structure")
                 for (key, t), val in zip(self.dataType.keyTypes.items(), elList):
                     if isinstance(val, ExprNode):
@@ -317,13 +342,22 @@ class CompositeLitNode(Node):
                 val = element.val
 
                 ## TODO: Check type for key
+                keytype = element.keytype 
+                print("Actual: ", keytype)
+                print("Expected ", self.dataType['KeyType'])
+
+                if not utils.isTypeCastable(stm, keytype, self.dataType['KeyType']):
+                    raise TypeError("Key not typecastable to map's key dataType")
 
                 if key in keys:
                     raise DuplicateKeyError("Key " + key + "already assigned")
                 else:
                     keys.append(key)
 
-                if not utils.isTypeCastable(self.dataType['ValType'], val.dataType):
+                print("Actual: ", val.dataType)
+                print("Expected ", self.dataType['ValueType'])
+
+                if not utils.isTypeCastable(stm, self.dataType['ValueType'], val.dataType):
                     raise TypeError("Value cannot be typecasted to required datatype for key: " + key)
 
 
@@ -337,15 +371,17 @@ class CompositeLitNode(Node):
         elif self.dataType['name'] == 'slice':
             return f'SLICE[{self.dataType["length"]}:{self.dataType["capacity"]}]'
         elif self.dataType['name'] == 'map':
-            return f'MAP[{self.KeyType.name}:{self.ValueType.name}]'
+            key = self.dataType['KeyType']['name']
+            val = self.dataType['ValueType']['name']
+            return f'MAP[{key}:{val}]'
 
 class StructFieldNode(Node):
-    def __init__(self, key, type, dataType):
+    def __init__(self, key, val):
         super().__init__()
         self.key = key
-        self.type = type
-        self.dataType = dataType
-        self.addChildren(key, type)
+        self.type = val
+        self.dataType = val.dataType
+        self.addChild(key, val)
 
     def __str__(self):
         return ":"
@@ -362,8 +398,10 @@ class KeyValNode(Node):
     def __init__(self, key, val):
         super().__init__()
         self.key = key.label
+        self.keytype = key.dataType
         self.val = val
-        self.children.append(key, val)
+        self.children.append(key)
+        self.children.append(val)
     
     def __str__(self):
         return f':'
@@ -478,6 +516,15 @@ class LabelNode(Node):
     
     def __str__(self):
         return f'LABEL'
+    
+class LabelStatementNode(Node):
+    def __init__(self, statementNode, lineno):
+        super().__init__()
+        self.statementNode = statementNode
+        self.statementLabel = lineno
+
+    def __str__(self):
+        return f'LINE:{self.statementLabel}'
 
 class GotoNode(Node):
     def __init__(self, labelNode):
@@ -572,7 +619,7 @@ class SwitchNode(Node):
 class CasesNode(Node):
     def __init__(self, caseValsNode, instrNode):
         super().__init__()
-        self.addChild(*caseValsNode, instrNode)
+        self.addChild(*caseValsNode, *instrNode)
     
     def __str__(self):
         return "CASES"

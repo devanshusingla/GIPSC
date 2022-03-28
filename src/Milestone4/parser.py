@@ -1,4 +1,5 @@
 from typing import List
+from copy import deepcopy
 import ply.yacc as yacc
 import ply.lex as lex
 import lexer
@@ -51,6 +52,12 @@ def p_SourceFile(p):
     SourceFile : PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult
     """
     global ast
+    # Check if any label has expecting key set
+    for label in stm.labels:
+        if stm.labels[label]['expecting'] == True:
+            assert(len(stm.labels[label]['prevGotos']) > 0)
+            goto = stm.labels[label]['prevGotos'][0]
+            raise LogicalError(f"{goto[1]}: Goto declared without declaring any label {label}.")
     p[0] = FileNode(p[1], p[3], p[4])
     ast = p[0]
 
@@ -330,12 +337,9 @@ def p_VarSpec(p):
             | IdentifierList Type
             | IdentifierList IDENT
     """
-    
     p[0] = []
     length = len(p)-1
-
     if len(p) >= 4:
-
         count_0 = 0
         count_1 = 0
 
@@ -354,13 +358,11 @@ def p_VarSpec(p):
                     count_1+=1
             else:
                 expression_datatypes.append(p[length][i].dataType)
-        
         if count_1 > 0:
             if len(p[length]) > 1:
-                raise TypeError("Function with more than one return values should be assigned alone!")
-
+                raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
         if len(p[1]) != len(expression_datatypes):
-            raise NameError("Assignment is not balanced", p.lexer.lineno)
+            raise NameError(f"{p.lexer.lineno}: Assignment is not balanced", p.lexer.lineno)
         
         dt = {}
 
@@ -372,11 +374,9 @@ def p_VarSpec(p):
                 dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
             else:
                 dt = p[2].dataType
-            
             for i, expression in enumerate(expression_datatypes):
-               
                 if not isTypeCastable(stm, dt, expression):
-                    raise TypeError("Mismatch of type for identifier: " + p[1][i].label)
+                    raise TypeError(f"{p.lexer.lineno}: Mismatch of type for identifier: " + p[1][i].label)
 
         if count_1 > 0:
             expr = ExprNode(dataType = dt, label = "ASSIGN", operator = "=")
@@ -514,30 +514,28 @@ def p_TypeDef(p):
               | IDENT IDENT
 
     """
-    
-    dt = {}
     if isinstance(p[2], str):
-        dt['name'] = p[3]
-        dt['baseType'] = p[2]
-        dt['level'] = 0
-    else:
-        dt = p[2].dataType
+        p[2] = stm.findType(p[2])
+    dt = p[2].dataType
 
     if checkTypePresence(stm, dt) == -1:
         raise TypeError("baseType " + dt + " not declared yet")
 
     if p[1] in stm.symTable[stm.id].typeDefs:
-        raise TypeError("Redeclaration of Alias " + p[1], p.lexer.lineno)
+        raise TypeError("Redeclaration of type " + p[1], p.lexer.lineno)
         
     elif isinstance(p[2], str) and p[2] in stm.symTable[stm.id].avlTypes:
-        stm.symTable[stm.id].typeDefs[p[1]] = p[2]
+        stm.symTable[stm.id].typeDefs[p[1]] = {'baseType': p[2], 'name': p[2], 'level' : 0}
     
     elif isinstance(p[2], str):
         stm.symTable[stm.id].typeDefs[p[1]] = stm.symTable[stm.id].typeDefs[p[2]]
 
     else:
-        stm.symTable[stm.id].typeDefs[p[1]] = dt
-
+        stm.symTable[stm.id].typeDefs[p[1]] = p[2]
+        # params = []
+        # for key in dt['keyTypes']:
+        #     params.append(dt['keyTypes'][key])
+        # stm.addFunction(p[1], {"params": params , "return": [p[2]], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
 
 ###################################################################################
 ### Identifier List
@@ -673,21 +671,26 @@ def p_PrimaryExpr(p):
             # Ig Composite Literal is only used for assignment
             p[0] = p[1]
 
-    ## Primary Expr -> Ident
+    ## PrimaryExpr -> Ident
     elif (len(p) == 2):
+        if p[1] in stm.symTable[0].typeDefs:
+            # Type Declaration Found
+            # Assuming Constructor Initialisation
+            dt = stm.symTable[0].typeDefs[p[1]]
+            p[0] = ExprNode(dataType=dt, label=p[1], isAddressable=False, isConst=False, val=None)
+            return
+
         # Check declaration
         latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
 
         if latest_scope == 0:
             ## To be checked for global declarations (TODO)
             print("Expecting global declaration for ",p[1], p.lexer.lineno)
-
-        print("Searching for: ", p[1])
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
     
-    ## Primary Expr -> LPAREN Expr RPAREN
+    ## PrimaryExpr -> LPAREN Expr RPAREN
     elif len(p) == 4:
         p[0] = p[2]
 
@@ -737,7 +740,7 @@ def p_PrimaryExpr(p):
                     dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
 
             if p[1].dataType['name'] == 'map':
-                if not isTypeCastable(p[2].dataType, p[1].dataType['KeyType']):
+                if not isTypeCastable(stm, p[2].dataType, p[1].dataType['KeyType']):
                     raise TypeError("Incorrect type for map " + p.lexer.lineno)
                 dt = p[1].dataType['ValueType']
 
@@ -783,32 +786,42 @@ def p_PrimaryExpr(p):
 
         ## PrimaryExpr -> PrimaryExpr Arguments
         elif isinstance(p[2], List):
-            if p[1].label not in stm.functions:
-                raise NameError("No such function declared ", p.lexer.lineno)
+            dt = stm.findType(p[1].label)
+            if dt != -1:
+                if not isinstance(dt, StructType):
+                    raise TypeError(f'Not of type struct')
+                p[2] = CompositeLitNode(stm, dt, p[2])
+                p[0] = p[2]
+                p[0].dataType = dt.dataType
+                p[0].isAddressable = False
+                return
+            else:
+                if p[1].label not in stm.functions:
+                    raise NameError("No such function declared ", p.lexer.lineno)
 
-            info = stm.functions[p[1].label]
-            paramList = info['params']
-            dt = None
-            if info['return'] != None:
-                dt = info['return']
+                info = stm.functions[p[1].label]
+                paramList = info['params']
+                dt = None
+                if info['return'] != None:
+                    dt = info['return']
 
-            if len(paramList) != len(p[2]):
-                raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + len(paramList) + " number of arguments but got " + len(p[2]), p.lexer.lineno)
+                if len(paramList) != len(p[2]):
+                    raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + str(len(paramList)) + " number of arguments but got " + str(len(p[2])), p.lexer.lineno)
 
-            for i, argument in enumerate(p[2]):
-                dt1 = argument.dataType
-                dt2 = paramList[i]
+                for i, argument in enumerate(p[2]):
+                    dt1 = argument.dataType
+                    dt2 = paramList[i]
 
-                if not isTypeCastable(stm, dt1, dt2):
-                    raise TypeError("Type mismatch on argument number: " + i, p.lexer.lineno)
+                    if not isTypeCastable(stm, dt1, dt2):
+                        raise TypeError("Type mismatch on argument number: " + i, p.lexer.lineno)
 
-            p[2] = FuncCallNode(p[1], p[2])
+                p[2] = FuncCallNode(p[1], p[2])
         
-        p[0] = p[2]
-        p[0].dataType = dt
+        p[0] = p[2]       
         p[0].isAddressable = True
+        p[0].dataType = dt
         if isinstance(p[2], list):
-            p[0].isAddressable = False
+            p[0].isAddressable = False            
 
 ###################################################################################
 ## Selector
@@ -988,16 +1001,11 @@ def p_ElementType(p):
     """
     ElementType : Type
                 | IDENT
-    """
-    p[0] = ElementaryType()
-    
-    if not isinstance(p[1], str):
-        p[0].dataType = p[1].dataType 
+    """    
+    if isinstance(p[1], str):
+        p[0] = stm.findType(p[1]) 
     else:
-        p[0].dataType['baseType'] = p[1]
-        p[0].dataType['level'] = 0
-
-    p[0].dataType['name'] = 'elementary'
+        p[0] = p[1]
 
 ###################################################################################
 ### Struct Type
@@ -1048,7 +1056,6 @@ def p_FieldDecl(p):
         for key in p[1]:
             p[0].append(StructFieldType(key, p[2]))
     
-
 def p_EmbeddedField(p):
     """
     EmbeddedField : MUL IDENT
@@ -1077,25 +1084,24 @@ def p_MapType(p):
     """
     p[0] = MapType(p[3], p[5])
 
-    if p[2].dataType['name'] == 'map' or p[2].dataType['name'] == 'func' or p[2].dataType['name'] == 'slice' or p[2].dataType['name'] == 'array':
+    if p[3].dataType['name'] == 'map' or p[3].dataType['name'] == 'func' or p[3].dataType['name'] == 'slice' or p[3].dataType['name'] == 'array':
         raise TypeError(f"{p.lexer.lineno} Invalid map key type")
 
     p[0].dataType = {'name' : 'map'}
-    p[0].dataType['KeyType'] = p[2].dataType
-    p[0].dataType['ValueType'] = p[4].dataType
+    p[0].dataType['KeyType'] = p[3].dataType
+    p[0].dataType['ValueType'] = p[5].dataType
 
 def p_KeyType(p):
     """
     KeyType : Type
             | IDENT
     """
-    p[0] = p[1]
-
     if isinstance(p[1], str):
-        p[0].dataType['baseType'] = p[1]
-        p[0].dataType['level'] = 0
+        p[0] = stm.findType(p[1])
+    else:
+        p[0] = p[1]
 
-    p[0].dataType['name'] = 'key'
+    # p[0].dataType['name'] = 'key'
 
 
 ###################################################################################
@@ -1182,15 +1188,8 @@ def p_CompositeLit(p):
     """
     if isinstance(p[1], str):
         p[1] = stm.findType(p[1])
-    p[0] = CompositeLitNode(p[1], p[2])
 
-    # if isinstance(p[1], BrackType):
-    #     return p[2]
-    # elif isinstance(p[1], MapType):
-    #     return p[2]
-    # elif len(p) == 3:
-    #     return p[2]
-
+    p[0] = CompositeLitNode(stm, p[1], p[2])
 
 def p_LiteralValue(p):
     """
@@ -1340,11 +1339,6 @@ def p_Signature(p):
     else:
         p[0] = [p[1], FuncReturnNode([])]
 
-    # p[0] = Node()
-    # p[0].children.append(p[1])
-    # if len(p) > 2:
-    #     p[0].children.append(p[2])
-
 ###################################################################################
 ## Function Parameters
 
@@ -1380,15 +1374,9 @@ def p_ParameterDecl(p):
     p[0] = p[1]
     if isinstance(p[2], str):
         p[2] = stm.findType(p[2])
+        print(p[2])
     for i in range(len(p[0])):
         p[0][i].dataType = p[2].dataType
-    # p[0] = Node()
-    
-    # if len(p) == 3 and isinstance(p[2], str):
-    #     stm.symTable[stm.id].addType(p[2])
-
-    #     for i, child in enumerate(p[1].children):
-    #         p[0].chidren.append(ParamNode(label = child.label, dataType = p[2]))
 
 ###################################################################################
 ## Return Type
@@ -1397,6 +1385,8 @@ def p_Result(p):
     """
     Result : LPAREN ParametersType RPAREN
            | LPAREN RPAREN
+           | IDENT
+           | Type
     """
     if len(p) > 3:
         if isinstance(p[2], str):
@@ -1406,12 +1396,6 @@ def p_Result(p):
         p[0] = FuncReturnNode(p[2])
     else:
         p[0] = FuncReturnNode([])
-    # p[0] = ResultNode()
-    # if len(p) == 1 and isinstance(p[1], str):
-    #     p[0].children.append(IdentNode(dataType = p[1]))
-    
-    # elif len(p) == 1:
-    #     p[0] = p[1]
 
 def p_ParametersType(p):
     """
@@ -1463,6 +1447,8 @@ def p_Statement(p):
               | ContinueStmt
               | FallthroughStmt
               | Block
+              | GotoStmt
+              | LabeledStmt
               | IfStmt
               | SwitchStmt
               | ForStmt
@@ -1474,17 +1460,41 @@ def p_Statement(p):
 ### Labeled Statements
 ###################################################################################
 
-# def p_LabeledStmt(p):
-#     """
-#     LabeledStmt : Label COLON Statement
-#     """
-#     p[0] = LabelNode(p[1], p[3])
+def p_LabeledStmt(p):
+    """
+    LabeledStmt : Label COLON Statement
+    """
 
-# def p_Label(p):
-#     """
-#     Label : IDENT
-#     """
-#     p[0] = p[1]
+    labelScopeTab = deepcopy(stm.symTable[stm.getCurrentScope()])
+    if p[1] not in stm.labels:
+        # Create a new label and need not set expecting to true; set it to false
+        stm.labels[p[1]] = {
+            'scopeTab': labelScopeTab,
+            'mappedName' : stm.getNewLabel(),
+            'expecting' : False ,
+            'lineno' : p.lexer.lineno,
+            'prevGotos': []
+        }
+    elif p[1] in stm.labels:
+        # Analyse previous gotos (if any), and set expecting to False
+        if stm.labels[p[1]]['expecting'] == True:
+            for goto in stm.labels[p[1]]['prevGotos']:
+                gotoScopeTab, gotoLineno = goto
+                if not isValidGoto(stm, labelScopeTab, gotoScopeTab, checkNoSkipVar=True):
+                    raise LogicalError(f"{p.lexer.lineno}: Invalid placement of Goto at {gotoLineno} - Goto statement outside of a block can't jump inside a block and variable declarations can't be skipped.")
+            stm.labels[p[1]]['expecting'] = False
+            stm.labels[p[1]]['scopeTab'] = labelScopeTab
+            stm.labels[p[1]]['lineno'] = p.lexer.lineno
+        else:
+            # Redeclaration of label - Error
+            raise LogicalError(f"{p.lexer.lineno}: Label declared earlier at {stm.labels[p[1]]['lineno']}.")
+    p[0] = LabelNode(p[1], LabelStatementNode(p[3], p.lexer.lineno))
+
+def p_Label(p):
+    """
+    Label : IDENT
+    """
+    p[0] = p[1]
 
 ###################################################################################
 ### Simple Statements
@@ -1667,11 +1677,42 @@ def p_ShortVarDecl(p):
 ### Goto Statements
 ###################################################################################
 
-# def p_GotoStmt(p):
-#     """
-#     GotoStmt :  GOTO Label
-#     """
-#     p[0] = GotoNode(p[2])
+def p_GotoStmt(p):
+    """
+    GotoStmt :  GOTO Label
+    """
+    gotoScopeTab = deepcopy(stm.symTable[stm.getCurrentScope()])
+    if p[2] in stm.labels:
+        # Label has been seen before
+        if stm.labels[p[2]]['expecting']:
+            # Currently not seen the labeled statement
+            # Label has been created earlier by previous goto
+            stm.labels[p[2]]['prevGotos'].append(
+                (gotoScopeTab, p.lexer.lineno)
+            )
+        else:
+            # Label already declared before (backward jump)
+            # Check parent condition
+            if not isValidGoto(stm, stm.labels[p[2]]['scopeTab'], gotoScopeTab):
+                raise LogicalError(f"{p.lexer.lineno}: Invalid placement of goto wrt label at {stm.labels[p[2]]['lineno']} - Goto statement outside of a block can't jump inside a block.")
+            # No need to append gotos as semantic analysis is complete
+    else:
+        # Label not declared before; expecting label; (forward jump)
+        # Semantic analysis to be done when corresponding Label is parsed
+
+        # Will shallow copy work or do we need deepcopy?
+        # Label is created for the first time from goto
+        stm.labels[p[2]] = {
+            'scopeTab': None,
+            'mappedName' : stm.getNewLabel(),
+            'expecting' : True ,
+            'lineno' : None,
+            'prevGotos': [
+                (gotoScopeTab, p.lexer.lineno)
+            ]
+        }
+            
+    p[0] = GotoNode(p[2])
 
 ###################################################################################
 ### Return Statements
@@ -1687,8 +1728,13 @@ def p_ReturnStmt(p):
         raise LogicalError(f"{p.lexer.lineno}: Return statement outside of a function.")
     # if len(stm.currentReturnType)
     if len(p) == 2:
+        if stm.currentReturnType:
+            raise LogicalError(f"{p.lexer.lineno}: Current function doesn't return nothing.")
         p[0] = ReturnNode([])
     else:
+        for returnDataType, ExprNode in zip(stm.currentReturnType.dataType, p[2]):
+            if returnDataType != ExprNode.dataType:
+                return LogicalError(f"{p.lexer.lineno}: Return type of current function and the return statement doesn't match.")
         p[0] = ReturnNode(p[2])
 
 ###################################################################################
@@ -1698,6 +1744,7 @@ def p_ReturnStmt(p):
 def p_BreakStmt(p):
     """
     BreakStmt : BREAK 
+              | BREAK Label
     """
     if len(p) == 2:
         p[0] = BreakNode()
@@ -1711,6 +1758,7 @@ def p_BreakStmt(p):
 def p_ContinueStmt(p):
     """
     ContinueStmt :  CONTINUE
+                 |  CONTINUE Label
     """
     if len(p) == 2:
         p[0] = ContinueNode()
@@ -1743,13 +1791,30 @@ def p_Block(p):
 
 def p_IfStmt(p):
     """
-    IfStmt : IF Expr Block else_stmt
-           | IF SimpleStmt SEMICOLON Expr Block else_stmt
+    IfStmt : IF BeginIf Expr Block else_stmt EndIf
+           | IF BeginIf SimpleStmt SEMICOLON Expr Block else_stmt EndIf
     """
-    if len(p) == 5:
-        p[0] = IfNode(None, p[2], ThenNode(p[3]), p[4])
+    if len(p) == 7:
+        if p[3].dataType['baseType'] != 'bool' or p[3].dataType['level'] != 0:
+            raise TypeError('Expression inside if-statement must be of bool type!') 
+        else:
+            p[0] = IfNode(None, p[3], ThenNode(p[4]), p[5])
     else:
-        p[0] = IfNode(p[2], p[4], ThenNode(p[5]), p[6])
+        if p[5].dataType['baseType'] != 'bool' or p[5].dataType['level'] != 0:
+            raise TypeError('Expression inside if-statement must be of bool type!') 
+        p[0] = IfNode(*p[3], p[5], ThenNode(p[6]), p[7])
+
+def p_BeginIf(p):
+    """
+    BeginIf : 
+    """
+    stm.newScope()
+
+def p_EndIf(p):
+    """
+    EndIf :
+    """
+    stm.exitScope()
 
 def p_else_stmt(p):
     """
@@ -1785,14 +1850,52 @@ def p_ExprSwitchStmt(p):
     varNode = None
     casesNode = []
     if len(p) == 7:
+
+        ## Check if a case has been repeated
+        lst = []
+        for case in p[4]:
+            if case.children[0].children[0].label in lst:
+                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
+            else:
+                lst.append(case.children[0].children[0].label) 
         casesNode = p[4]
     elif len(p) == 8:
+        
+        ## Check if dataType is supported
+        if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
+            raise TypeError("Unsupported type in switch condition!")
+
+        ## Check if a case has been repeated
+        lst = []
+        for case in p[5]:
+            if case.children[0].children[0].label in lst:
+                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
+            else:
+                lst.append(case.children[0].children[0].label) 
         varNode = p[2]
         casesNode = p[5]
     elif len(p) == 9:
+        ## Check if a case has been repeated
+        lst = []
+        for case in p[6]:
+            if case.children[0].children[0].label in lst:
+                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
+            else:
+                lst.append(case.children[0].children[0].label) 
+
         smtNode = p[2]
         casesNode = p[6]
     else:
+        if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
+            raise TypeError("Unsupported type in switch condition!")
+
+        ## Check if a case has been repeated
+        lst = []
+        for case in p[7]:
+            if case.children[0].children[0].label in lst:
+                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
+            else:
+                lst.append(case.children[0].children[0].label) 
         smtNode = p[2]
         varNode = p[4]
         casesNode = p[7]
@@ -1803,22 +1906,24 @@ def p_BeginSwitch(p):
     """
     BeginSwitch : 
     """
+    stm.newScope()
 
 def p_EndSwitch(p):
     """
     EndSwitch : 
     """
+    stm.exitScope()
 
 def p_ExprCaseClauseMult(p):
     """
-    ExprCaseClauseMult : ExprCaseClause ExprCaseClauseMult 
+    ExprCaseClauseMult : ExprCaseClauseMult ExprCaseClause 
                          |
     """
-    if len(p) == 2:
-        return []
+    if len(p) == 1:
+        p[0] = []
     else:
-        p[2].append(p[1])
-        p[0] = p[2]
+        p[1].append(p[2])
+        p[0] = p[1]
 
 def p_ExprCaseClause(p):
     """
@@ -1833,6 +1938,8 @@ def p_ExprSwitchCase(p):
     """
     if len(p) == 3:
         p[0] = []
+        if len(p[2]) > 1:
+            raise SwitchCaseError("Complex expressions not allowed inside switch statement!")
         for expr in p[2]:
             p[0].append(CaseNode(expr))
     else:
@@ -1893,14 +2000,16 @@ def p_BeginFor(p):
     """
     BeginFor : 
     """
-    
+    stm.newScope()
+    stm.forDepth += 1
 
 def p_EndFor(p):
     """
     EndFor : 
     """
+    stm.forDepth -= 1
+    stm.exitScope()
     
-
 def p_Condition(p):
     """
     Condition : Expr
@@ -1916,9 +2025,16 @@ def p_ForClause(p):
                 | InitStmt SEMICOLON SEMICOLON PostStmt
     """
     if len(p) == 6:
-        p[0] = ForClauseNode(p[1], p[3], p[5])
+        p[0] = ForClauseNode(p[1], p[3].children[1], p[5])
     else:
-        p[0] = ForClauseNode(p[1], None, p[4])
+        dt = {
+            'name' : 'bool',
+            'baseType': 'bool',
+            'level' : 0
+        }
+        trueNode = ExprNode(dt, label='true', operator=None, isConst=True, isAddressable=False, val='true')
+        # Absence of condition is equivalent to a FOR true statement
+        p[0] = ForClauseNode(p[1], trueNode, p[4])
 
 def p_InitStmt(p):
     """
@@ -1930,6 +2046,8 @@ def p_PostStmt(p):
     """
     PostStmt :   SimpleStmt
     """
+    if isinstance(p[1], ExprNode) and p[1].label == 'DEFINE':
+        raise LogicalError("Short Variable Declaration not allowed in post statement of for loop.")
     p[0] = p[1]
 
 ###################################################################################
@@ -1939,6 +2057,8 @@ def p_RangeClause(p):
     """
     RangeClause : RangeList RANGE Expr
     """
+    if not (p[3].dataType['name'] in ['array', 'slice', 'map'] or (p[3].dataType['name'] == 'pointer' and p[3].dataType['baseType'] == 'array')): 
+        raise TypeError(f"{p.lexer.lineno}: Core Type of range clause must be array, pointer to an array, slice or map")
     p[0] = ForRangeNode(p[1], p[3])
 
 def p_RangeList(p):
@@ -1950,8 +2070,13 @@ def p_RangeList(p):
     if len(p) == 1:
         return []
     else:
+        if p[2] == '=':
+            for expr in p[1]:
+                if expr.isAddressable is False:
+                    raise TypeError(f"{p.lexer.lineno}: Operands in expression list must be addressable or map index expressions.")
+        if len(p[1]) > 2:
+            raise LogicalError(f"{p.lexer.lineno}: Atmost two iteration values may be provided to the range expression.")
         return p[1]
-
 
 
 ###################################################################################
@@ -1991,6 +2116,13 @@ def writeOutput(parser_out, output_file):
     with open(output_file, 'w') as fout:
         pprint.pprint(parser_out, width=10, stream=fout)
 
+
+def df(root, level):
+    print('    '*level + str(root) +  " - " +  str(type(root)))
+    if hasattr(root, 'children') and root.children:
+        for child in root.children:
+            df(child, level+1)
+
 def buildAndCompile():
     source_code = None
     path_to_source_code = sys.argv[1]
@@ -1998,11 +2130,15 @@ def buildAndCompile():
     with open(path_to_source_code, 'r') as f:
         source_code = f.read()
     lexer = lex.lex()
-    parser, _ = yacc.yacc(debug = True)
+    parser, _ = yacc.yacc(debug=True)
     genAutomaton(parser)
     parser_out = parse(parser, lexer, source_code)
+    # df(parser_out, 0)
     writeOutput(parser_out, output_file)
     return parser_out
 
+
 if __name__ == '__main__':
     buildAndCompile()
+
+
