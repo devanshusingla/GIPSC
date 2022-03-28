@@ -66,6 +66,7 @@ class SymTableMaker:
         self.switchDepth = 0
         self.labels = {}
         self.currentLabel = None
+        self.pkgs = {}
         # self.labels: dict[str] -> dict[]
         # self.labels[label] = {
         # 'scopeTab' : _ , 
@@ -173,9 +174,11 @@ class ImportNode(Node):
         return "IMPORT"
 
 class ImportPathNode(Node):
-    def __init__(self, alias, path):
+    def __init__(self, alias, path, astNode):
         super().__init__()
-        self.addChild(alias, path)
+        if alias is not None:
+            self.addChild(alias)
+        self.addChild(path, astNode)
     
     def __str__(self):
         return f'PKG'
@@ -454,7 +457,7 @@ class BlockNode(Node):
         return "{}"
 
 class ExprNode(Node):
-    def __init__(self, dataType, label = None, operator = None, isConst = False, isAddressable = False, val = None):
+    def __init__(self, dataType, label = None, operator = None, isConst = False, isAddressable = False, val = None, pkg=None):
         super().__init__()
         self.children = []
         self.label = label
@@ -463,6 +466,7 @@ class ExprNode(Node):
         self.isConst = isConst # For constant folding
         self.val = val # For saving the value returned by constant folding
         self.isAddressable = isAddressable
+        self.pkg = pkg
 
     def __str__(self):
         if self.isConst:
@@ -470,9 +474,12 @@ class ExprNode(Node):
                 return f'\\\"{self.label[1:-1]}\\\"'
             return str(self.val)
         if self.operator is None:
-            if 'name' in self.dataType and self.dataType['name'] == 'string':
-                return f'\\\"{self.label}\\\"'
-            return self.label
+            if self.pkg is not None:
+                return '.'
+            else:
+                if 'name' in self.dataType and self.dataType['name'] == 'string':
+                    return f'\\\"{self.label}\\\"'
+                return self.label
         else:
             return self.operator
 
@@ -486,8 +493,9 @@ class NodeListNode(Node):
     
 
 class DotNode(Node):
-    def __init__(self, label="Node"):
-        super().__init__(label)
+    def __init__(self, selectorNode):
+        super().__init__()
+        self.addChild(selectorNode)
     
     def __str__(self):
         return f'DOT'
@@ -503,6 +511,9 @@ class IndexNode(Node):
 class SliceNode(Node):
     def __init__(self, arrNode, lIndexNode, rIndexNode, maxIndexNode, label="Node"):
         super().__init__(label)
+        self.lIndexNode = lIndexNode
+        self.rIndexNode = rIndexNode
+        self.maxIndexNode = maxIndexNode
         self.addChild(arrNode, lIndexNode, rIndexNode, maxIndexNode)
     
     def __str__(self):

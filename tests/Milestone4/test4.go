@@ -19,10 +19,12 @@ func main() {
 	*/
 	words := []string{"I", " aFfxhzsgnxhjewmhxmjehxmj", "\ta", " student"}
 	var sentence string = ""
-	for _, word := range words {
-		sentence += word
-		x = -x/-2 - -(2/-x)
-	}
+	var p int = fmt.pp
+	fmt.Println()
+	// for i, word := range words {
+	// 	sentence += word
+	// 	x = -x/-2 - -(2/-x)
+	// }
 	// Print(sentence)
 	// Print("value of x := %d\n", x)
 	// if 1 > 2 {

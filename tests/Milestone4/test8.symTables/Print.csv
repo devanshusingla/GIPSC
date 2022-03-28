@@ -1,0 +1,2 @@
+ident,scope,info
+v,1,"{'dataType': {'name': 'struct', 'keyTypes': {'Lat': {'name': 'float64', 'baseType': 'float64', 'level': 0}, 'Long': {'name': 'float64', 'baseType': 'float64', 'level': 0}}}, 'val': 0, 'isConst': False, 'isArg': True}"

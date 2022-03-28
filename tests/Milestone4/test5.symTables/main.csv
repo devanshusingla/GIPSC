@@ -1,0 +1,3 @@
+ident,scope,info
+b,3,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
+a,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"

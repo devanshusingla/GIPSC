@@ -1,9 +1,12 @@
 from parser import buildAndCompile
-import sys
+import sys, os
 
 from scope import NodeListNode
 
-ast = buildAndCompile()
+if not os.path.exists(sys.argv[1]):
+    print("Invalid Path to Source Code")
+    sys.exit(1)
+ast = buildAndCompile(sys.argv[1])
 if ast is None:
     sys.exit(1)
 path_to_source_file = sys.argv[1][:-3]

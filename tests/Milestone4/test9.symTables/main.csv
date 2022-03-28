@@ -1,0 +1,7 @@
+ident,scope,info
+i,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
+j,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
+p,1,"{'dataType': {'name': 'pointer', 'baseType': 'int', 'level': 1}, 'isConst': False}"
+q,1,"{'dataType': {'name': 'pointer', 'baseType': 'int', 'level': 2}, 'isConst': False}"
+r,1,"{'dataType': {'name': 'pointer', 'baseType': 'int', 'level': 3}, 'isConst': False}"
+s,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"

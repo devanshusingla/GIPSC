@@ -1,4 +1,6 @@
+from tokenize import Name
 from scope import *
+import os
 
 # COMPACT = False
 # def get_value_p(p):
@@ -31,6 +33,19 @@ from scope import *
 #                 # print(value, value[2] + [value[1]] + value[3:])
 #     return value
 
+LIBPATH = os.path.dirname(os.path.realpath(__file__)) + "/lib"
+
+def getPath(filename, target_folder):
+    for root, dirs, files in os.walk(LIBPATH):
+        if filename in files:
+            return os.path.join(root, filename)
+
+    for root, dirs, files in os.walk(target_folder):
+        if filename in files:
+            return os.path.join(root, filename)
+    
+    raise NameError(f"Invalid import: {filename}")
+
 def getBaseType(stm, dt):
     curr = dt
     
@@ -45,9 +60,9 @@ def isBasicNumeric(stm, dt):
 
     if not isinstance(dt, str):
         if 'baseType' in dt:
-            dt = dt['baseType']
             if 'level' in dt and dt['level'] != 0:
                 return False 
+            dt = dt['baseType']
         else:
             return False 
 
@@ -61,9 +76,9 @@ def isBasicInteger(stm, dt):
 
     if not isinstance(dt, str):
         if 'baseType' in dt:
-            dt = dt['baseType']
             if 'level' in dt and dt['level'] != 0:
                 return False 
+            dt = dt['baseType']
         else:
             return False 
 
@@ -77,9 +92,9 @@ def isOrdered(stm, dt):
 
     if not isinstance(dt, str):
         if 'baseType' in dt:
-            dt = dt['baseType']
             if 'level' in dt and dt['level'] != 0:
                 return False 
+            dt = dt['baseType']
         else:
             return False 
 
@@ -92,18 +107,24 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
 
+    if dt1['level'] > 0 or dt2['level'] > 0:
+        if binop != '==' and binop != '!=':
+            return False
+        if dt1['level'] != dt2['level']:
+            return False
+
     if not isinstance(dt1, str):
         if 'baseType' in dt1:
             dt1 = dt1['baseType']
         else:
             return False
-    
+
     if not isinstance(dt2, str):
         if 'baseType' in dt2:
             dt2 = dt2['baseType']
         else:
             return False
-    
+
     if dt1 == None or dt2 == None or dt1 not in stm.symTable[stm.id].avlTypes or dt2 not in stm.symTable[stm.id].avlTypes:
         return False
 
@@ -223,7 +244,7 @@ def getUnaryType(stm, dt, unOp):
     if unOp == '*':
         dt_copy['level'] -= 1
         if dt_copy['level'] == 0:
-            return dt_copy['baseType']
+            dt_copy['name'] = dt_copy['baseType']
         return dt_copy
 
     if unOp == '&':
