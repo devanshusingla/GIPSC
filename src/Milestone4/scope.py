@@ -432,13 +432,14 @@ class FuncReturnNode(Node):
         super().__init__()
         self.dataType = []
         self.addChild(*params)
-        # for param in params:
-        #     self.dataType.append(param.dataType)
     
     def addChild(self, *children):
         super().addChild(*children)
         for child in children:
-            self.dataType.append(child.dataType)
+            if isinstance(child.dataType, list):
+                self.dataType.extend(child.dataType)
+            else:
+                self.dataType.append(child.dataType)
 
     def __str__(self):
         return "RETURN-TYPE"

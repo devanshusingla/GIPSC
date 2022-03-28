@@ -6,7 +6,6 @@ path_to_root=$( dirname $( dirname $( realpath $0) ) )
 abs_path_to_parser="${path_to_root}/src/Milestone${MILESTONE}/parser.py"
 abs_path_to_tests="${path_to_root}/tests/Milestone${MILESTONE}/"
 export PATH_TO_ROOT=$path_to_root
-# test_cases=$( find ${abs_path_to_tests} -type f -name '*.go' )
 for test_case in "${abs_path_to_tests}"*
 do
     if [[ $test_case != *go ]];
