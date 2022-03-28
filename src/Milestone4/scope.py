@@ -263,7 +263,7 @@ class CompositeLitNode(Node):
             else:
                 if len(elList) != len(self.dataType['keyTypes']):
                     raise NameError("too few arguments for structure")
-                for (key, t), val in zip(self.dataType.keyTypes.items(), elList):
+                for (key, t), val in zip(self.dataType['keyTypes'].items(), elList):
                     if isinstance(val, ExprNode):
                         self.children.append(StructFieldNode(key, val))
                     elif t.name in compositeTypes:
