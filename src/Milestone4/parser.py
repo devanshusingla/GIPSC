@@ -8,7 +8,7 @@ import sys
 import pprint
 from scope import *
 from utils import *
-import os
+import os, csv
 
 
 tokens=lexer.tokens
@@ -43,8 +43,10 @@ ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
 ####################                                        ######################
 ##################################################################################
 
+info_tables = {}
 stm = SymTableMaker()
 target_folder = ''
+curr_func_id = 'global'
 
 _symbol = '_'
 stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0}})
@@ -631,7 +633,11 @@ def p_Expr(p):
         dt1 = p[1].dataType
         dt2 = p[3].dataType
 
-        if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
+        firstChar = None
+        if hasattr(p[3], 'label') and  p[3].label != None:
+            firstChar = p[3].label[0]
+
+        if not checkBinOp(stm, dt1, dt2, p[2], firstChar):
             raise TypeError("Incompatible operand types", p.lexer.lineno)
 
         dt = getFinalType(stm, dt1, dt2, p[2])
@@ -642,7 +648,7 @@ def p_Expr(p):
             isConst = True
             val = Operate(p[2], p[1].val, p[3].val, p.lexer.lineno, p[3].dataType['name'])
 
-        p[0] = ExprNode(operator = p[2], dataType = dt, label = p[1].label+p[2]+p[3].label, isConst = isConst, val=val)
+        p[0] = ExprNode(operator = p[2], dataType = dt, isConst = isConst, val=val)
         p[0].addChild(p[1], p[3])
 
 def p_UnaryExpr(p):
@@ -672,7 +678,8 @@ def p_UnaryExpr(p):
                 val = None
             else:
                 val = Operate(p[1], None, p[2].val, p.lexer.lineno, p[2].dataType['name'])
-        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isConst=isConst, val=val)
+        isAddressable = flag and (p[1] == '*' or p[1] =='&')
+        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isAddressable = isAddressable, isConst=isConst, val=val)
         p[0].addChild(p[2])
 
 ###################################################################################
@@ -761,10 +768,10 @@ def p_PrimaryExpr(p):
 
         ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
-            if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'array' and p[1].dataType['name']!= 'map') :
+            if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'array' and p[1].dataType['name']!= 'map' and p[1].dataType['name'] != 'slice') :
                 raise TypeError("Expecting array or map type but found different one", p.lexer.lineno)
 
-            if p[1].dataType['name'] == 'array':
+            if p[1].dataType['name'] == 'array' or p[1].dataType['name'] == 'slice':
                 if isinstance(p[2].dataType, str):
                     if not isBasicInteger(stm, p[2].dataType):
                         raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
@@ -791,7 +798,7 @@ def p_PrimaryExpr(p):
 
         ## PrimaryExpr -> PrimaryExpr Slice
         elif isinstance(p[2], SliceNode):
-            if 'name' not in p[1].dataType or p[1].dataType['name'] != 'slice' :
+            if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'slice' and p[1].dataType['name'] != 'array'):
                 raise TypeError("Expecting a slice type but found different one", p.lexer.lineno)
 
             if  p[2].lIndexNode != None: 
@@ -828,7 +835,7 @@ def p_PrimaryExpr(p):
 
         ## PrimaryExpr -> PrimaryExpr Arguments
         elif isinstance(p[2], List):
-            if hasattr(p[1], "pkg"):
+            if hasattr(p[1], "pkg") and p[1].pkg is not None:
                 new_stm = stm.pkgs[p[1].pkg]
             else:
                 new_stm = stm
@@ -1303,13 +1310,24 @@ def p_FuncDecl(p):
     """
     ## Make node
     p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
+    global curr_func_id
     stm.currentReturnType = None
+    for symbol in stm.symTable[stm.id].localsymTable:
+        if symbol not in info_tables[curr_func_id]:
+            info_tables[curr_func_id][symbol] = {}
+
+        if stm.id not in info_tables[curr_func_id][symbol]:
+            info_tables[curr_func_id][symbol][stm.id] = {}
+        
+        info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
+    curr_func_id = 'global'
     stm.exitScope()
 
 def p_FuncSig(p):
     """
     FuncSig : FUNC FunctionName Signature
     """
+    global curr_func_id
     if p[3][1] == None:
         if p[3][0] == None:
             stm.addFunction(p[2].label, {"params": [] , "return": [], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
@@ -1336,6 +1354,9 @@ def p_FuncSig(p):
                 stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
                 p[3][0].children[i].scope = stm.id
     
+    curr_func_id = p[2].label
+    info_tables[curr_func_id] = {}
+
     p[0] = [p[2], p[3]]
 
 # def p_BeginFunc(p):
@@ -1419,7 +1440,6 @@ def p_ParameterDecl(p):
     p[0] = p[1]
     if isinstance(p[2], str):
         p[2] = stm.findType(p[2])
-        print(p[2])
     for i in range(len(p[0])):
         p[0][i].dataType = p[2].dataType
 
@@ -1777,6 +1797,10 @@ def p_ReturnStmt(p):
             raise LogicalError(f"{p.lexer.lineno}: Current function doesn't return nothing.")
         p[0] = ReturnNode([])
     else:
+        if len(stm.currentReturnType.dataType) != len(p[2]):
+            raise LogicalError(f"{p.lexer.lineno}: Different number of return statements!")
+        # if len(stm.currentReturnType.dataType) != len(p[2]):
+        #     return LogicalError(f"{p.lexer.lineno}: Different number of returns.")
         for returnDataType, ExprNode in zip(stm.currentReturnType.dataType, p[2]):
             if returnDataType != ExprNode.dataType:
                 return LogicalError(f"{p.lexer.lineno}: Return type of current function and the return statement doesn't match.")
@@ -1859,6 +1883,15 @@ def p_EndIf(p):
     """
     EndIf :
     """
+    global curr_func_id
+    for symbol in stm.symTable[stm.id].localsymTable:
+        if symbol not in info_tables[curr_func_id]:
+            info_tables[curr_func_id][symbol] = {}
+
+        if stm.id not in info_tables[curr_func_id][symbol]:
+            info_tables[curr_func_id][symbol][stm.id] = {}
+        
+        info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
     stm.exitScope()
 
 def p_else_stmt(p):
@@ -1957,6 +1990,15 @@ def p_EndSwitch(p):
     """
     EndSwitch : 
     """
+    global curr_func_id
+    for symbol in stm.symTable[stm.id].localsymTable:
+        if symbol not in info_tables[curr_func_id]:
+            info_tables[curr_func_id][symbol] = {}
+
+        if stm.id not in info_tables[curr_func_id][symbol]:
+            info_tables[curr_func_id][symbol][stm.id] = {}
+        
+        info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
     stm.exitScope()
 
 def p_ExprCaseClauseMult(p):
@@ -2053,6 +2095,15 @@ def p_EndFor(p):
     EndFor : 
     """
     stm.forDepth -= 1
+    global curr_func_id
+    for symbol in stm.symTable[stm.id].localsymTable:
+        if symbol not in info_tables[curr_func_id]:
+            info_tables[curr_func_id][symbol] = {}
+
+        if stm.id not in info_tables[curr_func_id][symbol]:
+            info_tables[curr_func_id][symbol][stm.id] = {}
+        
+        info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
     stm.exitScope()
     
 def p_Condition(p):
@@ -2168,6 +2219,31 @@ def df(root, level):
         for child in root.children:
             df(child, level+1)
 
+def create_sym_tables(path_to_folder):
+    if not os.path.exists(path_to_folder):
+        os.mkdir(path_to_folder)
+
+    for key in info_tables:
+        filename = os.path.join(path_to_folder, key) + ".csv"
+        info = info_tables[key]
+        dict = []
+        i = 0
+        for item in info:
+            dict.append({})
+            dict[i]['ident'] = item
+            dict[i]['scope'] = list(info[item].keys())[0]
+            dict[i]['info'] = info[item][dict[i]['scope']]
+            i += 1
+
+        fields = ['ident', 'scope', 'info']
+
+        with open(filename, "w") as f:
+            writer = csv.DictWriter(f, fieldnames = fields)
+
+            writer.writeheader()
+
+            writer.writerows(dict)
+
 def buildAndCompile(input_file):
     global target_folder
 
@@ -2183,8 +2259,8 @@ def buildAndCompile(input_file):
     parser_out = parse(parser, lexer, source_code)
     # df(parser_out, 0)
     writeOutput(parser_out, output_file)
+    create_sym_tables(os.path.join(os.getcwd(), path_to_source_code[:-2]) + "symTables")
     return parser_out
-
 
 if __name__ == '__main__':
     buildAndCompile(sys.argv[1])

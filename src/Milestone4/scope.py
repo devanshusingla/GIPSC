@@ -262,7 +262,7 @@ class CompositeLitNode(Node):
             else:
                 if len(elList) != len(self.dataType['keyTypes']):
                     raise NameError("too few arguments for structure")
-                for (key, t), val in zip(self.dataType.keyTypes.items(), elList):
+                for (key, t), val in zip(self.dataType['keyTypes'].items(), elList):
                     if isinstance(val, ExprNode):
                         self.children.append(StructFieldNode(key, val))
                     elif t.name in compositeTypes:
@@ -344,8 +344,6 @@ class CompositeLitNode(Node):
 
                 ## TODO: Check type for key
                 keytype = element.keytype 
-                print("Actual: ", keytype)
-                print("Expected ", self.dataType['KeyType'])
 
                 if not utils.isTypeCastable(stm, keytype, self.dataType['KeyType']):
                     raise TypeError("Key not typecastable to map's key dataType")
@@ -354,9 +352,6 @@ class CompositeLitNode(Node):
                     raise DuplicateKeyError("Key " + key + "already assigned")
                 else:
                     keys.append(key)
-
-                print("Actual: ", val.dataType)
-                print("Expected ", self.dataType['ValueType'])
 
                 if not utils.isTypeCastable(stm, self.dataType['ValueType'], val.dataType):
                     raise TypeError("Value cannot be typecasted to required datatype for key: " + key)
@@ -502,6 +497,9 @@ class IndexNode(Node):
 class SliceNode(Node):
     def __init__(self, arrNode, lIndexNode, rIndexNode, maxIndexNode, label="Node"):
         super().__init__(label)
+        self.lIndexNode = lIndexNode
+        self.rIndexNode = rIndexNode
+        self.maxIndexNode = maxIndexNode
         self.addChild(arrNode, lIndexNode, rIndexNode, maxIndexNode)
     
     def __str__(self):

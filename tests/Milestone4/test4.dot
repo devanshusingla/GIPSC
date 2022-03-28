@@ -40,27 +40,3 @@ digraph G {
 	38 -> 39;
 	38 -> 40;
 	40 -> 41;
-	40 -> 42;
-	42 -> 43;
-	42 -> 44;
-	26 -> 45;
-	45 -> 46;
-	45 -> 47;
-	47 -> 48;
-	47 -> 49;
-	47 -> 50;
-	47 -> 51;
-	26 -> 52;
-	52 -> 53;
-	52 -> 54;
-	26 -> 55;
-	55 -> 56;
-	55 -> 57;
-	57 -> 58;
-	57 -> 59;
-	26 -> 60;
-	60 -> 61;
-	61 -> 62;
-	61 -> 63;
-	0 [label=FILE];	1 [label="\"main\""];	2 [label="IMPORT"];	3 [label="PKG"];	4 [label="fmt"];	5 [label="\"fmt\""];	6 [label="FILE"];	7 [label="\"fmt\""];	8 [label="IMPORT"];	9 [label="GLOBAL"];	10 [label="="];	11 [label="pp"];	12 [label="3"];	13 [label="FUNC"];	14 [label="Println"];	15 [label="PARAMS"];	16 [label="RETURN-TYPE"];	17 [label="{}"];	18 [label="="];	19 [label="pp"];	20 [label="3"];	21 [label="GLOBAL"];	22 [label="FUNC"];	23 [label="main"];	24 [label="PARAMS"];	25 [label="RETURN-TYPE"];	26 [label="{}"];	27 [label="="];	28 [label="x"];	29 [label="5"];	30 [label="++"];	31 [label="x"];	32 [label="="];	33 [label="_"];	34 [label="\"Random String\n\n\""];	35 [label="="];	36 [label="y"];	37 [label="\"ABC!!\""];	38 [label="="];	39 [label="\"y\""];	40 [label="+"];	41 [label="\"y\""];	42 [label="\"123"+"1212\""];	43 [label="\"123\""];	44 [label="\"1212\""];	45 [label="="];	46 [label="words"];	47 [label="SLICE[4:4]"];	48 [label="\"I\""];	49 [label="\" aFfxhzsgnxhjewmhxmjehxmj\""];	50 [label="\"\ta\""];	51 [label="\" student\""];	52 [label="="];	53 [label="sentence"];	54 [label="\"\""];	55 [label="="];	56 [label="p"];	57 [label="."];	58 [label="fmt"];	59 [label="pp"];	60 [label="func()"];	61 [label="."];	62 [label="fmt"];	63 [label="Println"];
-}

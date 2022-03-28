@@ -1,0 +1,6 @@
+ident,scope,info
+x,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
+y,1,"{'dataType': {'name': 'string', 'baseType': 'string', 'level': 0}, 'isConst': False}"
+words,1,"{'dataType': {'baseType': 'string', 'level': 1, 'name': 'slice', 'length': 4, 'capacity': 4}, 'isConst': False}"
+sentence,1,"{'dataType': {'name': 'string', 'baseType': 'string', 'level': 0}, 'isConst': False}"
+p,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'isConst': False}"
