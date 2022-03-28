@@ -2201,10 +2201,13 @@ def df(root, level):
     if hasattr(root, 'children') and root.children:
         for child in root.children:
             df(child, level+1)
-
+import os, sys
 def buildAndCompile():
     source_code = None
     path_to_source_code = sys.argv[1]
+    if not os.path.exists(path_to_source_code):
+        print("Invalid Path to Source Code")
+        return None
     output_file = path_to_source_code[:-2] + "output"
     with open(path_to_source_code, 'r') as f:
         source_code = f.read()

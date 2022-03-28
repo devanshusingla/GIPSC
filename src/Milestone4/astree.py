@@ -4,6 +4,8 @@ import sys
 from scope import NodeListNode
 
 ast = buildAndCompile()
+if ast is None:
+    sys.exit(1)
 path_to_source_file = sys.argv[1][:-3]
 node_ids = [f'\t0 [label={ast}];']
 print(f"Saving to {path_to_source_file}.dot ...")
