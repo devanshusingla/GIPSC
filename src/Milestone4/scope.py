@@ -482,6 +482,15 @@ class ExprNode(Node):
         else:
             return self.operator
 
+class NodeListNode(Node):
+    def __init__(self, children):
+        super().__init__()
+        self.addChild(*children)
+
+    def __str__(self):
+        return "LIST"
+    
+
 class DotNode(Node):
     def __init__(self, label="Node"):
         super().__init__(label)

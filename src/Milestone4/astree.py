@@ -1,6 +1,8 @@
 from parser import buildAndCompile
 import sys
 
+from scope import NodeListNode
+
 ast = buildAndCompile()
 path_to_source_file = sys.argv[1][:-3]
 node_ids = [f'\t0 [label={ast}];']
@@ -10,7 +12,10 @@ with open(f"{path_to_source_file}.dot", 'w') as f:
     def dfs(node, id):
         global node_ids
         if hasattr(node, 'children') and node.children is not None:
-            for c in node.children:
+            for i, c in enumerate(node.children):
+                if isinstance(c, list):
+                    c = NodeListNode(c)
+                    node.children[i] = c
                 node_ids.append(f'\t{len(node_ids)} [label="{c}"];')
                 f.write(f'\t{id} -> {len(node_ids)-1};\n')
                 dfs(c, len(node_ids)-1)
