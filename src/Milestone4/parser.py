@@ -1796,13 +1796,30 @@ def p_Block(p):
 
 def p_IfStmt(p):
     """
-    IfStmt : IF Expr Block else_stmt
-           | IF SimpleStmt SEMICOLON Expr Block else_stmt
+    IfStmt : IF BeginFor Expr Block else_stmt EndFor
+           | IF BeginFor SimpleStmt SEMICOLON Expr Block else_stmt EndFor
     """
     if len(p) == 5:
-        p[0] = IfNode(None, p[2], ThenNode(p[3]), p[4])
+        if p[2].dataType['baseType'] != 'bool' or p[2].dataType['level'] != 0:
+            raise TypeError('Expression inside if-statement must be of bool type!') 
+        else:
+            p[0] = IfNode(None, p[2], ThenNode(p[3]), p[4])
     else:
+        if p[4].dataType['baseType'] != 'bool' or p[4].dataType['level'] != 0:
+            raise TypeError('Expression inside if-statement must be of bool type!') 
         p[0] = IfNode(p[2], p[4], ThenNode(p[5]), p[6])
+
+def p_BeginFor(p):
+    """
+    BeginFor : 
+    """
+    stm.newScope()
+
+def p_EndFor(p):
+    """
+    EndFor :
+    """
+    stm.exitScope()
 
 def p_else_stmt(p):
     """
@@ -1838,14 +1855,52 @@ def p_ExprSwitchStmt(p):
     varNode = None
     casesNode = []
     if len(p) == 7:
+
+        ## Check if a case has been repeated
+        lst = []
+        for case in p[4]:
+            if case.children[0].children[0].label in lst:
+                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
+            else:
+                lst.append(case.children[0].children[0].label) 
         casesNode = p[4]
     elif len(p) == 8:
+        
+        ## Check if dataType is supported
+        if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
+            raise TypeError("Unsupported type in switch condition!")
+
+        ## Check if a case has been repeated
+        lst = []
+        for case in p[5]:
+            if case.children[0].children[0].label in lst:
+                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
+            else:
+                lst.append(case.children[0].children[0].label) 
         varNode = p[2]
         casesNode = p[5]
     elif len(p) == 9:
+        ## Check if a case has been repeated
+        lst = []
+        for case in p[6]:
+            if case.children[0].children[0].label in lst:
+                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
+            else:
+                lst.append(case.children[0].children[0].label) 
+
         smtNode = p[2]
         casesNode = p[6]
     else:
+        if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
+            raise TypeError("Unsupported type in switch condition!")
+
+        ## Check if a case has been repeated
+        lst = []
+        for case in p[7]:
+            if case.children[0].children[0].label in lst:
+                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
+            else:
+                lst.append(case.children[0].children[0].label) 
         smtNode = p[2]
         varNode = p[4]
         casesNode = p[7]
@@ -1856,19 +1911,21 @@ def p_BeginSwitch(p):
     """
     BeginSwitch : 
     """
+    stm.newScope()
 
 def p_EndSwitch(p):
     """
     EndSwitch : 
     """
+    stm.exitScope()
 
 def p_ExprCaseClauseMult(p):
     """
     ExprCaseClauseMult : ExprCaseClause ExprCaseClauseMult 
                          |
     """
-    if len(p) == 2:
-        return []
+    if len(p) == 1:
+        p[0] = []
     else:
         p[2].append(p[1])
         p[0] = p[2]
@@ -1886,6 +1943,8 @@ def p_ExprSwitchCase(p):
     """
     if len(p) == 3:
         p[0] = []
+        if len(p[2]) > 1:
+            raise SwitchCaseError("Complex expressions not allowed inside switch statement!")
         for expr in p[2]:
             p[0].append(CaseNode(expr))
     else:

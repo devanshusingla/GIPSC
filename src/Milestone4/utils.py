@@ -289,6 +289,8 @@ def isTypeCastable(stm, dt1, dt2):
         elif 'name' not in dt2:
             return False 
 
+        l1 = dt1['level']
+        l2 = dt2['level']
         dt1 = dt1['baseType']
         dt2 = dt2['baseType']
 
@@ -296,12 +298,14 @@ def isTypeCastable(stm, dt1, dt2):
         dt1 = getBaseType(stm, dt1)
         dt2 = getBaseType(stm, dt2)
 
-        if dt1 == dt2:
+        if dt1 == dt2 and l1 == l2:
             return True
-        if isBasicInteger(stm, dt1) and isBasicInteger(stm, dt2):
+        if isBasicInteger(stm, dt1) and isBasicInteger(stm, dt2) and l1 == l2:
             return True
-        if (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float"):
-            return True
+        
+        ## Float to int typecasting
+        # if (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float"):
+        #     return True
         return False
 
     if isinstance(dt1, str) or isinstance(dt2, str):

@@ -16,6 +16,9 @@ class ScopeTableError(Exception):
 class DuplicateKeyError(Exception):
     pass
 
+class SwitchCaseError(Exception):
+    pass
+
 class scope:
     def __init__(self, currentScopeId, parentScope=None):
         self.localsymTable = {}
@@ -595,7 +598,7 @@ class SwitchNode(Node):
 class CasesNode(Node):
     def __init__(self, caseValsNode, instrNode):
         super().__init__()
-        self.addChild(*caseValsNode, instrNode)
+        self.addChild(*caseValsNode, *instrNode)
     
     def __str__(self):
         return "CASES"
