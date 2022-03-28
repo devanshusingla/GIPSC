@@ -224,7 +224,9 @@ class CompositeLitNode(Node):
                         val = kv[key]
                     else:
                         val = zeroLit(t)
-                    if t.name in compositeTypes:
+                    if isinstance(val, ExprNode):
+                        self.children.append(StructFieldNode(key, val))
+                    elif t.name in compositeTypes:
                         self.children.append(StructFieldNode(key, CompositeLitNode(t, val)))
                     else:
                         self.children.append(StructFieldNode(key, LitNode(val, t)))
@@ -233,7 +235,9 @@ class CompositeLitNode(Node):
                 if len(elList) != len(self.dataType.keyTypes):
                     raise NameError("too few arguments for structure")
                 for (key, t), val in zip(self.dataType.keyTypes.items(), elList):
-                    if t.name in compositeTypes:
+                    if isinstance(val, ExprNode):
+                        self.children.append(StructFieldNode(key, val))
+                    elif t.name in compositeTypes:
                         self.children.append(StructFieldNode(key, CompositeLitNode(t, val)))
                     else:
                         self.children.append(StructFieldNode(key, LitNode(val, t)))
@@ -279,15 +283,18 @@ class CompositeLitNode(Node):
                 else:
                     prevKey += 1
                 
-                print(prevKey, len(self.children))
-                if prevKey >= len(self.children):
+                print("first: ",prevKey, self.children, self.vis)
+                if prevKey >= len(self.children)-1:
                     self.children.extend([None]*(prevKey+1-len(self.children)))
-                    self.vis.extend([False]*(prevKey+1-len(self.children)))
-                
+                    self.vis.extend([False]*(prevKey+1-len(self.vis)))
+                print("second: ",prevKey, self.children, self.vis)
+
                 if self.vis[prevKey]:
                     raise NameError("Duplicate index in array")
                 self.vis[prevKey] = True
-                if self.dataType['baseType'] in compositeTypes:
+                if isinstance(el, ExprNode):
+                    self.children[prevKey] = el
+                elif self.dataType['baseType'] in compositeTypes:
                     self.children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
                 else:
                     self.children[prevKey] = LitNode(el, self.dataType['baseType'])
@@ -295,6 +302,7 @@ class CompositeLitNode(Node):
             for i in range(len(self.children)):
                 if not self.vis[i]:
                     self.children[i] = zeroLit(self.dataType['baseType'])
+            self.dataType['length'] = len(self.children)
             self.dataType['capacity'] = self.dataType['length']
 
         elif self.dataType['name'] == 'map':
