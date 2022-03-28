@@ -462,3 +462,10 @@ def isValidGoto(stm : SymTableMaker, labelST : scope, gotoST : scope, checkNoSki
             return False
         else:
             return True
+            
+def constructDataType(baseType):
+    return {
+        'name' : baseType,
+        'baseType' : baseType,
+        'level': 0 
+    }

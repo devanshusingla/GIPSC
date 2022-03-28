@@ -308,11 +308,11 @@ class CompositeLitNode(Node):
                 else:
                     prevKey += 1
                 
-                print("first: ",prevKey, self.children, self.vis)
+                # print("first: ",prevKey, self.children, self.vis)
                 if prevKey >= len(self.children)-1:
                     self.children.extend([None]*(prevKey+1-len(self.children)))
                     self.vis.extend([False]*(prevKey+1-len(self.vis)))
-                print("second: ",prevKey, self.children, self.vis)
+                # print("second: ",prevKey, self.children, self.vis)
 
                 if self.vis[prevKey]:
                     raise NameError("Duplicate index in array")
@@ -657,7 +657,7 @@ class ForRangeNode(Node):
         super().__init__(self)
         self.addChild(*paramsNode, iterableNode)
     
-    def __str__():
+    def __str__(self):
         return "RANGE"
 
 ### TYPE Class

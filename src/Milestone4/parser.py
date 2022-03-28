@@ -599,7 +599,6 @@ def p_Expr(p):
     else:
         dt1 = p[1].dataType
         dt2 = p[3].dataType
-
         if not checkBinOp(stm, dt1, dt2, p[2], p[3].label[0]):
             raise TypeError("Incompatible operand types", p.lexer.lineno)
 
@@ -641,7 +640,7 @@ def p_UnaryExpr(p):
                 val = None
             else:
                 val = Operate(p[1], None, p[2].val, p.lexer.lineno, p[2].dataType['name'])
-        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isConst=isConst, val=val)
+        p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), label=p[1]+p[2].label, operator=p[1], isConst=isConst, val=val)
         p[0].addChild(p[2])
 
 ###################################################################################
@@ -1374,7 +1373,6 @@ def p_ParameterDecl(p):
     p[0] = p[1]
     if isinstance(p[2], str):
         p[2] = stm.findType(p[2])
-        print(p[2])
     for i in range(len(p[0])):
         p[0][i].dataType = p[2].dataType
 
@@ -2057,8 +2055,52 @@ def p_RangeClause(p):
     """
     RangeClause : RangeList RANGE Expr
     """
-    if not (p[3].dataType['name'] in ['array', 'slice', 'map'] or (p[3].dataType['name'] == 'pointer' and p[3].dataType['baseType'] == 'array')): 
+    rangeExprType = []
+    if p[3].dataType['name'] in ['array', 'slice']:
+        rangeExprType.append(constructDataType('int')) 
+        core_type = p[3].dataType['baseType']
+        if not isinstance(core_type, dict):
+            core_type = constructDataType(core_type)
+        rangeExprType.append(
+            core_type
+        )
+    elif p[3].dataType['name'] in ['string']:
+        rangeExprType.append(constructDataType('int')) 
+        rangeExprType.append(constructDataType('rune'))
+    elif p[3].dataType['name'] in ['map']:
+        key_type = p[3].dataType['KeyType']
+        if not isinstance(key_type, dict):
+            key_type = constructDataType(key_type)
+        value_type = p[3].dataType['ValueType']
+        if not isinstance(value_type, dict):
+            value_type = constructDataType(value_type)
+        rangeExprType.append(
+            key_type
+        )
+        rangeExprType.append(
+            value_type
+        )
+    else:
         raise TypeError(f"{p.lexer.lineno}: Core Type of range clause must be array, pointer to an array, slice or map")
+    if len(p[1]) == 2:
+        if p[1][0].label == p[1][1].label and p[1][0].label != '_':
+            raise LogicalError(f"{p.lexer.lineno}: Range clauses has multiple identifiers with same name.")
+    for idx, var in enumerate(p[1]):
+        if isinstance(var, IdentNode):
+            # ShortVarDecl
+            # If shortvaldecl statement, insert into stm
+            stm.add(var.label, {'dataType' : rangeExprType[idx], 'isConst' : False})
+        elif isinstance(var, ExprNode):
+            # Assignment
+            # If assignment statement check for types
+            if var.label != '_':
+                lastDeclaredEntry = stm.get(var.label)
+                if lastDeclaredEntry != -1:
+                    if lastDeclaredEntry['dataType'] != rangeExprType[idx]:
+                        raise TypeError(f"{p.lexer.lineno}: Type of {var.label} does't match with {rangeExprType[idx]['name']}.")
+            else:
+                stm.add(var.label, {'dataType' : rangeExprType[idx], 'isConst' : False})
+
     p[0] = ForRangeNode(p[1], p[3])
 
 def p_RangeList(p):
@@ -2068,7 +2110,7 @@ def p_RangeList(p):
                 | 
     """
     if len(p) == 1:
-        return []
+        p[0] = []
     else:
         if p[2] == '=':
             for expr in p[1]:
@@ -2076,7 +2118,7 @@ def p_RangeList(p):
                     raise TypeError(f"{p.lexer.lineno}: Operands in expression list must be addressable or map index expressions.")
         if len(p[1]) > 2:
             raise LogicalError(f"{p.lexer.lineno}: Atmost two iteration values may be provided to the range expression.")
-        return p[1]
+        p[0] = p[1]
 
 
 ###################################################################################
