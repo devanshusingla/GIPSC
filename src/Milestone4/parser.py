@@ -1796,28 +1796,28 @@ def p_Block(p):
 
 def p_IfStmt(p):
     """
-    IfStmt : IF BeginFor Expr Block else_stmt EndFor
-           | IF BeginFor SimpleStmt SEMICOLON Expr Block else_stmt EndFor
+    IfStmt : IF BeginIf Expr Block else_stmt EndIf
+           | IF BeginIf SimpleStmt SEMICOLON Expr Block else_stmt EndIf
     """
-    if len(p) == 5:
-        if p[2].dataType['baseType'] != 'bool' or p[2].dataType['level'] != 0:
+    if len(p) == 7:
+        if p[3].dataType['baseType'] != 'bool' or p[3].dataType['level'] != 0:
             raise TypeError('Expression inside if-statement must be of bool type!') 
         else:
-            p[0] = IfNode(None, p[2], ThenNode(p[3]), p[4])
+            p[0] = IfNode(None, p[3], ThenNode(p[4]), p[5])
     else:
-        if p[4].dataType['baseType'] != 'bool' or p[4].dataType['level'] != 0:
+        if p[5].dataType['baseType'] != 'bool' or p[5].dataType['level'] != 0:
             raise TypeError('Expression inside if-statement must be of bool type!') 
-        p[0] = IfNode(p[2], p[4], ThenNode(p[5]), p[6])
+        p[0] = IfNode(*p[3], p[5], ThenNode(p[6]), p[7])
 
-def p_BeginFor(p):
+def p_BeginIf(p):
     """
-    BeginFor : 
+    BeginIf : 
     """
     stm.newScope()
 
-def p_EndFor(p):
+def p_EndIf(p):
     """
-    EndFor :
+    EndIf :
     """
     stm.exitScope()
 
@@ -1921,14 +1921,14 @@ def p_EndSwitch(p):
 
 def p_ExprCaseClauseMult(p):
     """
-    ExprCaseClauseMult : ExprCaseClause ExprCaseClauseMult 
+    ExprCaseClauseMult : ExprCaseClauseMult ExprCaseClause 
                          |
     """
     if len(p) == 1:
         p[0] = []
     else:
-        p[2].append(p[1])
-        p[0] = p[2]
+        p[1].append(p[2])
+        p[0] = p[1]
 
 def p_ExprCaseClause(p):
     """
