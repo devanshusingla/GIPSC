@@ -283,7 +283,7 @@ def isTypeCastable(stm, dt1, dt2):
     if 'name' not in dt1 or 'name'not in dt2:
         return False
 
-    while 'name' in dt1 and (dt1['name'] == 'array' or dt1['name'] == 'slice' or dt1['name'] == 'pointer' or dt1['name'] == 'elementary' or dt1['name'] in basicTypes):
+    while 'name' in dt1 and (dt1['name'] == 'array' or dt1['name'] == 'slice' or dt1['name'] == 'pointer' or dt1['name'] in basicTypes):
         if 'name' in dt2 and dt1['name']!= dt2['name']:
             return False
         elif 'name' not in dt2:
@@ -328,10 +328,10 @@ def isTypeCastable(stm, dt1, dt2):
         return True 
 
     if dt1['name'] == 'map':
-        return isTypeCastable(dt1['KeyType'], dt2['KeyType']) and isTypeCastable(dt1['ValueType'], dt2['ValueType'])
+        return isTypeCastable(stm, dt1['KeyType'], dt2['KeyType']) and isTypeCastable(stm, dt1['ValueType'], dt2['ValueType'])
 
 def checkTypePresence(stm, dt):
-    while ('name' in dt) and (dt['name'] == 'array' or dt['name'] == 'slice' or dt['name'] == 'pointer' or dt['name'] == 'elementary'):
+    while ('name' in dt) and (dt['name'] == 'array' or dt['name'] == 'slice' or dt['name'] == 'pointer'):
         dt = dt['baseType']
 
     if isinstance(dt, str):

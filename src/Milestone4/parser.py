@@ -525,7 +525,7 @@ def p_TypeDef(p):
         raise TypeError("Redeclaration of type " + p[1], p.lexer.lineno)
         
     elif isinstance(p[2], str) and p[2] in stm.symTable[stm.id].avlTypes:
-        stm.symTable[stm.id].typeDefs[p[1]] = p[2]
+        stm.symTable[stm.id].typeDefs[p[1]] = {'baseType': p[2], 'name': p[2], 'level' : 0}
     
     elif isinstance(p[2], str):
         stm.symTable[stm.id].typeDefs[p[1]] = stm.symTable[stm.id].typeDefs[p[2]]
@@ -740,7 +740,7 @@ def p_PrimaryExpr(p):
                     dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
 
             if p[1].dataType['name'] == 'map':
-                if not isTypeCastable(p[2].dataType, p[1].dataType['KeyType']):
+                if not isTypeCastable(stm, p[2].dataType, p[1].dataType['KeyType']):
                     raise TypeError("Incorrect type for map " + p.lexer.lineno)
                 dt = p[1].dataType['ValueType']
 
@@ -790,7 +790,7 @@ def p_PrimaryExpr(p):
             if dt != -1:
                 if not isinstance(dt, StructType):
                     raise TypeError(f'Not of type struct')
-                p[2] = CompositeLitNode(dt, p[2])
+                p[2] = CompositeLitNode(stm, dt, p[2])
                 p[0] = p[2]
                 p[0].dataType = dt.dataType
                 p[0].isAddressable = False
@@ -1001,16 +1001,11 @@ def p_ElementType(p):
     """
     ElementType : Type
                 | IDENT
-    """
-    p[0] = ElementaryType()
-    
-    if not isinstance(p[1], str):
-        p[0].dataType = p[1].dataType 
+    """    
+    if isinstance(p[1], str):
+        p[0] = stm.findType(p[1]) 
     else:
-        p[0].dataType['baseType'] = p[1]
-        p[0].dataType['level'] = 0
-
-    p[0].dataType['name'] = 'elementary'
+        p[0] = p[1]
 
 ###################################################################################
 ### Struct Type
@@ -1061,7 +1056,6 @@ def p_FieldDecl(p):
         for key in p[1]:
             p[0].append(StructFieldType(key, p[2]))
     
-
 def p_EmbeddedField(p):
     """
     EmbeddedField : MUL IDENT
@@ -1090,25 +1084,24 @@ def p_MapType(p):
     """
     p[0] = MapType(p[3], p[5])
 
-    if p[2].dataType['name'] == 'map' or p[2].dataType['name'] == 'func' or p[2].dataType['name'] == 'slice' or p[2].dataType['name'] == 'array':
+    if p[3].dataType['name'] == 'map' or p[3].dataType['name'] == 'func' or p[3].dataType['name'] == 'slice' or p[3].dataType['name'] == 'array':
         raise TypeError(f"{p.lexer.lineno} Invalid map key type")
 
     p[0].dataType = {'name' : 'map'}
-    p[0].dataType['KeyType'] = p[2].dataType
-    p[0].dataType['ValueType'] = p[4].dataType
+    p[0].dataType['KeyType'] = p[3].dataType
+    p[0].dataType['ValueType'] = p[5].dataType
 
 def p_KeyType(p):
     """
     KeyType : Type
             | IDENT
     """
-    p[0] = p[1]
-
     if isinstance(p[1], str):
-        p[0].dataType['baseType'] = p[1]
-        p[0].dataType['level'] = 0
+        p[0] = stm.findType(p[1])
+    else:
+        p[0] = p[1]
 
-    p[0].dataType['name'] = 'key'
+    # p[0].dataType['name'] = 'key'
 
 
 ###################################################################################
@@ -1195,7 +1188,8 @@ def p_CompositeLit(p):
     """
     if isinstance(p[1], str):
         p[1] = stm.findType(p[1])
-    p[0] = CompositeLitNode(p[1], p[2])
+
+    p[0] = CompositeLitNode(stm, p[1], p[2])
 
 def p_LiteralValue(p):
     """
@@ -1380,6 +1374,7 @@ def p_ParameterDecl(p):
     p[0] = p[1]
     if isinstance(p[2], str):
         p[2] = stm.findType(p[2])
+        print(p[2])
     for i in range(len(p[0])):
         p[0][i].dataType = p[2].dataType
 

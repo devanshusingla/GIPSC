@@ -217,7 +217,7 @@ class LitNode(Node):
 
 import utils
 class CompositeLitNode(Node):
-    def  __init__(self, compositeLitType, elList):
+    def  __init__(self, stm, compositeLitType, elList):
         super().__init__()
         self.dataType = compositeLitType.dataType
         self.children = []
@@ -334,13 +334,22 @@ class CompositeLitNode(Node):
                 val = element.val
 
                 ## TODO: Check type for key
+                keytype = element.keytype 
+                print("Actual: ", keytype)
+                print("Expected ", self.dataType['KeyType'])
+
+                if not utils.isTypeCastable(stm, keytype, self.dataType['KeyType']):
+                    raise TypeError("Key not typecastable to map's key dataType")
 
                 if key in keys:
                     raise DuplicateKeyError("Key " + key + "already assigned")
                 else:
                     keys.append(key)
 
-                if not utils.isTypeCastable(self.dataType['ValType'], val.dataType):
+                print("Actual: ", val.dataType)
+                print("Expected ", self.dataType['ValueType'])
+
+                if not utils.isTypeCastable(stm, self.dataType['ValueType'], val.dataType):
                     raise TypeError("Value cannot be typecasted to required datatype for key: " + key)
 
 
@@ -354,7 +363,9 @@ class CompositeLitNode(Node):
         elif self.dataType['name'] == 'slice':
             return f'SLICE[{self.dataType["length"]}:{self.dataType["capacity"]}]'
         elif self.dataType['name'] == 'map':
-            return f'MAP[{self.KeyType.name}:{self.ValueType.name}]'
+            key = self.dataType['KeyType']['name']
+            val = self.dataType['ValueType']['name']
+            return f'MAP[{key}:{val}]'
 
 class StructFieldNode(Node):
     def __init__(self, key, val):
@@ -379,8 +390,10 @@ class KeyValNode(Node):
     def __init__(self, key, val):
         super().__init__()
         self.key = key.label
+        self.keytype = key.dataType
         self.val = val
-        self.children.append(key, val)
+        self.children.append(key)
+        self.children.append(val)
     
     def __str__(self):
         return f':'
