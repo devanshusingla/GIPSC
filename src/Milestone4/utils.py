@@ -352,21 +352,18 @@ def isTypeCastable(stm, dt1, dt2):
         return isTypeCastable(stm, dt1['KeyType'], dt2['KeyType']) and isTypeCastable(stm, dt1['ValueType'], dt2['ValueType'])
 
 def checkTypePresence(stm, dt):
-    while ('name' in dt) and (dt['name'] == 'array' or dt['name'] == 'slice' or dt['name'] == 'pointer'):
+    while not isinstance(dt, str) and ('name' in dt) and (dt['name'] == 'array' or dt['name'] == 'slice' or dt['name'] == 'pointer'):
         dt = dt['baseType']
 
     if isinstance(dt, str):
         return stm.findType(dt)
 
     elif 'name' in dt and dt['name'] == 'struct':
-        for i in dt:
-            tmp = dt[i]
-            if i == 'name':
-                continue
-            else:
-                flag = checkTypePresence(stm, tmp)
-                if flag == -1:
-                    return -1
+        for i in dt['keyTypes']:
+            tmp = dt['keyTypes'][i]
+            flag = checkTypePresence(stm, tmp)
+            if flag == -1:
+                return -1
         return 1
                         
     elif 'name' in dt and dt['name'] == 'map':

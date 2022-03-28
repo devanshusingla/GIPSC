@@ -447,9 +447,10 @@ def p_VarSpec(p):
                     present = stm.findType(stm, dt)
 
                 if present == -1:
-                    raise TypeError('Type not declared/found: ' + dt, p.lexer.lineno)
+                    raise TypeError('Type not declared/found: ' + dt['name'], p.lexer.lineno)
                 else:
                     # Add to symbol table
+
                     stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                     p[1][i].dataType = dt    
             else:
@@ -486,7 +487,6 @@ def p_VarSpec(p):
                 # Add to symbol table
                 stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                 p[1][i].dataType = dt
-
 
 
 ###################################################################################
@@ -564,6 +564,7 @@ def p_TypeDef(p):
         stm.symTable[stm.id].typeDefs[p[1]] = stm.symTable[stm.id].typeDefs[p[2]]
 
     else:
+        p[2].dataType['baseType'] = p[1]
         stm.symTable[stm.id].typeDefs[p[1]] = p[2]
         # params = []
         # for key in dt['keyTypes']:
@@ -747,24 +748,27 @@ def p_PrimaryExpr(p):
                 p[0] = ExprNode(dataType=stm_entry['dataType'], label=p[2].children[0], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None), pkg=p[1].label)
                 p[0].addChild(p[1],p[2].children[0])
                 return
-            if 'name' not in p[1].dataType or p[1].dataType['name'] != 'struct':
+
+            if 'name' not in p[1].dataType:
+                raise TypeError("Expecting struct type but found different one", p.lexer.lineno)
+            if stm.findType(p[1].dataType['name']) != -1 or p[1].dataType['name'] == 'struct':
+                pass
+            else:
                 raise TypeError("Expecting struct type but found different one", p.lexer.lineno)
             
-            field = p[2].chidren[0]
+            field = p[2].children[0]
             found = False
             idx = -1
-            for i in p[1].dataType:
-                if i == 'name':
-                    continue
-                if p[1].dataType[i]['field']==field:
+            for i in p[1].dataType['keyTypes']:
+                if i == field:
                     found = True
-                    idx = i
-                    
+                    dt = p[1].dataType['keyTypes'][i]
+
             if not found:
                 raise NameError("No such field found in " + p[1].label, p.lexer.lineno)                
 
             p[2].addChild(p[1])
-            dt = p[2].dataType[idx]
+            # dt = p[2].dataType[idx]
 
         ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
@@ -869,7 +873,6 @@ def p_PrimaryExpr(p):
                         raise TypeError("Type mismatch on argument number: " + i, p.lexer.lineno)
 
                 p[2] = FuncCallNode(p[1], p[2])
-        
         p[0] = p[2]       
         p[0].isAddressable = True
         p[0].dataType = dt
@@ -993,14 +996,16 @@ def p_PointerType(p):
     PointerType : MUL Type %prec UMUL
                | MUL IDENT %prec UMUL
     """
-    p[0] = PointerType(p[2])
-
     if isinstance(p[2], str):
-        p[0].dataType['baseType'] = p[2]
+        name = p[2]
+        p[2] = stm.findType(p[2])
+        p[0] = PointerType(p[2].dataType)
         p[0].dataType['level'] = 1
+        p[0].dataType['baseType'] = name
     else:
-        p[0].dataType['baseType'] = p[2].dataType['baseType']
-        p[0].dataType['level'] = p[2].dataType['level'] + 1
+        p[0] = PointerType(p[2].dataType)
+        p[0].dataType['level'] += 1
+        p[0].dataType['baseType'] = p[2].dataType['name']
     
     p[0].dataType['name'] = 'pointer'
 
@@ -1658,7 +1663,7 @@ def p_Assignment(p):
     p[0] = []
     for key, val in zip(p[1], p[3]):
         if key.label != _symbol:
-            if key.isConst == True:
+            if hasattr(key, 'isConst') and key.isConst == True:
                 raise TypeError(f"{p.lexer.lineno}: LHS contains constant! Cannot assign")
             if key.dataType != val.dataType:
                 raise TypeError(f"{p.lexer.lineno}: Type of {key.label} and {val.label} doesn't match.")

@@ -1,7 +1,7 @@
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
-
+from copy import deepcopy
 def zeroLit(dataType):
     if dataType == 'int':
         dt = {'name' : 'int', 'baseType' : 'int', 'level' : 0}
@@ -80,10 +80,10 @@ class SymTableMaker:
         self.addBuiltInFuncs()
 
     def addFunction(self, label, info):
-        self.functions[label] = info
+        self.functions[label] = deepcopy(info)
     
     def addType(self, type, typeObj):
-        self.symTable[self.id].addType(type, typeObj)
+        self.symTable[self.id].addType(type, deepcopy(typeObj))
     
     def newScope(self):
         self.symTable[self.nextId] = scope(self.nextId, parentScope = self.id)
@@ -96,7 +96,7 @@ class SymTableMaker:
         self.id = self.stack[-1]
     
     def add(self, ident, info):
-        self.symTable[self.id].insert(ident, info)
+        self.symTable[self.id].insert(ident, deepcopy(info))
 
     def get(self, ident, scope=None):
         if scope is None:
@@ -364,9 +364,7 @@ class CompositeLitNode(Node):
                 self.children.append(element)    
 
     def __str__(self):
-        if self.dataType['name'] == 'struct':
-            return f'STRUCT'
-        elif self.dataType['name'] == 'array':
+        if self.dataType['name'] == 'array':
             return f'ARRAY[{self.dataType["length"]}]'
         elif self.dataType['name'] == 'slice':
             return f'SLICE[{self.dataType["length"]}:{self.dataType["capacity"]}]'
@@ -374,6 +372,8 @@ class CompositeLitNode(Node):
             key = self.dataType['KeyType']['name']
             val = self.dataType['ValueType']['name']
             return f'MAP[{key}:{val}]'
+        else:
+            return f'{self.dataType["name"]}'
 
 class StructFieldNode(Node):
     def __init__(self, key, val):
@@ -469,17 +469,16 @@ class ExprNode(Node):
         self.pkg = pkg
 
     def __str__(self):
+        if self.pkg is not None:
+            return '.'
         if self.isConst:
             if 'name' in self.dataType and self.dataType['name'] == 'string':
                 return f'\\\"{self.label[1:-1]}\\\"'
             return str(self.val)
         if self.operator is None:
-            if self.pkg is not None:
-                return '.'
-            else:
-                if 'name' in self.dataType and self.dataType['name'] == 'string':
-                    return f'\\\"{self.label}\\\"'
-                return self.label
+            if 'name' in self.dataType and self.dataType['name'] == 'string':
+                return f'\\\"{self.label}\\\"'
+            return self.label
         else:
             return self.operator
 
@@ -700,9 +699,9 @@ class ElementaryType(Type):
 
 class PointerType(Type):
     def __init__(self, dataType = {}):
-        super().__init__()
+        super().__init__()    
         self.dataType = dataType
-        self.children = type.children
+        self.children = None
     
     def __str__(self):
         x = self.dataType['baseType'] 
@@ -712,7 +711,7 @@ class ParenType(Type):
     def __init__(self, dataType = {}):
         super().__init__()
         self.dataType = dataType
-        self.children = type.children
+        self.children = None
     
     def __str__(self):
         x = self.dataType['baseType'] 
@@ -745,7 +744,7 @@ class MapType(Type):
 class StructType(Type):
     def __init__(self, fieldList):
         super().__init__()
-        self.dataType = {'name': "struct", 'keyTypes': {}}
+        self.dataType = {'name': "struct", 'keyTypes': {}, 'level' : 0}
         for field in fieldList:
             if field.dataType['key'] in self.dataType['keyTypes']:
                 raise NameError("Can not have same key names in two fields of structure")
