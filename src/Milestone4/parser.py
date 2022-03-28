@@ -41,8 +41,10 @@ ignored_tokens = [';', '{', '}', '(', ')', '[', ']', ',']
 ####################                                        ######################
 ##################################################################################
 
+info_tables = {}
 stm = SymTableMaker()
 ast = None
+curr_func_id = 'global'
 
 _symbol = '_'
 stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0}})
@@ -1263,13 +1265,24 @@ def p_FuncDecl(p):
     """
     ## Make node
     p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
+    global curr_func_id
     stm.currentReturnType = None
+    for symbol in stm.symTable[stm.id].localsymTable:
+        if symbol not in info_tables[curr_func_id]:
+            info_tables[curr_func_id][symbol] = {}
+
+        if stm.id not in info_tables[curr_func_id][symbol]:
+            info_tables[curr_func_id][symbol][stm.id] = {}
+        
+        info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
+    curr_func_id = 'global'
     stm.exitScope()
 
 def p_FuncSig(p):
     """
     FuncSig : FUNC FunctionName Signature
     """
+    global curr_func_id
     if p[3][1] == None:
         if p[3][0] == None:
             stm.addFunction(p[2].label, {"params": [] , "return": [], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
@@ -1296,6 +1309,9 @@ def p_FuncSig(p):
                 stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
                 p[3][0].children[i].scope = stm.id
     
+    curr_func_id = p[2].label
+    info_tables[curr_func_id] = {}
+
     p[0] = [p[2], p[3]]
 
 # def p_BeginFunc(p):
@@ -1822,6 +1838,15 @@ def p_EndIf(p):
     """
     EndIf :
     """
+    global curr_func_id
+    for symbol in stm.symTable[stm.id].localsymTable:
+        if symbol not in info_tables[curr_func_id]:
+            info_tables[curr_func_id][symbol] = {}
+
+        if stm.id not in info_tables[curr_func_id][symbol]:
+            info_tables[curr_func_id][symbol][stm.id] = {}
+        
+        info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
     stm.exitScope()
 
 def p_else_stmt(p):
@@ -1920,6 +1945,15 @@ def p_EndSwitch(p):
     """
     EndSwitch : 
     """
+    global curr_func_id
+    for symbol in stm.symTable[stm.id].localsymTable:
+        if symbol not in info_tables[curr_func_id]:
+            info_tables[curr_func_id][symbol] = {}
+
+        if stm.id not in info_tables[curr_func_id][symbol]:
+            info_tables[curr_func_id][symbol][stm.id] = {}
+        
+        info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
     stm.exitScope()
 
 def p_ExprCaseClauseMult(p):
@@ -2016,6 +2050,15 @@ def p_EndFor(p):
     EndFor : 
     """
     stm.forDepth -= 1
+    global curr_func_id
+    for symbol in stm.symTable[stm.id].localsymTable:
+        if symbol not in info_tables[curr_func_id]:
+            info_tables[curr_func_id][symbol] = {}
+
+        if stm.id not in info_tables[curr_func_id][symbol]:
+            info_tables[curr_func_id][symbol][stm.id] = {}
+        
+        info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
     stm.exitScope()
     
 def p_Condition(p):
@@ -2131,6 +2174,31 @@ def df(root, level):
         for child in root.children:
             df(child, level+1)
 
+import csv , os
+def create_sym_tables(path_to_folder):
+    os.mkdir(path_to_folder)
+
+    for key in info_tables:
+        filename = os.path.join(path_to_folder, key) + ".csv"
+        info = info_tables[key]
+        dict = []
+        i = 0
+        for item in info:
+            dict.append({})
+            dict[i]['ident'] = item
+            dict[i]['scope'] = list(info[item].keys())[0]
+            dict[i]['info'] = info[item][dict[i]['scope']]
+            i += 1
+
+        fields = ['ident', 'scope', 'info']
+
+        with open(filename, "w") as f:
+            writer = csv.DictWriter(f, fieldnames = fields)
+
+            writer.writeheader()
+
+            writer.writerows(dict)
+
 def buildAndCompile():
     source_code = None
     path_to_source_code = sys.argv[1]
@@ -2143,8 +2211,8 @@ def buildAndCompile():
     parser_out = parse(parser, lexer, source_code)
     # df(parser_out, 0)
     writeOutput(parser_out, output_file)
+    create_sym_tables(os.path.join(os.getcwd(), path_to_source_code[:-2]) + "symTables")
     return parser_out
-
 
 if __name__ == '__main__':
     buildAndCompile()

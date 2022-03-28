@@ -19,6 +19,5 @@ func main() {
 	var x int  = b + c / d + c;
 	a := [5]int{1, 2, 3, 4, 5}
 	s := a[1:4]
-	r := a[6]
 	// add(3, 5)
 }

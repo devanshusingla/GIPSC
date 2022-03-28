@@ -1,0 +1,4 @@
+ident,scope,info
+x,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'val': 0, 'isConst': False, 'isArg': True}"
+y,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'val': 0, 'isConst': False, 'isArg': True}"
+z,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0}, 'val': 0, 'isConst': False, 'isArg': True}"
