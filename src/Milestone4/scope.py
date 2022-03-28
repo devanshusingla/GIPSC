@@ -259,7 +259,7 @@ class CompositeLitNode(Node):
             else:
                 if len(elList) != len(self.dataType['keyTypes']):
                     raise NameError("too few arguments for structure")
-                for (key, t), val in zip(self.dataType.keyTypes.items(), elList):
+                for (key, t), val in zip(self.dataType['keyTypes'].items(), elList):
                     if isinstance(val, ExprNode):
                         self.children.append(StructFieldNode(key, val))
                     elif t.name in compositeTypes:
@@ -489,6 +489,9 @@ class IndexNode(Node):
 class SliceNode(Node):
     def __init__(self, arrNode, lIndexNode, rIndexNode, maxIndexNode, label="Node"):
         super().__init__(label)
+        self.lIndexNode = lIndexNode
+        self.rIndexNode = rIndexNode
+        self.maxIndexNode = maxIndexNode
         self.addChild(arrNode, lIndexNode, rIndexNode, maxIndexNode)
     
     def __str__(self):

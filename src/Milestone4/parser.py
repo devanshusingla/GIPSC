@@ -724,10 +724,10 @@ def p_PrimaryExpr(p):
 
         ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
-            if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'array' and p[1].dataType['name']!= 'map') :
+            if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'array' and p[1].dataType['name']!= 'map' and p[1].dataType['name'] != 'slice') :
                 raise TypeError("Expecting array or map type but found different one", p.lexer.lineno)
 
-            if p[1].dataType['name'] == 'array':
+            if p[1].dataType['name'] == 'array' or p[1].dataType['name'] == 'slice':
                 if isinstance(p[2].dataType, str):
                     if not isBasicInteger(stm, p[2].dataType):
                         raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
@@ -754,7 +754,7 @@ def p_PrimaryExpr(p):
 
         ## PrimaryExpr -> PrimaryExpr Slice
         elif isinstance(p[2], SliceNode):
-            if 'name' not in p[1].dataType or p[1].dataType['name'] != 'slice' :
+            if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'slice' and p[1].dataType['name'] != 'array'):
                 raise TypeError("Expecting a slice type but found different one", p.lexer.lineno)
 
             if  p[2].lIndexNode != None: 
@@ -1736,6 +1736,10 @@ def p_ReturnStmt(p):
             raise LogicalError(f"{p.lexer.lineno}: Current function doesn't return nothing.")
         p[0] = ReturnNode([])
     else:
+        if len(stm.currentReturnType.dataType) != len(p[2]):
+            raise LogicalError(f"{p.lexer.lineno}: Different number of return statements!")
+        # if len(stm.currentReturnType.dataType) != len(p[2]):
+        #     return LogicalError(f"{p.lexer.lineno}: Different number of returns.")
         for returnDataType, ExprNode in zip(stm.currentReturnType.dataType, p[2]):
             if returnDataType != ExprNode.dataType:
                 return LogicalError(f"{p.lexer.lineno}: Return type of current function and the return statement doesn't match.")
