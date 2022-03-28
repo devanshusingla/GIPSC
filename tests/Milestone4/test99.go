@@ -6,8 +6,7 @@ func main() {
 	var i, j, n , m int;
 	var state string;
 	var a [5][6]int;
-	OuterLoop:
-	for i = 0; i < n; i++ {
+	OuterLoop: for i = 0; i < n; i++ {
 		for j = 0; j < m; j++ {
 			switch a[i][j] {
 			case 2:
@@ -19,5 +18,6 @@ func main() {
 			}
 		}
 	}
-	fmt.Println(state)
+	state = state
+	// fmt.Println(state)
 }

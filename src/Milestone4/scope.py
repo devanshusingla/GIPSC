@@ -526,6 +526,7 @@ class LabelStatementNode(Node):
         super().__init__()
         self.statementNode = statementNode
         self.statementLabel = lineno
+        self.addChild(statementNode)
 
     def __str__(self):
         return f'LINE:{self.statementLabel}'

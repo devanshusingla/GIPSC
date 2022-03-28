@@ -1462,7 +1462,6 @@ def p_LabeledStmt(p):
     """
     LabeledStmt : Label COLON Statement
     """
-    print(type(p[3]))
     stm.labels[p[1]]['statementType'] = type(p[3])
     p[0] = LabelNode(p[1], LabelStatementNode(p[3], p.lexer.lineno))
     stm.currentLabel = None
@@ -2028,7 +2027,6 @@ def p_BeginFor(p):
     """
     BeginFor : 
     """
-    print(stm.currentLabel, p.lexer.lineno, stm.labels)
     if stm.currentLabel and stm.labels[stm.currentLabel]['lineno'] == p.lexer.lineno:
         stm.labels[stm.currentLabel]['statementType'] = 'FOR'
         stm.currentLabel = None
