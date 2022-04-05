@@ -1,5 +1,5 @@
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
-basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1}
+basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 from copy import deepcopy
 def zeroLit(dataType):
@@ -17,6 +17,9 @@ class DuplicateKeyError(Exception):
     pass
 
 class SwitchCaseError(Exception):
+    pass
+
+class LogicalError(Exception):
     pass
 
 class scope:
@@ -59,6 +62,7 @@ class SymTableMaker:
         self.symTable[0] = scope(0)
         self.functions = {}
         self.stack = [0]
+        self.offset = [0]
         self.id = 0
         self.nextId = 1
         self.currentReturnType = None
@@ -85,14 +89,22 @@ class SymTableMaker:
     def addType(self, type, typeObj):
         self.symTable[self.id].addType(type, deepcopy(typeObj))
     
+    def getOffset(self):
+        return self.offset[-1]
+
+    def updateOffset(self, val):
+        self.offset[-1] += val
+
     def newScope(self):
         self.symTable[self.nextId] = scope(self.nextId, parentScope = self.id)
         self.stack.append(self.nextId)
+        self.offset.append(0)
         self.id = self.nextId
         self.nextId += 1
     
     def exitScope(self):
         self.stack.pop()
+        self.offset.pop()
         self.id = self.stack[-1]
     
     def add(self, ident, info):

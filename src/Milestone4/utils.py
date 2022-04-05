@@ -402,11 +402,11 @@ def Operate(operator, operand1, operand2, lineno, dt2):
     elif operator == '-':
         return operand1 - operand2
     elif operator == '*':
-        return operand1 + operand2  
+        return operand1 * operand2  
     elif operator == '/':
         if operand2 == 0:
             raise LogicalError(f"{lineno}: Trying to divide by 0.")
-        return operand1 - operand2
+        return operand1 // operand2
     elif operator == '||':
         return 'true' if operand1 == 'true' or operand2 == 'true' else 'false'  
     elif operator == '&&':

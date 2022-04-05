@@ -132,7 +132,7 @@ def p_ImportSpec(p):
         path = LitNode(dataType = "string", label = p[2])
 
     if alias.label in stm.pkgs:
-        raise NameError("Cyclic import not supported")
+        raise NameError(f"{p.lexer.lineno}: Cyclic import not supported")
     
     tmp_target_folder = target_folder
     if p[1] != '.':
@@ -244,7 +244,7 @@ def p_ConstSpec(p):
             dt_return = stm.functions[func_name]["return"]
             expression_datatypes.extend(dt_return)
             if len(dt_return) == 0:
-                raise TypeError("Function does not return anything!")
+                raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")
             elif len(dt_return) == 1:
                 count_0+=1
             else:
@@ -255,10 +255,10 @@ def p_ConstSpec(p):
     if count_1 > 0:
         raise TypeError(f"{p.lexer.lineno}: Functions with multi-valued return type can't be allowed in single-value context!.")
         if len(p[length]) > 1:
-            raise TypeError("Function with more than one return values should be assigned alone!")
+            raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
 
     if len(p[1]) != len(expression_datatypes):
-        raise NameError("Assignment is not balanced", p.lexer.lineno)
+        raise NameError(f"{p.lexer.lineno}: Assignment is not balanced")
     
     dt = {}
 
@@ -275,7 +275,7 @@ def p_ConstSpec(p):
             
             #print("Datatypes being compared:", dt, temp)
             if not isTypeCastable(stm, dt, expression):
-                raise TypeError("Mismatch of type for identifier: " + p[1][i].label, p.lexer.lineno)
+                raise TypeError(f"{p.lexer.lineno}: Mismatch of type for identifier: " + p[1][i].label)
 
     if count_1 > 0:
         expr = ExprNode(dataType = dt, label = "ASSIGN", operator = "=")
@@ -299,7 +299,7 @@ def p_ConstSpec(p):
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(ident.label)
         if latest_scope == stm.id or ident.label in stm.functions:
-            raise NameError('Redeclaration of identifier: ' + ident, p.lexer.lineno)
+            raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident)
         
         if len(p) > 4:
             if not not_base_type:
@@ -313,7 +313,7 @@ def p_ConstSpec(p):
                 present = stm.findType(stm, dt)
 
             if present == -1:
-                raise TypeError('Type not declared/found: ' + dt, p.lexer.lineno)
+                raise TypeError(f'{p.lexer.lineno}: Type not declared/found: ' + dt)
             else:
                 val = None
                 # Add to symbol table
@@ -384,7 +384,7 @@ def p_VarSpec(p):
                 dt_return = stm.functions[func_name]["return"]
                 expression_datatypes.extend(dt_return)
                 if len(dt_return) == 0:
-                    raise TypeError("Function does not return anything!")
+                    raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")
                 elif len(dt_return) == 1:
                     count_0+=1
                 else:
@@ -395,7 +395,7 @@ def p_VarSpec(p):
             if len(p[length]) > 1:
                 raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
         if len(p[1]) != len(expression_datatypes):
-            raise NameError(f"{p.lexer.lineno}: Assignment is not balanced", p.lexer.lineno)
+            raise NameError(f"{p.lexer.lineno}: Assignment is not balanced")
         
         dt = {}
 
@@ -433,7 +433,7 @@ def p_VarSpec(p):
             # Check redeclaration for identifier list
             latest_scope = stm.getScope(ident.label)
             if latest_scope == stm.id or ident.label in stm.functions:
-                raise NameError('Redeclaration of identifier: ' + ident, p.lexer.lineno)
+                raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident)
             
             if len(p) > 4:
                 if not not_base_type:
@@ -447,7 +447,7 @@ def p_VarSpec(p):
                     present = stm.findType(stm, dt)
 
                 if present == -1:
-                    raise TypeError('Type not declared/found: ' + dt['name'], p.lexer.lineno)
+                    raise TypeError(f'{p.lexer.lineno}: Type not declared/found: ' + dt['name'])
                 else:
                     # Add to symbol table
 
@@ -469,7 +469,7 @@ def p_VarSpec(p):
             # Check redeclaration for identifier list
             latest_scope = stm.getScope(ident.label)
             if latest_scope == stm.id or ident.label in stm.functions:
-                raise NameError('Redeclaration of identifier: ' + ident, p.lexer.lineno)
+                raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident)
 
             if not not_base_type:
                 dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
@@ -482,7 +482,7 @@ def p_VarSpec(p):
                 present = stm.findType(dt)
 
             if present == -1:
-                raise TypeError('Type not declared/found: ' + dt, p.lexer.lineno)
+                raise TypeError(f'{p.lexer.lineno}: Type not declared/found: ' + dt)
             else:
                 # Add to symbol table
                 stm.add(ident.label, {'dataType': dt, 'isConst' : False})
@@ -527,10 +527,10 @@ def p_AliasDecl(p):
         dt = p[3].dataType
 
     if checkTypePresence(stm, dt) == -1:
-        raise TypeError("baseType " + dt + " not declared yet")
+        raise TypeError(f"{p.lexer.lineno}: baseType " + dt + " not declared yet")
 
     if p[1] in stm.symTable[stm.id].typeDefs:
-        raise TypeError("Redeclaration of Alias " + p[1], p.lexer.lineno)
+        raise TypeError(f"{p.lexer.lineno}: Redeclaration of Alias " + p[1])
         
     elif isinstance(p[3], str) and p[3] in stm.symTable[stm.id].avlTypes:
         stm.symTable[stm.id].typeDefs[p[1]] = p[3]
@@ -552,10 +552,10 @@ def p_TypeDef(p):
     dt = p[2].dataType
 
     if checkTypePresence(stm, dt) == -1:
-        raise TypeError("baseType " + dt + " not declared yet")
+        raise TypeError(f"{p.lexer.lineno}: baseType " + dt + " not declared yet")
 
     if p[1] in stm.symTable[stm.id].typeDefs:
-        raise TypeError("Redeclaration of type " + p[1], p.lexer.lineno)
+        raise TypeError(f"{p.lexer.lineno}: Redeclaration of type " + p[1])
         
     elif isinstance(p[2], str) and p[2] in stm.symTable[stm.id].avlTypes:
         stm.symTable[stm.id].typeDefs[p[1]] = {'baseType': p[2], 'name': p[2], 'level' : 0}
@@ -639,7 +639,7 @@ def p_Expr(p):
             firstChar = p[3].label[0]
 
         if not checkBinOp(stm, dt1, dt2, p[2], firstChar):
-            raise TypeError("Incompatible operand types", p.lexer.lineno)
+            raise TypeError(f"{p.lexer.lineno}: Incompatible operand types")
 
         dt = getFinalType(stm, dt1, dt2, p[2])
 
@@ -669,7 +669,7 @@ def p_UnaryExpr(p):
         if not isinstance(p[2], str) and hasattr(p[2], 'isAddressable'):
             flag = p[2].isAddressable 
         if not checkUnOp(stm, p[2].dataType, p[1], flag):
-            raise TypeError("Incompatible operand for Unary Expression", p.lexer.lineno)
+            raise TypeError(f"{p.lexer.lineno}: Incompatible operand for Unary Expression")
         val = None
         isConst = p[2].isConst
         if isConst:
@@ -727,7 +727,7 @@ def p_PrimaryExpr(p):
 
         if latest_scope == 0:
             ## To be checked for global declarations (TODO)
-            print("Expecting global declaration for ",p[1], p.lexer.lineno)
+            print("Expecting global declaration for ",p[1])
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
@@ -750,11 +750,11 @@ def p_PrimaryExpr(p):
                 return
 
             if 'name' not in p[1].dataType:
-                raise TypeError("Expecting struct type but found different one", p.lexer.lineno)
+                raise TypeError(f"{p.lexer.lineno}: Expecting struct type but found different one")
             if stm.findType(p[1].dataType['name']) != -1 or p[1].dataType['name'] == 'struct':
                 pass
             else:
-                raise TypeError("Expecting struct type but found different one", p.lexer.lineno)
+                raise TypeError(f"{p.lexer.lineno}: Expecting struct type but found different one")
             
             field = p[2].children[0]
             found = False
@@ -765,7 +765,7 @@ def p_PrimaryExpr(p):
                     dt = p[1].dataType['keyTypes'][i]
 
             if not found:
-                raise NameError("No such field found in " + p[1].label, p.lexer.lineno)                
+                raise NameError(f"{p.lexer.lineno}: No such field found in " + p[1].label)                
 
             p[2].addChild(p[1])
             # dt = p[2].dataType[idx]
@@ -773,18 +773,18 @@ def p_PrimaryExpr(p):
         ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
             if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'array' and p[1].dataType['name']!= 'map' and p[1].dataType['name'] != 'slice') :
-                raise TypeError("Expecting array or map type but found different one", p.lexer.lineno)
+                raise TypeError(f"{p.lexer.lineno}: Expecting array or map type but found different one")
 
             if p[1].dataType['name'] == 'array' or p[1].dataType['name'] == 'slice':
                 if isinstance(p[2].dataType, str):
                     if not isBasicInteger(stm, p[2].dataType):
-                        raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
+                        raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].dataType)
                 else:
                     if isinstance(p[2].dataType['baseType'], str) and p[2].dataType['level'] == 0:
                         if not isBasicInteger(stm, p[2].dataType['baseType']):
-                            raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
+                            raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].dataType)
                     else:
-                        raise TypeError("Index type incorrect", p.lexer.lineno)
+                        raise TypeError(f"{p.lexer.lineno}: Index type incorrect")
 
                 dt = p[1].dataType.copy()
                 dt['level']-=1
@@ -794,7 +794,7 @@ def p_PrimaryExpr(p):
 
             if p[1].dataType['name'] == 'map':
                 if not isTypeCastable(stm, p[2].dataType, p[1].dataType['KeyType']):
-                    raise TypeError("Incorrect type for map " + p.lexer.lineno)
+                    raise TypeError(f"{p.lexer.lineno}: Incorrect type for map " + p.lexer.lineno)
                 dt = p[1].dataType['ValueType']
 
             p[2].children[0] = p[1]
@@ -803,36 +803,36 @@ def p_PrimaryExpr(p):
         ## PrimaryExpr -> PrimaryExpr Slice
         elif isinstance(p[2], SliceNode):
             if 'name' not in p[1].dataType or (p[1].dataType['name'] != 'slice' and p[1].dataType['name'] != 'array'):
-                raise TypeError("Expecting a slice type but found different one", p.lexer.lineno)
+                raise TypeError(f"{p.lexer.lineno}: Expecting a slice type but found different one")
 
             if  p[2].lIndexNode != None: 
                 if not isBasicInteger(stm, p[2].lIndexNode.dataType['baseType']):
-                    raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
+                    raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].dataType)
             
             if  p[2].rIndexNode != None: 
                 if not isBasicInteger(stm, p[2].rIndexNode.dataType['baseType']):
-                    raise TypeError("Index cannot be of type " + p[2].dataType, p.lexer.lineno)
+                    raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].dataType)
 
             else:
                 if isinstance(p[2].lIndexNode.dataType, str):
                     if not isBasicInteger(stm, p[2].lIndexNode.dataType):
-                        raise TypeError("Index cannot be of type " + p[2].lIndexNode.dataType, p.lexer.lineno)
+                        raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].lIndexNode.dataType)
                 else:
                     if isinstance(p[2].lIndexNode.dataType['baseType'], str) and p[2].lIndexNode.dataType['level'] == 0:
                         if not isBasicInteger(stm, p[2].lIndexNode.dataType):
-                            raise TypeError("Index cannot be of type " + p[2].lIndexNode.dataType, p.lexer.lineno)
+                            raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].lIndexNode.dataType)
                     else:
-                        raise TypeError("Index type incorrect", p.lexer.lineno)
+                        raise TypeError(f"{p.lexer.lineno}: Index type incorrect")
                 
                 if isinstance(p[2].rIndexNode.dataType, str):
                     if not isBasicInteger(stm, p[2].rIndexNode.dataType):
-                        raise TypeError("Index cannot be of type " + p[2].rIndexNode.dataType, p.lexer.lineno)
+                        raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].rIndexNode.dataType)
                 else:
                     if isinstance(p[2].rIndexNode.dataType['baseType'], str) and p[2].rIndexNode.dataType['level'] == 0:
                         if not isBasicInteger(stm, p[2].rIndexNode.dataType):
-                            raise TypeError("Index cannot be of type " + p[2].rIndexNode.dataType, p.lexer.lineno)
+                            raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].rIndexNode.dataType)
                     else:
-                        raise TypeError("Index type incorrect", p.lexer.lineno)
+                        raise TypeError(f"{p.lexer.lineno}: Index type incorrect")
 
             dt = p[1].dataType.copy()
             p[2].children[0] = p[1]
@@ -854,7 +854,7 @@ def p_PrimaryExpr(p):
                 return
             else:
                 if p[1].label not in new_stm.functions:
-                    raise NameError("No such function declared ", p.lexer.lineno)
+                    raise NameError(f"{p.lexer.lineno}: No such function declared ")
 
                 info = new_stm.functions[p[1].label]
                 paramList = info['params']
@@ -863,14 +863,14 @@ def p_PrimaryExpr(p):
                     dt = info['return']
 
                 if len(paramList) != len(p[2]):
-                    raise NameError("Different number of arguments in function call: " + p[1].label + "\n Expected " + str(len(paramList)) + " number of arguments but got " + str(len(p[2])), p.lexer.lineno)
+                    raise NameError(f"{p.lexer.lineno}: Different number of arguments in function call: " + p[1].label + "\n Expected " + str(len(paramList)) + " number of arguments but got " + str(len(p[2])))
 
                 for i, argument in enumerate(p[2]):
                     dt1 = argument.dataType
                     dt2 = paramList[i]
 
                     if not isTypeCastable(new_stm, dt1, dt2):
-                        raise TypeError("Type mismatch on argument number: " + i, p.lexer.lineno)
+                        raise TypeError(f"{p.lexer.lineno}: Type mismatch on argument number: " + i)
 
                 p[2] = FuncCallNode(p[1], p[2])
         p[0] = p[2]       
@@ -1197,7 +1197,7 @@ def p_IntLit(p):
     if check_int(p[1]):
         p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0}, label = p[1], isConst=True, val=int(p[1]))
     else:
-        raise ("Integer Overflow detected", p.lexer.lineno)
+        raise (f"{p.lexer.lineno}: Integer Overflow detected")
 
 def p_FloatLit(p):
     """
@@ -1384,7 +1384,7 @@ def p_FunctionName(p):
     """
     ##  Check redeclaration
     if p[1] in stm.functions or stm.getScope(p[1]) >= 0 :
-        raise ("Redeclaration of function " + p[1], p.lexer.lineno)
+        raise (f"{p.lexer.lineno}: Redeclaration of function " + p[1])
 
     p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
 
@@ -1541,7 +1541,7 @@ def p_LabeledStmt(p):
     LabeledStmt : Label COLON Statement
     """
     stm.labels[p[1]]['statementType'] = type(p[3])
-    p[0] = LabelNode(p[1], LabelStatementNode(p[3], p.lexer.lineno))
+    p[0] = LabelNode(p[1], LabelStatementNode(p[3]))
     stm.currentLabel = None
 
 def p_JumpLabel(p):
@@ -1723,7 +1723,7 @@ def p_ShortVarDecl(p):
             dt_return = stm.functions[func_name]["return"]
             expression_datatypes.extend(dt_return)
             if len(dt_return) == 0:
-                raise TypeError("Function does not return anything!")
+                raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")
             elif len(dt_return) == 1:
                 count_0+=1
             else:
@@ -1733,10 +1733,10 @@ def p_ShortVarDecl(p):
     
     if count_1 > 0:
         if len(p[length]) > 1:
-            raise TypeError("Function with more than one return values should be assigned alone!")
+            raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
 
     if len(p[1]) != len(expression_datatypes):
-        raise NameError("Assignment is not balanced", p.lexer.lineno)
+        raise NameError(f"{p.lexer.lineno}: Assignment is not balanced")
     
     dt = {}
 
@@ -1753,7 +1753,7 @@ def p_ShortVarDecl(p):
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(ident.label)
         if latest_scope == stm.id or ident.label in stm.functions:
-            raise NameError('Redeclaration of identifier: ' + ident, p.lexer.lineno)
+            raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident)
         
         # Add to symbol table
         dt = p[length][i].dataType
@@ -1899,12 +1899,12 @@ def p_IfStmt(p):
     """
     if len(p) == 7:
         if p[3].dataType['baseType'] != 'bool' or p[3].dataType['level'] != 0:
-            raise TypeError('Expression inside if-statement must be of bool type!') 
+            raise TypeError(f'{p.lexer.lineno}: Expression inside if-statement must be of bool type!') 
         else:
             p[0] = IfNode(None, p[3], ThenNode(p[4]), p[5])
     else:
         if p[5].dataType['baseType'] != 'bool' or p[5].dataType['level'] != 0:
-            raise TypeError('Expression inside if-statement must be of bool type!') 
+            raise TypeError(f'{p.lexer.lineno}: Expression inside if-statement must be of bool type!') 
         p[0] = IfNode(*p[3], p[5], ThenNode(p[6]), p[7])
 
 def p_BeginIf(p):
@@ -1978,7 +1978,7 @@ def p_ExprSwitchStmt(p):
         
         ## Check if dataType is supported
         if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
-            raise TypeError("Unsupported type in switch condition!")
+            raise TypeError(f"{p.lexer.lineno}: Unsupported type in switch condition!")
 
         ## Check if a case has been repeated
         lst = []
@@ -2008,7 +2008,7 @@ def p_ExprSwitchStmt(p):
                 raise LogicalError(f"{p.lexer.lineno}: Fallthrough statement can't be used in the last case of the switch statement.")
     else:
         if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
-            raise TypeError("Unsupported type in switch condition!")
+            raise TypeError(f"{p.lexer.lineno}: Unsupported type in switch condition!")
 
         ## Check if a case has been repeated
         lst = []
