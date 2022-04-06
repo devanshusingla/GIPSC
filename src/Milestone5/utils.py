@@ -129,14 +129,14 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
         return False
 
     if binop == '+' or binop == '-' or binop == '*' or binop == '/':
-        if isBasicNumeric(stm, dt1) and isBasicNumeric(stm, dt2) and dt1 == dt2:
+        if isBasicNumeric(stm, dt1) and isBasicNumeric(stm, dt2):
             return True
         elif binop == '+' and dt1 == dt2 and dt1 == "string":
              return True 
         return False 
     
     if binop == '%' or binop == '&' or binop == '|' or binop == '^' or binop == '&^':
-        if isBasicInteger(stm, dt1) and isBasicInteger(stm, dt2) and dt1 == dt2:
+        if isBasicInteger(stm, dt1) and isBasicInteger(stm, dt2):
             return True
         return False 
 
@@ -164,7 +164,9 @@ def checkBinOp(stm, dt1, dt2, binop, firstchar):
             return False
 
 def getFinalType(stm, dt1, dt2, binop):
+    ranks = {'byte': -1, 'rune': 0,'int8': 1, 'uint8': 2, 'int16': 3, 'uint16': 4, 'int32': 5, 'int': 5, 'uint32': 6, 'int64': 7, 'uint64': 8, 'float32': 9, 'float64': 10}
     dt1_copy = dt1.copy()
+    dt2_copy = dt2.copy()
     
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
@@ -177,25 +179,28 @@ def getFinalType(stm, dt1, dt2, binop):
         if 'baseType' in dt2:
             dt2 = dt2['baseType']
 
-    if binop == '+' or binop == '-' or binop == '*' or binop == '/':
+    if binop == '+' or binop == '-' or binop == '*' or binop == '/':        
         if dt1 == 'byte' or dt1 == 'rune':
-            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0}
-        return dt1_copy
+            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0, 'size': 4}
+        if ranks[dt1] > ranks[dt2]:
+            return dt1_copy 
+        else:
+            return dt2_copy
     
     if binop == '%' or binop == '&' or binop == '|' or binop == '^' or binop == '&^':
         if dt1 == 'byte' or dt1 == 'rune':
-            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0}
+            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0, 'size': 4}
         return dt1_copy
 
     if binop == '<<' or binop == '>>':
         if dt1 == 'byte':
-            return {'name': 'uint8', 'baseType' : 'uint8', 'level' : 0}
+            return {'name': 'uint8', 'baseType' : 'uint8', 'level' : 0, 'size': 1}
         if dt1 == 'rune':
-            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0}
+            return {'name': 'int32', 'baseType' : 'int32', 'level' : 0, 'size': 1}
         return dt1_copy
 
     if binop == '&&' or binop == '||' or binop == '<' or binop == '<=' or binop == '>' or binop == '>=' or binop == '==' or binop == '!=':
-        return {'name': 'bool', 'baseType' : 'bool', 'level' : 0}
+        return {'name': 'bool', 'baseType' : 'bool', 'level' : 0, 'size': 1}
 
 def checkUnOp(stm, dt, unOp, flag):
     dt = getBaseType(stm, dt)
@@ -249,7 +254,7 @@ def getUnaryType(stm, dt, unOp):
 
     if unOp == '&':
         if isinstance(dt_copy, str):
-            return {'baseType': dt, 'level': 1, 'name': 'pointer'}
+            return {'baseType': dt, 'level': 1, 'name': 'pointer', 'size': 4}
         dt_copy['level'] += 1
         if dt_copy['level'] == 1:
             dt_copy['name'] = 'pointer'
@@ -261,9 +266,9 @@ def getUnaryType(stm, dt, unOp):
 
     if unOp != '*' and unOp != '&':
         if dt == 'byte':
-            return {'name': 'uint8', 'baseType': 'uint8', 'level': 0}
+            return {'name': 'uint8', 'baseType': 'uint8', 'level': 0, 'size': 1}
         if dt == 'rune':
-            return {'name': 'uint32', 'baseType': 'uint32', 'level': 0}
+            return {'name': 'uint32', 'baseType': 'uint32', 'level': 0, 'size': 4}
         else: 
             return dt_copy
 

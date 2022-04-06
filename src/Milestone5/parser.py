@@ -10,7 +10,6 @@ from scope import *
 from utils import *
 import os, csv
 
-
 tokens=lexer.tokens
 tokens.remove('COMMENT')
 precedence = (
@@ -61,11 +60,9 @@ def p_SourceFile(p):
             assert(len(stm.labels[label]['prevGotos']) > 0)
             goto = stm.labels[label]['prevGotos'][0]
             raise LogicalError(f"{goto[1]}: Goto declared without declaring any label {label}.")
-    p[4].children = p[3][1] + p[4].children
+    p[4].addChild(p[3][1]) 
     p[0] = FileNode(p[1], p[3][0], p[4])
-
-    # p[0].code = p[3].code
-    # p[0].code += p[4].code
+    print(p[0].code)
 
 ###################################################################################
 ### Package related grammar
@@ -76,6 +73,7 @@ def p_PackageClause(p):
     PackageClause : PACKAGE IDENT
     """
     p[0] = LitNode(dataType = 'string', label = f'"{p[2]}"')
+    p[0].code.append(f"package {p[2]}")
 
 ###################################################################################
 ### Import related grammar
@@ -88,11 +86,11 @@ def p_ImportDeclMult(p):
     """
     if len(p) > 1:
         p[1][0].addChild(*p[2][0])
+        print("M: ", p[2][0].__dict__,p[1][0].__dict__, type(p[1][0]))
         p[1][1].extend(p[2][1])
         p[0] = p[1]
-
     else:
-        p[0] = (ImportNode(), [])
+        p[0] = (ImportNode(), NodeList([]))
 
 def p_ImportDecl(p):
     """
@@ -110,7 +108,7 @@ def p_ImportMult(p):
                |
     """
     if len(p) == 1:
-        p[0] = ([], [])
+        p[0] = (NodeList([]), NodeList([]))
     elif len(p) == 4:
         p[3][0].extend(p[1][0])
         p[3][1].extend(p[1][1])
@@ -143,15 +141,18 @@ def p_ImportSpec(p):
         temp_stm = stm
         stm = SymTableMaker()
         stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 0}})
-
         astNode = buildAndCompile(pathname)
+        print(pathname)
         temp_stm.pkgs[alias.label] = stm
         stm = temp_stm
-        p[0] = ([ImportPathNode(alias, path, astNode)], [])
+        ipnode = ImportPathNode(alias, path, astNode)
+        ipnode.code.append(f"import {p[len(p)-1]}")
+        p[0] = (NodeList([ipnode]), NodeList([]))
     else:
         astNode = buildAndCompile(pathname)
+        print(pathname)
         stm.pkgs[alias.label] = None
-        p[0] = (astNode.children[1].children, astNode.children[2].children)
+        p[0] = (NodeList(astNode.children[1].children), NodeList(astNode.children[2].children))
     
     target_folder = tmp_target_folder
 
@@ -179,9 +180,6 @@ def p_TopLevelDeclMult(p):
 
         p[0].addChild(*p[3].children)
 
-        # p[0].code = p[1].code
-        # p[0].code += p[3].code
-
     if len(p)==1:
         p[0] = DeclNode()
 
@@ -193,7 +191,7 @@ def p_TopLevelDecl(p):
     if p[1] is not None:
         p[0] = p[1]
     else:
-        p[0] = []
+        p[0] = NodeList([])
 
 def p_Decl(p):
     """
@@ -214,10 +212,10 @@ def p_ConstDecl(p):
               | CONST LPAREN ConstSpecMult RPAREN
     """
     if len(p)==3:
-        p[0] = p[2]
-    
+        p[0] = p[2]            
     else:
         p[0] = p[3]
+        
 
 def p_ConstSpecMult(p):
     """
@@ -227,12 +225,8 @@ def p_ConstSpecMult(p):
     if len(p) == 4:
         p[3].extend(p[1])
         p[0] = p[3]
-        
-        # p[3].code.extend(p[1].code)
-        # p[0].code = p[3].code
-
     else:
-        p[0] = []
+        p[0] = NodeList([])
 
 def p_ConstSpec(p):
     """
@@ -240,17 +234,13 @@ def p_ConstSpec(p):
               | IdentifierList IDENT ASSIGN ExpressionList
               | IdentifierList ASSIGN ExpressionList
     """
-    p[0] = []
+    p[0] = NodeList([])
     length = len(p)-1
 
     count_0 = 0
     count_1 = 0
 
     expression_datatypes = []
-
-    # p[0].code =p[1].code
-    # p[0].code += p[len(p)-1].code
-    # curr= []
 
     for i in range(len(p[length])):
         if isinstance(p[length][i], FuncCallNode):
@@ -268,8 +258,6 @@ def p_ConstSpec(p):
     
     if count_1 > 0:
         raise TypeError(f"{p.lexer.lineno}: Functions with multi-valued return type can't be allowed in single-value context!.")
-        if len(p[length]) > 1:
-            raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
 
     if len(p[1]) != len(expression_datatypes):
         raise NameError(f"{p.lexer.lineno}: Assignment is not balanced")
@@ -279,17 +267,10 @@ def p_ConstSpec(p):
     if len(p) > 4:
         if isinstance(p[2], str):
             p[2] = stm.findType(p[2])
-        
-        # if isinstance(p[2], str):
-        #     dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
-        #     dt['size'] = basicTypeSizes[p[2]]
-        # else:
-        #     dt = p[2].dataType
+    
         dt = p[2].dataType
 
         for i, expression in enumerate(expression_datatypes):
-            
-            #print("Datatypes being compared:", dt, temp)
             if not isTypeCastable(stm, dt, expression):
                 raise TypeError(f"{p.lexer.lineno}: Mismatch of type for identifier: " + p[1][i].label)
 
@@ -298,7 +279,6 @@ def p_ConstSpec(p):
         i = 0
         for child in p[1]:
             expr.addChild(child)
-            # curr.append([p[1][i], "=" , p[length][i]])
             i+=1
         expr.addChild(p[length][0])
         p[0].append(expr)
@@ -307,11 +287,9 @@ def p_ConstSpec(p):
         for (ident, val) in zip(p[1], p[len(p)-1]):
             expr = ExprNode(dataType=p[2], label="ASSIGN", operator="=")
             expr.addChild(ident, val)
-            # curr.append([p[1][i], "=" , p[length][i]])
+
             i+= 1
             p[0].append(expr)
-
-        
 
     not_base_type = False
 
@@ -351,6 +329,12 @@ def p_ConstSpec(p):
                 stm.add(ident.label, {'dataType': dt, 'isConst' : True, 'val': val})
                 p[1][i].dataType = dt
         else:
+            for expr in p[length]:
+                p[0].code.append(expr.code)
+
+            for id, expr in zip(p[1], p[length]):
+                p[0].code.append(f"{id}_{stm.id} = {expr.place}")
+
             val = None
             dt = p[length][i].dataType
             # Add to symbol table
@@ -386,7 +370,7 @@ def p_VarMult(p):
         p[3].extend(p[1])
         p[0] = p[3]
     else:
-        p[0] = [Node()] 
+        p[0] = NodeList([Node()]) 
 
 def p_VarSpec(p):
     """
@@ -396,7 +380,7 @@ def p_VarSpec(p):
             | IdentifierList Type
             | IdentifierList IDENT
     """
-    p[0] = []
+    p[0] = NodeList([])
     length = len(p)-1
     if len(p) >= 4:
         count_0 = 0
@@ -610,7 +594,7 @@ def p_IdentifierList(p):
                    | IDENT COMMA IdentifierList
     """
     
-    p[0] = [IdentNode(label = p[1], scope = stm.id)]
+    p[0] = NodeList([IdentNode(label = p[1], scope = stm.id)])
 
     if len(p) > 2:
         p[0].extend(p[3])
@@ -628,7 +612,7 @@ def p_ExpressionList(p):
                    | ExpressionList COMMA Expr
     """
     if len(p) == 2:
-        p[0] = [p[1]]
+        p[0] = NodeList([p[1]])
 
     else:
         p[1].append(p[3])
@@ -701,9 +685,11 @@ def p_UnaryExpr(p):
             raise TypeError(f"{p.lexer.lineno}: Incompatible operand for Unary Expression")
         val = None
         isConst = p[2].isConst
+        print(p[1], p[2])
         if isConst:
             if p[1] == '*' or p[1] == '&':
                 # Referencing or dereferencing a constant in compile time is not possible
+                raise LogicalError(f"{p.lexer.lineno}: Constants can't be referenced or dereferenced.")
                 isConst = False
                 val = None
             else:
@@ -874,6 +860,7 @@ def p_PrimaryExpr(p):
             else:
                 new_stm = stm
             dt = new_stm.findType(p[1].label)
+
             if dt != -1:
                 if not isinstance(dt, StructType):
                     raise TypeError(f'Not of type struct')
@@ -892,6 +879,8 @@ def p_PrimaryExpr(p):
                 dt = None
                 if info['return'] != None:
                     dt = info['return']
+
+                print("DT: ", dt)
 
                 if len(paramList) != len(p[2]):
                     raise NameError(f"{p.lexer.lineno}: Different number of arguments in function call: " + p[1].label + "\n Expected " + str(len(paramList)) + " number of arguments but got " + str(len(p[2])))
@@ -970,17 +959,17 @@ def p_Arguments(p):
               | LPAREN ExpressionList RPAREN
               | LPAREN ExpressionList COMMA RPAREN
     """
-    p[0] = []
+    p[0] = NodeList([])
     if len(p) == 4:
         if isinstance(p[2], list):
             p[0] = p[2]
         else:
-            p[0] = [p[2]]
+            p[0] = NodeList([p[2]])
     elif len(p) == 5:
         if isinstance(p[2], list):
             p[0] = p[2]
         else:
-            p[0] = [p[2]]
+            p[0] = NodeList([p[2]])
 
 ###################################################################################
 #####################                                        ######################
@@ -1122,7 +1111,7 @@ def p_FieldDeclMult(p):
                   | 
     """
     if len(p) == 1:
-        p[0] = []
+        p[0] = NodeList([])
     else:
         p[1].extend(p[2])
         p[0] = p[1]
@@ -1135,10 +1124,10 @@ def p_FieldDecl(p):
               | EmbeddedField
     """
     if len(p) == 2:
-        p[0] = [StructFieldType(p[1], p[1])]
+        p[0] = NodeList([StructFieldType(p[1], p[1])])
 
     elif len(p) == 3:
-        p[0] = []
+        p[0] = NodeList([])
         if isinstance(p[2], str):
             p[2] = stm.findType(p[2])
         for key in p[1]:
@@ -1284,7 +1273,7 @@ def p_LiteralValue(p):
     if len(p) > 3:
         p[0] = p[2]
     else:
-        p[0] = []
+        p[0] = NodeList([])
 
 def p_ElementList(p):
     """
@@ -1292,7 +1281,7 @@ def p_ElementList(p):
                 | ElementList COMMA KeyedElement 
     """
     if len(p) == 2:
-        p[0] = [p[1]]
+        p[0] = NodeList([p[1]])
     else:
         p[1].append(p[3])
         p[0] = p[1]
@@ -1383,7 +1372,7 @@ def p_FuncSig(p):
     curr_func_id = p[2].label
     info_tables[curr_func_id] = {}
 
-    p[0] = [p[2], p[3]]
+    p[0] = NodeList([p[2], p[3]])
 
 # def p_BeginFunc(p):
 #     """
@@ -1427,9 +1416,9 @@ def p_Signature(p):
               | Parameters
     """
     if len(p) == 3:
-        p[0] = [p[1], p[2]]
+        p[0] = NodeList([p[1], p[2]])
     else:
-        p[0] = [p[1], FuncReturnNode([])]
+        p[0] = NodeList([p[1], FuncReturnNode([])])
 
 ###################################################################################
 ## Function Parameters
@@ -1464,6 +1453,7 @@ def p_ParameterDecl(p):
                   | IdentifierList IDENT
     """
     p[0] = p[1]
+    print(p[1], p[2], p.lexer.lineno)
     if isinstance(p[2], str):
         p[2] = stm.findType(p[2])
     for i in range(len(p[0])):
@@ -1534,7 +1524,7 @@ def p_StatementList(p):
             p[1].extend(p[3])
         p[0] = p[1]
     else:
-        p[0] = []
+        p[0] = NodeList([])
 
 def p_Statement(p):
     """
@@ -1681,7 +1671,7 @@ def p_Assignment(p):
             pass 
         else:
             raise LogicalError(f"{p.lexer.lineno}: Imbalanced assignment with {len(p[1])} identifiers and {len(p[3])} expressions.")
-    p[0] = []
+    p[0] = NodeList([])
     for key, val in zip(p[1], p[3]):
         if key.label != _symbol:
             if hasattr(key, 'isConst') and key.isConst == True:
@@ -1763,7 +1753,7 @@ def p_ShortVarDecl(p):
 
     if len(p[1]) != len(p[3]):
         raise LogicalError(f"{p.lexer.lineno}: Imbalanced declaration with {len(p[1])} identifiers and {len(p[3])} expressions.")
-    p[0] = []
+    p[0] = NodeList([])
     for key, val in zip(p[1], p[3]):
         exprNode = ExprNode(None, label="DEFINE", operator="=")
         exprNode.addChild(key, val)
@@ -1841,11 +1831,17 @@ def p_ReturnStmt(p):
             raise LogicalError(f"{p.lexer.lineno}: Current function doesn't return nothing.")
         p[0] = ReturnNode([])
     else:
-        if len(stm.currentReturnType.dataType) != len(p[2]):
+        returnvalues = []
+        for expr in p[2]:
+            if isinstance(expr.dataType, list):
+                returnvalues.extend(expr.dataType)
+            else:
+                returnvalues.append(expr.dataType)
+        if len(stm.currentReturnType.dataType) != len(returnvalues):
             raise LogicalError(f"{p.lexer.lineno}: Different number of return values.")
-        for returnDataType, ExprNode in zip(stm.currentReturnType.dataType, p[2]):
-            if returnDataType != ExprNode.dataType:
-                raise LogicalError(f"{p.lexer.lineno}: Return type of current function and the return statement doesn't match.")
+        for returnDataType, ExprNodedt in zip(stm.currentReturnType.dataType, returnvalues):
+            if returnDataType != ExprNodedt:
+                raise LogicalError(f"{p.lexer.lineno}: Return type of current function :{returnDataType} and the return statement {ExprNodedt} doesn't match.")
         p[0] = ReturnNode(p[2])
 
 ###################################################################################
@@ -2079,7 +2075,7 @@ def p_ExprCaseClauseMult(p):
                          |
     """
     if len(p) == 1:
-        p[0] = []
+        p[0] = NodeList([])
     else:
         p[1].append(p[2])
         p[0] = p[1]
@@ -2096,13 +2092,13 @@ def p_ExprSwitchCase(p):
                      | DEFAULT
     """
     if len(p) == 3:
-        p[0] = []
+        p[0] = NodeList([])
         if len(p[2]) > 1:
             raise SwitchCaseError("Complex expressions not allowed inside switch statement!")
         for expr in p[2]:
             p[0].append(CaseNode(expr))
     else:
-        p[0] = [DefaultNode()]
+        p[0] = NodeList([DefaultNode()])
 
 ###################################################################################
 ### Type Switch Statements
@@ -2284,7 +2280,7 @@ def p_RangeList(p):
                 | 
     """
     if len(p) == 1:
-        p[0] = []
+        p[0] = NodeList([])
     else:
         if p[2] == '=':
             for expr in p[1]:
