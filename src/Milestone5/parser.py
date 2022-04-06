@@ -62,7 +62,6 @@ def p_SourceFile(p):
             raise LogicalError(f"{goto[1]}: Goto declared without declaring any label {label}.")
     p[4].addChild(p[3][1]) 
     p[0] = FileNode(p[1], p[3][0], p[4])
-    print(p[0].code)
 
 ###################################################################################
 ### Package related grammar
@@ -86,7 +85,6 @@ def p_ImportDeclMult(p):
     """
     if len(p) > 1:
         p[1][0].addChild(*p[2][0])
-        print("M: ", p[2][0].__dict__,p[1][0].__dict__, type(p[1][0]))
         p[1][1].extend(p[2][1])
         p[0] = p[1]
     else:
@@ -142,7 +140,6 @@ def p_ImportSpec(p):
         stm = SymTableMaker()
         stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 0}})
         astNode = buildAndCompile(pathname)
-        print(pathname)
         temp_stm.pkgs[alias.label] = stm
         stm = temp_stm
         ipnode = ImportPathNode(alias, path, astNode)
@@ -685,7 +682,6 @@ def p_UnaryExpr(p):
             raise TypeError(f"{p.lexer.lineno}: Incompatible operand for Unary Expression")
         val = None
         isConst = p[2].isConst
-        print(p[1], p[2])
         if isConst:
             if p[1] == '*' or p[1] == '&':
                 # Referencing or dereferencing a constant in compile time is not possible
@@ -743,6 +739,7 @@ def p_PrimaryExpr(p):
         if latest_scope == 0:
             ## To be checked for global declarations (TODO)
             print("Expecting global declaration for ",p[1])
+
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
@@ -879,8 +876,6 @@ def p_PrimaryExpr(p):
                 dt = None
                 if info['return'] != None:
                     dt = info['return']
-
-                print("DT: ", dt)
 
                 if len(paramList) != len(p[2]):
                     raise NameError(f"{p.lexer.lineno}: Different number of arguments in function call: " + p[1].label + "\n Expected " + str(len(paramList)) + " number of arguments but got " + str(len(p[2])))
@@ -1453,7 +1448,6 @@ def p_ParameterDecl(p):
                   | IdentifierList IDENT
     """
     p[0] = p[1]
-    print(p[1], p[2], p.lexer.lineno)
     if isinstance(p[2], str):
         p[2] = stm.findType(p[2])
     for i in range(len(p[0])):
