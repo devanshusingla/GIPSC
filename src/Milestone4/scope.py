@@ -1,5 +1,5 @@
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
-basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 1, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
+basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 from copy import deepcopy
 def zeroLit(dataType):
@@ -29,9 +29,19 @@ class scope:
         self.parentScope = parentScope
         self.avlTypes = basicTypes.copy()
         self.typeDefs = {}
+        self.offset=0
+        self.negoffset=0
 
-    def insert(self, id, info):
+    def insert(self, id, info, isarg=False):
+        if not isarg:
+            info['offset'] = self.offset
+            self.offset += info['dataType']['size']
+        else:
+            self.negoffset -= info['dataType']['size']
+            info['offset'] = self.negoffset
+
         self.localsymTable[id] = info
+
 
     def getinfo(self, id):
         return self.localsymTable.get(id,None)
@@ -62,7 +72,6 @@ class SymTableMaker:
         self.symTable[0] = scope(0)
         self.functions = {}
         self.stack = [0]
-        self.offset = [0]
         self.id = 0
         self.nextId = 1
         self.currentReturnType = None
@@ -85,39 +94,32 @@ class SymTableMaker:
 
     def addFunction(self, label, info):
         self.functions[label] = deepcopy(info)
+        self.newScope()
     
     def addType(self, type, typeObj):
         self.symTable[self.id].addType(type, deepcopy(typeObj))
-    
-    def getOffset(self):
-        return self.offset[-1]
-
-    def updateOffset(self, val):
-        self.offset[-1] += val
 
     def newScope(self):
         self.symTable[self.nextId] = scope(self.nextId, parentScope = self.id)
         self.stack.append(self.nextId)
-        self.offset.append(0)
         self.id = self.nextId
         self.nextId += 1
     
     def exitScope(self):
         self.stack.pop()
-        self.offset.pop()
         self.id = self.stack[-1]
     
-    def add(self, ident, info):
-        self.symTable[self.id].insert(ident, deepcopy(info))
+    def add(self, ident, info, isarg=False):
+        self.symTable[self.id].insert(ident, deepcopy(info), isarg)
 
     def get(self, ident, scope=None):
         if scope is None:
             if ident in self.functions:
-                return self.functions[ident]
+                return deepcopy(self.functions[ident])
             scope = self.getScope(ident)
-            return self.symTable[scope].getinfo(ident)
+            return deepcopy(self.symTable[scope].getinfo(ident))
         else:
-            return self.symTable[scope].getinfo(ident)
+            return deepcopy(self.symTable[scope].getinfo(ident))
 
     def findType(self, type):
         if isinstance(type, dict):
@@ -277,8 +279,10 @@ class CompositeLitNode(Node):
             
             else:
                 if len(elList) != len(self.dataType['keyTypes']):
-                    raise NameError("too few arguments for structure")
+                    raise NameError("Unequal arguments for structure")
                 for (key, t), val in zip(self.dataType['keyTypes'].items(), elList):
+                    if not utils.isTypeCastable(stm, t, val.dataType):
+                        raise TypeError(f"Type of {key} of struct: {t['name']} doesn't match with type of {val.label} : {val.dataType['name']}")
                     if isinstance(val, ExprNode):
                         self.children.append(StructFieldNode(key, val))
                     elif t.name in compositeTypes:
@@ -705,6 +709,7 @@ class ElementaryType(Type):
     def __init__(self, dataType = {}):
         super().__init__()
         self.dataType = dataType
+        self.dataType["size"] = basicTypeSizes[dataType['name']]
         self.children = None
     
     def __str__(self):
@@ -714,6 +719,7 @@ class PointerType(Type):
     def __init__(self, dataType = {}):
         super().__init__()    
         self.dataType = dataType
+        self.dataType["size"] = 4
         self.children = None
     
     def __str__(self):
@@ -736,7 +742,8 @@ class BrackType(Type):
         # Not storing the node about constant length of array type further
         self.length = None
         self.dataType = {
-            'baseType' : elementType
+            'baseType' : elementType,
+            'size' : 12,
         }
         if length:
             self.dataType['length'] = length.val
@@ -749,6 +756,13 @@ class BrackType(Type):
 class MapType(Type):
     def __init__(self, keyType, valueType):
         super().__init__()
+        self.dataType = {
+            'name': 'map',
+            'KeyType': keyType.dataType,
+            'ValueType': valueType.dataType,
+            'size': 12
+        }
+
         self.children = [keyType, valueType]
     
     def __str__(self):
@@ -757,12 +771,16 @@ class MapType(Type):
 class StructType(Type):
     def __init__(self, fieldList):
         super().__init__()
+        size=0
         self.dataType = {'name': "struct", 'keyTypes': {}, 'level' : 0}
         for field in fieldList:
             if field.dataType['key'] in self.dataType['keyTypes']:
                 raise NameError("Can not have same key names in two fields of structure")
             else:
                 self.dataType['keyTypes'][field.dataType['key']] = field.dataType['dataType']
+                size += field.dataType['size']
+        
+        self.dataType['size'] = size
 
         self.addChild(*fieldList)
     
@@ -772,19 +790,19 @@ class StructType(Type):
 class StructFieldType(Type):
     def __init__(self, key, type):
         super().__init__()
-        self.dataType = {'name': "field", 'key': key.label, 'dataType': type.dataType}
+        self.dataType = {'name': "field", 'key': key.label, 'dataType': type.dataType, 'size': type.dataType['size']}
         self.addChild(key, type)
     
     def __str__(self):
         return f':'
 
-class FuncType(Type):
-    def __init__(self, paramsType, returnType):
-        super().init()
-        self.addChild(returnType, *paramsType)
+# class FuncType(Type):
+#     def __init__(self, paramsType, returnType):
+#         super().init()
+#         self.addChild(returnType, *paramsType)
     
-    def __str__(self):
-        return f'FUNC'
+#     def __str__(self):
+#         return f'FUNC'
 
 class FuncParamType(Type):
     def __init__(self, dataType=[]):
@@ -797,13 +815,13 @@ class FuncParamType(Type):
     def __str__(self):
         return '()'
 
-class ParamType(Type):
-    def __init__(self, key, dataType = {}):
-        super().__init__()
-        self.addChild(key, dataType)
+# class ParamType(Type):
+#     def __init__(self, key, dataType = {}):
+#         super().__init__()
+#         self.addChild(key, dataType)
     
-    def __str__(self):
-        return f'='
+#     def __str__(self):
+#         return f'='
 
 ## Exceptions
 class ValueNotUsedError(Exception):

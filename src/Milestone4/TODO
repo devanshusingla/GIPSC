@@ -13,3 +13,5 @@ Add definitions of builtin functions
 _ support
 Struct fields have two quotes
 Change struct literal in docs
+Check each function has valid return if return type
+TypeCasting

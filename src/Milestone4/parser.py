@@ -49,7 +49,7 @@ target_folder = ''
 curr_func_id = 'global'
 
 _symbol = '_'
-stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0}})
+stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 4}})
     
 def p_SourceFile(p):
     """
@@ -63,6 +63,9 @@ def p_SourceFile(p):
             raise LogicalError(f"{goto[1]}: Goto declared without declaring any label {label}.")
     p[4].children = p[3][1] + p[4].children
     p[0] = FileNode(p[1], p[3][0], p[4])
+
+    # p[0].code = p[3].code
+    # p[0].code += p[4].code
 
 ###################################################################################
 ### Package related grammar
@@ -87,6 +90,7 @@ def p_ImportDeclMult(p):
         p[1][0].addChild(*p[2][0])
         p[1][1].extend(p[2][1])
         p[0] = p[1]
+
     else:
         p[0] = (ImportNode(), [])
 
@@ -138,7 +142,7 @@ def p_ImportSpec(p):
     if p[1] != '.':
         temp_stm = stm
         stm = SymTableMaker()
-        stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0}})
+        stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 0}})
 
         astNode = buildAndCompile(pathname)
         temp_stm.pkgs[alias.label] = stm
@@ -174,6 +178,9 @@ def p_TopLevelDeclMult(p):
             p[0].addChild(p[1])
 
         p[0].addChild(*p[3].children)
+
+        # p[0].code = p[1].code
+        # p[0].code += p[3].code
 
     if len(p)==1:
         p[0] = DeclNode()
@@ -220,6 +227,9 @@ def p_ConstSpecMult(p):
     if len(p) == 4:
         p[3].extend(p[1])
         p[0] = p[3]
+        
+        # p[3].code.extend(p[1].code)
+        # p[0].code = p[3].code
 
     else:
         p[0] = []
@@ -237,6 +247,10 @@ def p_ConstSpec(p):
     count_1 = 0
 
     expression_datatypes = []
+
+    # p[0].code =p[1].code
+    # p[0].code += p[len(p)-1].code
+    # curr= []
 
     for i in range(len(p[length])):
         if isinstance(p[length][i], FuncCallNode):
@@ -265,12 +279,14 @@ def p_ConstSpec(p):
     if len(p) > 4:
         if isinstance(p[2], str):
             p[2] = stm.findType(p[2])
-
-        if isinstance(p[2], str):
-            dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
-        else:
-            dt = p[2].dataType
         
+        # if isinstance(p[2], str):
+        #     dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+        #     dt['size'] = basicTypeSizes[p[2]]
+        # else:
+        #     dt = p[2].dataType
+        dt = p[2].dataType
+
         for i, expression in enumerate(expression_datatypes):
             
             #print("Datatypes being compared:", dt, temp)
@@ -279,15 +295,23 @@ def p_ConstSpec(p):
 
     if count_1 > 0:
         expr = ExprNode(dataType = dt, label = "ASSIGN", operator = "=")
+        i = 0
         for child in p[1]:
             expr.addChild(child)
+            # curr.append([p[1][i], "=" , p[length][i]])
+            i+=1
         expr.addChild(p[length][0])
         p[0].append(expr)
     else:
+        i = 0
         for (ident, val) in zip(p[1], p[len(p)-1]):
             expr = ExprNode(dataType=p[2], label="ASSIGN", operator="=")
             expr.addChild(ident, val)
+            # curr.append([p[1][i], "=" , p[length][i]])
+            i+= 1
             p[0].append(expr)
+
+        
 
     not_base_type = False
 
@@ -304,6 +328,7 @@ def p_ConstSpec(p):
         if len(p) > 4:
             if not not_base_type:
                 dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+                dt['size'] = basicTypeSizes[dt['name']]
             else:
                 dt = p[2].dataType
 
@@ -317,6 +342,7 @@ def p_ConstSpec(p):
             else:
                 val = None
                 # Add to symbol table
+                size = 0
                 if dt['name'].startswith('int'):
                     val = int(p[length][i].label)
                 elif dt['name'].startswith('float'):
@@ -405,6 +431,7 @@ def p_VarSpec(p):
 
             if isinstance(p[2], str):
                 dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+                dt['size'] = basicTypeSizes[p[2]]
             else:
                 dt = p[2].dataType
             for i, expression in enumerate(expression_datatypes):
@@ -438,6 +465,7 @@ def p_VarSpec(p):
             if len(p) > 4:
                 if not not_base_type:
                     dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+                    dt['size'] = basicTypeSizes[p[2]]
                 else:
                     dt = p[2].dataType
 
@@ -473,6 +501,7 @@ def p_VarSpec(p):
 
             if not not_base_type:
                 dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+                dt['size'] = basicTypeSizes[p[2]]
             else:
                 dt = p[2].dataType
 
@@ -558,7 +587,7 @@ def p_TypeDef(p):
         raise TypeError(f"{p.lexer.lineno}: Redeclaration of type " + p[1])
         
     elif isinstance(p[2], str) and p[2] in stm.symTable[stm.id].avlTypes:
-        stm.symTable[stm.id].typeDefs[p[1]] = {'baseType': p[2], 'name': p[2], 'level' : 0}
+        stm.symTable[stm.id].typeDefs[p[1]] = {'baseType': p[2], 'name': p[2], 'level' : 0, 'size': basicTypeSizes[p[2]]}
     
     elif isinstance(p[2], str):
         stm.symTable[stm.id].typeDefs[p[1]] = stm.symTable[stm.id].typeDefs[p[2]]
@@ -791,6 +820,7 @@ def p_PrimaryExpr(p):
 
                 if dt['level']==0:
                     dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
+                    dt['size'] = basicTypeSizes[dt['name']]
 
             if p[1].dataType['name'] == 'map':
                 if not isTypeCastable(stm, p[2].dataType, p[1].dataType['KeyType']):
@@ -1144,10 +1174,6 @@ def p_MapType(p):
     if p[3].dataType['name'] == 'map' or p[3].dataType['name'] == 'func' or p[3].dataType['name'] == 'slice' or p[3].dataType['name'] == 'array':
         raise TypeError(f"{p.lexer.lineno} Invalid map key type")
 
-    p[0].dataType = {'name' : 'map'}
-    p[0].dataType['KeyType'] = p[3].dataType
-    p[0].dataType['ValueType'] = p[5].dataType
-
 def p_KeyType(p):
     """
     KeyType : Type
@@ -1195,7 +1221,7 @@ def p_IntLit(p):
     IntLit : INT
     """
     if check_int(p[1]):
-        p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0}, label = p[1], isConst=True, val=int(p[1]))
+        p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, label = p[1], isConst=True, val=int(p[1]))
     else:
         raise (f"{p.lexer.lineno}: Integer Overflow detected")
 
@@ -1203,31 +1229,31 @@ def p_FloatLit(p):
     """
     FloatLit : FLOAT
     """
-    p[0] = LitNode(dataType = {'name': 'float64', 'baseType': 'float64', 'level': 0}, label = p[1], isConst=True, val=float(p[1]))
+    p[0] = LitNode(dataType = {'name': 'float64', 'baseType': 'float64', 'level': 0, 'size': 8}, label = p[1], isConst=True, val=float(p[1]))
     
 def p_ImagLit(p):
     """
     ImagLit : IMAG
     """
-    p[0] = LitNode(dataType = {'name': 'complex128', 'baseType': 'complex128', 'level': 0}, label = p[1], isConst=True, val=float(p[1].strip('i')))
+    p[0] = LitNode(dataType = {'name': 'complex128', 'baseType': 'complex128', 'level': 0, 'size': 8}, label = p[1], isConst=True, val=float(p[1].strip('i')))
 
 def p_RuneLit(p):
     """
     RuneLit : RUNE
     """
-    p[0] = LitNode(dataType = {'name': 'rune', 'baseType': 'rune', 'level': 0}, label = p[1], isConst=True, val=p[1])
+    p[0] = LitNode(dataType = {'name': 'rune', 'baseType': 'rune', 'level': 0, 'size': 2}, label = p[1], isConst=True, val=p[1])
 
 def p_StringLit(p):
     """
     StringLit : STRING
     """
-    p[0] = LitNode(dataType = {'name': 'string', 'baseType': 'string', 'level': 0}, label = p[1], isConst=True, val=p[1])
+    p[0] = LitNode(dataType = {'name': 'string', 'baseType': 'string', 'level': 0, 'size': 12}, label = p[1], isConst=True, val=p[1])
 
 def p_BoolLit(p):
     """
     BoolLit : BOOL
     """
-    p[0] = LitNode(dataType = {'name': 'bool', 'baseType': 'bool', 'level': 0}, label = p[1], isConst=True, val = p[1])
+    p[0] = LitNode(dataType = {'name': 'bool', 'baseType': 'bool', 'level': 0, 'size': 1}, label = p[1], isConst=True, val = p[1])
 
 ###################################################################################
 ### Composite Literal
@@ -1336,29 +1362,23 @@ def p_FuncSig(p):
     if p[3][1] == None:
         if p[3][0] == None:
             stm.addFunction(p[2].label, {"params": [] , "return": [], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
-            stm.currentReturnType = p[3][1]
-            stm.newScope()
         else:
             stm.addFunction(p[2].label, {"params": p[3][0].dataType, "return": [], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
-            stm.currentReturnType = p[3][1]
-            stm.newScope()
             for i, param in enumerate(p[3][0].children):
-                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
+                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True}, True)
                 p[3][0].children[i].scope = stm.id
 
     else:
         if p[3][0] == None:
             stm.addFunction(p[2].label, {"params": [] , "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
-            stm.currentReturnType = p[3][1]
-            stm.newScope()
         else:
             stm.addFunction(p[2].label, {"params": p[3][0].dataType, "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
-            stm.currentReturnType = p[3][1]
-            stm.newScope()
             for i, param in enumerate(p[3][0].children):
-                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True})
+                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True}, True)
                 p[3][0].children[i].scope = stm.id
     
+    stm.currentReturnType = p[3][1]
+
     curr_func_id = p[2].label
     info_tables[curr_func_id] = {}
 
@@ -1489,7 +1509,7 @@ def p_ParametersType(p):
             p[0].addChild(p[1])
     else:
         if isinstance(p[3], str):
-            p[1].addChild(ElementaryType(dataType={'name':p[3], 'baseType': p[3], 'level': 0}))
+            p[1].addChild(stm.findType(p[3]))
         else:
             p[1].addChild(p[3])
         p[0] = p[1]
@@ -1541,7 +1561,7 @@ def p_LabeledStmt(p):
     LabeledStmt : Label COLON Statement
     """
     stm.labels[p[1]]['statementType'] = type(p[3])
-    p[0] = LabelNode(p[1], LabelStatementNode(p[3]))
+    p[0] = LabelNode(p[1], LabelStatementNode(p[3], p.lexer.lineno))
     stm.currentLabel = None
 
 def p_JumpLabel(p):
@@ -1666,7 +1686,7 @@ def p_Assignment(p):
             if hasattr(key, 'isConst') and key.isConst == True:
                 raise TypeError(f"{p.lexer.lineno}: LHS contains constant! Cannot assign")
             if key.dataType != val.dataType:
-                raise TypeError(f"{p.lexer.lineno}: Type of {key.label} and {val.label} doesn't match.")
+                raise TypeError(f"{p.lexer.lineno}: Type of {key.label} : {key.dataType} and {val.label} : {val.dataType} doesn't match.")
             if key.isAddressable == False:
                 raise TypeError(f"{p.lexer.lineno}: LHS expression is not assignable")
         exprNode = ExprNode(None, operator=p[2])
@@ -2180,7 +2200,8 @@ def p_ForClause(p):
         dt = {
             'name' : 'bool',
             'baseType': 'bool',
-            'level' : 0
+            'level' : 0,
+            'size' : 1
         }
         trueNode = ExprNode(dt, label='true', operator=None, isConst=True, isAddressable=False, val='true')
         # Absence of condition is equivalent to a FOR true statement
