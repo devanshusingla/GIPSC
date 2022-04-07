@@ -1,3 +1,0 @@
-ident,scope,info
-c,2,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'isConst': False, 'offset': 0}"
-d,2,"{'dataType': {'name': 'string', 'baseType': 'string', 'level': 0, 'size': 12}, 'isConst': False, 'offset': 4}"

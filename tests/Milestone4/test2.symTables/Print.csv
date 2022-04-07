@@ -1,4 +1,0 @@
-ident,scope,info
-x,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'val': 0, 'isConst': False, 'isArg': True, 'offset': -4}"
-y,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'val': 0, 'isConst': False, 'isArg': True, 'offset': -8}"
-z,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'val': 0, 'isConst': False, 'isArg': True, 'offset': -12}"
