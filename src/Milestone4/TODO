@@ -10,8 +10,10 @@ typechecking for & operator -> Done
 negative indices in array
 Type arguments in p_Arguments -> Done 
 Add definitions of builtin functions 
-_ support
+_ support -> Done 
 Struct fields have two quotes
-Change struct literal in docs
+Change struct literal in docs  -> Done 
 Check each function has valid return if return type
 TypeCasting
+MapType 3AC code in PrimaryExpr
+Short Circuit Evaluation

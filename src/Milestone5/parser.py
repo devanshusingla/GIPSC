@@ -1,5 +1,6 @@
 from typing import List
 from copy import deepcopy
+from numpy import true_divide
 import ply.yacc as yacc
 import ply.lex as lex
 import lexer
@@ -46,10 +47,17 @@ info_tables = {}
 stm = SymTableMaker()
 target_folder = ''
 curr_func_id = 'global'
+curr_temp = 0
 
 _symbol = '_'
 stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 4}})
     
+def new_temp():
+    global curr_temp
+    temp = curr_temp
+    curr_temp += 1
+    return "temp_" +str(temp)
+
 def p_SourceFile(p):
     """
     SourceFile : PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult
@@ -315,7 +323,7 @@ def p_ConstSpec(p):
             if present == -1:
                 raise TypeError(f'{p.lexer.lineno}: Type not declared/found: ' + dt)
             else:
-                val = None
+                val = p[length][i]
                 # Add to symbol table
                 size = 0
                 if dt['name'].startswith('int'):
@@ -326,13 +334,7 @@ def p_ConstSpec(p):
                 stm.add(ident.label, {'dataType': dt, 'isConst' : True, 'val': val})
                 p[1][i].dataType = dt
         else:
-            for expr in p[length]:
-                p[0].code.append(expr.code)
-
-            for id, expr in zip(p[1], p[length]):
-                p[0].code.append(f"{id}_{stm.id} = {expr.place}")
-
-            val = None
+            val = p[length][i]
             dt = p[length][i].dataType
             # Add to symbol table
             if dt['name'].startswith('int'):
@@ -343,6 +345,17 @@ def p_ConstSpec(p):
             stm.add(ident.label, {'dataType': dt, 'isConst' : True, 'val': val})
             p[1][i].dataType = dt
  
+    for expr in p[length]:
+        p[0].code.append(expr.code)
+
+    if count_1 == 0:
+        for i in range(len(p[1])):
+            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+
+    else:
+        for i in range(len(p[1])):
+            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
+
 ###################################################################################
 ### Variable Declarations
 ###################################################################################
@@ -460,13 +473,24 @@ def p_VarSpec(p):
                 else:
                     # Add to symbol table
 
-                    stm.add(ident.label, {'dataType': dt, 'isConst' : False})
+                    stm.add(ident.label, {'dataType': dt, 'isConst' : False, 'val': p[len(p) - 1][i]})
                     p[1][i].dataType = dt    
             else:
                 dt = p[length][i].dataType
                 # Add to symbol table
-                stm.add(ident.label, {'dataType': dt, 'isConst' : False})
+                stm.add(ident.label, {'dataType': dt, 'isConst' : False, 'val': p[len(p) - 1][i]})
                 p[1][i].dataType = dt
+
+        for expr in p[length]:
+            p[0].code.append(expr.code)
+
+        if count_1 == 0:
+            for i in range(len(p[1])):
+                p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+
+        else:
+            for i in range(len(p[1])):
+                p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
     else:
         not_base_type = False
 
@@ -576,10 +600,6 @@ def p_TypeDef(p):
     else:
         p[2].dataType['baseType'] = p[1]
         stm.symTable[stm.id].typeDefs[p[1]] = p[2]
-        # params = []
-        # for key in dt['keyTypes']:
-        #     params.append(dt['keyTypes'][key])
-        # stm.addFunction(p[1], {"params": params , "return": [p[2]], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
 
 ###################################################################################
 ### Identifier List
@@ -661,6 +681,10 @@ def p_Expr(p):
 
         p[0] = ExprNode(operator = p[2], dataType = dt, isConst = isConst, val=val)
         p[0].addChild(p[1], p[3])
+        temp_var = new_temp()
+
+        p[0].code.append(f"{temp_var} = {p[1].place} {p[2]} {p[3].place}")
+        p[0].place = temp_var
 
 def p_UnaryExpr(p):
     """
@@ -694,6 +718,11 @@ def p_UnaryExpr(p):
         p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isAddressable = isAddressable, isConst=isConst, val=val)
         p[0].addChild(p[2])
 
+        temp_var = new_temp()
+        
+        p[0].code.append(f"{temp_var} = {p[1]} {p[2].place}")
+        p[0].place = temp_var
+
 ###################################################################################
 ### Primary Expression
 ###################################################################################
@@ -716,16 +745,36 @@ def p_PrimaryExpr(p):
             p[0] = ExprNode(p[1].dataType, p[1].label, None, p[1].isConst, False, p[1].val)
             if p[1].children:
                 for child in p[1].children:
-                    p[0].children.append(child)
+                    p[0].addChild(*child)
         else:
             # Ig Composite Literal is only used for assignment
             p[0] = p[1]
 
     ## PrimaryExpr -> Ident
     elif (len(p) == 2):
+        identType = getBaseType(p[1])
+        code = None
+        place = None
+
+        if 'name' in identType.dataType and (identType.dataType['name'] == 'array' or identType.dataType['name'] == 'slice' or identType.dataType['name'] == 'struct' or  identType.dataType['name']=="string" or identType.dataType['name']== "map"):
+            temp = new_temp()
+            code = f"{temp} = &{stm.id}_{p[1]}"
+            place = temp
+    
+        elif p[1] in stm.functions:
+            code = f"call {p[1]}:"
+
+        else:
+            temp = new_temp()
+            code = f"{temp} = {stm.id}_{p[1]}"
+            place = temp
+            
         if p[1] in stm.pkgs and stm.pkgs[p[1]] != None:
             p[0] = IdentNode(0, p[1], dataType={'name': 'package'})
+            p[0].code = code
             return
+
+        ## TODO : What is the need for this?        
         if p[1] in stm.symTable[0].typeDefs:
             # Type Declaration Found
             # Assuming Constructor Initialisation
@@ -743,12 +792,16 @@ def p_PrimaryExpr(p):
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
-    
+        p[0].code.append(code)
+        p[0].place = place
+
     ## PrimaryExpr -> LPAREN Expr RPAREN
     elif len(p) == 4:
         p[0] = p[2]
 
     else:
+        code = []
+        place = None
         dt = None
         ## PrimaryExpr -> PrimaryExpr Selector
         if isinstance(p[2], DotNode):
@@ -771,15 +824,28 @@ def p_PrimaryExpr(p):
             field = p[2].children[0]
             found = False
             idx = -1
+            struct_off = 0
+            
             for i in p[1].dataType['keyTypes']:
                 if i == field:
                     found = True
                     dt = p[1].dataType['keyTypes'][i]
 
+                struct_off += p[1].dataType['keyTypes'][i]['size']
+
             if not found:
                 raise NameError(f"{p.lexer.lineno}: No such field found in " + p[1].label)                
 
             p[2].addChild(p[1])
+            # temp = new_temp()
+
+            # code.append(f"{temp} = {struct_off}")
+            temp = new_temp()
+            code.append(f"{temp} = {p[1].place} + {struct_off}")
+            temp2 = new_temp()
+            code.append(f"{temp2} = *({temp2})")
+            place = temp2
+
             # dt = p[2].dataType[idx]
 
         ## PrimaryExpr -> PrimaryExpr Index
@@ -805,10 +871,42 @@ def p_PrimaryExpr(p):
                     dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
                     dt['size'] = basicTypeSizes[dt['name']]
 
+            temp1 = new_temp()
+            elem_size = getBaseType(p[1].dataType['baseType'])['baseType']
+            code.append(f"{temp1} = {p[2].place} * {elem_size}")
+            temp2 = new_temp()
+            code.append(f"{temp2} = {p[1].place} + {temp1}")
+            temp3 = new_temp()
+            code.append(f"{temp3} = *{temp2}")
+            place = temp3             
+
+            ## TODO : Discuss Layout for MapType
             if p[1].dataType['name'] == 'map':
                 if not isTypeCastable(stm, p[2].dataType, p[1].dataType['KeyType']):
                     raise TypeError(f"{p.lexer.lineno}: Incorrect type for map " + p.lexer.lineno)
+
+                found = False
+                idx = 0
+                for key in stm.get(p[1])['val'].keys:
+                    if p[2] == key:
+                        found = True 
+                        break 
+                    idx += 1
+
                 dt = p[1].dataType['ValueType']
+                keySize = p[1].dataType['KeyType']['size']
+                valSize = p[1].dataType['ValueType']['size']
+
+            temp1 = new_temp()
+            code.append(f"{temp1} = {keySize} * {idx}")
+            temp2 = new_temp()
+            code.append(f"{temp2} = {valSize} * {idx}")
+            temp3 = new_temp()
+            code.append(f"{temp3} = {temp1} + {temp2}")
+            temp4 = new_temp()
+            code.append(f"{temp4} = {p[1]} + {temp3}")
+            temp5 = new_temp()
+            code.append(f"{temp5} = *({temp4} + {keySize})")
 
             p[2].children[0] = p[1]
             
@@ -891,6 +989,9 @@ def p_PrimaryExpr(p):
         p[0] = p[2]       
         p[0].isAddressable = True
         p[0].dataType = dt
+        p[0].code.append(code)
+        p[0].place = place
+        
         if isinstance(p[2], list):
             p[0].isAddressable = False            
 

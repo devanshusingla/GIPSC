@@ -1,0 +1,4 @@
+ident,scope,info
+m,2,"{'dataType': {'name': 'map', 'KeyType': {'name': 'string', 'baseType': 'string', 'level': 0, 'size': 12}, 'ValueType': {'name': 'struct', 'keyTypes': {'Lat': {'name': 'float64', 'baseType': 'float64', 'level': 0, 'size': 8}, 'Long': {'name': 'float64', 'baseType': 'float64', 'level': 0, 'size': 8}}, 'level': 0, 'size': 16, 'baseType': 'Vertex'}, 'size': 12}, 'isConst': False, 'offset': 0}"
+a,2,"{'dataType': {'name': 'struct', 'keyTypes': {'Lat': {'name': 'float64', 'baseType': 'float64', 'level': 0, 'size': 8}, 'Long': {'name': 'float64', 'baseType': 'float64', 'level': 0, 'size': 8}}, 'level': 0, 'size': 16, 'baseType': 'Vertex'}, 'isConst': False, 'offset': 12}"
+c,2,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'isConst': False, 'offset': 28}"
