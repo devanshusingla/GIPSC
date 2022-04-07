@@ -48,6 +48,7 @@ stm = SymTableMaker()
 target_folder = ''
 curr_func_id = 'global'
 curr_temp = 0
+curr_var_temp = 0
 
 _symbol = '_'
 stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 4}})
@@ -57,6 +58,13 @@ def new_temp():
     temp = curr_temp
     curr_temp += 1
     return "temp_" +str(temp)
+
+def var_new_temp():
+    global curr_var_temp 
+    var_temp = curr_var_temp 
+    var_temp += 1
+    return "var_temp_" + str(var_temp)
+
 
 def p_SourceFile(p):
     """
