@@ -78,8 +78,6 @@ class SymTableMaker:
         self.forDepth = 0
         self.switchDepth = 0
         self.labels = {}
-        self.currentLabel = None
-        self.pkgs = {}
         # self.labels: dict[str] -> dict[]
         # self.labels[label] = {
         # 'scopeTab' : _ , 
@@ -89,6 +87,8 @@ class SymTableMaker:
         # 'prevGotos' : [
         #  (scopeTab, lineno), (scopeTab, lineno) ...
         # ]}
+        self.currentLabel = None
+        self.pkgs = {}
         self.nextLabel = 0
         self.addBuiltInFuncs()
 
@@ -166,10 +166,16 @@ class Node:
     def __init__(self, label = "Node"):
         self.children = []
         self.label = label
+        self.code = []
+        self.place = None
     
     def addChild(self, *children):
         if children:
             self.children.extend(children)
+            # print(type(children), children)
+            for child in children:
+                if child and hasattr(child, "code"):
+                    self.code.extend(child.code)
 
     def __str__(self):
         return self.label 
@@ -184,6 +190,14 @@ class FileNode(Node):
         return "FILE"
 
 class ImportNode(Node):
+
+    def __init__(self):
+        super().__init__()
+
+    # def addChild(self, *children):
+    #     print(*children)
+    #     return super().addChild(*children)
+        
     def __str__(self):
         return "IMPORT"
 
@@ -271,11 +285,11 @@ class CompositeLitNode(Node):
                     else:
                         val = zeroLit(t)
                     if isinstance(val, ExprNode):
-                        self.children.append(StructFieldNode(key, val))
+                        self.addChild(StructFieldNode(key, val))
                     elif t.name in compositeTypes:
-                        self.children.append(StructFieldNode(key, CompositeLitNode(t, val)))
+                        self.addChild(StructFieldNode(key, CompositeLitNode(t, val)))
                     else:
-                        self.children.append(StructFieldNode(key, LitNode(val, t)))
+                        self.addChild(StructFieldNode(key, LitNode(val, t)))
             
             else:
                 if len(elList) != len(self.dataType['keyTypes']):
@@ -284,11 +298,11 @@ class CompositeLitNode(Node):
                     if not utils.isTypeCastable(stm, t, val.dataType):
                         raise TypeError(f"Type of {key} of struct: {t['name']} doesn't match with type of {val.label} : {val.dataType['name']}")
                     if isinstance(val, ExprNode):
-                        self.children.append(StructFieldNode(key, val))
+                        self.addChild(StructFieldNode(key, val))
                     elif t.name in compositeTypes:
-                        self.children.append(StructFieldNode(key, CompositeLitNode(t, val)))
+                        self.addChild(StructFieldNode(key, CompositeLitNode(t, val)))
                     else:
-                        self.children.append(StructFieldNode(key, LitNode(val, t)))
+                        self.addChild(StructFieldNode(key, LitNode(val, t)))
 
         elif self.dataType['name'] == 'array':
             if len(elList) > int(self.dataType['length']):
@@ -376,8 +390,7 @@ class CompositeLitNode(Node):
                 if not utils.isTypeCastable(stm, self.dataType['ValueType'], val.dataType):
                     raise TypeError("Value cannot be typecasted to required datatype for key: " + key)
 
-
-                self.children.append(element)    
+                self.addChild(element)    
 
     def __str__(self):
         if self.dataType['name'] == 'array':
@@ -416,8 +429,8 @@ class KeyValNode(Node):
         self.key = key.label
         self.keytype = key.dataType
         self.val = val
-        self.children.append(key)
-        self.children.append(val)
+        self.addChild(key)
+        self.addChild(val)
     
     def __str__(self):
         return f':'
@@ -698,12 +711,16 @@ class ForRangeNode(Node):
 ### TYPE Class
 class Type:
     def __init__(self, dataType = {}):
+        self.code = []
         self.children = []
         self.dataType = dataType
     
     def addChild(self, *children):
         if children:
             self.children.extend(children)
+            for child in children:
+                if child and hasattr(child, "code"):
+                    self.code.extend(child.code)
 
 class ElementaryType(Type):
     def __init__(self, dataType = {}):
@@ -810,7 +827,10 @@ class FuncParamType(Type):
     
     def addChild(self, type):
         self.dataType.append(type.dataType)
-        self.children.append(type)
+        self.addChild(type)
+        for child in self.children:
+                if child and hasattr(child, "code"):
+                    self.code.extend(child.code)
 
     def __str__(self):
         return '()'
@@ -839,6 +859,32 @@ class LogicalError(Exception):
 
     def __str__(self):
         return repr(self.message)
+
+class NodeList(list):
+    def __init__(self, *args):
+        self.code = []
+        if len(args) > 0:
+            super(NodeList, self).__init__(args[0])
+            for elem in args[0]:
+                if elem and hasattr(elem, "code"):
+                    self.code.extend(elem.code)
+        else:
+            super(NodeList, self).__init__()
+
+    def append(self, x):
+        super().append(x)
+        if x and hasattr(x, "code"):
+            self.code.extend(x.code)
+    
+    def extend(self, *x):
+        super().extend(*x)
+        if x:
+            for child in x:
+                if child and hasattr(child, "code"):
+                    self.code.extend(child.code)
+
+    def __dict__(self):
+        return {'children' : super().__dict__, 'code': self.code}
 
 ## Wrapper class
 class Wrapper:
