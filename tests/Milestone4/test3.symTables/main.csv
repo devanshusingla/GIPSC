@@ -1,0 +1,8 @@
+ident,scope,info
+b,3,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'isConst': False, 'offset': 0}"
+c,3,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'isConst': False, 'offset': 4}"
+d,3,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'isConst': False, 'offset': 8}"
+e,3,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'isConst': False, 'offset': 12}"
+x,3,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'isConst': False, 'offset': 16}"
+a,3,"{'dataType': {'baseType': 'int', 'size': 12, 'length': 5, 'level': 1, 'name': 'array'}, 'isConst': False, 'offset': 20}"
+s,3,"{'dataType': {'baseType': 'int', 'size': 12, 'length': 5, 'level': 1, 'name': 'array'}, 'isConst': False, 'offset': 32}"

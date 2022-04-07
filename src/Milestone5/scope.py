@@ -285,11 +285,11 @@ class CompositeLitNode(Node):
                     else:
                         val = zeroLit(t)
                     if isinstance(val, ExprNode):
-                        self.addChild(*StructFieldNode(key, val))
+                        self.addChild(StructFieldNode(key, val))
                     elif t.name in compositeTypes:
-                        self.addChild(*StructFieldNode(key, CompositeLitNode(t, val)))
+                        self.addChild(StructFieldNode(key, CompositeLitNode(t, val)))
                     else:
-                        self.addChild(*StructFieldNode(key, LitNode(val, t)))
+                        self.addChild(StructFieldNode(key, LitNode(val, t)))
             
             else:
                 if len(elList) != len(self.dataType['keyTypes']):
@@ -298,11 +298,11 @@ class CompositeLitNode(Node):
                     if not utils.isTypeCastable(stm, t, val.dataType):
                         raise TypeError(f"Type of {key} of struct: {t['name']} doesn't match with type of {val.label} : {val.dataType['name']}")
                     if isinstance(val, ExprNode):
-                        self.addChild(*StructFieldNode(key, val))
+                        self.addChild(StructFieldNode(key, val))
                     elif t.name in compositeTypes:
-                        self.addChild(*StructFieldNode(key, CompositeLitNode(t, val)))
+                        self.addChild(StructFieldNode(key, CompositeLitNode(t, val)))
                     else:
-                        self.addChild(*StructFieldNode(key, LitNode(val, t)))
+                        self.addChild(StructFieldNode(key, LitNode(val, t)))
 
         elif self.dataType['name'] == 'array':
             if len(elList) > int(self.dataType['length']):
@@ -390,8 +390,7 @@ class CompositeLitNode(Node):
                 if not utils.isTypeCastable(stm, self.dataType['ValueType'], val.dataType):
                     raise TypeError("Value cannot be typecasted to required datatype for key: " + key)
 
-                self.keys = keys
-                self.addChild(*element)    
+                self.addChild(element)    
 
     def __str__(self):
         if self.dataType['name'] == 'array':
@@ -430,8 +429,8 @@ class KeyValNode(Node):
         self.key = key.label
         self.keytype = key.dataType
         self.val = val
-        self.addChild(*key)
-        self.addChild(*val)
+        self.addChild(key)
+        self.addChild(val)
     
     def __str__(self):
         return f':'
@@ -828,7 +827,7 @@ class FuncParamType(Type):
     
     def addChild(self, type):
         self.dataType.append(type.dataType)
-        self.addChild(*type)
+        self.addChild(type)
         for child in self.children:
                 if child and hasattr(child, "code"):
                     self.code.extend(child.code)

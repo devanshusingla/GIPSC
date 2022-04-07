@@ -1,0 +1,4 @@
+ident,scope,info
+a,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'val': 0, 'isConst': False, 'isArg': True, 'offset': -4}"
+b,1,"{'dataType': {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, 'val': 0, 'isConst': False, 'isArg': True, 'offset': -8}"
+c,1,"{'dataType': {'name': 'float32', 'baseType': 'float32', 'level': 0, 'size': 4}, 'val': 0, 'isConst': False, 'isArg': True, 'offset': -12}"

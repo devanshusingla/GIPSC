@@ -182,6 +182,8 @@ def getFinalType(stm, dt1, dt2, binop):
     if binop == '+' or binop == '-' or binop == '*' or binop == '/':        
         if dt1 == 'byte' or dt1 == 'rune':
             return {'name': 'int32', 'baseType' : 'int32', 'level' : 0, 'size': 4}
+        elif dt1 == 'string':
+            return dt1_copy
         if ranks[dt1] > ranks[dt2]:
             return dt1_copy 
         else:
@@ -397,12 +399,19 @@ def Operate(operator, operand1, operand2, lineno, dt2):
     # Operator is a string while operands are values
     # TODO : Check for overflow issues
     # Do type checks
+    flag = False 
+    if isinstance(operand1, str):
+        flag = True 
+        operand1 = operand1[1:-1]
+        operand2 = operand2[1:-1]
     if operand1 == None:
         if operator == '^':
             return Not(operand2, dt2)
         else:
             operand1 = 0
     if operator == '+':
+        if flag:
+            return '"' + operand1 + operand2 + '"'
         return operand1 + operand2  
     elif operator == '-':
         return operand1 - operand2

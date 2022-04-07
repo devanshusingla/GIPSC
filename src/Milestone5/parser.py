@@ -473,12 +473,12 @@ def p_VarSpec(p):
                 else:
                     # Add to symbol table
 
-                    stm.add(ident.label, {'dataType': dt, 'isConst' : False, 'val': p[len(p) - 1][i]})
+                    stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                     p[1][i].dataType = dt    
             else:
                 dt = p[length][i].dataType
                 # Add to symbol table
-                stm.add(ident.label, {'dataType': dt, 'isConst' : False, 'val': p[len(p) - 1][i]})
+                stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                 p[1][i].dataType = dt
 
         for expr in p[length]:
@@ -679,7 +679,7 @@ def p_Expr(p):
             isConst = True
             val = Operate(p[2], p[1].val, p[3].val, p.lexer.lineno, p[3].dataType['name'])
 
-        p[0] = ExprNode(operator = p[2], dataType = dt, isConst = isConst, val=val)
+        p[0] = ExprNode(operator = p[2], dataType = dt, isConst = isConst, val=val, label = val)
         p[0].addChild(p[1], p[3])
         temp_var = new_temp()
 
@@ -752,11 +752,11 @@ def p_PrimaryExpr(p):
 
     ## PrimaryExpr -> Ident
     elif (len(p) == 2):
-        identType = getBaseType(p[1])
+        identType = getBaseType(stm, p[1])
         code = None
         place = None
 
-        if 'name' in identType.dataType and (identType.dataType['name'] == 'array' or identType.dataType['name'] == 'slice' or identType.dataType['name'] == 'struct' or  identType.dataType['name']=="string" or identType.dataType['name']== "map"):
+        if hasattr(identType, 'dataType') and 'name' in identType.dataType and (identType.dataType['name'] == 'array' or identType.dataType['name'] == 'slice' or identType.dataType['name'] == 'struct' or  identType.dataType['name']=="string" or identType.dataType['name']== "map"):
             temp = new_temp()
             code = f"{temp} = &{stm.id}_{p[1]}"
             place = temp
@@ -871,45 +871,46 @@ def p_PrimaryExpr(p):
                     dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
                     dt['size'] = basicTypeSizes[dt['name']]
 
-            temp1 = new_temp()
-            elem_size = getBaseType(p[1].dataType['baseType'])['baseType']
-            code.append(f"{temp1} = {p[2].place} * {elem_size}")
-            temp2 = new_temp()
-            code.append(f"{temp2} = {p[1].place} + {temp1}")
-            temp3 = new_temp()
-            code.append(f"{temp3} = *{temp2}")
-            place = temp3             
+                temp1 = new_temp()
+                elem_size = getBaseType(stm, p[1].dataType['baseType'])
+                if not isinstance(elem_size, str):
+                    elem_size = elem_size['baseType']
+                code.append(f"{temp1} = {p[2].place} * {elem_size}")
+                temp2 = new_temp()
+                code.append(f"{temp2} = {p[1].place} + {temp1}")
+                temp3 = new_temp()                                
+                code.append(f"{temp3} = *{temp2}")
+                place = temp3             
 
             ## TODO : Discuss Layout for MapType
             if p[1].dataType['name'] == 'map':
                 if not isTypeCastable(stm, p[2].dataType, p[1].dataType['KeyType']):
                     raise TypeError(f"{p.lexer.lineno}: Incorrect type for map " + p.lexer.lineno)
 
-                found = False
-                idx = 0
-                for key in stm.get(p[1])['val'].keys:
-                    if p[2] == key:
-                        found = True 
-                        break 
-                    idx += 1
+                # found = False
+                # idx = 0
+                # for key in stm.get(p[1].label)['val'].keys:
+                #     if p[2] == key:
+                #         found = True 
+                #         break 
+                #     idx += 1
 
+                # keySize = p[1].dataType['KeyType']['size']
+                # valSize = p[1].dataType['ValueType']['size']
+
+                # temp1 = new_temp()
+                # code.append(f"{temp1} = {keySize} * {idx}")
+                # temp2 = new_temp()
+                # code.append(f"{temp2} = {valSize} * {idx}")
+                # temp3 = new_temp()
+                # code.append(f"{temp3} = {temp1} + {temp2}")
+                # temp4 = new_temp()
+                # code.append(f"{temp4} = {p[1]} + {temp3}")
+                # temp5 = new_temp()
+                # code.append(f"{temp5} = *({temp4} + {keySize})")
                 dt = p[1].dataType['ValueType']
-                keySize = p[1].dataType['KeyType']['size']
-                valSize = p[1].dataType['ValueType']['size']
 
-            temp1 = new_temp()
-            code.append(f"{temp1} = {keySize} * {idx}")
-            temp2 = new_temp()
-            code.append(f"{temp2} = {valSize} * {idx}")
-            temp3 = new_temp()
-            code.append(f"{temp3} = {temp1} + {temp2}")
-            temp4 = new_temp()
-            code.append(f"{temp4} = {p[1]} + {temp3}")
-            temp5 = new_temp()
-            code.append(f"{temp5} = *({temp4} + {keySize})")
-
-            p[2].children[0] = p[1]
-            
+            p[2].children[0] = p[1]                                                      
 
         ## PrimaryExpr -> PrimaryExpr Slice
         elif isinstance(p[2], SliceNode):

@@ -19,7 +19,7 @@ func main() {
 	*/
 	words := []string{"I", " aFfxhzsgnxhjewmhxmjehxmj", "\ta", " student"}
 	var sentence string = ""
-	var p int = fmt.pp
+	var p int = fmt.pre
 	fmt.Println()
 	// for i, word := range words {
 	// 	sentence += word
