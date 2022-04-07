@@ -2,6 +2,7 @@ basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'floa
 basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 from copy import deepcopy
+from typing import List
 def zeroLit(dataType):
     if dataType == 'int':
         dt = {'name' : 'int', 'baseType' : 'int', 'level' : 0}
@@ -31,6 +32,8 @@ class scope:
         self.typeDefs = {}
         self.offset=0
         self.negoffset=0
+        self.okReturn = False
+        self.NotAllChildReturn = False
 
     def insert(self, id, info, isarg=False):
         if not isarg:
@@ -71,7 +74,7 @@ class SymTableMaker:
         self.symTable : dict[int, scope] = {}
         self.symTable[0] = scope(0)
         self.functions = {}
-        self.stack = [0]
+        self.stack : List[scope] = [0]
         self.id = 0
         self.nextId = 1
         self.currentReturnType = None
@@ -106,6 +109,12 @@ class SymTableMaker:
         self.nextId += 1
     
     def exitScope(self):
+        if self.symTable[self.id].okReturn == True:
+            if len(self.stack) >= 2:
+                self.symTable[self.stack[-2]].okReturn = True
+        if self.symTable[self.id].okReturn == False:
+            if len(self.stack) >= 2:
+                self.symTable[self.stack[-2]].NotAllChildReturn = True
         self.stack.pop()
         self.id = self.stack[-1]
     
