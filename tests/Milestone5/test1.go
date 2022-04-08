@@ -2,11 +2,13 @@ package main
 
 import "fmt"
 
-var a [2]int = [2]int{1, 3}
+var a int = 3
 
 func Print(x int) {}
 
 func main() {
-	c := a[0] + a[1]
-	d := "Lorem Ipsum Dolor Sit Amet"
+	var b int = 4
+	var c int = a + 2*b
+	var d string = "Lorem Ipsum Dolor Sit Amet"
+	e := c / 4
 }

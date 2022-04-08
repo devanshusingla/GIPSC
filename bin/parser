@@ -32,4 +32,4 @@ then
     exit 1
 fi
 echo "PNG Generated Successfully!"
-xdg-open $abs_path_to_png
+# xdg-open $abs_path_to_png

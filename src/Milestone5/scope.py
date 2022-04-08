@@ -46,7 +46,7 @@ class scope:
     def getinfo(self, id):
         return self.localsymTable.get(id,None)
 
-    def updateAttr(self, id, **kwargs):
+    def updateAttr(self, id, kwargs):
         if id not in self.localsymTable:
             raise ScopeTableError("Identifier has not been declared")
         for key, value in kwargs.items():
@@ -175,6 +175,7 @@ class Node:
             # print(type(children), children)
             for child in children:
                 if child and hasattr(child, "code"):
+                    # print("Child: ", child.code)
                     self.code.extend(child.code)
 
     def __str__(self):

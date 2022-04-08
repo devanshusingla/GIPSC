@@ -78,6 +78,7 @@ def p_SourceFile(p):
             raise LogicalError(f"{goto[1]}: Goto declared without declaring any label {label}.")
     p[4].addChild(p[3][1]) 
     p[0] = FileNode(p[1], p[3][0], p[4])
+    print(p[0].code)
 
 ###################################################################################
 ### Package related grammar
@@ -163,7 +164,6 @@ def p_ImportSpec(p):
         p[0] = (NodeList([ipnode]), NodeList([]))
     else:
         astNode = buildAndCompile(pathname)
-        print(pathname)
         stm.pkgs[alias.label] = None
         p[0] = (NodeList(astNode.children[1].children), NodeList(astNode.children[2].children))
     
@@ -354,15 +354,18 @@ def p_ConstSpec(p):
             p[1][i].dataType = dt
  
     for expr in p[length]:
-        p[0].code.append(expr.code)
+        p[0].code.extend(expr.code)
 
     if count_1 == 0:
         for i in range(len(p[1])):
             p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+            stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
     else:
         for i in range(len(p[1])):
             p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
+            stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
+
 
 ###################################################################################
 ### Variable Declarations
@@ -490,15 +493,18 @@ def p_VarSpec(p):
                 p[1][i].dataType = dt
 
         for expr in p[length]:
-            p[0].code.append(expr.code)
+            p[0].code.extend(expr.code)
 
         if count_1 == 0:
             for i in range(len(p[1])):
                 p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+                stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
         else:
             for i in range(len(p[1])):
                 p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
+                stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
+
     else:
         not_base_type = False
 
@@ -529,6 +535,9 @@ def p_VarSpec(p):
                 # Add to symbol table
                 stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                 p[1][i].dataType = dt
+
+        for i in range(len(p[1])):
+            stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
 
 ###################################################################################
@@ -673,7 +682,7 @@ def p_Expr(p):
         dt2 = p[3].dataType
 
         firstChar = None
-        if hasattr(p[3], 'label') and  p[3].label != None:
+        if hasattr(p[3], 'label') and  isinstance(p[3].label, List):
             firstChar = p[3].label[0]
 
         if not checkBinOp(stm, dt1, dt2, p[2], firstChar):
@@ -751,9 +760,12 @@ def p_PrimaryExpr(p):
     if len(p) == 2 and (isinstance(p[1], LitNode) or isinstance(p[1], CompositeLitNode)):
         if isinstance(p[1], LitNode):
             p[0] = ExprNode(p[1].dataType, p[1].label, None, p[1].isConst, False, p[1].val)
+            p[0].place = p[1].place
             if p[1].children:
                 for child in p[1].children:
-                    p[0].addChild(*child)
+                    p[0].addChild(child)
+            else:
+                p[0].code = p[1].code
         else:
             # Ig Composite Literal is only used for assignment
             p[0] = p[1]
@@ -761,25 +773,11 @@ def p_PrimaryExpr(p):
     ## PrimaryExpr -> Ident
     elif (len(p) == 2):
         identType = getBaseType(stm, p[1])
-        code = None
         place = None
-
-        if hasattr(identType, 'dataType') and 'name' in identType.dataType and (identType.dataType['name'] == 'array' or identType.dataType['name'] == 'slice' or identType.dataType['name'] == 'struct' or  identType.dataType['name']=="string" or identType.dataType['name']== "map"):
-            temp = new_temp()
-            code = f"{temp} = &{stm.id}_{p[1]}"
-            place = temp
-    
-        elif p[1] in stm.functions:
-            code = f"call {p[1]}:"
-
-        else:
-            temp = new_temp()
-            code = f"{temp} = {stm.id}_{p[1]}"
-            place = temp
             
         if p[1] in stm.pkgs and stm.pkgs[p[1]] != None:
             p[0] = IdentNode(0, p[1], dataType={'name': 'package'})
-            p[0].code = code
+            p[0].place = stm.get(p[1])['tmp']
             return
 
         ## TODO : What is the need for this?        
@@ -788,6 +786,7 @@ def p_PrimaryExpr(p):
             # Assuming Constructor Initialisation
             dt = stm.symTable[0].typeDefs[p[1]]
             p[0] = ExprNode(dataType=dt, label=p[1], isAddressable=False, isConst=False, val=None)
+            p[0].place = stm.get(p[1])['tmp']
             return
 
         # Check declaration
@@ -800,8 +799,8 @@ def p_PrimaryExpr(p):
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
-        p[0].code.append(code)
-        p[0].place = place
+        print(p[1], p.lexer.lineno)
+        p[0].place = stm.get(p[1])['tmp']
 
     ## PrimaryExpr -> LPAREN Expr RPAREN
     elif len(p) == 4:
@@ -849,8 +848,10 @@ def p_PrimaryExpr(p):
 
             # code.append(f"{temp} = {struct_off}")
             temp = new_temp()
+            print("5 ", temp)
             code.append(f"{temp} = {p[1].place} + {struct_off}")
             temp2 = new_temp()
+            print("6 ", temp2)
             code.append(f"{temp2} = *({temp2})")
             place = temp2
 
@@ -880,13 +881,22 @@ def p_PrimaryExpr(p):
                     dt['size'] = basicTypeSizes[dt['name']]
 
                 temp1 = new_temp()
-                elem_size = getBaseType(stm, p[1].dataType['baseType'])
-                if not isinstance(elem_size, str):
-                    elem_size = elem_size['baseType']
+                print("7 ", temp1)
+                elem_size = 4
+                if 'baseType' in p[1].dataType:
+                    elem_size = p[1].dataType['baseType']
+                    if elem_size in basicTypes:
+                        elem_size = p[1].dataType['size']
+                    elif isinstance(elem_size, str):
+                        elem_size = getBaseType(elem_size).dataType['size']
+                    else:
+                        elem_size = 4
                 code.append(f"{temp1} = {p[2].place} * {elem_size}")
                 temp2 = new_temp()
+                print("8 ", temp2)
                 code.append(f"{temp2} = {p[1].place} + {temp1}")
-                temp3 = new_temp()                                
+                temp3 = new_temp()        
+                print("9 ", temp3)                        
                 code.append(f"{temp3} = *{temp2}")
                 place = temp3             
 
@@ -953,6 +963,26 @@ def p_PrimaryExpr(p):
                             raise TypeError(f"{p.lexer.lineno}: Index cannot be of type " + p[2].rIndexNode.dataType)
                     else:
                         raise TypeError(f"{p.lexer.lineno}: Index type incorrect")
+ 
+            elem_size = 4
+            if 'baseType' in p[1].dataType:
+                elem_size = p[1].dataType['baseType']
+                if elem_size in basicTypes:
+                    elem_size = p[1].dataType['size']
+                elif isinstance(elem_size, str):
+                    elem_size = getBaseType(elem_size).dataType['size']
+                else:
+                    elem_size = 4
+            temp1 = new_temp()
+            code.append(f"{temp1} = {p[2].lIndexNode.place} * {elem_size}")
+            temp2 = new_temp()
+            code.append(f"{temp2} = {p[2].rIndexNode.place} - {p[2].lIndexNode.place}")
+            temp3 = new_temp()
+            code.append(f"{temp3} = {p[1].place}.capacity - {p[2].lIndexNode.place}")
+            temp4 = var_new_temp()
+            code.append(f"{temp4}.pointer = {p[1].place}.pointer + {p[2].lIndexNode.place}")
+            code.append(f"{temp4}.length = {temp2}")
+            code.append(f"{temp4}.capacity = {temp3}")
 
             dt = p[1].dataType.copy()
             p[2].children[0] = p[1]
@@ -975,6 +1005,7 @@ def p_PrimaryExpr(p):
                 p[0].isAddressable = False
                 return
             else:
+        
                 if p[1].label not in new_stm.functions:
                     raise NameError(f"{p.lexer.lineno}: No such function declared ")
 
@@ -994,11 +1025,14 @@ def p_PrimaryExpr(p):
                     if not isTypeCastable(new_stm, dt1, dt2):
                         raise TypeError(f"{p.lexer.lineno}: Type mismatch on argument number: " + i)
 
+                    code.append(f"params {argument.place}")
+
+                code.append(f"call {p[1]}:")
                 p[2] = FuncCallNode(p[1], p[2])
         p[0] = p[2]       
         p[0].isAddressable = True
         p[0].dataType = dt
-        p[0].code.append(code)
+        p[0].code.extend(code)
         p[0].place = place
         
         if isinstance(p[2], list):
@@ -1158,7 +1192,10 @@ def p_ArrayType(p):
     """
     p[0] = BrackType(p[4], p[2])
 
-    p[0].dataType['baseType'] = p[4].dataType['baseType']
+    if 'baseType' in p[4].dataType:
+        p[0].dataType['baseType'] = p[4].dataType['baseType']
+    else:
+        p[0].dataType['baseType'] = p[4].dataType['name']
     p[0].dataType['level'] = p[4].dataType['level'] + 1
     
     p[0].dataType['name'] = 'array'
@@ -1319,36 +1356,54 @@ def p_IntLit(p):
         p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, label = p[1], isConst=True, val=int(p[1]))
     else:
         raise (f"{p.lexer.lineno}: Integer Overflow detected")
+    temp = new_temp()
+    p[0].code.append(f"{temp} = {p[1]}")
+    p[0].place = temp 
 
 def p_FloatLit(p):
     """
     FloatLit : FLOAT
     """
     p[0] = LitNode(dataType = {'name': 'float64', 'baseType': 'float64', 'level': 0, 'size': 8}, label = p[1], isConst=True, val=float(p[1]))
+    temp = new_temp()
+    p[0].code.append(f"{temp} = {p[1]}")
+    p[0].place = temp 
     
 def p_ImagLit(p):
     """
     ImagLit : IMAG
     """
     p[0] = LitNode(dataType = {'name': 'complex128', 'baseType': 'complex128', 'level': 0, 'size': 8}, label = p[1], isConst=True, val=float(p[1].strip('i')))
+    temp = new_temp()
+    p[0].code.append(f"{temp} = {p[1]}")
+    p[0].place = temp 
 
 def p_RuneLit(p):
     """
     RuneLit : RUNE
     """
     p[0] = LitNode(dataType = {'name': 'rune', 'baseType': 'rune', 'level': 0, 'size': 2}, label = p[1], isConst=True, val=p[1])
+    temp = new_temp()
+    p[0].code.append(f"{temp} = {p[1]}")
+    p[0].place = temp 
 
 def p_StringLit(p):
     """
     StringLit : STRING
     """
     p[0] = LitNode(dataType = {'name': 'string', 'baseType': 'string', 'level': 0, 'size': 12}, label = p[1], isConst=True, val=p[1])
+    temp = new_temp()
+    p[0].code.append(f"{temp} = {p[1]}")
+    p[0].place = temp 
 
 def p_BoolLit(p):
     """
     BoolLit : BOOL
     """
     p[0] = LitNode(dataType = {'name': 'bool', 'baseType': 'bool', 'level': 0, 'size': 1}, label = p[1], isConst=True, val = p[1])
+    temp = new_temp()
+    p[0].code.append(f"{temp} = {p[1]}")
+    p[0].place = temp 
 
 ###################################################################################
 ### Composite Literal
@@ -1436,6 +1491,8 @@ def p_FuncDecl(p):
     """
     ## Make node
     p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
+    p[0].code.append(f"Func END")
+    
     global curr_func_id
     stm.currentReturnType = None
     for symbol in stm.symTable[stm.id].localsymTable:
@@ -1477,7 +1534,11 @@ def p_FuncSig(p):
     curr_func_id = p[2].label
     info_tables[curr_func_id] = {}
 
-    p[0] = NodeList([p[2], p[3]])
+    code = [f"Func {p[1].label}"]
+    temp = NodeList([p[2], p[3]])
+    code.extend(temp.code)
+    p[0] = temp 
+    p[0].code = code 
 
 # def p_BeginFunc(p):
 #     """
@@ -1874,6 +1935,19 @@ def p_ShortVarDecl(p):
         dt = p[length][i].dataType
         stm.add(ident.label, {'dataType': dt, 'isConst' : False})
         p[1][i].dataType = dt
+
+    for expr in p[length]:
+        p[0].code.extend(expr.code)
+
+    if count_1 == 0:
+        for i in range(len(p[1])):
+            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+            stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
+
+    else:
+        for i in range(len(p[1])):
+            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
+            stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
 ###################################################################################
 ### Goto Statements
