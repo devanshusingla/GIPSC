@@ -1491,6 +1491,8 @@ def p_FuncDecl(p):
     """
     ## Make node
     p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
+    p[0].code.append(f"Func END")
+    
     global curr_func_id
     stm.currentReturnType = None
     for symbol in stm.symTable[stm.id].localsymTable:
@@ -1532,7 +1534,11 @@ def p_FuncSig(p):
     curr_func_id = p[2].label
     info_tables[curr_func_id] = {}
 
-    p[0] = NodeList([p[2], p[3]])
+    code = [f"Func {p[1].label}"]
+    temp = NodeList([p[2], p[3]])
+    code.extend(temp.code)
+    p[0] = temp 
+    p[0].code = code 
 
 # def p_BeginFunc(p):
 #     """
@@ -1929,6 +1935,19 @@ def p_ShortVarDecl(p):
         dt = p[length][i].dataType
         stm.add(ident.label, {'dataType': dt, 'isConst' : False})
         p[1][i].dataType = dt
+
+    for expr in p[length]:
+        p[0].code.extend(expr.code)
+
+    if count_1 == 0:
+        for i in range(len(p[1])):
+            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+            stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
+
+    else:
+        for i in range(len(p[1])):
+            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
+            stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
 ###################################################################################
 ### Goto Statements
