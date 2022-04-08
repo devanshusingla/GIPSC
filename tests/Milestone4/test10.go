@@ -6,7 +6,8 @@ func main() {
 	var i, j, n , m int;
 	var state string;
 	var a [5][6]int;
-	a [7][1] = 0;
+	a [7][2] = 0;
+	x := a[7][1] + a[7][0]
 	OuterLoop: for i = 0; i < n; i++ {
 		for j = 0; j < m; j++ {
 			switch a[i][j] {

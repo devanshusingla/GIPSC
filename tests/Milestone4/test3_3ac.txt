@@ -16,6 +16,7 @@ temp_2 = 3
 
 Func Print
 retparams arg_[Print_-4]
+retparams arg_[Print_-8]
 return
 Func END
 
@@ -28,22 +29,22 @@ params temp_16
 params temp_17
 params temp_18
 call Print:
-retparams retval_Print_0
+retparams ['retval_Print_0', 'retval_Print_1']
 return
 Func END
 
 
 Func main
 temp_19 = 0
-temp_20 = None * 12
+temp_20 = temp_19 * 4
 temp_21 = 0_a + temp_20
 temp_22 = *temp_21
 temp_23 = 1
-temp_24 = None * 12
+temp_24 = temp_23 * 4
 temp_25 = 0_a + temp_24
 temp_26 = *temp_25
 temp_27 = 2
-temp_28 = None * 12
+temp_28 = temp_27 * 4
 temp_29 = 0_a + temp_28
 temp_30 = *temp_29
 3_b = temp_22
@@ -54,18 +55,21 @@ params 3_c
 params 3_d
 call Print:
 3_e = retval_Print_0
+3_f = retval_Print_1
 temp_31 = 3_c /(int) 3_d
 temp_32 = 3_b +(int) temp_31
 temp_33 = temp_32 +(int) 3_c
 3_x = temp_33
 call f2:
+3_u = retval_f2_0
+3_g = retval_f2_1
 3_a = None
 temp_40 = 1
 temp_41 = 4
-temp_42 = temp_40 * 12
+temp_42 = temp_40 * 4
 temp_43 = temp_41 - temp_40
 temp_44 = 3_a.capacity - temp_40
-var_temp_1.pointer = 3_a.pointer + temp_40
+var_temp_1.pointer = 3_a.pointer + temp_42
 var_temp_1.length = temp_43
 var_temp_1.capacity = temp_44
 3_s = None

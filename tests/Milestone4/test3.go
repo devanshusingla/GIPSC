@@ -21,7 +21,7 @@ func main() {
 	var b, c, d int = a[0], a[1], a[2]
 	var e, f int = Print(b, c, d)
 	var x int  = b + c / d + c;
-	f2()
+	u, g := f2()
 	a := [5]int{1, 2, 3, 4, 5}
 	s := a[1:4]
 	// add(3, 5)

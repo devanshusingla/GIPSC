@@ -23,7 +23,14 @@ func main() {
 	fmt.Println()
 	for i, word := range words {
 		sentence += word
+		i += 7
 		x = -x/-2 - -(2/-x)
+	}
+	mp := map[string]int {"Hello" : 5, "World" : 7}
+	sen := ""
+	for key, val := range mp {
+		val += 5
+		sen += key
 	}
 	// Print(sentence)
 	// Print("value of x := %d\n", x)

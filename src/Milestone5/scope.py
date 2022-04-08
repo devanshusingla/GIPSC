@@ -76,8 +76,8 @@ class SymTableMaker:
         self.id = 0
         self.nextId = 1
         self.currentReturnType = None
-        self.forDepth = 0
-        self.switchDepth = 0
+        # self.forDepth = 0
+        # self.switchDepth = 0
         self.labels = {}
         # self.labels: dict[str] -> dict[]
         # self.labels[label] = {
@@ -91,6 +91,8 @@ class SymTableMaker:
         self.currentLabel = None
         self.pkgs = {}
         self.nextLabel = 0
+        self.forStack = []
+        self.switchStack = []
         self.addBuiltInFuncs()
 
     def addFunction(self, label, info):
@@ -706,6 +708,7 @@ class ForRangeNode(Node):
     def __init__(self, paramsNode, iterableNode):
         super().__init__(self)
         self.addChild(*paramsNode, iterableNode)
+        self.vartemp = None
     
     def __str__(self):
         return "RANGE"
@@ -824,9 +827,9 @@ class StructFieldType(Type):
 #         return f'FUNC'
 
 class FuncParamType(Type):
-    def __init__(self, dataType=[]):
+    def __init__(self):
         super().__init__()
-        self.dataType = dataType
+        self.dataType = []
         self.children = []
     
     def addChild(self, type):

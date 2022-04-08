@@ -1,0 +1,70 @@
+package main
+package fmt
+temp_0 = 3
+0_pre = temp_0
+
+Func Println
+temp_1 = 3
+1_pre = temp_1
+Func END
+
+import "fmt"
+
+Func main
+temp_7 = 2
+temp_4 = 7
+temp_5 = temp_4 * 4
+temp_6 = 1_a + temp_5
+temp_8 = temp_7 * 4
+temp_9 = *temp_6 + temp_8
+temp_10 = 0
+*temp_9 = temp_10
+temp_14 = 1
+temp_11 = 7
+temp_12 = temp_11 * 4
+temp_13 = 1_a + temp_12
+temp_15 = temp_14 * 4
+temp_16 = *temp_13 + temp_15
+temp_20 = 0
+temp_17 = 7
+temp_18 = temp_17 * 4
+temp_19 = 1_a + temp_18
+temp_21 = temp_20 * 4
+temp_22 = *temp_19 + temp_21
+temp_23 = *temp_16
+temp_24 = temp_23 +(int) *temp_22
+1_x = temp_24
+label_0:
+temp_25 = 0
+1_i = temp_25
+label begin_for_11:
+temp_26 = 1_i <(bool) 1_n
+if not temp_26 goto end_for_11
+1_i = 1_i + 1
+temp_27 = 0
+1_j = temp_27
+label begin_for_12:
+temp_28 = 1_j <(bool) 1_m
+if not temp_28 goto end_for_12
+1_j = 1_j + 1
+temp_29 = 1_i * 4
+temp_30 = 1_a + temp_29
+temp_31 = 1_j * 4
+temp_32 = *temp_30 + temp_31
+temp_33 = 2
+temp_34 = "Error"
+1_state = temp_34
+goto end_for_11
+temp_35 = 4
+temp_36 = "Found"
+1_state = temp_36
+goto end_for_11
+temp_37 = 6
+goto begin_for_11
+goto begin_for_12
+label end_for_12:
+goto begin_for_11
+label end_for_11:
+1_b = None
+Func END
+

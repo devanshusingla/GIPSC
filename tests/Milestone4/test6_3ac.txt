@@ -1,6 +1,7 @@
 package main
 package fmt
 temp_0 = 3
+0_pre = temp_0
 
 Func Println
 temp_1 = 3
@@ -20,14 +21,17 @@ temp_3 = "hello"
 temp_4 = "hello"
 params temp_4
 call Print:
+goto end_switch_12
 temp_5 = "hi"
 temp_6 = "hi"
 params temp_6
 call Print:
+goto end_switch_12
 temp_7 = "yo"
 temp_8 = "yo"
 params temp_8
 call Print:
+goto end_switch_12
 temp_9 = "Hello, 世界"
 params temp_9
 call Print:

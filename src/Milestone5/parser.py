@@ -1,3 +1,4 @@
+from multiprocessing import Condition
 from typing import List
 from copy import deepcopy
 import ply.yacc as yacc
@@ -59,7 +60,7 @@ def new_temp():
     return "temp_" +str(temp)
 
 def var_new_temp():
-    global curr_var_temp 
+    global curr_var_temp
     var_temp = curr_var_temp 
     var_temp += 1
     return "var_temp_" + str(var_temp)
@@ -695,10 +696,15 @@ def p_Expr(p):
 
         p[0] = ExprNode(operator = p[2], dataType = dt, isConst = isConst, val=val, label = val)
         p[0].addChild(p[1], p[3])
+        if((p[1].place)[0] == '*' and (p[3].place)[0] == '*') :
+            point = new_temp()
+            p[0].code.append(f"{point} = {p[1].place}")
+            p[1].place = point
         temp_var = new_temp()
 
         p[0].code.append(f"{temp_var} = {p[1].place} {p[2]}({dt['name']}) {p[3].place}")
         p[0].place = temp_var
+
 
 def p_UnaryExpr(p):
     """
@@ -891,19 +897,21 @@ def p_PrimaryExpr(p):
                 temp1 = new_temp()
                 elem_size = 4
                 if 'baseType' in p[1].dataType:
-                    elem_size = p[1].dataType['baseType']
-                    if elem_size in basicTypes:
-                        elem_size = p[1].dataType['size']
-                    elif isinstance(elem_size, str):
-                        elem_size = getBaseType(elem_size).dataType['size']
+                    elem_type = p[1].dataType['baseType']
+                    if elem_type in basicTypes:
+                        elem_size = basicTypeSizes[elem_type]
+                    elif isinstance(elem_type, str):
+                        elem_size = getBaseType(elem_type).dataType['size']
                     else:
                         elem_size = 4
+                code.extend(p[1].code)
+                # code.extend(p[2].code)
                 code.append(f"{temp1} = {p[2].place} * {elem_size}")
                 temp2 = new_temp()
                 code.append(f"{temp2} = {p[1].place} + {temp1}")
-                temp3 = new_temp()        
-                code.append(f"{temp3} = *{temp2}")
-                place = temp3             
+                # temp3 = new_temp()        
+                # code.append(f"{temp3} = *{temp2}")
+                place = f"*{temp2}"       
 
             ## TODO : Discuss Layout for MapType
             if p[1].dataType['name'] == 'map':
@@ -973,7 +981,7 @@ def p_PrimaryExpr(p):
             if 'baseType' in p[1].dataType:
                 elem_size = p[1].dataType['baseType']
                 if elem_size in basicTypes:
-                    elem_size = p[1].dataType['size']
+                    elem_size = basicTypeSizes[elem_size]
                 elif isinstance(elem_size, str):
                     elem_size = getBaseType(elem_size).dataType['size']
                 else:
@@ -985,7 +993,7 @@ def p_PrimaryExpr(p):
             temp3 = new_temp()
             code.append(f"{temp3} = {p[1].place}.capacity - {p[2].lIndexNode.place}")
             temp4 = var_new_temp()
-            code.append(f"{temp4}.pointer = {p[1].place}.pointer + {p[2].lIndexNode.place}")
+            code.append(f"{temp4}.pointer = {p[1].place}.pointer + {temp1}")
             code.append(f"{temp4}.length = {temp2}")
             code.append(f"{temp4}.capacity = {temp3}")
 
@@ -1043,9 +1051,9 @@ def p_PrimaryExpr(p):
         p[0].dataType = dt
         p[0].code.extend(code)
         p[0].place = place
-        
         if isinstance(p[2], list):
-            p[0].isAddressable = False  
+            p[0].isAddressable = False
+
 
 ###################################################################################
 ## Selector
@@ -1064,6 +1072,7 @@ def p_Index(p):
     Index : LBRACK Expr RBRACK
     """
     p[0] = IndexNode(None, p[2], dataType = p[2].dataType)
+    p[0].place = p[2].place
 
 ###################################################################################
 ## Slice
@@ -1365,6 +1374,7 @@ def p_IntLit(p):
         p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, label = p[1], isConst=True, val=int(p[1]))
     else:
         raise (f"{p.lexer.lineno}: Integer Overflow detected")
+    # print(p[1])
     temp = new_temp()
     p[0].code.append(f"{temp} = {p[1]}")
     p[0].place = temp 
@@ -1633,6 +1643,7 @@ def p_Result(p):
             p[2] = stm.findType(p[2])
         if isinstance(p[2], Type):
             p[2] = [p[2]]
+            # print("K: ", p[2])
         p[0] = FuncReturnNode(p[2])
     elif len(p) == 3:
         p[0] = FuncReturnNode([])
@@ -1641,6 +1652,7 @@ def p_Result(p):
             p[1] = stm.findType(p[1])
         if isinstance(p[1], Type):
             p[1] = [p[1]]
+        # print("G: ", p[1])
         p[0] = FuncReturnNode(p[1])
 
 def p_ParametersType(p):
@@ -1852,8 +1864,11 @@ def p_Assignment(p):
         exprNode = ExprNode(None, operator=p[2])
         exprNode.addChild(key, val)
         p[0].append(exprNode)
-    for key, val in zip(p[1], p[3]):
-        p[0].code.append(f"{key.place} = {val.place}")
+    for i, (key, val) in enumerate(zip(p[1], p[3])):
+        if p[2] == '=':
+            p[0].code.append(f"{key.place} = {val.place}")
+        else:
+            p[0].code.append(f"{key.place} = {key.place} {p[2][0]}({expression_dt[i]['name']}) {val.place}")
 
 def p_assign_op(p):
     """
@@ -1922,8 +1937,8 @@ def p_ShortVarDecl(p):
     
     dt = {}
 
-    if len(p[1]) != len(p[3]):
-        raise LogicalError(f"{p.lexer.lineno}: Imbalanced declaration with {len(p[1])} identifiers and {len(p[3])} expressions.")
+    if len(p[1]) != len(expression_datatypes):
+        raise LogicalError(f"{p.lexer.lineno}: Imbalanced declaration with {len(p[1])} identifiers and {len(expression_datatypes)} expressions.")
     p[0] = NodeList([])
     for key, val in zip(p[1], p[3]):
         exprNode = ExprNode(None, label="DEFINE", operator="=")
@@ -1935,7 +1950,7 @@ def p_ShortVarDecl(p):
         # Check redeclaration for identifier list
         latest_scope = stm.getScope(ident.label)
         if latest_scope == stm.id or ident.label in stm.functions:
-            raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident)
+            raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident.label)
         
         # Add to symbol table
         dt = expression_datatypes[i]
@@ -2041,16 +2056,29 @@ def p_BreakStmt(p):
     BreakStmt : BREAK 
               | BREAK JumpLabel
     """
-    if stm.forDepth == 0 and stm.switchDepth == 0:
+    if len(stm.forStack) == 0 and len(stm.switchStack) == 0:
         raise LogicalError(f"{p.lexer.lineno}: Break can only be used inside for loops and switch statements.")
     if len(p) == 2:
         p[0] = BreakNode()
+        if len(stm.forStack) == 0:
+            p[0].code.append(f"goto end_switch_{stm.switchStack[-1]}")
+        elif len(stm.switchStack) == 0:
+            p[0].code.append(f"goto end_for_{stm.forStack[-1]}")
+        elif stm.forStack[-1] < stm.switchStack[-1]:
+            p[0].code.append(f"goto end_switch_{stm.switchStack[-1]}")
+        else:
+            p[0].code.append(f"goto end_for_{stm.forStack[-1]}")
     else:
         if p[2] not in stm.labels:
             raise LogicalError(f"{p.lexer.lineno}: Label for the break statement must have been declared beforehand.")
         if not stm.labels[p[2]]['statementType'] or stm.labels[p[2]]['statementType'] not in ['FOR', 'SWITCH']:
             raise LogicalError(f"{p.lexer.lineno}: Label used with break statement must be used on a for loop statement or switch node statement.")
         p[0] = BreakNode(p[2])
+        lineno = stm.labels[p[2]]['lineno']
+        if lineno in stm.forStack:
+            p[0].code.append(f"goto end_for_{stm.labels[p[2]]['lineno']}")
+        else:
+            p[0].code.append(f"goto end_switch_{stm.labels[p[2]]['lineno']}")
 
 ###################################################################################
 ### Continue Statements
@@ -2061,16 +2089,18 @@ def p_ContinueStmt(p):
     ContinueStmt :  CONTINUE
                  |  CONTINUE JumpLabel
     """
-    if stm.forDepth == 0:
+    if len(stm.forStack) == 0:
         raise LogicalError(f"{p.lexer.lineno}: Continue can only be called inside a for loop.")
     if len(p) == 2:
         p[0] = ContinueNode()
+        p[0].append.code(f"goto start_for_{stm.forStack[-1]}")
     else:
         if p[2] not in stm.labels:
             raise LogicalError(f"{p.lexer.lineno}: Label for the continue statement must have been declared beforehand.")
         if not stm.labels[p[2]]['statementType'] or stm.labels[p[2]]['statementType'] not in ['FOR']:
             raise LogicalError(f"{p.lexer.lineno}: Label used with continue statement must be used on a for loop statement.")
         p[0] = ContinueNode(p[2])
+        p[0].code.append(f"goto begin_for_{stm.labels[p[2]]['lineno']}")
 
 ###################################################################################
 ### Fallthrough Statements
@@ -2081,6 +2111,7 @@ def p_FallthroughStmt(p):
     FallthroughStmt : FALLTHROUGH
     """
     p[0] = FallthroughNode()
+    # Code to implemented later
 
 
 ###################################################################################
@@ -2106,7 +2137,11 @@ def p_IfStmt(p):
         if p[3].dataType['baseType'] != 'bool' or p[3].dataType['level'] != 0:
             raise TypeError(f'{p.lexer.lineno}: Expression inside if-statement must be of bool type!') 
         else:
+            p[4].code.append(f"goto end_{p.lexer.lineno}")
+            p[4].code.append(f"label else_{p.lexer.lineno}:")
+            p[3].code.append(f"if not {p[3].place} then goto else_{p.lexer.lineno}")
             p[0] = IfNode(None, p[3], ThenNode(p[4]), p[5])
+            p[0].code.append(f"label end_{p.lexer.lineno}:")
     else:
         if p[5].dataType['baseType'] != 'bool' or p[5].dataType['level'] != 0:
             raise TypeError(f'{p.lexer.lineno}: Expression inside if-statement must be of bool type!') 
@@ -2239,13 +2274,13 @@ def p_BeginSwitch(p):
         stm.labels[stm.currentLabel] = 'SWITCH'
         stm.currentLabel = None
     stm.newScope()
-    stm.switchDepth += 1
+    stm.switchStack.append(p.lexer.lineno)
 
 def p_EndSwitch(p):
     """
     EndSwitch : 
     """
-    stm.switchDepth -= 1
+    stm.switchStack.pop()
     global curr_func_id
     for symbol in stm.symTable[stm.id].localsymTable:
         if symbol not in info_tables[curr_func_id]:
@@ -2289,41 +2324,6 @@ def p_ExprSwitchCase(p):
         p[0] = NodeList([DefaultNode()])
 
 ###################################################################################
-### Type Switch Statements
-
-# def p_TypeSwitchStmt(p):
-#     """
-#     TypeSwitchStmt : SWITCH SimpleStmt SEMICOLON TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
-#                      | SWITCH TypeSwitchGuard LBRACE TypeCaseClauseMult RBRACE
-#     """
-
-# def p_TypeSwitchGuard(p):
-#     """
-#     TypeSwitchGuard : IDENT DEFINE PrimaryExpr PERIOD LPAREN TYPE RPAREN
-#                       | PrimaryExpr PERIOD LPAREN TYPE RPAREN
-#     """
-
-# def p_TypeCaseClauseMult(p):
-#     """
-#     TypeCaseClauseMult : TypeCaseClause TypeCaseClauseMult 
-#                         |
-#     """
-
-# def p_TypeCaseClause(p):
-#     """
-#     TypeCaseClause : CASE TypeList COLON StatementList
-#                      | DEFAULT COLON StatementList
-#     """
-
-# def p_TypeList(p):
-#     """
-#     TypeList : Type
-#                 | IDENT 
-#                 | Type COMMA TypeList
-#                 | IDENT COMMA TypeList
-#     """
-
-###################################################################################
 ### For Statements
 ###################################################################################
 
@@ -2336,8 +2336,40 @@ def p_ForStmt(p):
     """
     if len(p) == 5:
         p[0] = ForNode(None, p[3])
+        p[0].code = [f"label begin_for_{stm.forStack[-1]}:"] + p[0].code + [f"goto begin_for_{stm.forStack[-1]}", f"label end_for_{stm.forStack[-1]}:"]
     else:
+        if isinstance(p[3], ForClauseNode) and p[3].children[0] is None and p[3].children[2] is None:
+            p[3].code = [f"label begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code + [f"if not {p[3].children[1].place} then goto end_for_{stm.forStack[-1]}"]
+            p[4].code.append(f"goto begin_for_{stm.forStack[-1]}")
+            p[4].code.append(f"label end_for_{stm.forStack[-1]}:")
+        elif isinstance(p[3], ForClauseNode):
+            # initc = p[3][0]
+            # condc = p[3][1]
+            # postc = p[3][2]
+            temp = p[3].children[0].code + [f"label begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code
+            p[3].code = temp + [f"if not {p[3].children[1].place} goto end_for_{stm.forStack[-1]}"]
+            p[4].code.extend(p[3].children[2].code)
+            p[4].code.append(f"goto begin_for_{stm.forStack[-1]}")
+            p[4].code.append(f"label end_for_{stm.forStack[-1]}:")
+        else:
+            if p[3].children[2].dataType['name'] == 'map':
+                pass
+            else:
+                code = []
+                idx = p[3].children[0].place
+                code.append(f"{idx} = {idx} + 1")
+                elemptr = p[3].vartemp
+                elem = p[3].children[1].place
+                size = p[3].children[1].dataType['size']
+                code.append(f"{elemptr}.pointer = {elemptr}.pointer + {size}")
+                code.append(f"{elem} = *{elemptr}")
+                code.append(f"goto begin_for_{stm.forStack[-1]}")
+                code.append(f"label end_for_{stm.forStack[-1]}")
+                p[4].code.extend(code)
         p[0] = ForNode(p[3], p[4])
+    
+    stm.forStack.pop()
+    stm.exitScope()
 
 def p_BeginFor(p):
     """
@@ -2347,13 +2379,12 @@ def p_BeginFor(p):
         stm.labels[stm.currentLabel]['statementType'] = 'FOR'
         stm.currentLabel = None
     stm.newScope()
-    stm.forDepth += 1
+    stm.forStack.append(p.lexer.lineno)
 
 def p_EndFor(p):
     """
     EndFor : 
     """
-    stm.forDepth -= 1
     global curr_func_id
     for symbol in stm.symTable[stm.id].localsymTable:
         if symbol not in info_tables[curr_func_id]:
@@ -2363,13 +2394,13 @@ def p_EndFor(p):
             info_tables[curr_func_id][symbol][stm.id] = {}
         
         info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
-    stm.exitScope()
     
 def p_Condition(p):
     """
     Condition : Expr
     """
     p[0] = ForClauseNode(None, p[1], None)
+    p[0].place = p[1].place
 
 ###################################################################################
 ### For Clause
@@ -2389,6 +2420,8 @@ def p_ForClause(p):
             'size' : 1
         }
         trueNode = ExprNode(dt, label='true', operator=None, isConst=True, isAddressable=False, val='true')
+        trueNode.place = new_temp()
+        trueNode.code.append(f"{trueNode.place} = true")
         # Absence of condition is equivalent to a FOR true statement
         p[0] = ForClauseNode(p[1], trueNode, p[4])
 
@@ -2447,6 +2480,7 @@ def p_RangeClause(p):
         if isinstance(var, IdentNode):
             # ShortVarDecl
             # If shortvaldecl statement, insert into stm
+            var.dataType = deepcopy(rangeExprType[idx])
             stm.add(var.label, {'dataType' : rangeExprType[idx], 'isConst' : False})
         elif isinstance(var, ExprNode):
             # Assignment
@@ -2457,9 +2491,30 @@ def p_RangeClause(p):
                     if lastDeclaredEntry['dataType'] != rangeExprType[idx]:
                         raise TypeError(f"{p.lexer.lineno}: Type of {var.label} does't match with {rangeExprType[idx]['name']}.")
             else:
+                var.dataType = deepcopy(rangeExprType[idx])
                 stm.add(var.label, {'dataType' : rangeExprType[idx], 'isConst' : False})
 
     p[0] = ForRangeNode(p[1], p[3])
+
+    code = []
+    idx = new_temp()
+    elemptr = var_new_temp()
+    elem = new_temp()
+    p[1][0].place = idx
+    scopeid = stm.getScope(p[1][0].label)
+    stm.symTable[scopeid].localsymTable[p[1][0].label]['tmp'] = idx
+    p[1][1].place = elem
+    scopeid = stm.getScope(p[1][1].label)
+    stm.symTable[scopeid].localsymTable[p[1][1].label]['tmp'] = elem
+    code.append(f"{idx} = 0")
+    code.append(f"{elemptr}.pointer = {p[3].place}.pointer")
+    code.append(f"{elem} = *{elemptr}.pointer")
+    code.append(f"label begin_for_{stm.forStack[-1]}:")
+    cond_res = new_temp()
+    code.append(f"{cond_res} = {idx} <(int) {elemptr}.length")
+    code.append(f"if not {cond_res} goto end_for_{stm.forStack[-1]}")
+    p[0].code = code
+    p[0].vartemp = elemptr
 
 def p_RangeList(p):
     """
