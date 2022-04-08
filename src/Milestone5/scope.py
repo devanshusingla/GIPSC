@@ -1,6 +1,7 @@
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
+from cProfile import label
 from copy import deepcopy
 def zeroLit(dataType):
     if dataType == 'int':
@@ -130,7 +131,7 @@ class SymTableMaker:
             if type in self.symTable[j].avlTypes:
                 return ElementaryType(dataType={'name':type, 'baseType': type, 'level': 0})
             if type in self.symTable[j].typeDefs:
-                return self.symTable[j].typeDefs[type]
+                return deepcopy(self.symTable[j].typeDefs[type])
             else:
                 i -= 1
             
@@ -824,11 +825,13 @@ class StructFieldType(Type):
 
 class FuncParamType(Type):
     def __init__(self, dataType=[]):
-        super().__init__(dataType)
+        super().__init__()
+        self.dataType = dataType
+        self.children = []
     
     def addChild(self, type):
         self.dataType.append(type.dataType)
-        self.addChild(type)
+        self.children.append(type)
         for child in self.children:
                 if child and hasattr(child, "code"):
                     self.code.extend(child.code)

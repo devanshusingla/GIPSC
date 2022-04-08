@@ -1,6 +1,7 @@
 package main
 package fmt
 temp_0 = 3
+0_pre = temp_0
 
 Func Println
 temp_1 = 3
@@ -9,6 +10,7 @@ Func END
 
 import "fmt"
 temp_2 = 3
+0_a = temp_2
 
 Func Print
 Func END
@@ -34,6 +36,7 @@ temp_11 = 7
 2_y = temp_11
 2_e = 2_e - 1
 2_b = 2_b + 1
+goto label_0
 2_b = 2_e
 Func END
 

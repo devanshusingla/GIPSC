@@ -185,10 +185,11 @@ def p_TopLevelDeclMult(p):
     """
     if len(p)>1:
         p[0] = DeclNode()
-        if isinstance(p[1], list):
-            p[0].addChild(*p[1])
-        else:
-            p[0].addChild(p[1])
+        p[0].addChild(p[1])
+        # if isinstance(p[1], list):
+        #     p[0].addChild(p[1])
+        # else:
+            
 
         p[0].addChild(*p[3].children)
 
@@ -493,7 +494,6 @@ def p_VarSpec(p):
 
         # for expr in p[length]:
         #     p[0].code.extend(expr.code)
-
         if count_1 == 0:
             for i in range(len(p[1])):
                 p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
@@ -503,7 +503,6 @@ def p_VarSpec(p):
             for i in range(len(p[1])):
                 p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
                 stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
-
     else:
         not_base_type = False
 
@@ -698,7 +697,7 @@ def p_Expr(p):
         p[0].addChild(p[1], p[3])
         temp_var = new_temp()
 
-        p[0].code.append(f"{temp_var} = {p[1].place} {p[2]} {p[3].place}")
+        p[0].code.append(f"{temp_var} = {p[1].place} {p[2]}({dt['name']}) {p[3].place}")
         p[0].place = temp_var
 
 def p_UnaryExpr(p):
@@ -1034,14 +1033,19 @@ def p_PrimaryExpr(p):
                     code.append(f"params {argument.place}")
                 code.append(f"call {p[1].label}:")
                 p[2] = FuncCallNode(p[1], p[2])
-        p[0] = p[2]       
+                if len(info['return']) > 1:
+                    place = [f"retval_{p[1].label}_{i}" for i in range(len(info['return']))]
+                else:
+                    place = f"retval_{p[1].label}_0"
+        p[0] = p[2]                       
+
         p[0].isAddressable = True
         p[0].dataType = dt
         p[0].code.extend(code)
         p[0].place = place
         
         if isinstance(p[2], list):
-            p[0].isAddressable = False            
+            p[0].isAddressable = False  
 
 ###################################################################################
 ## Selector
@@ -1533,8 +1537,8 @@ def p_FuncSig(p):
             for i, param in enumerate(p[3][0].children):
                 stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True, 'paramOf': p[2].label}, True)
                 p[3][0].children[i].scope = stm.id
-    
-    stm.currentReturnType = p[3][1]
+    stm.currentReturnType = deepcopy(p[3][1])
+    # print("M: ", len(stm.currentReturnType.dataType), p.lexer.lineno)
 
     curr_func_id = p[2].label
     info_tables[curr_func_id] = {}
@@ -1649,9 +1653,11 @@ def p_ParametersType(p):
     if len(p) == 2:
         if isinstance(p[1], str):
             p[0] = FuncParamType()
+            print("F: ", p[0].__dict__)
             p[0].addChild(stm.findType(p[1]))
         else:
             p[0] = FuncParamType()
+            print("G: ", p[0].__dict__)
             p[0].addChild(p[1])
     else:
         if isinstance(p[3], str):
@@ -1659,6 +1665,7 @@ def p_ParametersType(p):
         else:
             p[1].addChild(p[3])
         p[0] = p[1]
+    print("R: ",len(p[0].dataType))
 
 ###################################################################################
 #####################                                        ######################
@@ -2002,7 +2009,6 @@ def p_ReturnStmt(p):
     # This case should never arise
     if stm.currentReturnType is None:
         raise LogicalError(f"{p.lexer.lineno}: Return statement outside of a function.")
-    # if len(stm.currentReturnType)
     if len(p) == 2:
         if stm.currentReturnType:
             raise LogicalError(f"{p.lexer.lineno}: Current function doesn't return nothing.")
@@ -2015,13 +2021,16 @@ def p_ReturnStmt(p):
                 returnvalues.extend(expr.dataType)
             else:
                 returnvalues.append(expr.dataType)
+        print(len(stm.currentReturnType.dataType), len(returnvalues))
         if len(stm.currentReturnType.dataType) != len(returnvalues):
             raise LogicalError(f"{p.lexer.lineno}: Different number of return values.")
         for returnDataType, ExprNodedt in zip(stm.currentReturnType.dataType, returnvalues):
             if returnDataType != ExprNodedt:
                 raise LogicalError(f"{p.lexer.lineno}: Return type of current function :{returnDataType} and the return statement {ExprNodedt} doesn't match.")
         p[0] = ReturnNode(p[2])
-        p[0].code.append("return params")
+        for expr in p[2]:
+            p[0].code.append(f"retparams {expr.place}")
+        p[0].code.append("return")
 
 ###################################################################################
 ### Break Statements

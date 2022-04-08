@@ -6,6 +6,7 @@ import (
 )
 
 func cos(x float64 ) float64 {
+	// return 4.0
 	return math.Sin(math.PI/2 - x);
 }
 

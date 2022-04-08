@@ -307,7 +307,6 @@ def isTypeCastable(stm, dt1, dt2):
         return True
     if 'name' in dt1 and 'name' in dt2 and dt1['name']!=dt2['name']:
         return False
-
     if 'name' not in dt1 or 'name'not in dt2:
         return False
 
@@ -321,7 +320,6 @@ def isTypeCastable(stm, dt1, dt2):
         l2 = dt2['level']
         dt1 = dt1['baseType']
         dt2 = dt2['baseType']
-
     if isinstance(dt1, str) and isinstance(dt2, str):
         dt1 = getBaseType(stm, dt1)
         dt2 = getBaseType(stm, dt2)
@@ -332,8 +330,8 @@ def isTypeCastable(stm, dt1, dt2):
             return True
         
         ## Float to int typecasting
-        # if (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float"):
-        #     return True
+        if (len(dt1) >= 3 and dt1[0:3] == "int") and (len(dt2) >= 5 and dt2[0:5] == "float"):
+            return True
         return False
 
     if isinstance(dt1, str) or isinstance(dt2, str):
@@ -498,7 +496,6 @@ def isValidGoto(stm : SymTableMaker, labelST : scope, gotoST : scope, checkNoSki
         # Opposite case considered here
         return checkAncestor(stm, gotoST.id, labelST.id)
 
-from scope import basicTypeSizes
 def constructDataType(baseType):
     return {
         'name' : baseType,

@@ -15,5 +15,6 @@ func main() {
 	mylabel2: y := 7
 	e--;
 	b++;
+	goto mylabel
 	b = e
 }
