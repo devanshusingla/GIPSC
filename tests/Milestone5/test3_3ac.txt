@@ -1,0 +1,70 @@
+package main
+package math
+temp_2 = 3.4
+
+Func Sin
+temp_3 = 2.0
+temp_4 = 0_PI * temp_3
+temp_5 = arg_[Sin_-8] / temp_4
+1_periods = temp_5
+temp_6 = 2.0
+temp_7 = 0_PI * temp_6
+temp_8 = temp_7 * 1_periods
+arg_[Sin_-8] = temp_8
+temp_9 = arg_[Sin_-8] * arg_[Sin_-8]
+temp_10 = temp_9 * arg_[Sin_-8]
+temp_11 = 6.0
+temp_12 = temp_10 / temp_11
+temp_13 = arg_[Sin_-8] - temp_12
+temp_14 = arg_[Sin_-8] * arg_[Sin_-8]
+temp_15 = temp_14 * arg_[Sin_-8]
+temp_16 = temp_15 * arg_[Sin_-8]
+temp_17 = temp_16 * arg_[Sin_-8]
+temp_18 = 120.0
+temp_19 = temp_17 / temp_18
+temp_20 = temp_13 + temp_19
+temp_21 = arg_[Sin_-8] * arg_[Sin_-8]
+temp_22 = temp_21 * arg_[Sin_-8]
+temp_23 = temp_22 * arg_[Sin_-8]
+temp_24 = temp_23 * arg_[Sin_-8]
+temp_25 = temp_24 * arg_[Sin_-8]
+temp_26 = temp_25 * arg_[Sin_-8]
+temp_27 = 5040.0
+temp_28 = temp_26 / temp_27
+temp_29 = temp_20 - temp_28
+return params
+Func END
+
+import "math"
+package fmt
+temp_0 = 3
+
+Func Println
+temp_1 = 3
+1_pre = temp_1
+Func END
+
+import "fmt"
+
+Func cos
+temp_30 = 2
+temp_31 = 0_PI / temp_30
+temp_32 = temp_31 - arg_[cos_-8]
+params temp_32
+call Sin:
+return params
+Func END
+
+
+Func main
+temp_33 = 2.2
+params temp_33
+call cos:
+2_x = None
+temp_34 = 7.8
+2_y = temp_34
+params 2_x
+call cos:
+2_y = None
+Func END
+

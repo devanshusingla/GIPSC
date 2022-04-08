@@ -10,6 +10,7 @@ Func END
 import "fmt"
 
 Func main
+label_0:
 temp_2 = 5
 1_x = temp_2
 1_x = 1_x + 1
@@ -26,6 +27,21 @@ temp_8 = 1_y + temp_7
 temp_13 = ""
 1_sentence = temp_13
 1_p = None
-call .:
+call Println:
+1_sentence = None
+temp_14 = - 1_x
+temp_15 = 2
+temp_16 = - temp_15
+temp_17 = temp_14 / temp_16
+temp_18 = 2
+temp_19 = - 1_x
+temp_20 = temp_18 / temp_19
+temp_21 = - temp_20
+temp_22 = temp_17 - temp_21
+1_x = temp_22
+temp_23 = 1
+temp_24 = 2
+temp_25 = temp_23 > temp_24
+goto label_0
 Func END
 

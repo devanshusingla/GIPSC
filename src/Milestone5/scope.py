@@ -877,8 +877,8 @@ class NodeList(list):
         if x and hasattr(x, "code"):
             self.code.extend(x.code)
     
-    def extend(self, *x):
-        super().extend(*x)
+    def extend(self, x):
+        super().extend(x)
         if x:
             for child in x:
                 if child and hasattr(child, "code"):

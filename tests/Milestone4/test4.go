@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	// mylabel : 
+	mylabel : 
 	// Testing for string literals inside format strings
 	// fmt.Println("Hello World! -CS335 Project\n\n\x31 Does this thing even work ''\"MikeTesting\" ``\t--")
 	var x int = 5
@@ -21,14 +21,14 @@ func main() {
 	var sentence string = ""
 	var p int = fmt.pre
 	fmt.Println()
-	// for i, word := range words {
-	// 	sentence += word
-	// 	x = -x/-2 - -(2/-x)
-	// }
+	for i, word := range words {
+		sentence += word
+		x = -x/-2 - -(2/-x)
+	}
 	// Print(sentence)
 	// Print("value of x := %d\n", x)
-	// if 1 > 2 {
-	// 	goto mylabel
-	// }
+	if 1 > 2 {
+		goto mylabel
+	}
 
 }

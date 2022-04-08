@@ -493,19 +493,16 @@ def checkAncestor(stm : SymTableMaker, lid, gid, noSkipVar=False):
 def isValidGoto(stm : SymTableMaker, labelST : scope, gotoST : scope, checkNoSkipVar=False):
     if checkNoSkipVar:
         return checkAncestor(stm, gotoST.id, labelST.id, checkNoSkipVar)
-        # if  < len(labelST.localsymTable):
-        #     return False
-        # if len(gotoST.avlTypes) < len(labelST.avlTypes):
-        #     return False
-        # if len(gotoST.typeDefs) < len(labelST.typeDefs):
-        #     return False
-        # return True
     else:
-        return checkAncestor(stm, labelST.id, gotoST.id)
-            
+        # Check logic whether it can happen that goto is an ancestor of label scope
+        # Opposite case considered here
+        return checkAncestor(stm, gotoST.id, labelST.id)
+
+from scope import basicTypeSizes
 def constructDataType(baseType):
     return {
         'name' : baseType,
         'baseType' : baseType,
-        'level': 0 
+        'level': 0,
+        'size': basicTypeSizes[baseType]
     }

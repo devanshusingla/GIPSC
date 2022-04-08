@@ -644,8 +644,8 @@ def p_ExpressionList(p):
                    | ExpressionList COMMA Expr
     """
     if len(p) == 2:
-        p[0] = NodeList([p[1]])
-
+        p[0] = NodeList([])
+        p[0].append(p[1])
     else:
         p[1].append(p[3])
         p[0] = p[1]
@@ -801,7 +801,10 @@ def p_PrimaryExpr(p):
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
-        p[0].place = stm.get(p[1]).get('tmp', None)
+        if stm_entry.get('isArg', None):
+            p[0].place = f'arg_[{stm_entry["paramOf"]}_{stm_entry["offset"]}]'
+        else:
+            p[0].place = stm_entry.get('tmp', None)
 
     ## PrimaryExpr -> LPAREN Expr RPAREN
     elif len(p) == 4:
@@ -820,6 +823,13 @@ def p_PrimaryExpr(p):
                     raise NameError(f"{p.lexer.lineno}: No such variable or function in package {p[1].label}")
                 p[0] = ExprNode(dataType=stm_entry['dataType'], label=p[2].children[0], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None), pkg=p[1].label)
                 p[0].addChild(p[1],p[2].children[0])
+                if 'tmp' in stm_entry:
+                    # Imported Variable
+                    p[0].place = stm_entry['tmp']
+                else:
+                    pass
+                    # Imported Function
+                    # p[0].code.append(f"{new_temp()} = loc_{p[1].label}_{p[2].children[0]}")                    
                 return
 
             if 'name' not in p[1].dataType:
@@ -1019,11 +1029,10 @@ def p_PrimaryExpr(p):
                     dt2 = paramList[i]
 
                     if not isTypeCastable(new_stm, dt1, dt2):
-                        raise TypeError(f"{p.lexer.lineno}: Type mismatch on argument number: " + i)
+                        raise TypeError(f"{p.lexer.lineno}: Type mismatch on argument number: {i} - {argument}")
 
                     code.append(f"params {argument.place}")
-
-                code.append(f"call {p[1]}:")
+                code.append(f"call {p[1].label}:")
                 p[2] = FuncCallNode(p[1], p[2])
         p[0] = p[2]       
         p[0].isAddressable = True
@@ -1513,7 +1522,7 @@ def p_FuncSig(p):
         else:
             stm.addFunction(p[2].label, {"params": p[3][0].dataType, "return": [], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
             for i, param in enumerate(p[3][0].children):
-                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True}, True)
+                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True, 'paramOf': p[2].label}, True)
                 p[3][0].children[i].scope = stm.id
 
     else:
@@ -1522,7 +1531,7 @@ def p_FuncSig(p):
         else:
             stm.addFunction(p[2].label, {"params": p[3][0].dataType, "return": p[3][1].dataType, "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}})
             for i, param in enumerate(p[3][0].children):
-                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True}, True)
+                stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True, 'paramOf': p[2].label}, True)
                 p[3][0].children[i].scope = stm.id
     
     stm.currentReturnType = p[3][1]
@@ -1818,12 +1827,19 @@ def p_Assignment(p):
         else:
             raise LogicalError(f"{p.lexer.lineno}: Imbalanced assignment with {len(p[1])} identifiers and {len(p[3])} expressions.")
     p[0] = NodeList([])
-    for key, val in zip(p[1], p[3]):
+    expression_dt = []
+    for i in range(len(p[3])):
+        expr = p[3][i]
+        if isinstance(expr.dataType, list):
+            expression_dt.extend(expr.dataType)
+        else:
+            expression_dt.append(expr.dataType)
+    for i, (key, val) in enumerate(zip(p[1], p[3])):
         if key.label != _symbol:
             if hasattr(key, 'isConst') and key.isConst == True:
                 raise TypeError(f"{p.lexer.lineno}: LHS contains constant! Cannot assign")
-            if key.dataType != val.dataType:
-                raise TypeError(f"{p.lexer.lineno}: Type of {key.label} : {key.dataType} and {val.label} : {val.dataType} doesn't match.")
+            if key.dataType != expression_dt[i]:
+                raise TypeError(f"{p.lexer.lineno}: Type of {key.label} : {key.dataType} and {val.label} : {expression_dt[i]} doesn't match.")
             if key.isAddressable == False:
                 raise TypeError(f"{p.lexer.lineno}: LHS expression is not assignable")
         exprNode = ExprNode(None, operator=p[2])
@@ -1915,12 +1931,10 @@ def p_ShortVarDecl(p):
             raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident)
         
         # Add to symbol table
-        dt = p[length][i].dataType
+        dt = expression_datatypes[i]
         stm.add(ident.label, {'dataType': dt, 'isConst' : False})
         p[1][i].dataType = dt
 
-    # for expr in p[length]:
-    #     p[0].code.extend(expr.code)
 
     if count_1 == 0:
         for i in range(len(p[1])):
@@ -1958,6 +1972,7 @@ def p_GotoStmt(p):
     else:
         # Label not declared before; expecting label; (forward jump)
         # Semantic analysis to be done when corresponding Label is parsed
+        # at the labeled stmt non-terminal
 
         # Will shallow copy work or do we need deepcopy?
         # Label is created for the first time from goto
@@ -1973,6 +1988,7 @@ def p_GotoStmt(p):
         }
             
     p[0] = GotoNode(p[2])
+    p[0].code.append(f"goto {stm.labels[p[2]]['mappedName']}")
 
 ###################################################################################
 ### Return Statements
@@ -1991,6 +2007,7 @@ def p_ReturnStmt(p):
         if stm.currentReturnType:
             raise LogicalError(f"{p.lexer.lineno}: Current function doesn't return nothing.")
         p[0] = ReturnNode([])
+        p[0].code.append("return")
     else:
         returnvalues = []
         for expr in p[2]:
@@ -2004,6 +2021,7 @@ def p_ReturnStmt(p):
             if returnDataType != ExprNodedt:
                 raise LogicalError(f"{p.lexer.lineno}: Return type of current function :{returnDataType} and the return statement {ExprNodedt} doesn't match.")
         p[0] = ReturnNode(p[2])
+        p[0].code.append("return params")
 
 ###################################################################################
 ### Break Statements
