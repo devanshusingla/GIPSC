@@ -77,8 +77,8 @@ def p_SourceFile(p):
             goto = stm.labels[label]['prevGotos'][0]
             raise LogicalError(f"{goto[1]}: Goto declared without declaring any label {label}.")
     p[4].addChild(p[3][1]) 
+    # p[4].code = ["// Source Code Top Level Declaration"] + p[4].code
     p[0] = FileNode(p[1], p[3][0], p[4])
-    print(p[0].code)
 
 ###################################################################################
 ### Package related grammar
@@ -353,8 +353,8 @@ def p_ConstSpec(p):
             stm.add(ident.label, {'dataType': dt, 'isConst' : True, 'val': val})
             p[1][i].dataType = dt
  
-    for expr in p[length]:
-        p[0].code.extend(expr.code)
+    # for expr in p[length]:
+    #     p[0].code.extend(expr.code)
 
     if count_1 == 0:
         for i in range(len(p[1])):
@@ -492,8 +492,8 @@ def p_VarSpec(p):
                 stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                 p[1][i].dataType = dt
 
-        for expr in p[length]:
-            p[0].code.extend(expr.code)
+        # for expr in p[length]:
+        #     p[0].code.extend(expr.code)
 
         if count_1 == 0:
             for i in range(len(p[1])):
@@ -538,7 +538,6 @@ def p_VarSpec(p):
 
         for i in range(len(p[1])):
             stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
-
 
 ###################################################################################
 ### Type Declarations
@@ -799,7 +798,6 @@ def p_PrimaryExpr(p):
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
-        print(p[1], p.lexer.lineno)
         p[0].place = stm.get(p[1])['tmp']
 
     ## PrimaryExpr -> LPAREN Expr RPAREN
@@ -848,10 +846,8 @@ def p_PrimaryExpr(p):
 
             # code.append(f"{temp} = {struct_off}")
             temp = new_temp()
-            print("5 ", temp)
             code.append(f"{temp} = {p[1].place} + {struct_off}")
             temp2 = new_temp()
-            print("6 ", temp2)
             code.append(f"{temp2} = *({temp2})")
             place = temp2
 
@@ -881,7 +877,6 @@ def p_PrimaryExpr(p):
                     dt['size'] = basicTypeSizes[dt['name']]
 
                 temp1 = new_temp()
-                print("7 ", temp1)
                 elem_size = 4
                 if 'baseType' in p[1].dataType:
                     elem_size = p[1].dataType['baseType']
@@ -893,10 +888,8 @@ def p_PrimaryExpr(p):
                         elem_size = 4
                 code.append(f"{temp1} = {p[2].place} * {elem_size}")
                 temp2 = new_temp()
-                print("8 ", temp2)
                 code.append(f"{temp2} = {p[1].place} + {temp1}")
                 temp3 = new_temp()        
-                print("9 ", temp3)                        
                 code.append(f"{temp3} = *{temp2}")
                 place = temp3             
 
@@ -1491,8 +1484,8 @@ def p_FuncDecl(p):
     """
     ## Make node
     p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
-    p[0].code.append(f"Func END")
-    
+    p[0].code.append(f"Func END\n")
+
     global curr_func_id
     stm.currentReturnType = None
     for symbol in stm.symTable[stm.id].localsymTable:
@@ -1534,23 +1527,7 @@ def p_FuncSig(p):
     curr_func_id = p[2].label
     info_tables[curr_func_id] = {}
 
-    code = [f"Func {p[1].label}"]
-    temp = NodeList([p[2], p[3]])
-    code.extend(temp.code)
-    p[0] = temp 
-    p[0].code = code 
-
-# def p_BeginFunc(p):
-#     """
-#     BeginFunc : 
-#     """
-#     stm.newScope()
-
-# def p_EndFunc(p):
-#     """
-#     EndFunc : 
-#     """
-#     stm.exitScope()
+    p[0] = NodeList([p[2], p[3]])
 
 ###################################################################################
 ## Function Name
@@ -1563,6 +1540,7 @@ def p_FunctionName(p):
         raise (f"{p.lexer.lineno}: Redeclaration of function " + p[1])
 
     p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
+    p[0].code.append(f"\nFunc {p[1]}")
 
 ###################################################################################
 ## Function Body
@@ -1682,12 +1660,18 @@ def p_StatementList(p):
                   | 
     """
     if len(p) == 4:
-        if isinstance(p[1], List):
-            p[1].extend(p[3])
-        elif p[1] is not None:
-            p[1] = [p[1]]
-            p[1].extend(p[3])
-        p[0] = p[1]
+        # if isinstance(p[1], list):
+        #     p[1].extend(p[3])
+        # elif p[1] is not None:
+        #     p[1] = NodeList([p[1]])
+        #     p[1].extend(p[3])
+        # p[0] = p[1]
+        # print(type(p[1]), type(p[3])) 
+        # print("P1_cODE: ", p[1].code)
+        # print("p3_code: ", p[3].code)
+        assert(isinstance(p[3], NodeList))
+        p[0] = NodeList([p[1]])
+        p[0].extend(p[3])
     else:
         p[0] = NodeList([])
 
@@ -1719,6 +1703,7 @@ def p_LabeledStmt(p):
     stm.labels[p[1]]['statementType'] = type(p[3])
     p[0] = LabelNode(p[1], LabelStatementNode(p[3], p.lexer.lineno))
     stm.currentLabel = None
+    p[0].code = [f"{stm.labels[p[1]]['mappedName']}:"] + p[0].code
 
 def p_JumpLabel(p):
     """
@@ -1821,8 +1806,10 @@ def p_IncDecStmt(p):
         raise LogicalError(f"{p.lexer.lineno}: Non-numeric type can't be incremented or decremented.")
     if p[2] == '++':
         p[0] = IncNode(p[1])
+        p[0].code.append(f"{p[1].place} = {p[1].place} + 1")
     else:
         p[0] = DecNode(p[1])
+        p[0].code.append(f"{p[1].place} = {p[1].place} - 1")
 
 ###################################################################################
 ### Assignment Statements
@@ -1848,6 +1835,8 @@ def p_Assignment(p):
         exprNode = ExprNode(None, operator=p[2])
         exprNode.addChild(key, val)
         p[0].append(exprNode)
+    for key, val in zip(p[1], p[3]):
+        p[0].code.append(f"{key.place} = {val.place}")
 
 def p_assign_op(p):
     """
@@ -1936,8 +1925,8 @@ def p_ShortVarDecl(p):
         stm.add(ident.label, {'dataType': dt, 'isConst' : False})
         p[1][i].dataType = dt
 
-    for expr in p[length]:
-        p[0].code.extend(expr.code)
+    # for expr in p[length]:
+    #     p[0].code.extend(expr.code)
 
     if count_1 == 0:
         for i in range(len(p[1])):

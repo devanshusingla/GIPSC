@@ -481,7 +481,7 @@ class FuncReturnNode(Node):
 class BlockNode(Node):
     def __init__(self, statements):
         super().__init__()
-        self.addChild(*statements)
+        self.addChild(statements)
     
     def __str__(self):
         return "{}"
