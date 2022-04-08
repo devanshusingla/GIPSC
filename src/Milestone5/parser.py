@@ -1446,10 +1446,9 @@ def p_FuncDecl(p):
     for symbol in stm.symTable[stm.id].localsymTable:
         if symbol not in info_tables[curr_func_id]:
             info_tables[curr_func_id][symbol] = {}
-
+            
         if stm.id not in info_tables[curr_func_id][symbol]:
             info_tables[curr_func_id][symbol][stm.id] = {}
-        
         info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
     curr_func_id = 'global'
     # Analyze whether return statements are present
