@@ -1,0 +1,47 @@
+package main
+package fmt
+temp_0 = 3
+
+Func Println
+temp_1 = 3
+1_pre = temp_1
+Func END
+
+import "fmt"
+
+Func demo
+temp_2 = "sdfdf"
+Func END
+
+
+Func hello
+temp_3 = "n"
+temp_4 = "s"
+temp_5 = "c"
+temp_6 = "st"
+temp_7 = 13244
+Func END
+
+
+Func main
+temp_8 = "Akshay"
+temp_9 = "PremNagar"
+temp_10 = "Dehradun"
+temp_11 = "Uttarakhand"
+temp_12 = 252636
+3_a = None
+call hello:
+3_b = None
+temp_13 = 3_a + 52
+temp_14 = *(temp_14)
+temp_15 = "Akshat"
+temp_14 = temp_15
+temp_16 = & 3_a
+3_x = temp_16
+temp_17 = * 3_x
+temp_18 = temp_17 + 52
+temp_19 = *(temp_19)
+temp_20 = "Kanpur"
+temp_19 = temp_20
+Func END
+

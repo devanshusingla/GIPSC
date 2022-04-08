@@ -1,0 +1,31 @@
+package main
+package fmt
+temp_0 = 3
+
+Func Println
+temp_1 = 3
+1_pre = temp_1
+Func END
+
+import "fmt"
+
+Func main
+temp_2 = 5
+1_x = temp_2
+1_x = 1_x + 1
+temp_3 = "Random String\n\n"
+None = temp_3
+temp_4 = "ABC!!"
+1_y = temp_4
+temp_5 = "123"
+temp_6 = "1212"
+temp_7 = temp_5 + temp_6
+temp_8 = 1_y + temp_7
+1_y = temp_8
+1_words = None
+temp_13 = ""
+1_sentence = temp_13
+1_p = None
+call .:
+Func END
+

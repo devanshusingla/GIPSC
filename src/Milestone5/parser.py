@@ -1,6 +1,5 @@
 from typing import List
 from copy import deepcopy
-from numpy import true_divide
 import ply.yacc as yacc
 import ply.lex as lex
 import lexer
@@ -776,7 +775,8 @@ def p_PrimaryExpr(p):
             
         if p[1] in stm.pkgs and stm.pkgs[p[1]] != None:
             p[0] = IdentNode(0, p[1], dataType={'name': 'package'})
-            p[0].place = stm.get(p[1])['tmp']
+            # The name of package doesn't have any place value
+            p[0].place = None
             return
 
         ## TODO : What is the need for this?        
@@ -785,7 +785,10 @@ def p_PrimaryExpr(p):
             # Assuming Constructor Initialisation
             dt = stm.symTable[0].typeDefs[p[1]]
             p[0] = ExprNode(dataType=dt, label=p[1], isAddressable=False, isConst=False, val=None)
-            p[0].place = stm.get(p[1])['tmp']
+            # Types need not have place values; they only has role in semantics
+            # may consider writing type conversion functions if supporting type conversion. 
+            # p[0].place = stm.get(p[1]).get('tmp', None)
+            p[0].place = None
             return
 
         # Check declaration
@@ -798,7 +801,7 @@ def p_PrimaryExpr(p):
         stm_entry = stm.get(p[1])
         dt = stm_entry['dataType']
         p[0] = ExprNode(dataType=dt, label = p[1], isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
-        p[0].place = stm.get(p[1])['tmp']
+        p[0].place = stm.get(p[1]).get('tmp', None)
 
     ## PrimaryExpr -> LPAREN Expr RPAREN
     elif len(p) == 4:
@@ -1040,7 +1043,7 @@ def p_Selector(p):
     """
     p[0] = DotNode(p[2])
 
-#########################FuncCallNo##########################################################
+###################################################################################
 ## Index
 
 def p_Index(p):
@@ -1660,15 +1663,6 @@ def p_StatementList(p):
                   | 
     """
     if len(p) == 4:
-        # if isinstance(p[1], list):
-        #     p[1].extend(p[3])
-        # elif p[1] is not None:
-        #     p[1] = NodeList([p[1]])
-        #     p[1].extend(p[3])
-        # p[0] = p[1]
-        # print(type(p[1]), type(p[3])) 
-        # print("P1_cODE: ", p[1].code)
-        # print("p3_code: ", p[3].code)
         assert(isinstance(p[3], NodeList))
         p[0] = NodeList([p[1]])
         p[0].extend(p[3])
