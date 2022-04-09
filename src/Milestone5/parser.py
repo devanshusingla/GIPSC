@@ -2185,7 +2185,6 @@ def p_SwitchStmt(p):
     """
     SwitchStmt :  ExprSwitchStmt
     """
-                #  | TypeSwitchStmt
     p[0] = p[1]
 
 ###################################################################################
@@ -2193,9 +2192,9 @@ def p_SwitchStmt(p):
 
 def p_ExprSwitchStmt(p):
     """
-    ExprSwitchStmt : SWITCH SimpleStmt SEMICOLON Expr LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+    ExprSwitchStmt : SWITCH BeginSwitch SimpleStmt SEMICOLON Expr LBRACE ExprCaseClauseMult EndSwitch RBRACE
                      | SWITCH Expr LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
-                     | SWITCH SimpleStmt SEMICOLON LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+                     | SWITCH BeginSwitch SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult EndSwitch RBRACE
                      | SWITCH LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
     """
     smtNode = None
@@ -2206,10 +2205,11 @@ def p_ExprSwitchStmt(p):
         ## Check if a case has been repeated
         lst = []
         for case in p[4]:
-            if case.children[0].children[0].label in lst:
-                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
-            else:
-                lst.append(case.children[0].children[0].label) 
+            if isinstance(case.children[0][0], CaseNode):
+                if case.children[0][0].children[0].label in lst:
+                    raise DuplicateKeyError("Case statement for " + case.children[0][0].children[0].label + " has been already written!")
+                else:
+                    lst.append(case.children[0][0].children[0].label) 
         casesNode = p[4]
         for statement in casesNode[-1].instrNode:
             if isinstance(statement, FallthroughNode):
@@ -2223,10 +2223,11 @@ def p_ExprSwitchStmt(p):
         ## Check if a case has been repeated
         lst = []
         for case in p[5]:
-            if case.children[0].children[0].label in lst:
-                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
-            else:
-                lst.append(case.children[0].children[0].label) 
+            if isinstance(case.children[0][0], CaseNode):
+                if case.children[0][0].children[0].label in lst:
+                    raise DuplicateKeyError("Case statement for " + case.children[0][0].children[0].label + " has been already written!")
+                else:
+                    lst.append(case.children[0][0].children[0].label) 
         varNode = p[2]
         casesNode = p[5]
         for statement in casesNode[-1].instrNode:
@@ -2236,10 +2237,11 @@ def p_ExprSwitchStmt(p):
         ## Check if a case has been repeated
         lst = []
         for case in p[6]:
-            if case.children[0].children[0].label in lst:
-                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
-            else:
-                lst.append(case.children[0].children[0].label) 
+            if isinstance(case.children[0][0], CaseNode):
+                if case.children[0][0].children[0].label in lst:
+                    raise DuplicateKeyError("Case statement for " + case.children[0][0].children[0].label + " has been already written!")
+                else:
+                    lst.append(case.children[0][0].children[0].label) 
 
         smtNode = p[2]
         casesNode = p[6]
@@ -2253,10 +2255,11 @@ def p_ExprSwitchStmt(p):
         ## Check if a case has been repeated
         lst = []
         for case in p[7]:
-            if case.children[0].children[0].label in lst:
-                raise DuplicateKeyError("Case statement for " + case.children[0].children[0].label + " has been already written!")
-            else:
-                lst.append(case.children[0].children[0].label) 
+            if isinstance(case.children[0][0], CaseNode):
+                if case.children[0][0].children[0].label in lst:
+                    raise DuplicateKeyError("Case statement for " + case.children[0][0].children[0].label + " has been already written!")
+                else:
+                    lst.append(case.children[0][0].children[0].label) 
         smtNode = p[2]
         varNode = p[4]
         casesNode = p[7]
@@ -2264,7 +2267,13 @@ def p_ExprSwitchStmt(p):
             if isinstance(statement, FallthroughNode):
                 raise LogicalError(f"{p.lexer.lineno}: Fallthrough statement can't be used in the last case of the switch statement.")
     
+    varNode.code.append(f"{stm.currentSwitchExpPlace} = {varNode.place}")
     p[0] = SwitchNode(smtNode, varNode, casesNode)
+    p[0].code.append(f"label end_switch_{stm.switchStack[-1]}:")
+    stm.switchStack.pop()
+    stm.exitScope()
+    stm.currentSwitchExpPlace = None
+    stm.nextCase = 0
 
 def p_BeginSwitch(p):
     """
@@ -2275,12 +2284,12 @@ def p_BeginSwitch(p):
         stm.currentLabel = None
     stm.newScope()
     stm.switchStack.append(p.lexer.lineno)
+    stm.currentSwitchExpPlace = new_temp()
 
 def p_EndSwitch(p):
     """
     EndSwitch : 
     """
-    stm.switchStack.pop()
     global curr_func_id
     for symbol in stm.symTable[stm.id].localsymTable:
         if symbol not in info_tables[curr_func_id]:
@@ -2290,7 +2299,6 @@ def p_EndSwitch(p):
             info_tables[curr_func_id][symbol][stm.id] = {}
         
         info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
-    stm.exitScope()
 
 def p_ExprCaseClauseMult(p):
     """
@@ -2307,19 +2315,36 @@ def p_ExprCaseClause(p):
     """
     ExprCaseClause : ExprSwitchCase COLON StatementList
     """
+    if isinstance(p[1][0], CasesNode):
+        cond_res = new_temp()
+        code = []
+        code.append(f"{cond_res} = {stm.currentSwitchExpPlace} ==({p[1][0].dataType['name']}) {p[1][0].place}")
+        code.append(f"if not {cond_res} then goto case_{stm.nextCase}_{stm.switchStack[-1]}")
+        p[1].code.extend(code)
+    else:
+        # Default Node case
+        pass
+    p[3].code.append(f"goto end_switch_{stm.switchStack[-1]}")
+    p[3].code.append(f"label case_{stm.nextCase}_{stm.switchStack[-1]}:")
     p[0] = CasesNode(p[1], p[3])
-
+    # print(p[0].code)
+    
 def p_ExprSwitchCase(p):
     """
     ExprSwitchCase : CASE ExpressionList
                      | DEFAULT
     """
     if len(p) == 3:
+        stm.nextCase += 1
         p[0] = NodeList([])
         if len(p[2]) > 1:
             raise SwitchCaseError("Complex expressions not allowed inside switch statement!")
         for expr in p[2]:
-            p[0].append(CaseNode(expr))
+            caseNode = CaseNode(expr)
+            caseNode.place = expr.place
+            caseNode.dataType = expr.dataType
+            
+            p[0].append(caseNode)
     else:
         p[0] = NodeList([DefaultNode()])
 

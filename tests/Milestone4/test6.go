@@ -10,17 +10,21 @@ func main() {
 	// fmt.Print("Write ", i, " as ")
 	switch i {
 	case "hello":
-		Print("hello")
+		Print("world")
 		break
 		// fmt.Println("one")
 	case "hi":
-		Print("hi")
+		Print("hello")
 		break
 		// fmt.Println("two")
 	case "yo":
-		Print("yo")
+		Print("man")
 		break
 		// fmt.Println("three")
+	default:
+		Print("Sdf")
+		x := 8
+		break
 	}
 	Print("Hello, 世界")
 }

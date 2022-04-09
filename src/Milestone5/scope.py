@@ -93,6 +93,8 @@ class SymTableMaker:
         self.nextLabel = 0
         self.forStack = []
         self.switchStack = []
+        self.currentSwitchExpPlace = None
+        self.nextCase = 0
         self.addBuiltInFuncs()
 
     def addFunction(self, label, info):
@@ -662,7 +664,7 @@ class ElseNode(Node):
 class SwitchNode(Node):
     def __init__(self, smtNode, varNode, casesNode):
         super().__init__()
-        self.addChild(smtNode, varNode, *casesNode)
+        self.addChild(smtNode, varNode, casesNode)
     
     def __str__(self):
         return "SWITCH"
@@ -671,7 +673,7 @@ class CasesNode(Node):
     def __init__(self, caseValsNode, instrNode):
         super().__init__()
         self.instrNode = instrNode
-        self.addChild(*caseValsNode, *instrNode)
+        self.addChild(caseValsNode, instrNode)
     
     def __str__(self):
         return "CASES"
@@ -680,6 +682,7 @@ class CaseNode(Node):
     def __init__(self, caseValNode):
         super().__init__()
         self.addChild(caseValNode)
+        self.dataType = None
 
     def __str__(self):
         return "CASE"
