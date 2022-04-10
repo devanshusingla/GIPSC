@@ -839,6 +839,7 @@ def p_PrimaryExpr(p):
                 if i == field:
                     found = True
                     dt = p[1].dataType['keyTypes'][i]
+                    break
 
                 struct_off += p[1].dataType['keyTypes'][i]['size']
 
@@ -851,9 +852,7 @@ def p_PrimaryExpr(p):
             # code.append(f"{temp} = {struct_off}")
             temp = new_temp()
             code.append(f"{temp} = {p[1].place} + {struct_off}")
-            temp2 = new_temp()
-            code.append(f"{temp2} = *({temp2})")
-            place = temp2
+            place = f"*{temp}"
 
             # dt = p[2].dataType[idx]
 
