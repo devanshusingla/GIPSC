@@ -818,46 +818,25 @@ def p_PrimaryExpr(p):
                     # Imported Variable
                     p[0].place = stm_entry['tmp']
                 else:
-                    pass
-                    # Imported Function
-                    # p[0].code.append(f"{new_temp()} = loc_{p[1].label}_{p[2].children[0]}")                    
+                    pass                
                 return
 
             if 'name' not in p[1].dataType or p[1].dataType['name'] != 'struct':
                 raise TypeError(f"{p.lexer.lineno}: Expecting struct type but found different one")
-            # if stm.findType(p[1].dataType['name']) != -1 or p[1].dataType['name'] == 'struct':
-            #     pass
-            # else:
-            #     raise TypeError(f"{p.lexer.lineno}: Expecting struct type but found different one")
             
             field = p[2].children[0]
-            # found = False
-            # idx = -1
 
 
             if field not in p[1].dataType['keyTypes']:
                 raise NameError(f"{p.lexer.lineno}: No such field found in " + p[1].label)
             struct_off = p[1].dataType['offset'][field]
-            
-            # for i in p[1].dataType['keyTypes']:
-            #     if i == field:
-            #         found = True
-            #         dt = p[1].dataType['keyTypes'][i]
-
-            #     struct_off += p[1].dataType['keyTypes'][i]['size']
 
             p[2].addChild(p[1])
             dt = p[1].dataType['keyTypes'][field]
-            # temp = new_temp()
-
-            # code.append(f"{temp} = {struct_off}")
+            
             temp = new_temp()
-            code.append(f"{temp} = {p[1].place}.addr + {struct_off}")
-            temp2 = new_temp()
-            code.append(f"{temp2} = *{temp}")
-            place = temp2
-
-            # dt = p[2].dataType[idx]
+            code.append(f"{temp} = {p[1].place} + {struct_off}")
+            place = f"*{temp}"
 
         ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
