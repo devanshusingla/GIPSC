@@ -1,3 +1,4 @@
+from re import L
 from tokenize import Name
 from scope import *
 import os
@@ -245,21 +246,23 @@ def checkUnOp(stm, dt, unOp, flag):
 
 
 def getUnaryType(stm, dt, unOp):
-    dt_copy = dt.copy()
     dt = getBaseType(stm, dt)
+    dt_copy = dt.copy()
 
     if unOp == '*':
-        dt_copy['level'] -= 1
-        if dt_copy['level'] == 0:
-            dt_copy['name'] = dt_copy['baseType']
+        dt_copy = dt_copy['baseType']
+        
+        if isinstance(dt_copy, str):
+            dt_copy = {'name': dt_copy, 'baseType': dt_copy, 'level': 0, 'size': basicTypeSizes[dt_copy]}
+        # dt_copy['level'] -= 1
+        # if dt_copy['level'] == 0:
+        #     dt_copy['name'] = dt_copy['baseType']
         return dt_copy
 
     if unOp == '&':
-        if isinstance(dt_copy, str):
-            return {'baseType': dt, 'level': 1, 'name': 'pointer', 'size': 4}
-        dt_copy['level'] += 1
-        if dt_copy['level'] == 1:
-            dt_copy['name'] = 'pointer'
+        dt_copy = {'baseType': dt, 'level': 1, 'name': 'pointer', 'size': 4}
+        if not isinstance(dt, str):
+            dt_copy['level'] += dt['level']
         return dt_copy
 
     if not isinstance(dt, str):

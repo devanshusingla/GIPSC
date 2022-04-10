@@ -823,36 +823,38 @@ def p_PrimaryExpr(p):
                     # p[0].code.append(f"{new_temp()} = loc_{p[1].label}_{p[2].children[0]}")                    
                 return
 
-            if 'name' not in p[1].dataType:
+            if 'name' not in p[1].dataType or p[1].dataType['name'] != 'struct':
                 raise TypeError(f"{p.lexer.lineno}: Expecting struct type but found different one")
-            if stm.findType(p[1].dataType['name']) != -1 or p[1].dataType['name'] == 'struct':
-                pass
-            else:
-                raise TypeError(f"{p.lexer.lineno}: Expecting struct type but found different one")
+            # if stm.findType(p[1].dataType['name']) != -1 or p[1].dataType['name'] == 'struct':
+            #     pass
+            # else:
+            #     raise TypeError(f"{p.lexer.lineno}: Expecting struct type but found different one")
             
             field = p[2].children[0]
-            found = False
-            idx = -1
-            struct_off = 0
+            # found = False
+            # idx = -1
+
+
+            if field not in p[1].dataType['keyTypes']:
+                raise NameError(f"{p.lexer.lineno}: No such field found in " + p[1].label)
+            struct_off = p[1].dataType['offset'][field]
             
-            for i in p[1].dataType['keyTypes']:
-                if i == field:
-                    found = True
-                    dt = p[1].dataType['keyTypes'][i]
+            # for i in p[1].dataType['keyTypes']:
+            #     if i == field:
+            #         found = True
+            #         dt = p[1].dataType['keyTypes'][i]
 
-                struct_off += p[1].dataType['keyTypes'][i]['size']
-
-            if not found:
-                raise NameError(f"{p.lexer.lineno}: No such field found in " + p[1].label)                
+            #     struct_off += p[1].dataType['keyTypes'][i]['size']
 
             p[2].addChild(p[1])
+            dt = p[1].dataType['keyTypes'][field]
             # temp = new_temp()
 
             # code.append(f"{temp} = {struct_off}")
             temp = new_temp()
-            code.append(f"{temp} = {p[1].place} + {struct_off}")
+            code.append(f"{temp} = {p[1].place}.addr + {struct_off}")
             temp2 = new_temp()
-            code.append(f"{temp2} = *({temp2})")
+            code.append(f"{temp2} = *{temp}")
             place = temp2
 
             # dt = p[2].dataType[idx]
@@ -876,7 +878,6 @@ def p_PrimaryExpr(p):
                 dt = deepcopy(p[1].dataType['baseType'])
 
                 if dt['level']==0:
-                    print(dt)
                     dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
                     dt['size'] = basicTypeSizes[dt['name']]
 
@@ -886,7 +887,7 @@ def p_PrimaryExpr(p):
                 # code.extend(p[2].code)
                 code.append(f"{temp1} = {p[2].place} * {elem_size}")
                 temp2 = new_temp()
-                code.append(f"{temp2} = {p[1].place} + {temp1}")
+                code.append(f"{temp2} = {p[1].place}.addr + {temp1}")
                 # temp3 = new_temp()        
                 # code.append(f"{temp3} = *{temp2}")
                 place = f"*{temp2}"       
@@ -955,23 +956,21 @@ def p_PrimaryExpr(p):
                     else:
                         raise TypeError(f"{p.lexer.lineno}: Index type incorrect")
  
-            elem_size = 4
-            if 'baseType' in p[1].dataType:
-                elem_size = p[1].dataType['baseType']
-                if elem_size in basicTypes:
-                    elem_size = basicTypeSizes[elem_size]
-                elif isinstance(elem_size, str):
-                    elem_size = getBaseType(elem_size).dataType['size']
-                else:
-                    elem_size = 4
+            dt = deepcopy(p[1].dataType['baseType'])
+
+            if dt['level']==0:
+                dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
+                dt['size'] = basicTypeSizes[dt['name']]
+
             temp1 = new_temp()
+            elem_size = dt['size']
             code.append(f"{temp1} = {p[2].lIndexNode.place} * {elem_size}")
             temp2 = new_temp()
             code.append(f"{temp2} = {p[2].rIndexNode.place} - {p[2].lIndexNode.place}")
             temp3 = new_temp()
             code.append(f"{temp3} = {p[1].place}.capacity - {p[2].lIndexNode.place}")
             temp4 = var_new_temp()
-            code.append(f"{temp4}.pointer = {p[1].place}.pointer + {temp1}")
+            code.append(f"{temp4}.addr = {p[1].place}.addr + {temp1}")
             code.append(f"{temp4}.length = {temp2}")
             code.append(f"{temp4}.capacity = {temp3}")
 
@@ -1152,17 +1151,11 @@ def p_PointerType(p):
                | MUL IDENT %prec UMUL
     """
     if isinstance(p[2], str):
-        name = p[2]
         p[2] = stm.findType(p[2])
-        p[0] = PointerType(p[2].dataType)
-        p[0].dataType['level'] = 1
-        p[0].dataType['baseType'] = name
-    else:
-        p[0] = PointerType(p[2].dataType)
-        p[0].dataType['level'] += 1
-        p[0].dataType['baseType'] = p[2].dataType['name']
-    
-    p[0].dataType['name'] = 'pointer'
+        if p[2] == -1:
+            raise TypeError(f"{p.lexer.lineno}: No such type")
+
+    p[0] = PointerType(p[2].dataType)
 
 ###################################################################################
 ### Slice Type
@@ -1649,11 +1642,11 @@ def p_ParametersType(p):
     if len(p) == 2:
         if isinstance(p[1], str):
             p[0] = FuncParamType()
-            print("F: ", p[0].__dict__)
+            # print("F: ", p[0].__dict__)
             p[0].addChild(stm.findType(p[1]))
         else:
             p[0] = FuncParamType()
-            print("G: ", p[0].__dict__)
+            # print("G: ", p[0].__dict__)
             p[0].addChild(p[1])
     else:
         if isinstance(p[3], str):
@@ -1661,7 +1654,7 @@ def p_ParametersType(p):
         else:
             p[1].addChild(p[3])
         p[0] = p[1]
-    print("R: ",len(p[0].dataType))
+    # print("R: ",len(p[0].dataType))
 
 ###################################################################################
 #####################                                        ######################
@@ -2027,7 +2020,7 @@ def p_ReturnStmt(p):
                 returnvalues.extend(expr.dataType)
             else:
                 returnvalues.append(expr.dataType)
-        print(len(stm.currentReturnType.dataType), len(returnvalues))
+        # print(len(stm.currentReturnType.dataType), len(returnvalues))
         if len(stm.currentReturnType.dataType) != len(returnvalues):
             raise LogicalError(f"{p.lexer.lineno}: Different number of return values.")
         for returnDataType, ExprNodedt in zip(stm.currentReturnType.dataType, returnvalues):

@@ -1,5 +1,8 @@
 from copy import deepcopy
 from distutils.log import Log
+from typing import List
+
+from numpy import isin
 
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
@@ -212,10 +215,8 @@ class Node:
     def addChild(self, *children):
         if children:
             self.children.extend(children)
-            # print(type(children), children)
             for child in children:
                 if child and hasattr(child, "code"):
-                    # print("Child: ", child.code)
                     self.code.extend(child.code)
 
     def __str__(self):
@@ -234,10 +235,6 @@ class ImportNode(Node):
 
     def __init__(self):
         super().__init__()
-
-    # def addChild(self, *children):
-    #     print(*children)
-    #     return super().addChild(*children)
         
     def __str__(self):
         return "IMPORT"
@@ -304,8 +301,6 @@ class CompositeLitNode(Node):
         self.place = var_new_temp()
         addr = new_temp()
 
-        print("in composite")
-
         if self.dataType['name'] == 'struct':
             hasKey = False
             hasNotKey = False
@@ -357,7 +352,6 @@ class CompositeLitNode(Node):
                         raise SyntaxError("Not changing literals to expressions properly")
 
         elif self.dataType['name'] == 'array':
-            print("in array")
             if len(elList) > int(self.dataType['length']):
                 raise "Too many arguments"
             vis = [False]*self.dataType['length']
@@ -384,19 +378,15 @@ class CompositeLitNode(Node):
                 elSize = self.dataType["baseType"]["size"]
             self.code.append(f"new {self.place} {elSize*self.dataType['length']}")
             self.code.append(f'{addr} = {self.place}.addr')
-            print("still in array")
             for i in range(self.dataType['length']):
                 if not vis[i]:
                     self.addChild(zeroLit(stm,self.dataType['baseType']))
                     self.code.append(f'*{addr} = 0')
                 else:
                     if isinstance(children[i], NodeList):
-                        print("yes still in array")
                         if isinstance(self.dataType['baseType'], str):
-                            print(f"{self.dataType['baseType']} : {children[i]}")
                             raise NameError("Normal literal should not be of type NodeList")
                         else:
-                            print("pretty much still in array")
                             children[i] = CompositeLitNode(stm, self.dataType['baseType'], children[i])
                     
                     self.addChild(children[i])
@@ -439,19 +429,15 @@ class CompositeLitNode(Node):
                 elSize = self.dataType["baseType"]["size"]
             self.code.append(f"new {self.place} {elSize*self.dataType['length']}")
             self.code.append(f'{addr} = {self.place}.addr')
-            print("still in array")
             for i in range(self.dataType['length']):
                 if not vis[i]:
                     self.addChild(zeroLit(stm,self.dataType['baseType']))
                     self.code.append(f'*{addr} = 0')
                 else:
                     if isinstance(children[i], NodeList):
-                        print("yes still in array")
                         if isinstance(self.dataType['baseType'], str):
-                            print(f"{self.dataType['baseType']} : {children[i]}")
                             raise NameError("Normal literal should not be of type NodeList")
                         else:
-                            print("pretty much still in array")
                             children[i] = CompositeLitNode(stm, self.dataType['baseType'], children[i])
                     
                     self.addChild(children[i])
@@ -832,8 +818,9 @@ class ElementaryType(Type):
 class PointerType(Type):
     def __init__(self, dataType = {}):
         super().__init__()    
-        self.dataType = dataType
-        self.dataType["size"] = 4
+        self.dataType = {'name': 'pointer', 'size': 4, 'level': 1, 'baseType': dataType}
+        if not isinstance(dataType, str):
+            self.dataType['level'] += dataType['level']
         self.children = None
     
     def __str__(self):

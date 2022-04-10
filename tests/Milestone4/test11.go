@@ -20,9 +20,11 @@ func hello() (Address) {
 func main() {
 	var a Address = Address("Akshay", "PremNagar", "Dehradun", "Uttarakhand", 252636)
 	var b Address = hello()
+	var c *int
 
 	// var a Address
 	a.name = "Akshat"
 	var x *Address = &a
+	*c = 5
 	(*x).city = "Kanpur"
 }
