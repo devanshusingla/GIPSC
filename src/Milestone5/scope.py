@@ -1,15 +1,42 @@
+from copy import deepcopy
+from distutils.log import Log
+
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
-from cProfile import label
-from copy import deepcopy
-def zeroLit(dataType):
-    if dataType == 'int':
-        dt = {'name' : 'int', 'baseType' : 'int', 'level' : 0}
-        return ExprNode(dt, label='0', operator=None, isConst=True, isAddressable=False, val=0)
+
+curr_temp = 0
+curr_var_temp = 0
+    
+def new_temp():
+    global curr_temp
+    temp = curr_temp
+    curr_temp += 1
+    return "temp_" +str(temp)
+
+def var_new_temp():
+    global curr_var_temp
+    var_temp = curr_var_temp 
+    curr_var_temp += 1
+    return "var_temp_" + str(var_temp)
+
+def zeroLit(stm, dataType):
+    if dataType in basicTypes:
+        dt = LitNode({'name' : dataType, 'baseType' : dataType, 'level' : 0, 'size': basicTypeSizes[dataType]}, label=None, isConst=True, val=None)
+        if dataType == "string" or dataType == "Rune":
+            dt.label = ""
+            dt.val = ""
+        elif dataType == "complex128":
+            dt.label = "0i"
+            dt.val = float(0)
+        else:
+            dt.label = "0"
+            dt.val = 0
+        return ExprNode(dt.dataType, label=dt.label, operator=None, isConst=True, isAddressable=False, val=dt.val)
         # return LitNode('0', dataType, isConst=True, val=0)
     else:
-        raise NotImplementedError
+        if dataType['name'] == 'struct':
+            return CompositeLitNode(stm, dataType, NodeList([zeroLit(stm, dt) for dt in dataType["keyTypes"].values()]))
 
 class ScopeTableError(Exception):
     pass
@@ -260,10 +287,17 @@ import utils
 class CompositeLitNode(Node):
     def  __init__(self, stm, compositeLitType, elList):
         super().__init__()
-        self.dataType = compositeLitType.dataType
+        self.dataType = compositeLitType
         self.children = []
         if not isinstance(elList, list):
             raise NameError("Expected List of values")
+
+        # Initialising var_temp variable in 3ac code
+        self.place = var_new_temp()
+        addr = new_temp()
+
+        print("in composite")
+
         if self.dataType['name'] == 'struct':
             hasKey = False
             hasNotKey = False
@@ -276,6 +310,7 @@ class CompositeLitNode(Node):
             if hasKey and hasNotKey:
                 raise NameError("all elements should have key or not have key")
             
+            self.code.append(f"new {self.place} {self.dataType['size']}")
             if hasKey:
                 kv = {}
                 for el in elList:
@@ -289,32 +324,36 @@ class CompositeLitNode(Node):
                     if key in kv:
                         val = kv[key]
                     else:
-                        val = zeroLit(t)
+                        val = zeroLit(stm,t)
+
                     if isinstance(val, ExprNode):
                         self.addChild(StructFieldNode(key, val))
-                    elif t.name in compositeTypes:
-                        self.addChild(StructFieldNode(key, CompositeLitNode(t, val)))
+                        self.code.append(f'{addr} = {self.place}.addr+{self.dataType["offset"][key]}')
+                        self.code.append(f'*{addr} = {val.place}')
                     else:
-                        self.addChild(StructFieldNode(key, LitNode(val, t)))
+                        raise SyntaxError("Not changing literals to expressions properly")
             
             else:
                 if len(elList) != len(self.dataType['keyTypes']):
                     raise NameError("Unequal arguments for structure")
+
                 for (key, t), val in zip(self.dataType['keyTypes'].items(), elList):
                     if not utils.isTypeCastable(stm, t, val.dataType):
                         raise TypeError(f"Type of {key} of struct: {t['name']} doesn't match with type of {val.label} : {val.dataType['name']}")
+                    
                     if isinstance(val, ExprNode):
                         self.addChild(StructFieldNode(key, val))
-                    elif t.name in compositeTypes:
-                        self.addChild(StructFieldNode(key, CompositeLitNode(t, val)))
+                        self.code.append(f'{addr} = {self.place}.addr+{self.dataType["offset"][key]}')
+                        self.code.append(f'*{addr} = {val.place}')
                     else:
-                        self.addChild(StructFieldNode(key, LitNode(val, t)))
+                        raise SyntaxError("Not changing literals to expressions properly")
 
         elif self.dataType['name'] == 'array':
+            print("in array")
             if len(elList) > int(self.dataType['length']):
                 raise "Too many arguments"
             vis = [False]*self.dataType['length']
-            self.children = [None]*self.dataType['length']
+            children = [None]*self.dataType['length']
             prevKey = -1
             for el in elList:
                 if isinstance(el, KeyValNode):
@@ -329,19 +368,37 @@ class CompositeLitNode(Node):
                 if vis[prevKey]:
                     raise NameError("Duplicate index in array")
                 vis[prevKey] = True
-                self.children[prevKey] = el
-                # if self.dataType['baseType'] in compositeTypes:
-                #     self.children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
-                # else:
-                #     self.children[prevKey] = LitNode(el, self.dataType['baseType'])
+                children[prevKey] = el
 
+            if isinstance(self.dataType["baseType"], str):
+                elSize = basicTypeSizes[self.dataType["baseType"]]
+            else:
+                elSize = self.dataType["baseType"]["size"]
+            self.code.append(f"new {self.place} {elSize*self.dataType['length']}")
+            self.code.append(f'{addr} = {self.place}.addr')
+            print("still in array")
             for i in range(self.dataType['length']):
                 if not vis[i]:
-                    self.children[i] = zeroLit(self.dataType['baseType'])
+                    self.addChild(zeroLit(stm,self.dataType['baseType']))
+                    self.code.append(f'*{addr} = 0')
+                else:
+                    if isinstance(children[i], NodeList):
+                        print("yes still in array")
+                        if isinstance(self.dataType['baseType'], str):
+                            print(f"{self.dataType['baseType']} : {children[i]}")
+                            raise NameError("Normal literal should not be of type NodeList")
+                        else:
+                            print("pretty much still in array")
+                            children[i] = CompositeLitNode(stm, self.dataType['baseType'], children[i])
+                    
+                    self.addChild(children[i])
+                    self.code.append(f'*{addr} = {children[i].place}')
+                
+                self.code.append(f'{addr} = {addr}+{elSize}')
 
         elif self.dataType['name'] == 'slice':
-            self.vis = []
-            self.children = []
+            vis = []
+            children = []
             prevKey = -1
             for el in elList:
                 if isinstance(el, KeyValNode):
@@ -351,26 +408,50 @@ class CompositeLitNode(Node):
                 else:
                     prevKey += 1
                 
-                if prevKey >= len(self.children)-1:
-                    self.children.extend([None]*(prevKey+1-len(self.children)))
-                    self.vis.extend([False]*(prevKey+1-len(self.vis)))
+                if prevKey >= len(children)-1:
+                    children.extend([None]*(prevKey+1-len(children)))
+                    vis.extend([False]*(prevKey+1-len(vis)))
 
-                if self.vis[prevKey]:
+                if vis[prevKey]:
                     raise NameError("Duplicate index in array")
-                self.vis[prevKey] = True
+                vis[prevKey] = True
                 if isinstance(el, ExprNode):
-                    self.children[prevKey] = el
+                    children[prevKey] = el
                 elif self.dataType['baseType'] in compositeTypes:
-                    self.children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
+                    children[prevKey] = CompositeLitNode(self.dataType['baseType'], el)
                 else:
-                    self.children[prevKey] = LitNode(el, self.dataType['baseType'])
+                    children[prevKey] = LitNode(el, self.dataType['baseType'])
 
-            for i in range(len(self.children)):
-                if not self.vis[i]:
-                    self.children[i] = zeroLit(self.dataType['baseType'])
-            self.dataType['length'] = len(self.children)
+            self.dataType['length'] = len(children)
             self.dataType['capacity'] = self.dataType['length']
 
+            if isinstance(self.dataType["baseType"], str):
+                elSize = basicTypeSizes[self.dataType["baseType"]]
+            else:
+                elSize = self.dataType["baseType"]["size"]
+            self.code.append(f"new {self.place} {elSize*self.dataType['length']}")
+            self.code.append(f'{addr} = {self.place}.addr')
+            print("still in array")
+            for i in range(self.dataType['length']):
+                if not vis[i]:
+                    self.addChild(zeroLit(stm,self.dataType['baseType']))
+                    self.code.append(f'*{addr} = 0')
+                else:
+                    if isinstance(children[i], NodeList):
+                        print("yes still in array")
+                        if isinstance(self.dataType['baseType'], str):
+                            print(f"{self.dataType['baseType']} : {children[i]}")
+                            raise NameError("Normal literal should not be of type NodeList")
+                        else:
+                            print("pretty much still in array")
+                            children[i] = CompositeLitNode(stm, self.dataType['baseType'], children[i])
+                    
+                    self.addChild(children[i])
+                    self.code.append(f'*{addr} = {children[i].place}')
+                
+                self.code.append(f'{addr} = {addr}+{elSize}')
+
+        # TODO add map comoposite
         elif self.dataType['name'] == 'map':
             # print("TODO: Map not implemented in CompositeLitNode")
             # Working with elList
@@ -769,6 +850,8 @@ class BrackType(Type):
         self.dataType = {
             'baseType' : elementType,
             'size' : 12,
+            'level': elementType['level']+1,
+            'name' : 'slice' if length is None else 'array'
         }
         if length:
             self.dataType['length'] = length.val
@@ -797,12 +880,13 @@ class StructType(Type):
     def __init__(self, fieldList):
         super().__init__()
         size=0
-        self.dataType = {'name': "struct", 'keyTypes': {}, 'level' : 0}
+        self.dataType = {'name': "struct", 'keyTypes': {}, 'level' : 0, 'offset': {}}
         for field in fieldList:
             if field.dataType['key'] in self.dataType['keyTypes']:
                 raise NameError("Can not have same key names in two fields of structure")
             else:
                 self.dataType['keyTypes'][field.dataType['key']] = field.dataType['dataType']
+                self.dataType['offset'][field.dataType['key']] = size
                 size += field.dataType['size']
         
         self.dataType['size'] = size

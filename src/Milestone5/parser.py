@@ -47,23 +47,9 @@ info_tables = {}
 stm = SymTableMaker()
 target_folder = ''
 curr_func_id = 'global'
-curr_temp = 0
-curr_var_temp = 0
 
 _symbol = '_'
 stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 4}})
-    
-def new_temp():
-    global curr_temp
-    temp = curr_temp
-    curr_temp += 1
-    return "temp_" +str(temp)
-
-def var_new_temp():
-    global curr_var_temp
-    var_temp = curr_var_temp 
-    var_temp += 1
-    return "var_temp_" + str(var_temp)
 
 
 def p_SourceFile(p):
@@ -887,23 +873,15 @@ def p_PrimaryExpr(p):
                     else:
                         raise TypeError(f"{p.lexer.lineno}: Index type incorrect")
 
-                dt = p[1].dataType.copy()
-                dt['level']-=1
+                dt = deepcopy(p[1].dataType['baseType'])
 
                 if dt['level']==0:
+                    print(dt)
                     dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
                     dt['size'] = basicTypeSizes[dt['name']]
 
                 temp1 = new_temp()
-                elem_size = 4
-                if 'baseType' in p[1].dataType:
-                    elem_type = p[1].dataType['baseType']
-                    if elem_type in basicTypes:
-                        elem_size = basicTypeSizes[elem_type]
-                    elif isinstance(elem_type, str):
-                        elem_size = getBaseType(elem_type).dataType['size']
-                    else:
-                        elem_size = 4
+                elem_size = dt['size']
                 code.extend(p[1].code)
                 # code.extend(p[2].code)
                 code.append(f"{temp1} = {p[2].place} * {elem_size}")
@@ -1012,7 +990,7 @@ def p_PrimaryExpr(p):
                 if not isinstance(dt, StructType):
                     raise TypeError(f'Not of type struct')
                 
-                p[2] = CompositeLitNode(new_stm, dt, p[2])
+                p[2] = CompositeLitNode(new_stm, dt.dataType, p[2])
                 p[0] = p[2]
                 p[0].dataType = dt.dataType
                 p[0].isAddressable = False
@@ -1194,11 +1172,11 @@ def p_SliceType(p):
     """
     SliceType : LBRACK RBRACK ElementType
     """
-    p[0] = BrackType(p[3])
+    p[0] = BrackType(p[3].dataType)
         
-    p[0].dataType['baseType'] = p[3].dataType['baseType']
-    p[0].dataType['level'] = p[3].dataType['level'] + 1
-    p[0].dataType['name'] = 'slice'
+    # p[0].dataType['baseType'] = p[3].dataType['baseType']
+    # p[0].dataType['level'] = p[3].dataType['level'] + 1
+    # p[0].dataType['name'] = 'slice'
 
 ###################################################################################
 ### Array Type
@@ -1208,15 +1186,15 @@ def p_ArrayType(p):
     """
     ArrayType : LBRACK ArrayLength RBRACK ElementType
     """
-    p[0] = BrackType(p[4], p[2])
+    p[0] = BrackType(p[4].dataType, p[2])
 
-    if 'baseType' in p[4].dataType:
-        p[0].dataType['baseType'] = p[4].dataType['baseType']
-    else:
-        p[0].dataType['baseType'] = p[4].dataType['name']
-    p[0].dataType['level'] = p[4].dataType['level'] + 1
+    # if 'baseType' in p[4].dataType:
+    #     p[0].dataType['baseType'] = p[4].dataType['baseType']
+    # else:
+    #     p[0].dataType['baseType'] = p[4].dataType['name']
+    # p[0].dataType['level'] = p[4].dataType['level'] + 1
     
-    p[0].dataType['name'] = 'array'
+    # p[0].dataType['name'] = 'array'
 
 def p_ArrayLength(p):
     """
@@ -1441,7 +1419,7 @@ def p_CompositeLit(p):
     if isinstance(p[1], str):
         p[1] = stm.findType(p[1])
 
-    p[0] = CompositeLitNode(stm, p[1], p[2])
+    p[0] = CompositeLitNode(stm, p[1].dataType, p[2])
 
 def p_LiteralValue(p):
     """

@@ -14,7 +14,7 @@ type Address struct {
 }
 
 func hello() (Address) {
-	return Address("n", "s", "c", "st", 13244)
+	return Address("n", "s"+"r", "c", "st", 13244)
 }
 
 func main() {
