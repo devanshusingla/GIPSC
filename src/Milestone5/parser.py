@@ -51,7 +51,6 @@ curr_func_id = 'global'
 _symbol = '_'
 stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 4}})
 
-
 def p_SourceFile(p):
     """
     SourceFile : PackageClause SEMICOLON ImportDeclMult TopLevelDeclMult
@@ -296,6 +295,14 @@ def p_ConstSpec(p):
     if not isinstance(p[2], str):
         not_base_type = True
 
+    extended_list = []
+
+    for expr in p[length]:
+        if isinstance(expr, list):
+            extended_list.extend(expr)
+        else:
+            extended_list.append(expr)
+
     for i, ident in enumerate(p[1]):
 
         # Check redeclaration for identifier list
@@ -318,24 +325,24 @@ def p_ConstSpec(p):
             if present == -1:
                 raise TypeError(f'{p.lexer.lineno}: Type not declared/found: ' + dt)
             else:
-                val = p[length][i]
+                val = extended_list[i].label
                 # Add to symbol table
                 size = 0
                 if dt['name'].startswith('int'):
-                    val = int(p[length][i].label)
+                    val = int(extended_list[i].label)
                 elif dt['name'].startswith('float'):
-                    val = float(p[length][i].label)
+                    val = float(extended_list[i].label)
                 ## Write conditions for rune and other types
                 stm.add(ident.label, {'dataType': dt, 'isConst' : True, 'val': val})
                 p[1][i].dataType = dt
         else:
-            val = p[length][i]
-            dt = p[length][i].dataType
+            val = extended_list[i].label
+            dt = extended_list[i].dataType
             # Add to symbol table
             if dt['name'].startswith('int'):
-                val = int(p[length][i].label)
-            elif dt['name'].startswith('float'):
-                val = float(p[length][i].label)
+                val = int(extended_list[i].label)
+            elif dt['name'].startswith('float'):    
+                val = float(extended_list[i].label)
             ## Write conditions for rune and other types
             stm.add(ident.label, {'dataType': dt, 'isConst' : True, 'val': val})
             p[1][i].dataType = dt
@@ -447,6 +454,14 @@ def p_VarSpec(p):
         if not isinstance(p[2], str):
             not_base_type = True
 
+        extended_list = []
+
+        for expr in p[length]:
+            if isinstance(expr, list):
+                extended_list.extend(expr)
+            else:
+                extended_list.append(expr)
+
         for i, ident in enumerate(p[1]):
 
             # Check redeclaration for identifier list
@@ -474,7 +489,7 @@ def p_VarSpec(p):
                     stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                     p[1][i].dataType = dt    
             else:
-                dt = p[length][i].dataType
+                dt = extended_list[i].dataType
                 # Add to symbol table
                 stm.add(ident.label, {'dataType': dt, 'isConst' : False})
                 p[1][i].dataType = dt
@@ -678,6 +693,7 @@ def p_Expr(p):
         val = None
         if isinstance(p[1], ExprNode) and isinstance(p[3], ExprNode) and p[1].isConst and p[3].isConst:
             isConst = True
+            print("Line: ", p.lexer.lineno, p[1].val, p[3].val);
             val = Operate(p[2], p[1].val, p[3].val, p.lexer.lineno, p[3].dataType['name'])
 
         p[0] = ExprNode(operator = p[2], dataType = dt, isConst = isConst, val=val, label = val)
@@ -781,6 +797,11 @@ def p_PrimaryExpr(p):
             # p[0].place = stm.get(p[1]).get('tmp', None)
             p[0].place = None
             return
+
+        # If typecast function
+        if p[1] in utils.basicTypes and isBasicNumeric(stm, {'baseType': p[1], 'level': 0}):
+            p[0] = ExprNode(dataType = {'baseType': 'typeCastFunc'}, label = p[1], isAddressable = True, isConst = False)
+            pass
 
         # Check declaration
         latest_scope = ((stm.getScope(p[1]) != -1) or (p[1] in stm.functions)) 
@@ -983,6 +1004,30 @@ def p_PrimaryExpr(p):
                 new_stm = stm.pkgs[p[1].pkg]
             else:
                 new_stm = stm
+
+            if p[1].label in basicTypes and isBasicNumeric(stm, {'baseType': p[1].label, 'level': 0}):
+                if len(p[2]) > 1:
+                    raise LogicalError(f"{p.lexer.lineno:} Only one expression can be typecasted at a time!")
+                
+                dt = p[2][0].dataType
+                if isinstance(p[2][0].dataType, list) and len(p[2][0].dataType) > 1:
+                    raise LogicalError(f"{p.lexer.lineno:} Only one expression can be typecasted at a time!")
+                elif isinstance(p[2][0].dataType, list):
+                    dt = p[2][0].dataType[0]
+                
+                if not isBasicNumeric(stm, dt):
+                    raise TypeError(f"{p.lexer.lineno:} Only Basic Numeric Types can be typecasted with each other!")
+                else:
+                    code.append(f"params {p[2][0].place}")
+                    code.append(f"call {stm.id}_typecast_{dt['baseType']}_to_{p[1].label}:")
+                    place = f"retval_{stm.id}_typecast_{dt['baseType']}_to_{p[1].label}_0"
+                    p[0] = FuncCallNode(p[1], p[2])
+                    p[0].isAddressable = False
+                    p[0].dataType = {'baseType': p[1].label, 'name': p[1].label, 'level': 0, 'size': utils.basicTypeSizes[p[1].label]}
+                    p[0].code.extend(code)
+                    p[0].place = place            
+                return
+
             dt = new_stm.findType(p[1].label)
 
             if dt != -1:
@@ -1005,6 +1050,14 @@ def p_PrimaryExpr(p):
                 if info['return'] != None:
                     dt = info['return']
 
+                temp = []
+                for expr in p[2]:
+                    if isinstance(expr, list):
+                        temp.extend(expr)
+                    else:
+                        temp.append(expr)
+
+                p[2] = temp
                 if len(paramList) != len(p[2]):
                     raise NameError(f"{p.lexer.lineno}: Different number of arguments in function call: " + p[1].label + "\n Expected " + str(len(paramList)) + " number of arguments but got " + str(len(p[2])))
 

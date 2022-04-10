@@ -2,12 +2,12 @@ package main
 
 import "fmt"
 
-const temp int = 3
+const temp float64 = float64(3)
 
-// func add(a, b int) (int) {
-// 	return a + b
-// }
+func add(a, b int) (int) {
+	return a + b
+}
 
 func main() {
-	*(&(temp)) = 8
+	var x int64 = int64(add(int(temp), int(temp + float64(2))))
 }

@@ -398,6 +398,7 @@ def Operate(operator, operand1, operand2, lineno, dt2):
     # TODO : Check for overflow issues
     # Do type checks
     flag = False 
+    print(type(operand1), type(operand2))
     if isinstance(operand1, str):
         flag = True 
         operand1 = operand1[1:-1]

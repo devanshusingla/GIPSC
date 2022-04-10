@@ -2,6 +2,7 @@ from copy import deepcopy
 from distutils.log import Log
 
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
+basicNumericTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'rune']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 
@@ -125,6 +126,7 @@ class SymTableMaker:
         self.currentSwitchExpPlace = None
         self.nextCase = 0
         self.addBuiltInFuncs()
+        self.addTypeCastFunctions()
 
     def addFunction(self, label, info):
         self.functions[label] = deepcopy(info)
@@ -197,6 +199,13 @@ class SymTableMaker:
     def getNewLabel(self):
         self.nextLabel += 1
         return f"label_{self.nextLabel-1}"
+
+    def addTypeCastFunctions(self):
+        for type1 in basicNumericTypes:
+            func = type1
+            dt = {'baseType': type1, 'name': type1, 'level': 0, 'size': basicTypeSizes[type1]}
+            info = {"params": [], "return": [dt], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}}
+            self.functions[type1] = deepcopy(info)            
     
     def addBuiltInFuncs(self):
         print("TODO: Add builtin function definitions by parsing or by hard coding")
