@@ -59,6 +59,8 @@ class scope:
         self.typeDefs = {}
         self.offset=0
         self.negoffset=0
+        self.okReturn = False
+        self.NotAllChildReturn = False
 
     def insert(self, id, info, isarg=False):
         if not isarg:
@@ -99,7 +101,7 @@ class SymTableMaker:
         self.symTable : dict[int, scope] = {}
         self.symTable[0] = scope(0)
         self.functions = {}
-        self.stack = [0]
+        self.stack : List[scope] = [0]
         self.id = 0
         self.nextId = 1
         self.currentReturnType = None
@@ -138,6 +140,12 @@ class SymTableMaker:
         self.nextId += 1
     
     def exitScope(self):
+        if self.symTable[self.id].okReturn == True:
+            if len(self.stack) >= 2:
+                self.symTable[self.stack[-2]].okReturn = True
+        if self.symTable[self.id].okReturn == False:
+            if len(self.stack) >= 2:
+                self.symTable[self.stack[-2]].NotAllChildReturn = True
         self.stack.pop()
         self.id = self.stack[-1]
     

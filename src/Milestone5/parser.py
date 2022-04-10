@@ -1487,20 +1487,26 @@ def p_FuncDecl(p):
              | FuncSig
     """
     ## Make node
-    p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
+    if len(p) == 2:
+        p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], None)
+    else:
+        p[0] = FuncNode(p[1][0], p[1][1][0], p[1][1][1], p[2])
     p[0].code.append(f"Func END\n")
+
 
     global curr_func_id
     stm.currentReturnType = None
     for symbol in stm.symTable[stm.id].localsymTable:
         if symbol not in info_tables[curr_func_id]:
             info_tables[curr_func_id][symbol] = {}
-
+            
         if stm.id not in info_tables[curr_func_id][symbol]:
             info_tables[curr_func_id][symbol][stm.id] = {}
-        
         info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
     curr_func_id = 'global'
+    # Analyze whether return statements are present
+    if len(p[1][1][1].dataType) > 0 and not stm.symTable[stm.id].okReturn:
+        raise LogicalError(f"{p.lexer.lineno}: Function having non-void return type doesn't return anything.")
     stm.exitScope()
 
 def p_FuncSig(p):
@@ -1551,9 +1557,9 @@ def p_FunctionName(p):
 
 def p_FunctionBody(p):
     """
-    FunctionBody : Block
+    FunctionBody : BlockStart Block BlockEnd
     """
-    p[0] = p[1]
+    p[0] = p[2]
 
 ###################################################################################
 ## Function Signature
@@ -1682,7 +1688,7 @@ def p_Statement(p):
               | BreakStmt
               | ContinueStmt
               | FallthroughStmt
-              | Block
+              | BlockStart Block BlockEnd
               | GotoStmt
               | LabeledStmt
               | IfStmt
@@ -1736,7 +1742,7 @@ def p_Label(p):
             for goto in stm.labels[p[1]]['prevGotos']:
                 gotoScopeTab, gotoLineno = goto
                 if not isValidGoto(stm, labelScopeTab, gotoScopeTab, checkNoSkipVar=True):
-                    raise LogicalError(f"{p.lexer.lineno}: Invalid placement of Goto at {gotoLineno} - Goto statement outside of a block can't jump inside a block and variable declarations can't be skipped.")
+                    raise LogicalError(f"{p.lexer.lineno}: Invalid placement of Goto at {gotoLineno} - Goto statement outside of a Block can't jump inside a Block and variable declarations can't be skipped.")
             stm.labels[p[1]]['scopeTab'] = labelScopeTab
             stm.labels[p[1]]['expecting'] = False
             stm.labels[p[1]]['scopeTab'] = labelScopeTab
@@ -1922,7 +1928,14 @@ def p_ShortVarDecl(p):
         exprNode = ExprNode(None, label="DEFINE", operator="=")
         exprNode.addChild(key, val)
         p[0].append(exprNode)
-
+    return_values = []
+    for expr in p[length]:
+        exprDt = expr.dataType
+        if isinstance(exprDt, list):
+            return_values.extend(exprDt)
+        else:
+            return_values.append(exprDt)
+    assert(len(return_values) == len(p[1]))
     for i, ident in enumerate(p[1]):
 
         # Check redeclaration for identifier list
@@ -1931,7 +1944,7 @@ def p_ShortVarDecl(p):
             raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident.label)
         
         # Add to symbol table
-        dt = expression_datatypes[i]
+        dt = return_values[i]
         stm.add(ident.label, {'dataType': dt, 'isConst' : False})
         p[1][i].dataType = dt
 
@@ -1967,7 +1980,7 @@ def p_GotoStmt(p):
             # Label already declared before (backward jump)
             # Check parent condition
             if not isValidGoto(stm, stm.labels[p[2]]['scopeTab'], gotoScopeTab):
-                raise LogicalError(f"{p.lexer.lineno}: Invalid placement of goto wrt label at {stm.labels[p[2]]['lineno']} - Goto statement outside of a block can't jump inside a block.")
+                raise LogicalError(f"{p.lexer.lineno}: Invalid placement of goto wrt label at {stm.labels[p[2]]['lineno']} - Goto statement outside of a Block can't jump inside a block.")
             # No need to append gotos as semantic analysis is complete
     else:
         # Label not declared before; expecting label; (forward jump)
@@ -2024,6 +2037,7 @@ def p_ReturnStmt(p):
         for expr in p[2]:
             p[0].code.append(f"retparams {expr.place}")
         p[0].code.append("return")
+    stm.symTable[stm.id].okReturn = True
 
 ###################################################################################
 ### Break Statements
@@ -2102,28 +2116,49 @@ def p_Block(p):
     """
     p[0] = BlockNode(p[2])
 
+def p_BlockStart(p):
+    """
+    BlockStart : 
+    """
+    stm.newScope()
+    p[0] = []
+
+def p_BlockEnd(p):
+    """
+    BlockEnd : 
+    """
+    stm.exitScope()
+    p[0] = []
+
 ###################################################################################
 ### If Else Statements
 ###################################################################################
 
 def p_IfStmt(p):
     """
-    IfStmt : IF BeginIf Expr Block else_stmt EndIf
-           | IF BeginIf SimpleStmt SEMICOLON Expr Block else_stmt EndIf
+    IfStmt : IF BeginIf Expr BlockStart Block BlockEnd else_stmt EndIf
+           | IF BeginIf SimpleStmt SEMICOLON Expr BlockStart Block BlockEnd else_stmt EndIf
     """
-    if len(p) == 7:
+    if p[len(p) - 2] and stm.symTable[stm.id].NotAllChildReturn == False:
+        stm.symTable[stm.id].okReturn = True
+    else:
+        stm.symTable[stm.id].okReturn = False
+    stm.symTable[stm.id].NotAllChildReturn = True
+    stm.exitScope()
+
+    if len(p) == 9:
         if p[3].dataType['baseType'] != 'bool' or p[3].dataType['level'] != 0:
             raise TypeError(f'{p.lexer.lineno}: Expression inside if-statement must be of bool type!') 
         else:
-            p[4].code.append(f"goto end_{p.lexer.lineno}")
-            p[4].code.append(f"label else_{p.lexer.lineno}:")
+            p[5].code.append(f"goto end_{p.lexer.lineno}")
+            p[5].code.append(f"label else_{p.lexer.lineno}:")
             p[3].code.append(f"if not {p[3].place} then goto else_{p.lexer.lineno}")
-            p[0] = IfNode(None, p[3], ThenNode(p[4]), p[5])
+            p[0] = IfNode(None, p[3], ThenNode(p[5]), p[7])
             p[0].code.append(f"label end_{p.lexer.lineno}:")
     else:
         if p[5].dataType['baseType'] != 'bool' or p[5].dataType['level'] != 0:
             raise TypeError(f'{p.lexer.lineno}: Expression inside if-statement must be of bool type!') 
-        p[0] = IfNode(*p[3], p[5], ThenNode(p[6]), p[7])
+        p[0] = IfNode(*p[3], p[5], ThenNode(p[7]), p[9])
 
 def p_BeginIf(p):
     """
@@ -2144,12 +2179,11 @@ def p_EndIf(p):
             info_tables[curr_func_id][symbol][stm.id] = {}
         
         info_tables[curr_func_id][symbol][stm.id] = stm.symTable[stm.id].localsymTable[symbol]
-    stm.exitScope()
 
 def p_else_stmt(p):
     """
     else_stmt : ELSE IfStmt
-                | ELSE Block
+                | ELSE BlockStart Block BlockEnd
                 |
     """
     if len(p) > 1:
@@ -2332,28 +2366,28 @@ def p_ExprSwitchCase(p):
 
 def p_ForStmt(p):
     """
-    ForStmt : FOR BeginFor Condition Block EndFor
-            | FOR BeginFor ForClause Block EndFor
-            | FOR BeginFor RangeClause Block EndFor
-            | FOR BeginFor Block EndFor
+    ForStmt : FOR BeginFor Condition BlockStart Block BlockEnd EndFor
+            | FOR BeginFor ForClause BlockStart Block BlockEnd EndFor
+            | FOR BeginFor RangeClause BlockStart Block BlockEnd EndFor
+            | FOR BeginFor BlockStart Block BlockEnd EndFor
     """
-    if len(p) == 5:
-        p[0] = ForNode(None, p[3])
+    if len(p) == 7:
+        p[0] = ForNode(None, p[4])
         p[0].code = [f"label begin_for_{stm.forStack[-1]}:"] + p[0].code + [f"goto begin_for_{stm.forStack[-1]}", f"label end_for_{stm.forStack[-1]}:"]
     else:
         if isinstance(p[3], ForClauseNode) and p[3].children[0] is None and p[3].children[2] is None:
             p[3].code = [f"label begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code + [f"if not {p[3].children[1].place} then goto end_for_{stm.forStack[-1]}"]
-            p[4].code.append(f"goto begin_for_{stm.forStack[-1]}")
-            p[4].code.append(f"label end_for_{stm.forStack[-1]}:")
+            p[5].code.append(f"goto begin_for_{stm.forStack[-1]}")
+            p[5].code.append(f"label end_for_{stm.forStack[-1]}:")
         elif isinstance(p[3], ForClauseNode):
             # initc = p[3][0]
             # condc = p[3][1]
             # postc = p[3][2]
             temp = p[3].children[0].code + [f"label begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code
             p[3].code = temp + [f"if not {p[3].children[1].place} goto end_for_{stm.forStack[-1]}"]
-            p[4].code.extend(p[3].children[2].code)
-            p[4].code.append(f"goto begin_for_{stm.forStack[-1]}")
-            p[4].code.append(f"label end_for_{stm.forStack[-1]}:")
+            p[5].code.extend(p[3].children[2].code)
+            p[5].code.append(f"goto begin_for_{stm.forStack[-1]}")
+            p[5].code.append(f"label end_for_{stm.forStack[-1]}:")
         else:
             if p[3].children[2].dataType['name'] == 'map':
                 pass
@@ -2368,8 +2402,8 @@ def p_ForStmt(p):
                 code.append(f"{elem} = *{elemptr}")
                 code.append(f"goto begin_for_{stm.forStack[-1]}")
                 code.append(f"label end_for_{stm.forStack[-1]}")
-                p[4].code.extend(code)
-        p[0] = ForNode(p[3], p[4])
+                p[5].code.extend(code)
+        p[0] = ForNode(p[3], p[5])
     
     stm.forStack.pop()
     stm.exitScope()
@@ -2626,5 +2660,4 @@ def buildAndCompile(input_file):
 
 if __name__ == '__main__':
     buildAndCompile(sys.argv[1])
-
-
+    

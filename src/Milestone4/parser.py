@@ -2384,5 +2384,9 @@ def buildAndCompile(input_file):
 
 if __name__ == '__main__':
     buildAndCompile(sys.argv[1])
+    for x in stm.symTable:
+        print(x, stm.symTable[x].parentScope, stm.symTable[x].localsymTable.keys())
+
+
 
 
