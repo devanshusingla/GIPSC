@@ -504,3 +504,12 @@ def constructDataType(baseType):
         'level': 0,
         'size': basicTypeSizes[baseType]
     }
+
+def typecast(val, dt):
+    if dt.startswith('int'):
+        return int(val)
+    if dt.startswith('float'):
+        print(float(val))
+        return float(val)
+    if dt in ['byte', 'rune']:
+        return ord(val)

@@ -328,10 +328,11 @@ def p_ConstSpec(p):
                 val = extended_list[i].label
                 # Add to symbol table
                 size = 0
+                print(extended_list[i].__dict__)
                 if dt['name'].startswith('int'):
-                    val = int(extended_list[i].label)
+                    val = int(extended_list[i].val)
                 elif dt['name'].startswith('float'):
-                    val = float(extended_list[i].label)
+                    val = float(extended_list[i].val)
                 ## Write conditions for rune and other types
                 stm.add(ident.label, {'dataType': dt, 'isConst' : True, 'val': val})
                 p[1][i].dataType = dt
@@ -1018,11 +1019,23 @@ def p_PrimaryExpr(p):
                 if not isBasicNumeric(stm, dt):
                     raise TypeError(f"{p.lexer.lineno:} Only Basic Numeric Types can be typecasted with each other!")
                 else:
-                    code.append(f"params {p[2][0].place}")
-                    code.append(f"call {stm.id}_typecast_{dt['baseType']}_to_{p[1].label}:")
-                    place = f"retval_{stm.id}_typecast_{dt['baseType']}_to_{p[1].label}_0"
-                    p[0] = FuncCallNode(p[1], p[2])
-                    p[0].isAddressable = False
+                    if p[2][0].isConst:
+                        p[0] = p[2][0]
+                        p[0].isAddressable = False
+                        p[0].isConst = p[2][0].isConst
+                        place = new_temp()
+                        try:
+                            p[0].val = typecast(p[2][0].val, p[1].label)
+                            code.append(f"{place} = {p[0].val}")
+                        except Exception as e:
+                            raise TypeError(f"{p.lexer.lineno}: Couldn't typecase constant in compile time.")
+                    else:
+                        p[0] = FuncCallNode(p[1], p[2])
+                        p[0].isAddressable = False
+                        p[0].isConst = p[2][0].isConst
+                        place = f"retval_{stm.id}_typecast_{dt['baseType']}_to_{p[1].label}_0"
+                        code.append(f"params {p[2][0].place}")
+                        code.append(f"call {stm.id}_typecast_{dt['baseType']}_to_{p[1].label}:")
                     p[0].dataType = {'baseType': p[1].label, 'name': p[1].label, 'level': 0, 'size': utils.basicTypeSizes[p[1].label]}
                     p[0].code.extend(code)
                     p[0].place = place            

@@ -217,6 +217,7 @@ class Node:
         self.label = label
         self.code = []
         self.place = None
+        self.isConst = False
     
     def addChild(self, *children):
         if children:
