@@ -2,8 +2,6 @@ from copy import deepcopy
 from distutils.log import Log
 from typing import List
 
-from numpy import isin
-
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
 basicNumericTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'rune']
 basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
@@ -98,6 +96,15 @@ class scope:
     #     for avlType in prevScope.avlTypes:
     #         if avlType not in self.avlTypes:
     #             self.avlTypes.append(avlType)
+
+class ActivationRecord:
+    def __init__(self, local_var_space = None):
+        self.returnval_space = None 
+        self.param_space = None
+        self.old_base_ptr_space = 4
+        self.localvar_space = local_var_space
+        self.saved_registers_space = 128
+        self.return_address_space = 4
 
 ## Symbol Table Maker
 class SymTableMaker:

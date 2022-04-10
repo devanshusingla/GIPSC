@@ -328,7 +328,6 @@ def p_ConstSpec(p):
                 val = extended_list[i].label
                 # Add to symbol table
                 size = 0
-                print(extended_list[i].__dict__)
                 if dt['name'].startswith('int'):
                     val = int(extended_list[i].val)
                 elif dt['name'].startswith('float'):
@@ -694,7 +693,6 @@ def p_Expr(p):
         val = None
         if isinstance(p[1], ExprNode) and isinstance(p[3], ExprNode) and p[1].isConst and p[3].isConst:
             isConst = True
-            print("Line: ", p.lexer.lineno, p[1].val, p[3].val);
             val = Operate(p[2], p[1].val, p[3].val, p.lexer.lineno, p[3].dataType['name'])
 
         p[0] = ExprNode(operator = p[2], dataType = dt, isConst = isConst, val=val, label = val)
