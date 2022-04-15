@@ -2,7 +2,8 @@ package main
 
 // import "fmt"
 
-var a int = 3
+const b int = 3
+var a string = string(b)
 
 func Print(x int) {}
 

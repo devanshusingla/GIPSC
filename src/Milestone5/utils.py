@@ -507,10 +507,16 @@ def constructDataType(baseType):
         'size': basicTypeSizes[baseType]
     }
 
-def typecast(val, dt):
+def typecast(val, dt): 
     if dt.startswith('int'):
+        if val.startswith('\'') and val.endswith('\''):
+            return ord(val[1:-1])
         return int(val)
     if dt.startswith('float'):
         return float(val)
     if dt in ['byte', 'rune']:
         return ord(val)
+    if dt == 'string': 
+        if type(val) == 'string' and val[0] in ['\'', '\"'] and val[-1] in ['\'', '\"']:
+            return f"\"{str(val[1:-1])}\""
+        return f"\"{str(val)}\""

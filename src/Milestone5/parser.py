@@ -983,7 +983,7 @@ def p_PrimaryExpr(p):
             else:
                 new_stm = stm
 
-            if p[1].label in basicTypes and isBasicNumeric(stm, {'baseType': p[1].label, 'level': 0}):
+            if p[1].label in basicTypes and (isBasicNumeric(stm, {'baseType': p[1].label, 'level': 0}) or p[1].label == 'string'):
                 if len(p[2]) > 1:
                     raise LogicalError(f"{p.lexer.lineno:} Only one expression can be typecasted at a time!")
                 

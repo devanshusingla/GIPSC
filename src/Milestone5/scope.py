@@ -168,7 +168,10 @@ class SymTableMaker:
         if scope is None:
             if ident in self.functions:
                 return deepcopy(self.functions[ident])
+            print(ident) 
             scope = self.getScope(ident)
+            if scope == -1:
+                raise Exception("Ident not found in symbol table")
             return deepcopy(self.symTable[scope].getinfo(ident))
         else:
             return deepcopy(self.symTable[scope].getinfo(ident))
@@ -212,10 +215,14 @@ class SymTableMaker:
 
     def addTypeCastFunctions(self):
         for type1 in basicNumericTypes:
-            func = type1
             dt = {'baseType': type1, 'name': type1, 'level': 0, 'size': basicTypeSizes[type1]}
             info = {"params": [], "return": [dt], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}}
-            self.functions[type1] = deepcopy(info)            
+            self.functions[type1] = deepcopy(info)  
+
+        type1 = 'string'
+        dt = {'baseType': type1, 'name': type1, 'level': 0, 'size': basicTypeSizes[type1]}
+        info = {"params": [], "return": [dt], "dataType": {'name': 'func', 'baseType': 'func', 'level': 0}}
+        self.functions[type1] = deepcopy(info)           
     
     def addBuiltInFuncs(self):
         print("TODO: Add builtin function definitions by parsing or by hard coding")
