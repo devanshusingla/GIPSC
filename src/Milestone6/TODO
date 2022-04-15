@@ -1,19 +1,17 @@
-Handling type of IDENT PERIOD IDENT in  -> Done 
+TypeT rules not done in p_Arguments 
+negative indices in array
+Add definitions of builtin functions 
+MapType 3AC code in PrimaryExpr
+Short Circuit Evaluation
 Constant folding inside p_Expr -> Done
 Handling of unary expressions corresponding to addressing and dereferencing -> Done
 Correct ParameterDecl grammar -> Done
-Handle Type label (to be done in ParameterDecl, Result and ParameterList after p_Type is done) -> Done  
-TypeT rules not done in p_Arguments 
+Handle Type label (to be done in ParameterDecl, Result and ParameterList after p_Type is done) -> Done 
 uint type checking -> Done
 tags in structType -> Done
 typechecking for & operator -> Done 
-negative indices in array
 Type arguments in p_Arguments -> Done 
-Add definitions of builtin functions 
 _ support -> Done 
-Struct fields have two quotes
-Change struct literal in docs  -> Done 
-Check each function has valid return if return type
-TypeCasting
-MapType 3AC code in PrimaryExpr
-Short Circuit Evaluation
+Check each function has valid return if return type -> Done 
+TypeCasting -> Done
+Handling type of IDENT PERIOD IDENT in  -> Done 
