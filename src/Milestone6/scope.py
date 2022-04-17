@@ -168,7 +168,6 @@ class SymTableMaker:
         if scope is None:
             if ident in self.functions:
                 return deepcopy(self.functions[ident])
-            print(ident) 
             scope = self.getScope(ident)
             if scope == -1:
                 raise Exception("Ident not found in symbol table")

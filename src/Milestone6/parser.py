@@ -735,10 +735,9 @@ def p_UnaryExpr(p):
                 val = None
             else:
                 val = Operate(p[1], None, p[2].val, p.lexer.lineno, p[2].dataType['name'])
-        isAddressable = flag and (p[1] == '*' or p[1] =='&')
+        isAddressable = flag and (p[1] == '*')
         p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isAddressable = isAddressable, isConst=isConst, val=val)
         p[0].addChild(p[2])
-
         temp_var = new_temp()
         
         p[0].code.append(f"{temp_var} = {p[1]} {p[2].place}")
