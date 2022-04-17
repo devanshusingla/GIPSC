@@ -520,3 +520,22 @@ def typecast(val, dt):
         if type(val) == 'string' and val[0] in ['\'', '\"'] and val[-1] in ['\'', '\"']:
             return f"\"{str(val[1:-1])}\""
         return f"\"{str(val)}\""
+
+## Returns the suffix for load and store instructions given size of operand  
+def getsizeSuffix(size, isFloat = False, isUnsigned = False):
+    if isUnsigned:
+        return "u"
+
+    if isFloat:
+        if size == 4:
+            return ".s"
+        else:
+            return ".d"
+
+    else:
+        if size == 1:
+            return "b"
+        elif size == 2:
+            return "h"
+        else:
+            return "w"
