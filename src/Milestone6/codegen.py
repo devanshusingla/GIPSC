@@ -298,5 +298,33 @@ class Register:
 ## Class to implement code generation from 3AC and symtable to MIPS
 class MIPS:
     
-    def __init__(self):
-        print('')
+    def __init__(self, ):
+        print('Init MIPS')
+        self.regs = Register()
+        self.instr = []
+        self.INDENT = " " * 4
+        self.code = None
+        self.stm = None
+
+    def addSections(self):
+        code = ""
+        code += '\t.data\n'
+        code += '\t.text\n\t.globl main\n\n'
+        return code
+
+    def tac2mips(self, code, stm):
+        self.code = code
+        self.stm = stm
+        
+        return self.instr
+    
+    def dosyscall(self, number):
+        return f"\tli $v0 {number}\n\tsyscall"
+    
+    def malloc(self, space):
+        code = ""
+        if type(space) != str:
+            code += f"\tli $a0 {space}"
+        else:
+            code += f"\tadd $a0 r0 {space}"
+        code += self.dosyscall(9)

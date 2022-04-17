@@ -141,14 +141,14 @@ def p_ImportSpec(p):
         temp_stm = stm
         stm = SymTableMaker()
         stm.add(_symbol, {'dataType': {'name': '_', 'baseType': '_', 'level': 0, 'size': 0}})
-        astNode = buildAndCompile(pathname)
+        astNode, _ = buildAndCompile(pathname)
         temp_stm.pkgs[alias.label] = stm
         stm = temp_stm
         ipnode = ImportPathNode(alias, path, astNode)
         ipnode.code.append(f"import {p[len(p)-1]}")
         p[0] = (NodeList([ipnode]), NodeList([]))
     else:
-        astNode = buildAndCompile(pathname)
+        astNode, _ = buildAndCompile(pathname)
         stm.pkgs[alias.label] = None
         p[0] = (NodeList(astNode.children[1].children), NodeList(astNode.children[2].children))
     
@@ -1221,6 +1221,9 @@ def p_ArrayType(p):
     """
     ArrayType : LBRACK ArrayLength RBRACK ElementType
     """
+    if stm.id == 0:
+        if not p[2].dataType['isConst']:
+            raise LogicalError(f"{p.lexer.lineno}: Array length must be a constant in global scope.")
     p[0] = BrackType(p[4].dataType, p[2])
 
     # if 'baseType' in p[4].dataType:
@@ -2691,7 +2694,7 @@ def buildAndCompile(input_file):
     # df(parser_out, 0)
     writeOutput(parser_out, output_file)
     create_sym_tables(os.path.join(os.getcwd(), path_to_source_code[:-2]) + "symTables")
-    return parser_out
+    return parser_out, stm
 
 if __name__ == '__main__':
     buildAndCompile(sys.argv[1])
