@@ -70,7 +70,7 @@ class Register:
                              '$f2': [None, 0],
                             }        
 
-        ## List to store variables : location (register or offset on stack)
+        ## Map to store {variables : location (register or offset on stack)}
         ## Value is an array -> first index stores type (0/1 based on reg or offset)
         ## Second value stores the value (regName or offsetAmt)
         self.locations = {} 
@@ -131,9 +131,9 @@ class Register:
                 ## If someone occupied the register previously
                 if self.regs[reg][0]:
                     print('Going to free register ', reg) 
-                    if new_loc != None: ## To be stored in memory
+                    if new_loc[i] != None: ## To be stored in memory
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)   
-                        mips.append("s" + suffix + reg + "," + str(new_loc) + "($fp)\n")   
+                        mips.append("\ts" + suffix + "\t" + reg + "," + str(new_loc) + "($fp)\n")   
                     else:
                         print("Please provide a valid memory location") 
                     
@@ -145,9 +145,9 @@ class Register:
 
                 elif self.regsSaved[reg][0]:
                     print('Going to free register ', reg) 
-                    if new_loc != None: ## To be stored in memory 
+                    if new_loc[i] != None: ## To be stored in memory 
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)  
-                        mips.append("s" + suffix + reg + "," + str(new_loc) + "($fp)\n")   
+                        mips.append("\ts" + suffix + "\t" + reg + "," + str(new_loc) + "($fp)\n")   
                     else:
                         print("Please provide a valid memory location") 
                     
@@ -171,9 +171,9 @@ class Register:
                 ## If someone occupied the register previously
                 if self.regsF[reg][0]:
                     print('Going to free register ', reg) 
-                    if new_loc != None: ## To be stored in memory 
+                    if new_loc[i] != None: ## To be stored in memory 
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)  
-                        mips.append("s" + suffix + reg + "," + str(new_loc) + "($fp)\n")   
+                        mips.append("\ts" + suffix + "\t" + reg + "," + str(new_loc) + "($fp)\n")   
                     else:
                         print("Please provide a valid memory location") 
                     
@@ -185,9 +185,9 @@ class Register:
 
                 elif self.regsSavedF[reg][0]:
                     print('Going to free register ', reg) 
-                    if new_loc != None: ## To be stored in memory 
+                    if new_loc[i] != None: ## To be stored in memory 
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)  
-                        mips.append("s" + reg + "," + str(new_loc) + "($fp)\n")   
+                        mips.append("\ts" + suffix + "\t" + reg + "," + str(new_loc) + "($fp)\n")   
                     else:
                         print("Please provide a valid memory location") 
                     
@@ -217,7 +217,7 @@ class Register:
                     mips.append('\t#Going to free register ', reg) 
                     if new_loc != None: ## To be stored in memory 
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)   
-                        mips.append("s" + suffix + reg + "," + str(new_loc) + "($fp)\n")   
+                        mips.append("\ts" + suffix + "\t" + reg + "," + str(new_loc) + "($fp)\n")   
                     else:
                         print("Please provide a valid memory location") 
 
@@ -225,7 +225,7 @@ class Register:
                     mips.append('\t#Going to free register ', reg) 
                     if new_loc != None: ## To be stored in memory
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)   
-                        mips.append("s" + suffix + reg + "," + str(new_loc) + "($fp)\n")   
+                        mips.append("\ts" + suffix + "\t" + reg + "," + str(new_loc) + "($fp)\n")   
                     else:
                         print("Please provide a valid memory location") 
             
@@ -245,7 +245,7 @@ class Register:
                     mips.append('\t# Going to free register ', reg) 
                     if new_loc != None: ## To be stored in memory 
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)  
-                        mips.append("s" + suffix + reg + "," + str(new_loc) + "($fp)\n")   
+                        mips.append("\ts" + suffix + "\t" + reg + "," + str(new_loc) + "($fp)\n")   
                     else:
                         print("Please provide a valid memory location") 
 
@@ -253,7 +253,7 @@ class Register:
                     mips.append('\t# Going to free register ', reg) 
                     if new_loc != None: ## To be stored in memory 
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)  
-                        mips.append("s" + suffix + reg + "," + str(new_loc) + "($fp)\n")   
+                        mips.append("\ts" + suffix + "\t" + reg + "," + str(new_loc) + "($fp)\n")   
                     else:
                         print("Please provide a valid memory location") 
 
