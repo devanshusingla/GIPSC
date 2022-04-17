@@ -509,7 +509,7 @@ def constructDataType(baseType):
 
 def typecast(val, dt): 
     if dt.startswith('int'):
-        if val.startswith('\'') and val.endswith('\''):
+        if type(val) == "string" and val.startswith('\'') and val.endswith('\''):
             return ord(val[1:-1])
         return int(val)
     if dt.startswith('float'):

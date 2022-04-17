@@ -298,25 +298,78 @@ class Register:
 ## Class to implement code generation from 3AC and symtable to MIPS
 class MIPS:
     
-    def __init__(self, ):
+    def __init__(self, code, stm):
         print('Init MIPS')
         self.regs = Register()
         self.instr = []
         self.INDENT = " " * 4
-        self.code = None
-        self.stm = None
+        self.code = code 
+        self.stm: SymTableMaker = stm
+        self.builtins = ['Print', 'Scan', 'Typecas']
 
     def addSections(self):
         code = ""
         code += '\t.data\n'
+        for var in self.stm.symTable[0].localsymTable:
+            if var not in self.stm.functions:
+                code += ''
         code += '\t.text\n\t.globl main\n\n'
         return code
 
-    def tac2mips(self, code, stm):
-        self.code = code
-        self.stm = stm
-        
+    def tac2mips(self):
+        self.addSections()
+        for line in self.code:
+            if line.startswith('---'):
+                print('')
+                ## Do something 
         return self.instr
+
+    def handle_newvartemp(self):
+        pass 
+
+    def handle_varTempPointers(self):
+        pass 
+
+    def handle_temp_assignment(self):
+        pass 
+
+    def handle_arg(self):
+        pass 
+
+    def handle_funCall(self):
+        pass
+
+    def handle_params(self, paramList):
+        pass 
+
+    def handle_returns(self, returnList):
+        pass 
+
+    def handle_dereference(self):
+        pass 
+
+    def handle_addressing(self):
+        pass 
+
+    def handle_label(self):
+        pass 
+
+    def handle_goto(self):
+        pass 
+
+    def handle_ifStmt(self):
+        pass 
+
+    def handle_binOp(self):
+        pass 
+
+    def handle_unOp(self):
+        pass 
+
+    def handle_funcDecl(self):
+        pass 
+
+
     
     def dosyscall(self, number):
         return f"\tli $v0 {number}\n\tsyscall"

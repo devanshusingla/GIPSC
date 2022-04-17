@@ -1,6 +1,6 @@
 package main
 
-// import "fmt"
+import "fmt"
 
 const b int = 3
 var a string = string(b)
