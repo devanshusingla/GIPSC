@@ -860,7 +860,7 @@ def p_PrimaryExpr(p):
             
             temp = new_temp()
             code.append(f"{temp} = {p[1].place} + {struct_off}")
-            place = f"*{temp}"
+            place = f"* {temp}"
 
         ## PrimaryExpr -> PrimaryExpr Index
         elif isinstance(p[2], IndexNode):
@@ -891,7 +891,7 @@ def p_PrimaryExpr(p):
                 code.append(f"{temp2} = {p[1].place}.addr + {temp1}")
                 # temp3 = new_temp()        
                 # code.append(f"{temp3} = *{temp2}")
-                place = f"*{temp2}"       
+                place = f"* {temp2}"       
 
             ## TODO : Discuss Layout for MapType
             if p[1].dataType['name'] == 'map':
@@ -2195,10 +2195,10 @@ def p_IfStmt(p):
             raise TypeError(f'{p.lexer.lineno}: Expression inside if-statement must be of bool type!') 
         else:
             p[5].code.append(f"goto end_{p.lexer.lineno}")
-            p[5].code.append(f"label else_{p.lexer.lineno}:")
+            p[5].code.append(f"else_{p.lexer.lineno}:")
             p[3].code.append(f"if not {p[3].place} then goto else_{p.lexer.lineno}")
             p[0] = IfNode(None, p[3], ThenNode(p[5]), p[7])
-            p[0].code.append(f"label end_{p.lexer.lineno}:")
+            p[0].code.append(f"end_{p.lexer.lineno}:")
     else:
         if p[5].dataType['baseType'] != 'bool' or p[5].dataType['level'] != 0:
             raise TypeError(f'{p.lexer.lineno}: Expression inside if-statement must be of bool type!') 
@@ -2325,7 +2325,7 @@ def p_ExprSwitchStmt(p):
     
     varNode.code.append(f"{stm.currentSwitchExpPlace} = {varNode.place}")
     p[0] = SwitchNode(smtNode, varNode, casesNode)
-    p[0].code.append(f"label end_switch_{stm.switchStack[-1]}:")
+    p[0].code.append(f"end_switch_{stm.switchStack[-1]}:")
     stm.switchStack.pop()
     stm.exitScope()
     stm.currentSwitchExpPlace = None
@@ -2417,21 +2417,21 @@ def p_ForStmt(p):
     """
     if len(p) == 7:
         p[0] = ForNode(None, p[4])
-        p[0].code = [f"label begin_for_{stm.forStack[-1]}:"] + p[0].code + [f"goto begin_for_{stm.forStack[-1]}", f"label end_for_{stm.forStack[-1]}:"]
+        p[0].code = [f"begin_for_{stm.forStack[-1]}:"] + p[0].code + [f"goto begin_for_{stm.forStack[-1]}", f"end_for_{stm.forStack[-1]}:"]
     else:
         if isinstance(p[3], ForClauseNode) and p[3].children[0] is None and p[3].children[2] is None:
-            p[3].code = [f"label begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code + [f"if not {p[3].children[1].place} then goto end_for_{stm.forStack[-1]}"]
+            p[3].code = [f"begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code + [f"if not {p[3].children[1].place} then goto end_for_{stm.forStack[-1]}"]
             p[5].code.append(f"goto begin_for_{stm.forStack[-1]}")
-            p[5].code.append(f"label end_for_{stm.forStack[-1]}:")
+            p[5].code.append(f"end_for_{stm.forStack[-1]}:")
         elif isinstance(p[3], ForClauseNode):
             # initc = p[3][0]
             # condc = p[3][1]
             # postc = p[3][2]
-            temp = p[3].children[0].code + [f"label begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code
+            temp = p[3].children[0].code + [f"begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code
             p[3].code = temp + [f"if not {p[3].children[1].place} goto end_for_{stm.forStack[-1]}"]
             p[5].code.extend(p[3].children[2].code)
             p[5].code.append(f"goto begin_for_{stm.forStack[-1]}")
-            p[5].code.append(f"label end_for_{stm.forStack[-1]}:")
+            p[5].code.append(f"end_for_{stm.forStack[-1]}:")
         else:
             if p[3].children[2].dataType['name'] == 'map':
                 pass
@@ -2445,7 +2445,7 @@ def p_ForStmt(p):
                 code.append(f"{elemptr}.pointer = {elemptr}.pointer + {size}")
                 code.append(f"{elem} = *{elemptr}")
                 code.append(f"goto begin_for_{stm.forStack[-1]}")
-                code.append(f"label end_for_{stm.forStack[-1]}")
+                code.append(f"end_for_{stm.forStack[-1]}")
                 p[5].code.extend(code)
         p[0] = ForNode(p[3], p[5])
     
@@ -2590,7 +2590,7 @@ def p_RangeClause(p):
     code.append(f"{idx} = 0")
     code.append(f"{elemptr}.pointer = {p[3].place}.pointer")
     code.append(f"{elem} = *{elemptr}.pointer")
-    code.append(f"label begin_for_{stm.forStack[-1]}:")
+    code.append(f"begin_for_{stm.forStack[-1]}:")
     cond_res = new_temp()
     code.append(f"{cond_res} = {idx} <(int) {elemptr}.length")
     code.append(f"if not {cond_res} goto end_for_{stm.forStack[-1]}")

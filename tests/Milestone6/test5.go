@@ -19,6 +19,8 @@ func ar(v point) {
 }
 
 func main() {
+	var t int  = 5
+	var r int = -t
 	var d point = point(4, 5,6 ,2 ,6)
 	var arr []point = []point{d}
 	ars(arr)

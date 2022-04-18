@@ -13,6 +13,6 @@ _ars:
 	jr $ra
 _ar:
 	jr $ra
-_main:
+main:
 	li $v0 10
 	syscall

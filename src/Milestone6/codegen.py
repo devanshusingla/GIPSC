@@ -4,6 +4,8 @@ from utils import *
 class Register:
     def __init__(self):
 
+        self.count = 0
+
         ## Store an array for registers, first value denotes var it stores, 
         ## second value stores last time it has been used (for use in LRU algo)
         self.regs = {'$t0': [None, 0], 
@@ -123,13 +125,13 @@ class Register:
         if not isFloat:  
             if regList:
                 print("Requested to shift: ", regList)
-            if regList in None:
+            if regList is None:
                 regList = self.regs.keys()
 
             mips = []
             for i, reg in enumerate(regList):
                 ## If someone occupied the register previously
-                if self.regs[reg][0]:
+                if reg in self.regs and self.regs[reg][0]:
                     print('Going to free register ', reg) 
                     if new_loc[i] != None: ## To be stored in memory
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)   
@@ -143,7 +145,7 @@ class Register:
                     self.regs[reg][0] = None
                     self.regs[reg][1] = 0 
 
-                elif self.regsSaved[reg][0]:
+                elif reg in self.regsSaved and self.regsSaved[reg][0]:
                     print('Going to free register ', reg) 
                     if new_loc[i] != None: ## To be stored in memory 
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)  
@@ -275,7 +277,7 @@ class Register:
                 return (self.locations[var][1], [])
 
         else: ## Need a new register
-            new_reg = self.find_new_register(isFloat = isFloat)
+            new_reg = self.find_new_reg(isFloat = isFloat)
             mips = self.move_reg([new_reg])
             
             self.count += 1 
@@ -294,6 +296,8 @@ class Register:
                 mips.append("\tl" + suffix + "\t" + str(self.locations[var][1]) + "($fp)" + "," + f"{new_reg}")
             else:
                 self.locations[var] = [0, new_reg]
+
+            return (new_reg, mips)
 
 ## Class to implement code generation from 3AC and symtable to MIPS
 class MIPS:
@@ -362,7 +366,10 @@ class MIPS:
     def addFunction(self, lineno):
         code = []
         funcname = self.tac_code[lineno].split(' ')[1]
-        code.extend(self.handle_label('_'+funcname))
+        if funcname != 'main':
+            code.extend(self.handle_label('_'+funcname))
+        else:
+            code.extend(self.handle_label(funcname))
         for i in range(lineno+1, len(self.tac_code)):
             if self.tac_code[i].startswith('Func END'):
                 if not self.tac_code[i-1].startswith('return'):
@@ -372,7 +379,26 @@ class MIPS:
                         code.extend(self.exit())
                 break
             if self.tac_code[i].startswith('temp'):
-                pass
+                items = self.tac_code[i].split(' ')
+                if len(items) == 3:
+                    # a = b
+                    old_reg, mips = self.regs.get_register(items[2])
+                    self.code.extend(mips)
+                    find_new_reg, mips = self.regs.find_new_reg()
+                    self.code.extend(mips)
+                    self.code.append(f'\t add {find_new_reg}, {old_reg}, $0')
+                elif len(items) == 4:
+                    # a = unop b
+                    old_reg, mips = self.regs.get_register(items[2])
+                    self.code.extend(mips)
+                    find_new_reg, mips = self.regs.find_new_reg()
+                    self.code.extend(mips)
+                    self.code.extend(self.handle_unOp(items[2], items[3], items[1]))
+                elif len(items) == 5:
+                    # a = b binop c
+                    pass
+                else:
+                    raise NotImplementedError
             elif self.tac_code[i].startswith('vartemp'):
                 pass
             elif self.tac_code[i].startswith('*'):
@@ -385,17 +411,20 @@ class MIPS:
             elif self.tac_code[i].startswith('new'):
                 pass
             elif self.tac_code[i].startswith('params'):
-                self.tac_code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
+                code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
             elif self.tac_code[i].startswith('retparams'):
                 pass
             elif self.tac_code[i].startswith('retval'):
                 pass
             elif self.tac_code[i].startswith('if'):
-                pass
+                items = self.tac_code[i].split(' ')
+                cond = items[2]
+                elselab = items[5]
+                code.extend(self.handle_ifStmt(cond, elselab))
             elif self.tac_code[i].startswith('goto'):
-                pass
+                code.extend(self.handle_goto(self.tac_code[i].split(' ')[1]))
             elif self.tac_code[i].endswith(':'): # label
-                self.tac_code.extend(self.handle_label(self.tac_code[i][:-1]))
+                code.extend(self.handle_label(self.tac_code[i][:-1]))
             elif self.tac_code[i].startswith('arg'):
                 pass
             elif len(self.tac_code[i]) > 0 and self.tac_code[i][0].isnumeric():
@@ -440,17 +469,25 @@ class MIPS:
     def handle_label(self, label):
         return [f"{label}:"] 
 
-    def handle_goto(self):
-        pass 
+    def handle_goto(self, label):
+        code = []
+        code.append(f"\tj {label}")
+        return code
 
-    def handle_ifStmt(self):
-        pass 
+    def handle_ifStmt(self, cond, elselab):
+        code = []
+        reg = self.regs.get_register(cond)
+        code.extend(reg[1])
+        code.append(f"\tbeqz {reg[0]}, {elselab}")
+        return code
 
     def handle_binOp(self):
         pass 
 
-    def handle_unOp(self):
-        pass 
+    def handle_unOp(self, opr, operand, result):
+        code = []
+
+        return code
 
     def handle_funcDecl(self):
         pass 
