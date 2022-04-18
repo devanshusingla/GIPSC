@@ -382,11 +382,12 @@ class MIPS:
                 items = self.tac_code[i].split(' ')
                 if len(items) == 3:
                     # a = b
-                    old_reg, mips = self.regs.get_register(items[2])
-                    self.code.extend(mips)
-                    find_new_reg, mips = self.regs.find_new_reg()
-                    self.code.extend(mips)
-                    self.code.append(f'\t add {find_new_reg}, {old_reg}, $0')
+                    if items[2].startswith('temp'):
+                        old_reg, mips = self.regs.get_register(items[2])
+                        self.code.extend(mips)
+                        find_new_reg, mips = self.regs.find_new_reg()
+                        self.code.extend(mips)
+                        self.code.append(f'\t add {find_new_reg}, {old_reg}, $0')
                 elif len(items) == 4:
                     # a = unop b
                     old_reg, mips = self.regs.get_register(items[2])
