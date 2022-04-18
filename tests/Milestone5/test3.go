@@ -14,4 +14,5 @@ func main() {
 	x := cos(2.2)
 	y := 7.8
 	y += cos(x)
+
 }

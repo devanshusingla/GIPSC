@@ -303,12 +303,14 @@ class MIPS:
         self.regs = Register()
         self.instr = []
         self.INDENT = " " * 4
-        self.code = code 
+        self.tac_code = code 
         self.stm: SymTableMaker = stm
-        self.builtins = ['Print', 'Scan', 'Typecas']
+        self.builtins = ['Print', 'Scan', 'Typecast']
+        self.fpOffset = 0 # Offset from frame pointer
 
     def tac2mips(self):
         code = self.addDataSection()
+        code.extend(self.addTextHeader())
         code.extend(self.addTextSection())
         return code
 
@@ -330,20 +332,79 @@ class MIPS:
     
     def _getDataCode(self, detail):
         if detail['dataType']['name'] in ['byte', 'int8', 'uint8', 'bool']:
-            return f'\t{detail["tmp"]}: .byte 0'
+            return f'\t_{detail["tmp"]}: .byte 0'
         elif detail['dataType']['name'] in ['int16', 'uint16', 'rune']:
-            return f'\t{detail["tmp"]}: .half 0'
+            return f'\t_{detail["tmp"]}: .half 0'
         elif detail['dataType']['name'] in ['int', 'int32', 'float32', 'uint32']:
-            return f'\t{detail["tmp"]}: .word 0'
+            return f'\t_{detail["tmp"]}: .word 0'
         elif detail['dataType']['name'] in ['int64', 'uint64', 'float64']:
-            return f'\t{detail["tmp"]}: .? 0'
+            return f'\t_{detail["tmp"]}: .? 0'
         elif detail['dataType']['name'] in ['struct', 'array', 'slice', 'map', 'string']:
-            return f'\t{detail["tmp"]}: .word 0, 0, 0'
+            return f'\t_{detail["tmp"]}: .word 0, 0, 0'
         else:
             return ''
 
-    def addTextSection(self):
+    def addTextHeader(self):
         code = ['.text', '.globl main']
+        return code
+
+    def addTextSection(self):
+        code = []
+        for i, codeline in enumerate(self.tac_code):
+            if codeline.startswith('package') or codeline.startswith('import'):
+                continue
+            elif codeline.startswith('\nFunc'):
+                code.extend(self.addFunction(i))
+            else:
+                continue
+        return code
+
+    def addFunction(self, lineno):
+        code = []
+        funcname = self.tac_code[lineno].split(' ')[1]
+        code.extend(self.handle_label('_'+funcname))
+        for i in range(lineno+1, len(self.tac_code)):
+            if self.tac_code[i].startswith('Func END'):
+                if not self.tac_code[i-1].startswith('return'):
+                    if funcname != 'main':
+                        code.append('\tjr $ra')
+                    else:
+                        code.extend(self.exit())
+                break
+            if self.tac_code[i].startswith('temp'):
+                pass
+            elif self.tac_code[i].startswith('vartemp'):
+                pass
+            elif self.tac_code[i].startswith('*'):
+                if self.tac_code[i].startswith('temp'):
+                    pass
+                elif self.tac_code[i].startswith('vartemp'):
+                    pass
+            elif self.tac_code[i].startswith('call'):
+                pass
+            elif self.tac_code[i].startswith('new'):
+                pass
+            elif self.tac_code[i].startswith('params'):
+                self.tac_code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
+            elif self.tac_code[i].startswith('retparams'):
+                pass
+            elif self.tac_code[i].startswith('retval'):
+                pass
+            elif self.tac_code[i].startswith('if'):
+                pass
+            elif self.tac_code[i].startswith('goto'):
+                pass
+            elif self.tac_code[i].endswith(':'): # label
+                self.tac_code.extend(self.handle_label(self.tac_code[i][:-1]))
+            elif self.tac_code[i].startswith('arg'):
+                pass
+            elif len(self.tac_code[i]) > 0 and self.tac_code[i][0].isnumeric():
+                pass
+            elif self.tac_code[i].startswith('return'):
+                if funcname != 'main':
+                    code.append('\tjr $ra')
+                else:
+                    code.extend(self.exit())
         return code
 
     def handle_newvartemp(self):
@@ -361,9 +422,12 @@ class MIPS:
     def handle_funCall(self):
         pass
 
-    def handle_params(self, paramList):
-        pass 
-
+    def handle_param(self, param):
+        # print(self.stm.get(param))
+        for i in range(4):
+            if self.regs.arg_regs[f'$a{i}']:
+                pass
+        return []
     def handle_returns(self, returnList):
         pass 
 
@@ -373,8 +437,8 @@ class MIPS:
     def handle_addressing(self):
         pass 
 
-    def handle_label(self):
-        pass 
+    def handle_label(self, label):
+        return [f"{label}:"] 
 
     def handle_goto(self):
         pass 
@@ -390,16 +454,21 @@ class MIPS:
 
     def handle_funcDecl(self):
         pass 
-
-
+    
+    def handle_typecast(self):
+        pass
     
     def dosyscall(self, number):
-        return f"\tli $v0 {number}\n\tsyscall"
+        return [f"\tli $v0 {number}", "\tsyscall"]
     
     def malloc(self, space):
-        code = ""
+        code = []
         if type(space) != str:
-            code += f"\tli $a0 {space}"
+            code.append(f"\tli $a0 {space}")
         else:
-            code += f"\tadd $a0 r0 {space}"
-        code += self.dosyscall(9)
+            code.append(f"\tadd $a0 r0 {space}")
+        code.extend(self.dosyscall(9))
+        return code
+    
+    def exit(self):
+        return self.dosyscall(10)

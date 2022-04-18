@@ -467,7 +467,7 @@ def p_VarSpec(p):
             # Check redeclaration for identifier list
             latest_scope = stm.getScope(ident.label)
             if latest_scope == stm.id or ident.label in stm.functions:
-                raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident)
+                raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident.label)
             
             if len(p) > 4:
                 if not not_base_type:
@@ -735,11 +735,17 @@ def p_UnaryExpr(p):
                 val = None
             else:
                 val = Operate(p[1], None, p[2].val, p.lexer.lineno, p[2].dataType['name'])
+        if p[1] == '&' and p[2].isRef == True:
+            raise LogicalError(f"{p.lexer.lineno}: Can't reference a variable more than once.")
         isAddressable = flag and (p[1] == '*')
         p[0] = ExprNode(dataType = getUnaryType(stm, p[2].dataType, p[1]), operator=p[1], isAddressable = isAddressable, isConst=isConst, val=val)
         p[0].addChild(p[2])
         temp_var = new_temp()
-        
+        if p[1] == '*':
+            p[0].isDeRef = True
+            p[0].lvalue = p[2].place
+        elif p[1] == '&':
+            p[0].isRef = True
         p[0].code.append(f"{temp_var} = {p[1]} {p[2].place}")
         p[0].place = temp_var
 
@@ -839,8 +845,7 @@ def p_PrimaryExpr(p):
                 else:
                     pass                
                 return
-
-            if 'name' not in p[1].dataType or p[1].dataType['name'] != 'struct':
+            if 'name' not in p[1].dataType or p[1].dataType['name']  != 'struct':
                 raise TypeError(f"{p.lexer.lineno}: Expecting struct type but found different one")
             
             field = p[2].children[0]
@@ -874,10 +879,8 @@ def p_PrimaryExpr(p):
                         raise TypeError(f"{p.lexer.lineno}: Index type incorrect")
 
                 dt = deepcopy(p[1].dataType['baseType'])
-
                 if dt['level']==0:
-                    dt = {'name': dt['baseType'], 'baseType': dt['baseType'], 'level': 0}
-                    dt['size'] = basicTypeSizes[dt['name']]
+                    dt = stm.findType(dt['baseType']).dataType
 
                 temp1 = new_temp()
                 elem_size = dt['size']
@@ -1009,9 +1012,9 @@ def p_PrimaryExpr(p):
                         p[0] = FuncCallNode(p[1], p[2])
                         p[0].isAddressable = False
                         p[0].isConst = p[2][0].isConst
-                        place = f"retval_{stm.id}_typecast_{dt['baseType']}_to_{p[1].label}_0"
+                        place = f"retval_typecast_{dt['baseType']}_to_{p[1].label}_0"
                         code.append(f"params {p[2][0].place}")
-                        code.append(f"call {stm.id}_typecast_{dt['baseType']}_to_{p[1].label}:")
+                        code.append(f"call typecast_{dt['baseType']}_to_{p[1].label}")
                     p[0].dataType = {'baseType': p[1].label, 'name': p[1].label, 'level': 0, 'size': utils.basicTypeSizes[p[1].label]}
                     p[0].code.extend(code)
                     p[0].place = place            
@@ -1058,7 +1061,7 @@ def p_PrimaryExpr(p):
                         raise TypeError(f"{p.lexer.lineno}: Type mismatch on argument number: {i} - {argument}")
 
                     code.append(f"params {argument.place}")
-                code.append(f"call {p[1].label}:")
+                code.append(f"call {p[1].label}")
                 p[2] = FuncCallNode(p[1], p[2])
                 if len(info['return']) > 1:
                     place = [f"retval_{p[1].label}_{i}" for i in range(len(info['return']))]
@@ -1588,6 +1591,7 @@ def p_FunctionName(p):
         raise (f"{p.lexer.lineno}: Redeclaration of function " + p[1])
 
     p[0] = IdentNode(scope = stm.id, label = p[1], dataType = "func")
+
     p[0].code.append(f"\nFunc {p[1]}")
 
 ###################################################################################
@@ -1881,8 +1885,12 @@ def p_Assignment(p):
                 raise TypeError(f"{p.lexer.lineno}: LHS contains constant! Cannot assign")
             if key.dataType != expression_dt[i]:
                 raise TypeError(f"{p.lexer.lineno}: Type of {key.label} : {key.dataType} and {val.label} : {expression_dt[i]} doesn't match.")
-            if key.isAddressable == False:
-                raise TypeError(f"{p.lexer.lineno}: LHS expression is not assignable")
+            if key.isRef == True:
+                raise LogicalError(f"{p.lexer.lineno}: LHS Expression can't assign to an reference.")
+            if key.isDeRef == True:
+                if key.dataType['level'] < 0:
+                    raise LogicalError(f"{p.lexer.lineno}: LHS expression can't be derefenced further")
+                key.place = f'*{key.lvalue}'
         exprNode = ExprNode(None, operator=p[2])
         exprNode.addChild(key, val)
         p[0].append(exprNode)
@@ -1891,7 +1899,6 @@ def p_Assignment(p):
             p[0].code.append(f"{key.place} = {val.place}")
         else:
             p[0].code.append(f"{key.place} = {key.place} {p[2][0]}({expression_dt[i]['name']}) {val.place}")
-
 def p_assign_op(p):
     """
     assign_op : add_op_assign 
@@ -1928,7 +1935,6 @@ def p_ShortVarDecl(p):
     """
     ShortVarDecl : IdentifierList DEFINE ExpressionList
     """
-
     length = len(p) - 1
 
     count_0 = 0
@@ -2694,6 +2700,7 @@ def buildAndCompile(input_file):
     # df(parser_out, 0)
     writeOutput(parser_out, output_file)
     create_sym_tables(os.path.join(os.getcwd(), path_to_source_code[:-2]) + "symTables")
+    print("Writing 3AC")
     return parser_out, stm
 
 if __name__ == '__main__':

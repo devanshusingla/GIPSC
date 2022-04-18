@@ -6,7 +6,7 @@ if [[ $# -ne 1 ]]; then
     exit 2
 fi
 
-export MILESTONE=6
+export MILESTONE=5
 
 path_to_root=$( dirname $( dirname $( realpath $0) ) )
 abs_path_to_parser="${path_to_root}/src/Milestone${MILESTONE}/astree.py"

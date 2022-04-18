@@ -234,6 +234,9 @@ class Node:
         self.code = []
         self.place = None
         self.isConst = False
+        self.isRef = False
+        self.isDeRef = False
+        self.lvalue = None
     
     def addChild(self, *children):
         if children:

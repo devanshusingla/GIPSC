@@ -29,8 +29,3 @@ with open(f"{path_to_source_file}.dot", 'w') as f:
     f.writelines(node_ids)
 
     f.write("\n}")
-print("Writing 3AC")
-with open(f"{path_to_source_file}_3ac.txt", 'w') as f:
-    for line in ast.code:
-        f.write(line)
-        f.write("\n")

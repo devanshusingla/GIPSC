@@ -3,6 +3,8 @@ package main
 import "fmt"
 
 const b int = 3
+var x int = 7
+var y int = x + 3
 var a string = string(b)
 
 func Print(x int) {}
