@@ -8,8 +8,8 @@ path_name = sys.argv[1]
 
 parsed_output, sym_table = buildAndCompile(path_name)
 
-codegen = MIPS()
-mips = codegen.tac2mips(parsed_output, sym_table)
+codegen = MIPS(parsed_output.code, sym_table)
+mips = codegen.tac2mips()
 
 print(mips)
 with open(path_name[:-3]+'.s', 'w') as f:

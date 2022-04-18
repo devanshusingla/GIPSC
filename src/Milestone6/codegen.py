@@ -307,22 +307,44 @@ class MIPS:
         self.stm: SymTableMaker = stm
         self.builtins = ['Print', 'Scan', 'Typecas']
 
-    def addSections(self):
-        code = ""
-        code += '\t.data\n'
-        for var in self.stm.symTable[0].localsymTable:
-            if var not in self.stm.functions:
-                code += ''
-        code += '\t.text\n\t.globl main\n\n'
+    def tac2mips(self):
+        code = self.addDataSection()
+        code.extend(self.addTextSection())
         return code
 
-    def tac2mips(self):
-        self.addSections()
-        for line in self.code:
-            if line.startswith('---'):
-                print('')
-                ## Do something 
-        return self.instr
+    def addDataSection(self):
+        code = []
+        code.append('.data\n')
+
+        for scope in self.stm.pkgs.values():
+            for var, detail in scope.symTable[0].localsymTable.items():
+                if var not in self.stm.functions:
+                    code.append(self._getDataCode(detail))
+
+        for var, detail in self.stm.symTable[0].localsymTable.items():
+            if var not in self.stm.functions:
+                code.append(self._getDataCode(detail))
+
+        code.extend(['', ''])
+        return code
+    
+    def _getDataCode(self, detail):
+        if detail['dataType']['name'] in ['byte', 'int8', 'uint8', 'bool']:
+            return f'\t{detail["tmp"]}: .byte 0'
+        elif detail['dataType']['name'] in ['int16', 'uint16', 'rune']:
+            return f'\t{detail["tmp"]}: .half 0'
+        elif detail['dataType']['name'] in ['int', 'int32', 'float32', 'uint32']:
+            return f'\t{detail["tmp"]}: .word 0'
+        elif detail['dataType']['name'] in ['int64', 'uint64', 'float64']:
+            return f'\t{detail["tmp"]}: .? 0'
+        elif detail['dataType']['name'] in ['struct', 'array', 'slice', 'map', 'string']:
+            return f'\t{detail["tmp"]}: .word 0, 0, 0'
+        else:
+            return ''
+
+    def addTextSection(self):
+        code = ['.text', '.globl main']
+        return code
 
     def handle_newvartemp(self):
         pass 

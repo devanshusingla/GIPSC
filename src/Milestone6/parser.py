@@ -1222,7 +1222,7 @@ def p_ArrayType(p):
     ArrayType : LBRACK ArrayLength RBRACK ElementType
     """
     if stm.id == 0:
-        if not p[2].dataType['isConst']:
+        if not p[2].isConst:
             raise LogicalError(f"{p.lexer.lineno}: Array length must be a constant in global scope.")
     p[0] = BrackType(p[4].dataType, p[2])
 
