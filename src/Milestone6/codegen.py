@@ -384,21 +384,51 @@ class MIPS:
                     # a = b
                     if items[2].startswith('temp'):
                         old_reg, mips = self.regs.get_register(items[2])
-                        self.code.extend(mips)
-                        find_new_reg, mips = self.regs.find_new_reg()
-                        self.code.extend(mips)
-                        self.code.append(f'\t add {find_new_reg}, {old_reg}, $0')
+                        code.extend(mips)
+                        find_new_reg = self.regs.find_new_reg()
+                        code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
+                    elif items[2].startswith('args'):
+                        pass
+                    elif items[2].startswith('var_temp'):
+                        pass
+                    else:
+                        if items[2][0]=='"':
+                            # string
+                            pass
+                        elif items[2].isnumeric():
+                            if str(int(items[2])) == items[2]:
+                                # integer
+                                pass
+                            else:
+                                # float
+                                pass
+                        elif items[2][0] == "'":
+                            # rune
+                            pass                          
+                        else:
+                            print(items[2])
+                            raise NotImplementedError
+                        # find_new_reg, mips = self.regs.find_new_reg()
+                        # self.code.extend(mips)
+                        # self.code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
                 elif len(items) == 4:
                     # a = unop b
+                    # * a = b
                     old_reg, mips = self.regs.get_register(items[2])
-                    self.code.extend(mips)
-                    find_new_reg, mips = self.regs.find_new_reg()
-                    self.code.extend(mips)
-                    self.code.extend(self.handle_unOp(items[2], items[3], items[1]))
+                    code.extend(mips)
+                    find_new_reg = self.regs.find_new_reg()
+                    code.extend(self.handle_unOp(items[2], items[3], items[1]))
                 elif len(items) == 5:
                     # a = b binop c
+                    # * a = unop b
+                    pass
+                elif len(items) == 6:
+                    # a = * b binop c
+                    # a = b binop * c
+                    # * a = b binop c
                     pass
                 else:
+                    print(items)
                     raise NotImplementedError
             elif self.tac_code[i].startswith('vartemp'):
                 pass
@@ -414,7 +444,7 @@ class MIPS:
             elif self.tac_code[i].startswith('params'):
                 code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
             elif self.tac_code[i].startswith('retparams'):
-                pass
+                pass 
             elif self.tac_code[i].startswith('retval'):
                 pass
             elif self.tac_code[i].startswith('if'):
@@ -449,15 +479,89 @@ class MIPS:
     def handle_arg(self):
         pass 
 
-    def handle_funCall(self):
-        pass
+    def handle_funcCall(self):
+        code = []
+        pass 
 
     def handle_param(self, param):
         # print(self.stm.get(param))
+        ## TODO : Handle vartemp and sizes
+        found = 0
+        code = [] 
         for i in range(4):
-            if self.regs.arg_regs[f'$a{i}']:
-                pass
-        return []
+            if self.regs.arg_regs[f'$a{i}'][0] != None:
+                found = 1
+                if not param.startswith('var_temp'):
+                    self.regs.arg_regs[f'$a{i}'][0] = param 
+                    self.regs.arg_regs[f'$a{i}'][1] = self.count 
+                    self.count += 1
+                    reg, mips = self.regs.get_register(param)
+                    code.extend(mips)
+                    code.append(f'\tadd $a{i}, {reg}, $0')
+                    break
+                else:
+                    offset = self.locations[param.split('.')[0]]
+                    if param.endswith('.addr'):
+                        ## params var_temp#x.addr 
+                        self.regs.arg_regs[f'$a{i}'][0] = param 
+                        self.regs.arg_regs[f'$a{i}'][1] = self.count 
+                        self.count += 1
+                        code.append(f'\tlw $a{i}, {offset}($fp)') 
+                    elif param.endswith('.length'):
+                        ## params var_temp#x.length
+                        self.regs.arg_regs[f'$a{i}'][0] = param 
+                        self.regs.arg_regs[f'$a{i}'][1] = self.count 
+                        self.count += 1
+                        code.append(f'\tlw $a{i}, {offset + 4}($fp)') 
+                    elif param.endswith('.capacity'):
+                        self.regs.arg_regs[f'$a{i}'][0] = param 
+                        self.regs.arg_regs[f'$a{i}'][1] = self.count 
+                        self.count += 1
+                        code.append(f'\tlw $a{i}, {offset + 8}($fp)') 
+                    else:   
+                        pass 
+
+        if not found:
+            if not param.startswith('var_temp'):
+                reg, mips = self.regs.get_register(param)
+                code.extend(mips)
+                code.append(f'\taddi $sp, $sp, -4')
+                code.append(f'\tsw {reg} ($sp)')
+            else:
+                offset = self.locations[param.split('.')[0]]
+                if param.endswith('.addr'):
+                    reg, mips = self.regs.get_register()
+                    code.extend(mips)
+                    code.append('\tlw {reg} {offset}($fp)')
+                    code.append(f'addi $sp, $sp, -4')
+                    code.append('\tsw {reg} ($sp)')
+                elif param.endswith('.length'):
+                    reg, mips = self.regs.get_register()
+                    code.extend(mips)
+                    code.append('\tlw {reg} {offset + 4}($fp)')
+                    code.append(f'addi $sp, $sp, -4')
+                    code.append('\tsw {reg} ($sp)')
+                elif param.endswith('.capacity'):
+                    reg, mips = self.regs.get_register()
+                    code.extend(mips)
+                    code.append('\tlw {reg} {offset + 8}($fp)')
+                    code.append(f'addi $sp, $sp, -4')
+                    code.append('\tsw {reg} ($sp)')
+                else:
+                    reg, mips = self.regs.get_register()
+                    code.extend(mips)
+                    code.append('\tlw {reg} {offset}($fp)')
+                    code.append(f'addi $sp, $sp, -4')
+                    code.append('\tsw {reg} ($sp)')
+                    code.append('\tlw {reg} {offset + 4}($fp)')
+                    code.append(f'addi $sp, $sp, -4')
+                    code.append('\tsw {reg} ($sp)')
+                    code.append('\tlw {reg} {offset + 8}($fp)')
+                    code.append(f'addi $sp, $sp, -4')
+                    code.append('\tsw {reg} ($sp)')
+
+        return code
+
     def handle_returns(self, returnList):
         pass 
 

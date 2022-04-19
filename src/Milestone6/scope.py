@@ -357,8 +357,8 @@ class CompositeLitNode(Node):
 
                     if isinstance(val, ExprNode):
                         self.addChild(StructFieldNode(key, val))
-                        self.code.append(f'{addr} = {self.place}.addr+{self.dataType["offset"][key]}')
-                        self.code.append(f'*{addr} = {val.place}')
+                        self.code.append(f'{addr} = {self.place}.addr + {self.dataType["offset"][key]}')
+                        self.code.append(f'* {addr} = {val.place}')
                     else:
                         raise SyntaxError("Not changing literals to expressions properly")
             
@@ -372,8 +372,8 @@ class CompositeLitNode(Node):
                     
                     if isinstance(val, ExprNode):
                         self.addChild(StructFieldNode(key, val))
-                        self.code.append(f'{addr} = {self.place}.addr+{self.dataType["offset"][key]}')
-                        self.code.append(f'*{addr} = {val.place}')
+                        self.code.append(f'{addr} = {self.place}.addr + {self.dataType["offset"][key]}')
+                        self.code.append(f'* {addr} = {val.place}')
                     else:
                         raise SyntaxError("Not changing literals to expressions properly")
 
@@ -407,7 +407,7 @@ class CompositeLitNode(Node):
             for i in range(self.dataType['length']):
                 if not vis[i]:
                     self.addChild(zeroLit(stm,self.dataType['baseType']))
-                    self.code.append(f'*{addr} = 0')
+                    self.code.append(f'* {addr} = 0')
                 else:
                     if isinstance(children[i], NodeList):
                         if isinstance(self.dataType['baseType'], str):
@@ -416,9 +416,9 @@ class CompositeLitNode(Node):
                             children[i] = CompositeLitNode(stm, self.dataType['baseType'], children[i])
                     
                     self.addChild(children[i])
-                    self.code.append(f'*{addr} = {children[i].place}')
+                    self.code.append(f'* {addr} = {children[i].place}')
                 
-                self.code.append(f'{addr} = {addr}+{elSize}')
+                self.code.append(f'{addr} = {addr} + {elSize}')
 
         elif self.dataType['name'] == 'slice':
             vis = []
@@ -458,7 +458,7 @@ class CompositeLitNode(Node):
             for i in range(self.dataType['length']):
                 if not vis[i]:
                     self.addChild(zeroLit(stm,self.dataType['baseType']))
-                    self.code.append(f'*{addr} = 0')
+                    self.code.append(f'* {addr} = 0')
                 else:
                     if isinstance(children[i], NodeList):
                         if isinstance(self.dataType['baseType'], str):
@@ -467,9 +467,9 @@ class CompositeLitNode(Node):
                             children[i] = CompositeLitNode(stm, self.dataType['baseType'], children[i])
                     
                     self.addChild(children[i])
-                    self.code.append(f'*{addr} = {children[i].place}')
+                    self.code.append(f'* {addr} = {children[i].place}')
                 
-                self.code.append(f'{addr} = {addr}+{elSize}')
+                self.code.append(f'{addr} = {addr} + {elSize}')
 
         # TODO add map comoposite
         elif self.dataType['name'] == 'map':
