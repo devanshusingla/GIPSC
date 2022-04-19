@@ -1,13 +1,14 @@
 package main
 
-func inc(x int) int {
+func inc(x int) (int, int) {
 	x = x + 6
-	return x + 1
+	var y int=5
+	return y, x+3
 }
 
 
 func main() {
-	z := inc(5)
+	z,a := inc(5)
 	y := 6;
 	var x *int = &(y);
 	y = 2

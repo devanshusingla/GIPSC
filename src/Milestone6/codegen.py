@@ -377,7 +377,35 @@ class MIPS:
                         code.append('\tjr $ra')
                     else:
                         code.extend(self.exit())
-                break
+                else:
+                    j=2
+                    retValues = []
+                    while self.tac_code[i-j].startswith('retparams'):
+                        retValues.append(self.tac_code[i-j].split()[1])
+                        j += 1
+                    
+
+                    retReg, _code = self._get_label(retValues[0])
+                    code.extend(_code)
+                    if len(self.stm.functions[funcname]) == 1 and not retReg.startswith("vartemp"):
+                        code.append(f"\taddi $v0, {retReg}, $0")
+                        code.append('\tjr $ra')
+                    else:
+                        retSize=0
+                        for retVal in self.stm.functions[funcname]['return']:
+                            retSize += retVal['size']
+                        code.extend(self.malloc(retSize))
+
+                        print(retValues, self.stm.functions[funcname]['return'])
+                        offset=0
+                        for idx, retVal in enumerate(self.stm.functions[funcname]['return']):                            
+                            retReg, _code = self._get_label(retValues[idx])
+                            code.extend(_code)
+                            code.append(f"\tsw {retReg}, {offset}($v0)")
+                            offset += retVal['size']
+                        code.append(f"\taddi $v1, $0, {retSize}")
+                        code.append('\tjr $ra')
+
             if self.tac_code[i].startswith('temp'):
                 items = self.tac_code[i].split(' ')
                 if len(items) == 3:
@@ -466,6 +494,52 @@ class MIPS:
                 else:
                     code.extend(self.exit())
         return code
+    
+    def _get_label(self, label):
+        code = []
+        if label.startswith("temp") or label[0].isdigit():
+            return self.regs.get_register(label) 
+        elif label.startswith("arg"):
+            reg, mips = self.regs.get_register()
+            offset = int(label.split('_')[-1][:-1])
+            code.append(mips)
+            code.append('\tsw {reg} {offset}($fp)')
+            return reg, code 
+        else:
+            offset = self.regs.locations[label.split('.')[0]]
+            if label.endswith('.addr'):
+                reg, mips = self.regs.get_register()
+                code.extend(mips)
+                code.append('\tlw {reg} {offset}($fp)')
+                code.append(f'addi $sp, $sp, -4')
+                code.append('\tsw {reg} ($sp)')
+            elif label.endswith('.length'):
+                reg, mips = self.regs.get_register()
+                code.extend(mips)
+                code.append('\tlw {reg} {offset + 4}($fp)')
+                code.append(f'addi $sp, $sp, -4')
+                code.append('\tsw {reg} ($sp)')
+            elif label.endswith('.capacity'):
+                reg, mips = self.regs.get_register()
+                code.extend(mips)
+                code.append('\tlw {reg} {offset + 8}($fp)')
+                code.append(f'addi $sp, $sp, -4')
+                code.append('\tsw {reg} ($sp)')
+            else:
+                reg, mips = self.regs.get_register()
+                code.extend(mips)
+                code.append('\tlw {reg} {offset}($fp)')
+                code.append(f'addi $sp, $sp, -4')
+                code.append('\tsw {reg} ($sp)')
+                code.append('\tlw {reg} {offset + 4}($fp)')
+                code.append(f'addi $sp, $sp, -4')
+                code.append('\tsw {reg} ($sp)')
+                code.append('\tlw {reg} {offset + 8}($fp)')
+                code.append(f'addi $sp, $sp, -4')
+                code.append('\tsw {reg} ($sp)')
+
+            return reg, code
+            
 
     def handle_newvartemp(self):
         pass 
@@ -500,7 +574,7 @@ class MIPS:
                     code.append(f'\tadd $a{i}, {reg}, $0')
                     break
                 else:
-                    offset = self.locations[param.split('.')[0]]
+                    offset = self.regs.locations[param.split('.')[0]]
                     if param.endswith('.addr'):
                         ## params var_temp#x.addr 
                         self.regs.arg_regs[f'$a{i}'][0] = param 
@@ -528,7 +602,7 @@ class MIPS:
                 code.append(f'\taddi $sp, $sp, -4')
                 code.append(f'\tsw {reg} ($sp)')
             else:
-                offset = self.locations[param.split('.')[0]]
+                offset = self.regs.locations[param.split('.')[0]]
                 if param.endswith('.addr'):
                     reg, mips = self.regs.get_register()
                     code.extend(mips)
@@ -608,7 +682,7 @@ class MIPS:
         if type(space) != str:
             code.append(f"\tli $a0 {space}")
         else:
-            code.append(f"\tadd $a0 r0 {space}")
+            code.append(f"\tadd $a0 $0 {space}")
         code.extend(self.dosyscall(9))
         return code
     
