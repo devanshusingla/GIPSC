@@ -1,3 +1,4 @@
+from calendar import c
 from scope import *
 from utils import *
 
@@ -586,8 +587,128 @@ class MIPS:
         code.append(f"\tbeqz {reg[0]}, {elselab}")
         return code
 
-    def handle_binOp(self):
-        pass 
+    def handle_floatBinOp(self, operand1, operand2, operator, finalreg):
+        code = []
+        reg1, mips = self.get_register(operand1, isFloat=True)
+        code.extend(mips)
+        reg2, mips = self.get_register(operand2, isFloat=True)
+        code.extend(mips)
+        reg3, mips = self.get_register()
+        code.extend(mips)
+        code.append(f'\mtc1 {reg1} $f1')
+        code.append(f'\mtc1 {reg2} $f2')
+
+        if operator.startswith('+'):
+            code.append(f'\tadd.s $f0, $f1, $f2')
+            code.append(f'\tmfc1 {finalreg}, $f0')
+        elif operator.startswith('-'):
+            code.append(f'\tsub.s $f0, $f1, $f2')
+            code.append(f'\tmfc1 {finalreg}, $f0')
+        elif operator.startswith('*'):
+            code.append(f'\tmul.s $f0, $f1, $f2')
+            code.append(f'\tmfc1 {finalreg}, $f0')
+        elif operator.startswith('/'):
+            code.append(f'\tdiv.s $f0, $f1, $f2')
+            code.append(f'\tmfc1 {finalreg}, $f0')
+        elif operator.startswith('<='):
+            code.append(f'\tc.le.s $f0, $f1, $f2')
+            code.append(f'cfc1 {finalreg}, {reg3}')
+        elif operator.startswith('>='):
+            code.append(f'\tc.ge.s $f0, $f1, $f2')
+            code.append(f'cfc1 {finalreg}, {reg3}')
+        elif operator.startswith('<'):
+            code.append(f'\tc.lt.s $f0, $f1, $f2')
+            code.append(f'cfc1 {finalreg}, {reg3}')
+        elif operator.startswith('>'):
+            code.append(f'\tc.gt.s $f0, $f1, $f2')
+            code.append(f'cfc1 {finalreg}, {reg3}')
+        elif operator.startswith('=='):
+            code.append(f'\tc.eq.s $f0, $f1, $f2')
+            code.append(f'cfc1 {finalreg}, {reg3}')
+        elif operator.startswith('!='):
+            code.append(f'\tc.ne.s $f0, $f1, $f2')
+            code.append(f'cfc1 {finalreg}, {reg3}')
+        return code
+        
+
+
+    def handle_intBinOp(self, operand1, operand2, operator, finalreg):
+        code = []
+        reg1, mips = self.get_register(operand1)
+        code.extend(mips)
+        reg2, mips = self.get_register(operand2)
+        code.extend(mips)
+        if operator.startswith('+'):
+            code.append(f'\tadd {finalreg}, {reg1}, {reg2}')
+        
+        elif operator.startswith('||') or operator.startswith('|'):
+            code.append(f'\tor {finalreg}, {reg1}, {reg2}')
+
+        elif operator.startswith('&&') or operator.startswith('&'):
+            code.append(f'\tand {finalreg}, {reg1}, {reg2}')
+        
+        elif operator.startswith('-'):
+            code.append(f'\tsub {finalreg}, {reg1}, {reg2}')
+
+        elif operator.startswith('*'):
+            code.append(f'\tmult {reg1}, {reg2}')
+            code.append(f'\tmflo {finalreg}')
+        
+        elif operator.startswith('/'):
+            code.append(f'\tdiv {reg1}, {reg2}')
+            code.append(f'\tmflo {finalreg}')
+
+        elif operator.startswith('%'):
+            code.append(f'\tdiv {reg1}, {reg2}')
+            code.append(f'\tmfhi {finalreg}')
+
+        elif operator.startswith('>>'):
+            code.append(f'\tsrav {finalreg}, {reg1}, {reg2}')
+        
+        elif operator.startswith('<<'):
+            code.append(f'\tsllv {finalreg}, {reg1}, {reg2}')
+
+        elif operator.startswith('<='):
+            code.append(f'\tslt {finalreg}, {reg2}, {reg1}')
+            code.append(f'\txori {finalreg}, {finalreg}, 1')
+        
+        elif operator.startswith('>='):
+            code.append(f'\tslt {finalreg}, {reg1}, {reg2}')
+            code.append(f'\txori {finalreg}, {finalreg}, 1')
+        
+        elif operator.startswith('^'):
+            code.append(f'\txor {finalreg}, {reg1}, {reg2}')
+        
+        elif operator.startswith('<'):
+            code.append(f'\tslt {finalreg}, {reg1}, {reg2}')
+
+        elif operator.startswith('>'):
+            code.append(f'\tslt {finalreg}, {reg2}, {reg1}')
+        
+        elif operator.startswith('=='):
+            reg3, mips = self.regs.get_register()
+            code.extend(mips)
+            code.append(f'\tslt {finalreg}, {reg1}, {reg2}')
+            code.append(f'\txori {finalreg}, {finalreg}, 1')
+            code.append(f'\tslt {reg3}, {reg2}, {reg1}')
+            code.append(f'\txori {reg3}, {reg3}, 1')
+            code.append(f'\tand {finalreg}, {finalreg}, {reg3}')
+
+        elif operator.startswith('!='):
+            reg3, mips = self.regs.get_register()
+            code.extend(mips)
+            code.append(f'\tslt {finalreg}, {reg1}, {reg2}')
+            code.append(f'\tslt {reg3}, {reg2}, {reg1}')
+            code.append(f'\tor {finalreg}, {finalreg}, {reg3}')
+        
+        return code
+
+    def handle_binOp(self, operand1, operand2, operator, finalreg):
+
+        if 'float' in operator:
+            return self.handle_floatBinOp(operand1, operand2, operator, finalreg)
+        else:
+            return self.handle_intBinOp(operand1, operand2, operator, finalreg)
 
     def handle_unOp(self, opr, operand, result):
         code = []
