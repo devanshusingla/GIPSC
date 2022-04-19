@@ -7,4 +7,5 @@ var arr [4]int;
 
 func main() {
 	const a int = 3
+	var x *int = &arr[2]
 }
