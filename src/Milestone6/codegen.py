@@ -435,7 +435,12 @@ class MIPS:
                     elif items[2].startswith('args'):
                         find_new_reg, mips = self.regs.get_register(items[0])
                         code.extend(mips)
-                        offset = items[2].split('_')[-1][:-1] 
+                        offset = items[2].split('_')[-1].split('.')[0][:-1]
+                        if len(items[2].split('_')[-1].split('.')) > 1: 
+                            if items[2].split('_')[-1].split('.')[1] == 'length':
+                                offset += 4 
+                            else:
+                                offset += 8
                         code.append(f'\tlw {find_new_reg}, {offset}($fp)')
                     elif items[2].startswith('var_temp'):
                         retReg, mips = self._get_label(items[2])
@@ -479,7 +484,6 @@ class MIPS:
                         # self.code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
                 elif len(items) == 4:
                     # a = unop b
-                    continue
                     reg, mips = self.regs.get_register(items[0])
                     code.extend(mips)
                     code.append(self.handle_unOp(items[2], items[3], reg))
@@ -496,14 +500,34 @@ class MIPS:
                     else:
                         reg, mips = self.regs.get_register()
                         code.extend(mips)
-                        code.extend(self.handle_binOp(items[3], items[5], items[4], reg))
+                        code.extend(self.handle_binOp(items[2], items[4], items[3], reg))
                         reg2, mips2 = self.regs.get_register(items[0])
                         code.extend(mips2)
                         code.append(f'\tadd {reg2}, {reg}, $0')
                 elif len(items) == 6:
                     # a = * b binop c
                     # a = b binop * c
-                    pass
+                    if items[2] == '*': 
+                        reg, mips = self.regs.get_register(items[0])
+                        code.append(mips)
+                        new_reg, mips = self.regs.get_register()
+                        code.append(mips)
+                        code.append(self.handle_unOp(items[2], items[3], new_reg))
+                        binop_reg, mips = self.regs.get_register
+                        code.append(mips)
+                        code.append(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
+                        code.append("\tadd {reg}, {binop_reg}, $0")
+                    elif p[4] == '*':
+                        reg, mips = self.regs.get_register(items[0])
+                        code.append(mips)
+                        new_reg, mips = self.regs.get_register()
+                        code.append(mips)
+                        code.append(self.handle_unOp(items[4], items[5], new_reg))
+                        binop_reg, mips = self.regs.get_register
+                        code.append(mips)
+                        code.append(self.handle_binOp(items[2], new_reg, binop_reg, isreg2 = True))
+                        code.append("\tadd {reg}, {binop_reg}, $0")
+
                 else:
                     print(items)
                     raise NotImplementedError
@@ -564,38 +588,43 @@ class MIPS:
                     code.extend(self.exit())
         return code
 
-    def _get_label(self, label):
+    def _get_label(self, label, isFloat = False):
         code = []
         if label.startswith("temp") or label[0].isdigit():
-            return self.regs.get_register(label)
+            return self.regs.get_register(label, isFloat = isFloat)
         elif label.startswith("arg"):
-            reg, mips = self.regs.get_register()
-            offset = int(label.split('_')[-1][:-1])
+            reg, mips = self.regs.get_register(isFloat = isFloat)
+            offset = int(label.split('_')[-1].split('.')[0][:-1])
             code.append(mips)
+            if len(label.split('_')[-1].split('.')) > 1: 
+                if label.split('_')[-1].split('.')[1] == 'length':
+                    offset += 4 
+                else:
+                    offset += 8
             code.append('\tsw {reg} {offset}($fp)')
             return reg, code
         else:
             offset = self.regs.locations[label.split('.')[0]]
             if label.endswith('.addr'):
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat = isFloat)
                 code.extend(mips)
                 code.append('\tlw {reg} {offset}($fp)')
             elif label.endswith('.length'):
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat = isFloat)
                 code.extend(mips)
                 code.append('\tlw {reg} {offset + 4}($fp)')
             elif label.endswith('.capacity'):
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat = isFloat)
                 code.extend(mips)
                 code.append('\tlw {reg} {offset + 8}($fp)')
             else:
-                reg1, mips = self.regs.get_register()
+                reg1, mips = self.regs.get_register(isFloat = isFloat)
                 code.extend(mips)
                 code.append('\tlw {reg} {offset}($fp)')
-                reg2, mips = self.regs.get_register()
+                reg2, mips = self.regs.get_register(isFloat = isFloat)
                 code.extend(mips)
                 code.append('\tlw {reg2} {offset + 4}($fp)')
-                reg3, mips = self.regs.get_register()
+                reg3, mips = self.regs.get_register(isFloat = isFloat)
                 code.extend(mips)
                 code.append('\tlw {reg3} {offset + 8}($fp)')
                 return [reg1, reg2, reg3], code
@@ -722,12 +751,16 @@ class MIPS:
         code.append(f"\tbeqz {reg[0]}, {elselab}")
         return code
 
-    def handle_floatBinOp(self, operand1, operand2, operator, finalreg):
+    def handle_floatBinOp(self, operand1, operand2, operator, finalreg, isreg1 = False, isreg2 = False):
         code = []
-        reg1, mips = self.get_register(operand1, isFloat=True)
-        code.extend(mips)
-        reg2, mips = self.get_register(operand2, isFloat=True)
-        code.extend(mips)
+        reg1 = operand1  
+        reg2 = operand2 
+        if not isreg1:
+            reg1, mips = self._get_label(operand1, isFloat=True)
+            code.extend(mips)
+        if not isreg2:
+            reg2, mips = self._get_label(operand2, isFloat=True)
+            code.extend(mips)
         reg3, mips = self.get_register(isFloat=True)
         code.extend(mips)
 
@@ -763,12 +796,16 @@ class MIPS:
             code.append(f'cfc1 {finalreg}, {reg3}')
         return code
 
-    def handle_intBinOp(self, operand1, operand2, operator, finalreg):
+    def handle_intBinOp(self, operand1, operand2, operator, finalreg, isreg1 = False, isreg2 = False):
         code = []
-        reg1, mips = self.get_register(operand1)
-        code.extend(mips)
-        reg2, mips = self.get_register(operand2)
-        code.extend(mips)
+        reg1 = operand1
+        reg2 = operand2
+        if not isreg1:
+            reg1, mips = self._get_label(operand1)
+            code.extend(mips)
+        if not isreg2:
+            reg2, mips = self._get_label(operand2)
+            code.extend(mips)
         if operator.startswith('+'):
             code.append(f'\tadd {finalreg}, {reg1}, {reg2}')
 
@@ -834,12 +871,12 @@ class MIPS:
 
         return code
 
-    def handle_binOp(self, operand1, operand2, operator, finalreg):
+    def handle_binOp(self, operand1, operand2, operator, finalreg, isreg1 = False, isreg2 = False):
 
         if 'float' in operator:
-            return self.handle_floatBinOp(operand1, operand2, operator, finalreg)
+            return self.handle_floatBinOp(operand1, operand2, operator, finalreg, isreg1, isreg2)
         else:
-            return self.handle_intBinOp(operand1, operand2, operator, finalreg)
+            return self.handle_intBinOp(operand1, operand2, operator, finalreg, isreg1, isreg2)
 
     def handle_unOp(self, opr, operand, finalreg):
         code = []
@@ -847,7 +884,9 @@ class MIPS:
             return []
 
         elif opr[0] == '-':
-            reg, mips = self.regs.get_register(operand)
+            if 'float' in opr:
+                isFloat = True 
+            reg, mips = self.regs.get_register(operand, isFloat = isFloat)
             code.extend(mips)
             code.append('\tsubi {finalreg}, 0, {reg}')
             return code

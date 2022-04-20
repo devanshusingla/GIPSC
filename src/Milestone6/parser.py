@@ -746,7 +746,10 @@ def p_UnaryExpr(p):
             p[0].lvalue = p[2].place
         elif p[1] == '&':
             p[0].isRef = True
-        p[0].code.append(f"{temp_var} = {p[1]} {p[2].place}")
+        if p[1] == '-':
+            p[0].code.append(f"{temp_var} = {p[1]}({p[2].dataType['name']}) {p[2].place}")
+        else:
+            p[0].code.append(f"{temp_var} = {p[1]} {p[2].place}")
         p[0].place = temp_var
 
 ###################################################################################
