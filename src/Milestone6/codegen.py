@@ -401,7 +401,8 @@ class MIPS:
 
                     retReg, _code = self._get_label(retValues[0])
                     code.extend(_code)
-                    if len(self.stm.functions[funcname]['return']) == 1 and not retReg.startswith("vartemp"):
+                    if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
+                        retReg = retReg[0]
                         code.append(f"\taddi $v0, {retReg}, $0")
                         code.append('\tjr $ra')
                     else:
@@ -410,11 +411,11 @@ class MIPS:
                             retSize += retVal['size']
                         code.extend(self.malloc(retSize))
 
-                        print(
-                            retValues, self.stm.functions[funcname]['return'])
+                        print(retValues, self.stm.functions[funcname]['return'])
                         offset = 0
                         for idx, retVal in enumerate(self.stm.functions[funcname]['return']):
                             retReg, _code = self._get_label(retValues[idx])
+                            retReg = retReg[0] ## TODO: Make it general for returning Composite DTs
                             code.extend(_code)
                             code.append(f"\tsw {retReg}, {offset}($v0)")
                             offset += retVal['size']
@@ -428,12 +429,21 @@ class MIPS:
                     if items[2].startswith('temp'):
                         old_reg, mips = self.regs.get_register(items[2])
                         code.extend(mips)
-                        find_new_reg = self.regs.find_new_reg()
+                        find_new_reg, mips = self.regs.get_register(items[0])
+                        code.extend(mips)
                         code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
                     elif items[2].startswith('args'):
-                        pass
+                        find_new_reg, mips = self.regs.get_register(items[0])
+                        code.extend(mips)
+                        offset = items[2].split('_')[-1][:-1] 
+                        code.append(f'\tlw {find_new_reg}, {offset}($fp)')
                     elif items[2].startswith('var_temp'):
-                        pass
+                        retReg, mips = self._get_label(items[2])
+                        retReg = retReg[0] ## Both point to same location
+                        find_new_reg, mips = self.regs.get_register(items[0])
+                        code.extend(mips)
+                        code.append('\tadd {find_new_reg}, {retReg}, $0')
+
                     elif items[2].startswith('retval'):
                         funcName = items[2].split('_')[1]
                         num_returns = len(
@@ -469,28 +479,30 @@ class MIPS:
                         # self.code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
                 elif len(items) == 4:
                     # a = unop b
-                    # * a = b
                     continue
-                    if items[0] != '*':
-                        reg, mips = self.regs.get_register(items[0])
-                        code.extend(mips)
-                        code.append(self.handle_unOp(items[2], items[3], reg))
-                    else:
-                        reg, mips = self.regs.get_register(items[0])
-                        code.extend(mips)
-                        code.append(self.handle_unOp(items[0], items[1], reg))
-                        reg2, mips2 = self.regs.get_register(items[3])
-                        code.extend(mips2)
-                        code.append('\taddi {reg}, {reg2}, 0')
+                    reg, mips = self.regs.get_register(items[0])
+                    code.extend(mips)
+                    code.append(self.handle_unOp(items[2], items[3], reg))
 
                 elif len(items) == 5:
                     # a = b binop c
-                    # * a = unop b
-                    pass
+                    # a = & * b
+                    if items[2] == '&' and items[3] == '*': 
+                        old_reg, mips = self.regs.get_register(items[2])
+                        code.extend(mips)
+                        find_new_reg, mips = self.regs.get_register(items[0])
+                        code.extend(mips)
+                        code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
+                    else:
+                        reg, mips = self.regs.get_register()
+                        code.extend(mips)
+                        code.extend(self.handle_binOp(items[3], items[5], items[4], reg))
+                        reg2, mips2 = self.regs.get_register(items[0])
+                        code.extend(mips2)
+                        code.append(f'\tadd {reg2}, {reg}, $0')
                 elif len(items) == 6:
                     # a = * b binop c
                     # a = b binop * c
-                    # * a = b binop c
                     pass
                 else:
                     print(items)
@@ -498,8 +510,28 @@ class MIPS:
             elif self.tac_code[i].startswith('vartemp'):
                 pass
             elif self.tac_code[i].startswith('*'):
+                # * a = b
+                # * a = unop b
+                # * a = b binop c
+                items = self.tac_code[i].split(' ')  
                 if self.tac_code[i].startswith('temp'):
-                    pass
+                    if len(items) == 4:
+                        location = self.regs.locations[items[1]][1]
+                        reg, mips = self.regs.get_register(items[3])
+                        code.extend(mips)
+                        code.append('\tsw {reg}, {location}($fp)')
+                    elif len(items) == 5: 
+                        reg, mips = self.regs.get_register()
+                        code.extend(mips)
+                        code.extend(self.handle_unOp(items[3], items[4], reg))
+                        location = self.regs.locations[items[1]][1]
+                        code.append('\tsw {reg}, {location}($fp)')    
+                    elif len(items) == 6:
+                        reg, mips = self.regs.get_register()
+                        code.extend(mips)
+                        code.extend(self.handle_binOp(items[3], items[5], items[4], reg))
+                        location = self.regs.locations[items[1]][1]
+                        code.append('\tsw {reg}, {location}($fp)')  
                 elif self.tac_code[i].startswith('vartemp'):
                     pass
             elif self.tac_code[i].startswith('call'):
@@ -548,42 +580,32 @@ class MIPS:
                 reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.append('\tlw {reg} {offset}($fp)')
-                code.append(f'addi $sp, $sp, -4')
-                code.append('\tsw {reg} ($sp)')
             elif label.endswith('.length'):
                 reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.append('\tlw {reg} {offset + 4}($fp)')
-                code.append(f'addi $sp, $sp, -4')
-                code.append('\tsw {reg} ($sp)')
             elif label.endswith('.capacity'):
                 reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.append('\tlw {reg} {offset + 8}($fp)')
-                code.append(f'addi $sp, $sp, -4')
-                code.append('\tsw {reg} ($sp)')
             else:
-                reg, mips = self.regs.get_register()
+                reg1, mips = self.regs.get_register()
                 code.extend(mips)
                 code.append('\tlw {reg} {offset}($fp)')
-                code.append(f'addi $sp, $sp, -4')
-                code.append('\tsw {reg} ($sp)')
-                code.append('\tlw {reg} {offset + 4}($fp)')
-                code.append(f'addi $sp, $sp, -4')
-                code.append('\tsw {reg} ($sp)')
-                code.append('\tlw {reg} {offset + 8}($fp)')
-                code.append(f'addi $sp, $sp, -4')
-                code.append('\tsw {reg} ($sp)')
+                reg2, mips = self.regs.get_register()
+                code.extend(mips)
+                code.append('\tlw {reg2} {offset + 4}($fp)')
+                reg3, mips = self.regs.get_register()
+                code.extend(mips)
+                code.append('\tlw {reg3} {offset + 8}($fp)')
+                return [reg1, reg2, reg3], code
 
-            return reg, code
+            return [reg], code
 
     def handle_newvartemp(self):
         pass
 
     def handle_varTempPointers(self):
-        pass
-
-    def handle_temp_assignment(self):
         pass
 
     def handle_funcCall(self):
@@ -824,31 +846,31 @@ class MIPS:
         if opr == '+':
             return []
 
-        elif opr == '-':
+        elif opr[0] == '-':
             reg, mips = self.regs.get_register(operand)
             code.extend(mips)
             code.append('\tsubi {finalreg}, 0, {reg}')
             return code
 
-        elif opr == '*':
+        elif opr[0] == '*':
             reg, mips = self.regs.get_register(operand)
             code.extend(mips)
 
             code.append("\tlw {finalreg} (reg)")
             return code
 
-        elif opr == '&':
+        elif opr[0] == '&':
             addr = self.regs.locations[operand][1]
 
             code.append('\tla {finalreg}, {addr}')
             return code
 
-        elif opr == '!':
+        elif opr[0] == '!':
             reg, mips = self.regs.get_register(operand)
             code.extend(mips)
             code.append('\tnor {finalreg}, {reg}, $0')
 
-        elif opr == '^':
+        elif opr[0] == '^':
             reg, mips = self.regs.get_register(operand)
             code.extend(mips)
             reg_helper, mips = self.regs.get_register()
