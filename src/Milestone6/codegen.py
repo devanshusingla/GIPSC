@@ -507,7 +507,13 @@ class MIPS:
                 pass
             elif self.tac_code[i].startswith('new'):
                 ## TODO 
-                pass
+                items = self.tac_code[i].split(' ')
+                code.append(f"\taddi $sp, $sp, -12")
+                space = int(items[2])
+                code.extend(self.malloc(space))
+                code.append(f'\tsw $v0, ($sp)')
+                code.append(f'\tsw {space}, 4($sp)')
+                code.append(f'\tsw {space}, 8($sp)')
             elif self.tac_code[i].startswith('params'):
                 code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
             elif self.tac_code[i].startswith('retparams'):

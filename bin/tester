@@ -1,9 +1,9 @@
 #!/bin/bash
 
-export MILESTONE=5
+export MILESTONE=6
 
 path_to_root=$( dirname $( dirname $( realpath $0) ) )
-abs_path_to_parser="${path_to_root}/src/Milestone5/parser.py"
+abs_path_to_parser="${path_to_root}/src/Milestone6/parser.py"
 abs_path_to_tests="${path_to_root}/tests/Milestone${MILESTONE}/"
 export PATH_TO_ROOT=$path_to_root
 for test_case in "${abs_path_to_tests}"*
