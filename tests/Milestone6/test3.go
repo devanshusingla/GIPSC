@@ -2,8 +2,8 @@ package main
 
 func inc(x int) (int, int) {
 	x = x + 6
-	var y int=5
-	return y, x+3
+	var z int=5
+	return z, x+3
 }
 
 

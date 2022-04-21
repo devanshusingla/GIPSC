@@ -312,6 +312,19 @@ class Register:
 
             return (new_reg, mips)
 
+
+class ActivationRecord:
+    def __init__(self, local_var_space = None):
+        self.returnval_space = None 
+        self.param_space = None
+        self.old_base_ptr_space = 4
+        self.localvar_space = local_var_space
+        self.saved_registers_space = 128
+        self.return_address_space = 4
+
+        self.local_var = {}
+        self.args = {}
+
 # Class to implement code generation from 3AC and symtable to MIPS
 
 
@@ -327,6 +340,19 @@ class MIPS:
         self.builtins = ['Print', 'Scan', 'Typecast']
         self.fpOffset = 0  # Offset from frame pointer
 
+        self.global_var = {}
+        self.global_var_size=0
+        self.act_records = {}
+        self.curr_func = ""
+
+    def _location(self, label):
+        if label in self.regs.locations:
+            return self.regs.get_register(label)
+        elif label in self.act_records[self.curr_func].local_var:
+            return (0,f'{self.act_records[self.curr_func].local_var["offset"]}($fp)')
+        elif label in self.global_var:
+            return (0, f'{self.global_var[label]["offset"]}($gp)')
+
     def tac2mips(self):
         code = self.addDataSection()
         code.extend(self.addTextHeader())
@@ -341,6 +367,8 @@ class MIPS:
             for var, detail in scope.symTable[0].localsymTable.items():
                 if var not in self.stm.functions:
                     code.extend(self._getDataCode(detail))
+                    self.global_var[detail['tmp']] = {'size': detail['dataType']['size'], 'offset': self.global_var_size}
+                    self.global_var_size += detail['dataType']['size']
 
         for var, detail in self.stm.symTable[0].localsymTable.items():
             if var not in self.stm.functions:
@@ -378,49 +406,70 @@ class MIPS:
                 continue
         return code
 
+    def _func_arg_size_on_stack(self, funcname):
+        # TODO calculate correct size
+        return 0
+
     def addFunction(self, lineno):
         code = []
         funcname = self.tac_code[lineno].split(' ')[1]
+        self.curr_func = funcname
         if funcname != 'main':
             code.extend(self.handle_label('_'+funcname))
         else:
             code.extend(self.handle_label(funcname))
+
+        stack_return_size = self._func_arg_size_on_stack(funcname)
+
+        self.act_records[funcname] = ActivationRecord()
+        
+        local_var_size = 0
+        if self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
+            for local_var, lv_info in self.stm.symTable[self.stm.functions[funcname]['scope']+1].localsymTable.items():
+                self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': local_var_size}
+                local_var_size += lv_info['dataType']['size']
+        
+        code.append(f'addi $sp, $sp, -4')
+        code.append(f'sw $ra, 0($sp)')
+        code.append(f'addi $sp, $sp, -4')
+        code.append(f'sw $fp, 0($sp)')
+        code.append(f'addi $sp, $sp, -{local_var_size}')
+
         for i in range(lineno+1, len(self.tac_code)):
             if self.tac_code[i].startswith('Func END'):
-                if not self.tac_code[i-1].startswith('return'):
-                    if funcname != 'main':
-                        code.append(f'\tjr $ra')
-                    else:
-                        code.extend(self.exit())
+                code.append(f'_return_{funcname}:')
+                code.append(f'lw $ra, -4($sp)')
+                code.append(f'lw $sp, 0($sp)')
+                code.append(f'addi $sp, $sp, {stack_return_size}')
+                code.append(f'jr $ra')
+
+            elif self.tac_code[i].startswith('return'):
+                j = 1
+                retValues = []
+                while self.tac_code[i-j].startswith('retparams'):
+                    retValues.append(self.tac_code[i-j].split()[1])
+                    j += 1
+
+                retReg, _code = self._get_label(retValues[0])
+                code.extend(_code)
+                if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
+                    retReg = retReg[0]
+                    code.append(f"\taddi $v0, {retReg}, $0")
                 else:
-                    j = 2
-                    retValues = []
-                    while self.tac_code[i-j].startswith('retparams'):
-                        retValues.append(self.tac_code[i-j].split()[1])
-                        j += 1
+                    retSize = 0
+                    for retVal in self.stm.functions[funcname]['return']:
+                        retSize += retVal['size']
+                    code.extend(self.malloc(retSize))
 
-                    retReg, _code = self._get_label(retValues[0])
-                    code.extend(_code)
-                    if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
-                        retReg = retReg[0]
-                        code.append(f"\taddi $v0, {retReg}, $0")
-                        code.append(f'\tjr $ra')
-                    else:
-                        retSize = 0
-                        for retVal in self.stm.functions[funcname]['return']:
-                            retSize += retVal['size']
-                        code.extend(self.malloc(retSize))
-
-                        print(retValues, self.stm.functions[funcname]['return'])
-                        offset = 0
-                        for idx, retVal in enumerate(self.stm.functions[funcname]['return']):
-                            retReg, _code = self._get_label(retValues[idx])
-                            retReg = retReg[0] ## TODO: Make it general for returning Composite DTs
-                            code.extend(_code)
-                            code.append(f"\tsw {retReg}, {offset}($v0)")
-                            offset += retVal['size']
-                        code.append(f"\taddi $v1, $0, {retSize}")
-                        code.append(f'\tjr $ra')
+                    print(retValues, self.stm.functions[funcname]['return'])
+                    offset = 0
+                    for idx, retVal in enumerate(self.stm.functions[funcname]['return']):
+                        retReg, _code = self._get_label(retValues[idx])
+                        retReg = retReg[0] ## TODO: Make it general for returning Composite DTs
+                        code.extend(_code)
+                        code.append(f"\tsw {retReg}, {offset}($v0)")
+                        offset += retVal['size']
+                    code.append(f"\taddi $v1, $0, {retSize}")
 
             if self.tac_code[i].startswith('temp'):
                 items = self.tac_code[i].split(' ')
@@ -434,7 +483,7 @@ class MIPS:
                 items = self.tac_code[i].split(' ')  
                 if self.tac_code[i].startswith('temp'):
                     if len(items) == 4:
-                        location = self.regs.locations[items[1]][1]
+                        location = self._location(items[1])[1]
                         reg, mips = self.regs.get_register(items[3])
                         code.extend(mips)
                         code.append(f'\tsw {reg}, {location}($fp)')
@@ -442,13 +491,13 @@ class MIPS:
                         reg, mips = self.regs.get_register()
                         code.extend(mips)
                         code.extend(self.handle_unOp(items[3], items[4], reg))
-                        location = self.regs.locations[items[1]][1]
+                        location = self._location(items[1])[1]
                         code.append(f'\tsw {reg}, {location}($fp)')    
                     elif len(items) == 6:
                         reg, mips = self.regs.get_register()
                         code.extend(mips)
                         code.extend(self.handle_binOp(items[3], items[5], items[4], reg))
-                        location = self.regs.locations[items[1]][1]
+                        location = self._location(items[1])[1]
                         code.append(f'\tsw {reg}, {location}($fp)')  
                 elif self.tac_code[i].startswith('vartemp'):
                     # TODO
@@ -506,7 +555,7 @@ class MIPS:
             code.append(f'\tsw {reg} {offset}($fp)')
             return reg, code
         else:
-            offset = self.regs.locations[label.split('.')[0]]
+            offset = self._location(label.split('.')[0])
             if label.endswith('.addr'):
                 reg, mips = self.regs.get_register(isFloat = isFloat)
                 code.extend(mips)
@@ -592,11 +641,11 @@ class MIPS:
                 elif items[2].isnumeric():
                     if str(int(items[2])) == items[2]:
                         # integer
-                        offset = self.locations[items[0]][1]
+                        offset = self._location(items[0])[1]
                         helper_reg, mips = self.regs.get_register()
                         code.extend(mips) 
                         code.append(f'\tli {helper_reg}, {items[2]}')
-                        code.append(f'\tsw {reg}, {offset}($fp)')
+                        code.append(f'\tsw {helper_reg}, {offset}($fp)')
                         pass
                     else:
                         # float
@@ -723,7 +772,7 @@ class MIPS:
                 elif items[2].isnumeric():
                     if str(int(items[2])) == items[2]:
                         # integer
-                        reg, mips = self.regs.get_register(items[0]):
+                        reg, mips = self.regs.get_register(items[0])
                         code.extend(mips)
                         code.append(f'\tli {reg}, {items[2]}')
                         pass
@@ -940,7 +989,7 @@ class MIPS:
                     code.append(f'\tadd $a{i}, {reg}, $0')
                     break
                 else:
-                    offset = self.regs.locations[param.split('.')[0]][1]
+                    offset = self._location(param.split('.')[0])[1]
                     if param.endswith('.addr'):
                         # params var_temp#x.addr
                         self.regs.arg_regs[f'$a{i}'][0] = param
@@ -968,7 +1017,7 @@ class MIPS:
                 code.append(f'\taddi $sp, $sp, -4')
                 code.append(f'\tsw {reg} ($sp)')
             else:
-                offset = self.regs.locations[param.split('.')[0]][1]
+                offset = self._location(param.split('.')[0])[1]
                 if param.endswith('.addr'):
                     reg, mips = self.regs.get_register()
                     code.extend(mips)
@@ -1041,7 +1090,7 @@ class MIPS:
             reg1, mips = self._get_label(operand1, isFloat=True)
             code.extend(mips)
         if not isreg2:
-            reg2, mips = self._get_label(operand2, isFloat=True)
+            reg2, mips = self._get_label(self._location(operand2, isFloat=True))
             code.extend(mips)
         reg3, mips = self.get_register(isFloat=True)
         code.extend(mips)
@@ -1181,7 +1230,8 @@ class MIPS:
             return code
 
         elif opr[0] == '&':
-            addr = self.regs.locations[operand][1]
+            print(self.regs.locations)
+            addr = self._location(operand)[1]
 
             code.append(f'\tla {finalreg}, {addr}')
             return code

@@ -97,15 +97,6 @@ class scope:
     #         if avlType not in self.avlTypes:
     #             self.avlTypes.append(avlType)
 
-class ActivationRecord:
-    def __init__(self, local_var_space = None):
-        self.returnval_space = None 
-        self.param_space = None
-        self.old_base_ptr_space = 4
-        self.localvar_space = local_var_space
-        self.saved_registers_space = 128
-        self.return_address_space = 4
-
 ## Symbol Table Maker
 class SymTableMaker:
     def __init__(self):
@@ -141,6 +132,7 @@ class SymTableMaker:
     def addFunction(self, label, info):
         self.functions[label] = deepcopy(info)
         self.newScope()
+        self.functions[label]['scope'] = self.id
     
     def addType(self, type, typeObj):
         self.symTable[self.id].addType(type, deepcopy(typeObj))
