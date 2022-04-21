@@ -331,7 +331,6 @@ class ActivationRecord:
 class MIPS:
 
     def __init__(self, code, stm):
-        print('Init MIPS')
         self.regs = Register()
         self.instr = []
         self.INDENT = " " * 4
@@ -345,13 +344,18 @@ class MIPS:
         self.act_records = {}
         self.curr_func = ""
 
+        for st, st_info in self.stm.symTable.items():
+            pass
+
     def _location(self, label):
         if label in self.regs.locations:
             return self.regs.get_register(label)
         elif label in self.act_records[self.curr_func].local_var:
-            return (0,f'{self.act_records[self.curr_func].local_var["offset"]}($fp)')
+            return (0,f'{self.act_records[self.curr_func].local_var[label]["offset"]}($fp)')
+
         elif label in self.global_var:
             return (0, f'{self.global_var[label]["offset"]}($gp)')
+
 
     def tac2mips(self):
         code = self.addDataSection()
@@ -365,14 +369,18 @@ class MIPS:
 
         for scope in self.stm.pkgs.values():
             for var, detail in scope.symTable[0].localsymTable.items():
-                if var not in self.stm.functions:
-                    code.extend(self._getDataCode(detail))
-                    self.global_var[detail['tmp']] = {'size': detail['dataType']['size'], 'offset': self.global_var_size}
-                    self.global_var_size += detail['dataType']['size']
+                if var == '_':
+                    continue
+                code.extend(self._getDataCode(detail))
+                self.global_var[detail['tmp']] = {'size': detail['dataType']['size'], 'offset': self.global_var_size}
+                self.global_var_size += detail['dataType']['size']
 
         for var, detail in self.stm.symTable[0].localsymTable.items():
-            if var not in self.stm.functions:
-                code.extend(self._getDataCode(detail))
+            if var == '_':
+                continue
+            code.extend(self._getDataCode(detail))
+            self.global_var[detail['tmp']] = {'size': detail['dataType']['size'], 'offset': self.global_var_size}
+            self.global_var_size += detail['dataType']['size']
 
         code.extend(['', ''])
         return code
@@ -422,7 +430,7 @@ class MIPS:
         stack_return_size = self._func_arg_size_on_stack(funcname)
 
         self.act_records[funcname] = ActivationRecord()
-        
+
         local_var_size = 0
         if self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
             for local_var, lv_info in self.stm.symTable[self.stm.functions[funcname]['scope']+1].localsymTable.items():
@@ -439,9 +447,11 @@ class MIPS:
             if self.tac_code[i].startswith('Func END'):
                 code.append(f'_return_{funcname}:')
                 code.append(f'lw $ra, -4($sp)')
-                code.append(f'lw $sp, 0($sp)')
+                code.append(f'lw $fp, 0($fp)')
                 code.append(f'addi $sp, $sp, {stack_return_size}')
                 code.append(f'jr $ra')
+
+                return code
 
             elif self.tac_code[i].startswith('return'):
                 j = 1
@@ -461,7 +471,6 @@ class MIPS:
                         retSize += retVal['size']
                     code.extend(self.malloc(retSize))
 
-                    print(retValues, self.stm.functions[funcname]['return'])
                     offset = 0
                     for idx, retVal in enumerate(self.stm.functions[funcname]['return']):
                         retReg, _code = self._get_label(retValues[idx])
@@ -664,11 +673,10 @@ class MIPS:
                     code.append(f'\tsw {helper_reg}, {offset}($fp)')
                     pass
                 else:
-                    print(items[2])
                     raise NotImplementedError
         elif len(items) == 4:
             # a = unop b
-            offset = self.locations[items[0]][1]
+            offset = self._location(items[0])[1]
             reg, mips = self.regs.get_register()
             code.extend(mips)
             code.extend(self.handle_unOp(items[2], items[3], reg))
@@ -719,7 +727,6 @@ class MIPS:
                 code.append("\tadd {reg}, {binop_reg}, $0")
                 code.append('\tadd {reg}, {offset}($fp)')
         else:
-            print(items)
             raise NotImplementedError
 
         return code
@@ -789,7 +796,6 @@ class MIPS:
                     code.append(f'\tli {reg} {items[2]}')
                     pass
                 else:
-                    print(items[2])
                     raise NotImplementedError
         elif len(items) == 4:
             # a = unop b
@@ -838,7 +844,6 @@ class MIPS:
                 code.append("\tadd {reg}, {binop_reg}, $0")
 
         else:
-            print(items)
             raise NotImplementedError
 
         return code
@@ -912,7 +917,6 @@ class MIPS:
                     code.append(f'\tsw {helper_reg}, {offset}($fp)')
                     pass
                 else:
-                    print(items[2])
                     raise NotImplementedError
         elif len(items) == 4:
             # a = unop b
@@ -967,13 +971,11 @@ class MIPS:
                 code.append("\tadd {reg}, {binop_reg}, $0")
                 code.append('\tadd {reg}, {offset}($fp)')
         else:
-            print(items)
             raise NotImplementedError
 
         return code
 
     def handle_param(self, param):
-        # print(self.stm.get(param))
         # TODO : Handle vartemp and sizes
         found = 0
         code = []
@@ -1230,7 +1232,6 @@ class MIPS:
             return code
 
         elif opr[0] == '&':
-            print(self.regs.locations)
             addr = self._location(operand)[1]
 
             code.append(f'\tla {finalreg}, {addr}')
