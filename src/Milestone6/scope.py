@@ -60,7 +60,7 @@ class scope:
         self.avlTypes = basicTypes.copy()
         self.typeDefs = {}
         self.offset=0
-        self.negoffset=0
+        self.negoffset=-8
         self.okReturn = False
         self.NotAllChildReturn = False
 
@@ -69,8 +69,8 @@ class scope:
             info['offset'] = self.offset
             self.offset += info['dataType']['size']
         else:
-            self.negoffset -= info['dataType']['size']
             info['offset'] = self.negoffset
+            self.negoffset -= info['dataType']['size']
 
         self.localsymTable[id] = info
 
