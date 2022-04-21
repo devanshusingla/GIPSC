@@ -513,7 +513,9 @@ class MIPS:
                     pass
             elif self.tac_code[i].startswith('call'):
                 ## TODO 
-                pass
+                # Save registers
+                items = self.tac_code[i].split(' ')
+                code.append(f"\tjal _{items[1]}")
             elif self.tac_code[i].startswith('new'):
                 ## TODO 
                 items = self.tac_code[i].split(' ')
