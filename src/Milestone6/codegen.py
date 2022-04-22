@@ -78,8 +78,6 @@ class Register:
         # Value is an array -> first index stores type (0/1 based on reg or offset)
         # Second value stores the value (regName or offsetAmt)
         self.locations = {}
-
-        self.stack = {}
         self._sp = 0
 
     # Function to return the least recently used register
@@ -381,6 +379,9 @@ class MIPS:
         elif label in self.regs.locations:
             reg, mips = self.regs.get_register(label)
             return (reg, mips, 0)
+        else:
+            reg, mips = self.regs.get_register(label)
+            return (reg, mips, 0)
 
 
     def tac2mips(self):
@@ -458,7 +459,7 @@ class MIPS:
         self.act_records[funcname] = ActivationRecord()
 
         local_var_size = 0
-        
+
         if self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
             for local_var, lv_info in self.stm.symTable[self.stm.functions[funcname]['scope']+1].localsymTable.items():
                 local_var_size += lv_info['dataType']['size']
@@ -491,7 +492,6 @@ class MIPS:
                 retReg, _code = self._get_label(retValues[0])
                 code.extend(_code)
                 if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
-                    retReg = retReg[0]
                     code.append(f"\taddi $v0, {retReg}, $0")
                 else:
                     retSize = 0
@@ -591,8 +591,18 @@ class MIPS:
         if label.startswith("temp") or label[0].isdigit():
             return self.regs.get_register(label, isFloat = isFloat)
         elif label.startswith("arg"):
-            reg, mips = self.regs.get_register(isFloat = isFloat)
+            stm_entry = self.stm.get(self.curr_func)
             offset = -int(label.split('_')[-1].split('.')[0][:-1])
+            j = 0
+            curr_offset = 0
+            for param in stm_entry['params']:
+                curr_offset += param['size']
+                if curr_offset == offset:
+                    break  
+                j += 1 
+            if j <= 4:
+                return f"$a{j-1}", []
+            reg, mips = self.regs.get_register(isFloat = isFloat)
             code.extend(mips)
             if len(label.split('_')[-1].split('.')) > 1: 
                 if label.split('_')[-1].split('.')[1] == 'length':
@@ -655,6 +665,7 @@ class MIPS:
         if len(items) == 3:
             # a = b
             if items[2].startswith('temp'):
+                print(items[0])
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
                 find_new_reg, mips, type_new_reg = self._location(items[2])
@@ -947,45 +958,78 @@ class MIPS:
 
         return code
 
+    def get_args(self, label):
+        stm_entry = self.stm.get(self.curr_func)
+        offset = -int(label.split('_')[-1].split('.')[0][:-1])
+        j = 0
+        curr_offset = 0
+        for param in stm_entry['params']:
+            curr_offset += param['size']
+            if curr_offset == offset:
+                break  
+            j += 1 
+        if j <= 4:
+            return 0, f"$a{j-1}"
+        else:
+            offset = int(label.split('_')[-1].split('.')[0][:-1])
+            if len(label.split('_')[-1].split('.')) > 1:
+                if label.split('_')[-1].split('.')[1] == 'length':
+                    offset += 4 
+                else:
+                    offset += 8
+            return 1, -offset
+
     def handle_args(self, items): 
+        print(items)
         code = []
         if len(items) == 3:
             # a = b
             if items[2].startswith('temp'):
-                offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
-                find_new_reg, mips = self.regs.get_register(items[0])
+                _type, offset = self.get_args(items[0])
+                find_new_reg, mips = self._get_label(items[2])
                 code.extend(mips)
+                if _type == 0:
+                    code.append(f'\tadd {offset}, {find_new_reg}, $0')
+                    return code
                 code.append(f'\tsw {find_new_reg}, {offset}($fp)')
             elif items[2].startswith('args'):
-                offset1 = -int(items[0].split('_')[-1].split('.')[0][:-1])
-                offset2 = -int(items[2].split('_')[-1].split('.')[0][:-1])+8
-                if len(items[2].split('_')[-1].split('.')) > 1: 
-                    if items[2].split('_')[-1].split('.')[1] == 'length':
-                        offset2 += 4 
-                    else:
-                        offset2 += 8
+                _type1, offset1 = self.get_args(items[0])
+                _type2, offset2 = self.get_args(items[2])
                 helper_reg, mips = self.regs.get_register()
                 code.extend(mips)  
-                code.append(f'\tlw {helper_reg}, {offset2}($fp)')
-                code.append(f'\tsw {helper_reg}, {offset1}($fp)') 
+                if _type1 == 1:
+                    code.append(f'\tlw {helper_reg}, {offset2}($fp)')
+                else:
+                    code.append(f'\tlw {offset1}, {helper_reg}, $0')
+                if _type2 == 1:
+                    code.append(f'\tsw {helper_reg}, {offset1}($fp)')
+                else:
+                    code.append(f'\tlw {offset2}, {helper_reg}, $0')
+ 
             elif items[2].startswith('var_temp'):
                 retReg, mips = self._get_label(items[2])
                 retReg = retReg[0] ## Both point to same location
-                offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
-                code.append(f'\tsw {retReg}, {offset}($fp)')
+                _type, offset = self.get_args(items[0]) 
+                if _type == 1:
+                    code.append(f'\tsw {retReg}, {offset}($fp)')
+                else:
+                    code.append(f'\tadd {offset}, {retReg}, $0')
 
             elif items[2].startswith('retval'):
                 funcName = items[2].split('_')[1]
                 num_returns = len(
                     self.stm.functions[funcName]['return'])
                 if num_returns == 1:
-                    reg, mips = self.regs.get_register(items[0])
+                    reg, mips = self._get_label(items[0])
                     code.append(f'\taddi {reg}, $v0, $0')
                 else:
                     ret_reg, mips = self.handle_returns(items[2])
                     code.extend(mips)
-                    offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
-                    code.append(f'\tlw {ret_reg}, {offset}($fp)')
+                    _type, offset = self.get_args(items[0])
+                    if _type == 1:
+                        code.append(f'\tlw {ret_reg}, {offset}($fp)')
+                    else:
+                        code.append(f'\tadd {offset}, {ret_reg}, $0')
             else:
                 if items[2][0] == '"':
                     # string: TODO
@@ -993,60 +1037,77 @@ class MIPS:
                 elif items[2].isnumeric():
                     if str(int(items[2])) == items[2]:
                         # integer
-                        offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
+                        _type, offset = self.get_args(items[0])
                         helper_reg, mips = self.regs.get_register()
                         code.extend(mips) 
                         code.append(f'\tli {helper_reg}, {items[2]}')
-                        code.append(f'\tsw {reg}, {offset}($fp)')
+                        if _type == 1:
+                            code.append(f'\tsw {helper_reg}, {offset}($fp)')
+                        else:
+                            code.append(f'\tadd {offset}, {helper_reg}, $0')
                         pass
                     else:
                         # float
-                        offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
-                        helper_reg, mips = self.regs.get_register(items[0], isFloat = True)
+                        _type, offset = self.get_args(items[0])
+                        helper_reg, mips = self._get_label(items[0], isFloat = True)
                         code.extend(mips)
                         code.append(f'\tli.s {helper_reg}, {items[2]}')
-                        code.append(f'\s.s {helper_reg}, {offset}($fp)')
-                        pass
+                        if _type == 1:
+                            code.append(f'\tsw {helper_reg}, {offset}($fp)')
+                        else:
+                            code.append(f'\tadd {offset}, {helper_reg}, $0')                        
+                            pass
                 elif items[2][0] == "'":
                     # rune
-                    offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
-                    helper_reg, mips = self.regs.get_register(items[0])
+                    _type, offset = self.get_args(items[0])
+                    helper_reg, mips = self._get_label(items[0])
                     code.extend(mips)
                     code.append(f'\tli {helper_reg}, {items[2]}')
-                    code.append(f'\tsw {helper_reg}, {offset}($fp)')
-                    pass
+                    if _type == 1:
+                        code.append(f'\tsw {helper_reg}, {offset}($fp)')
+                    else:
+                        code.append(f'\tadd {offset}, {helper_reg}, $0')                    
+                        pass
                 else:
                     raise NotImplementedError
         elif len(items) == 4:
             # a = unop b
-            offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
+            _type, offset = self.get_args(items[0])
             reg, mips = self.regs.get_register()
             code.extend(mips)
             code.extend(self.handle_unOp(items[2], items[3], reg))
-            code.append(f'\tsw {reg}, {offset}($fp)')
-
+            if _type == 1:
+                code.append(f'\tsw {reg}, {offset}($fp)')
+            else:
+                code.append(f'\tadd {offset}, {reg}, $0')
         elif len(items) == 5:
             # a = b binop c
             # a = & * b
             if items[2] == '&' and items[3] == '*': 
-                offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
+                _type, offset = self.get_args(items[0])
                 old_reg, mips = self.regs.get_register(items[2])
                 code.extend(mips)
-                code.append(f'\tsw {old_reg}, {offset}($fp)')
+                if _type == 1:
+                    code.append(f'\tsw {old_reg}, {offset}($fp)')
+                else:
+                    code.append(f'\tadd {offset}, {old_reg}, $0')              
             else:
-                offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
+                _type, offset = self.get_args(items[0])
                 reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], items[4], items[3], reg))
                 reg2, mips2 = self.regs.get_register()
                 code.extend(mips2)
                 code.append(f'\tadd {reg2}, {reg}, $0')
-                code.append(f'\tsw {reg2}, {offset}($fp)')
+                if _type == 1:
+                    code.append(f'\tsw {reg2}, {offset}($fp)')
+                else:
+                    code.append(f'\tadd {offset}, {reg2}, $0')        
         elif len(items) == 6:
             # a = * b binop c
             # a = b binop * c
             if items[2] == '*': 
-                offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
+                _type, offset = self.get_args(items[0])
                 reg, mips = self.regs.get_register()
                 code.extend(mips)
                 new_reg, mips = self.regs.get_register()
@@ -1056,19 +1117,25 @@ class MIPS:
                 code.extend(mips)
                 code.extend(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
                 code.append("\tadd {reg}, {binop_reg}, $0")
-                code.append('\tsw {binop_reg}, {offset}($fp)')
-            elif p[4] == '*':
-                offset = -int(items[0].split('_')[-1].split('.')[0][:-1])  
+                if _type == 1:
+                    code.append(f'\tsw {binop_reg}, {offset}($fp)')
+                else:
+                    code.append(f'\tadd {offset}, {binop_reg}, $0')            
+        elif items[4] == '*':
+                _type, offset = self.get_args(items[0])  
                 reg, mips = self.regs.get_register()
                 code.extend(mips)
                 new_reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[4], items[5], new_reg))
-                binop_reg, mips = self.regs.get_register
+                binop_reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], new_reg, binop_reg, isreg2 = True))
                 code.append("\tadd {reg}, {binop_reg}, $0")
-                code.append('\tadd {reg}, {offset}($fp)')
+                if _type == 1:
+                    code.append(f'\tsw {reg}, {offset}($fp)')
+                else:
+                    code.append(f'\tadd {offset}, {reg}, $0')        
         else:
             raise NotImplementedError
 
@@ -1076,11 +1143,11 @@ class MIPS:
 
     def handle_param(self, param):
         # TODO : Handle vartemp and sizes
-        found = 0
+        found = 0            
         code = []
         for i in range(4):
             if self.regs.arg_regs[f'$a{i}'][0] == None:
-                found = 1
+                found = 1 
                 if not param.startswith('var_temp'):
                     self.regs.arg_regs[f'$a{i}'][0] = param
                     self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
@@ -1113,6 +1180,7 @@ class MIPS:
                         self.regs.count += 1
                         code.append(f'\tlw $a{i}, {int(loc.split("(")[0]) + 8}($fp)')
                     else:
+                        ## TODO
                         pass
 
         if not found:
