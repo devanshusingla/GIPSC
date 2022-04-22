@@ -729,6 +729,14 @@ class MIPS:
                     else:
                         code.append('\tadd {ret_reg}, {loc}, $0')
 
+            elif items[2].startswith('__syscall'):
+                loc, _mips, type_loc = self._location(items[0])
+                code.extend(_mips)
+                if type_loc == 1:
+                    code.append(f'\tsw $v0, {loc}')
+                else:
+                    code.append(f'\tadd $v0, {loc}, $0')
+
             else:
                 if items[2][0] == '"':
                     # string: TODO

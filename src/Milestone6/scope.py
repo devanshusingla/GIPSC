@@ -12,7 +12,7 @@ builtinFunctions = ["__syscall"]
 curr_temp = 0
 curr_var_temp = 0
     
-def new_temp():
+def new_temp(isFunc=False):
     global curr_temp
     temp = curr_temp
     curr_temp += 1
@@ -672,14 +672,14 @@ class BuiltinFuncNode(FuncCallNode):
         super().__init__(name, args)
         self.isAddressable = False
 
-        self.dataType = {}
+        self.dataType = []
         self.place = "builtin"
         code = []
         if name.label == "__syscall":
             if args[0].val is None or not isinstance(args[0].val, int):
                 raise Exception("First argument to syscall must be constant")
 
-            self.place = f"__syscall_{args[0].val}"
+            self.place = f"__syscall"
             for arg in args[1:]:
                 self.code.append(f"params {arg.place}")
             code.append(f'call #syscall_{args[0].val}')
@@ -687,6 +687,10 @@ class BuiltinFuncNode(FuncCallNode):
             if args[0].val == 11:
                 if len(args) != 2:
                     raise Exception("Incorrect number of arguments")
+            elif args[0].val == 12:
+                if len(args) != 1:
+                    raise Exception("Incorrect number of arguments")
+                self.dataType = [{'baseType': 'int', 'name': 'int', 'level': 0, 'size': 4}]
             else:
                 raise Exception("Syscall not implemented for the given number")
 

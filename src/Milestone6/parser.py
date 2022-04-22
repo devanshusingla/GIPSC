@@ -405,8 +405,11 @@ def p_VarSpec(p):
 
         for i in range(len(p[length])):
             if isinstance(p[length][i], FuncCallNode):
-                func_name = p[length][i].children[0].label
-                dt_return = stm.functions[func_name]["return"]
+                if isinstance(p[length][i], BuiltinFuncNode):
+                    dt_return = p[length][i].dataType
+                else:
+                    func_name = p[length][i].children[0].label
+                    dt_return = stm.functions[func_name]["return"]
                 expression_datatypes.extend(dt_return)
                 if len(dt_return) == 0:
                     raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")
