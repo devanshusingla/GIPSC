@@ -2443,7 +2443,7 @@ def p_ForStmt(p):
             # condc = p[3][1]
             # postc = p[3][2]
             temp = p[3].children[0].code + [f"begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code
-            p[3].code = temp + [f"if not {p[3].children[1].place} goto end_for_{stm.forStack[-1]}"]
+            p[3].code = temp + [f"if not {p[3].children[1].place} then goto end_for_{stm.forStack[-1]}"]
             p[5].code.extend(p[3].children[2].code)
             p[5].code.append(f"goto begin_for_{stm.forStack[-1]}")
             p[5].code.append(f"end_for_{stm.forStack[-1]}:")
@@ -2608,7 +2608,7 @@ def p_RangeClause(p):
     code.append(f"begin_for_{stm.forStack[-1]}:")
     cond_res = new_temp()
     code.append(f"{cond_res} = {idx} <(int) {elemptr}.length")
-    code.append(f"if not {cond_res} goto end_for_{stm.forStack[-1]}")
+    code.append(f"if not {cond_res} then goto end_for_{stm.forStack[-1]}")
     p[0].code = code
     p[0].vartemp = elemptr
 
