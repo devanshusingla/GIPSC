@@ -8,5 +8,6 @@ func main() {
 	y := 6;
 	var x *int = &(y);
 	y = 2
-	*x, y = add(7, 11)
+	// var z int = 5
+	z, w := add(7, 11)
 }
