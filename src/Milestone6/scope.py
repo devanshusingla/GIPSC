@@ -676,14 +676,17 @@ class BuiltinFuncNode(FuncCallNode):
         self.place = "builtin"
         code = []
         if name.label == "__syscall":
-            print(args[0].__dict__)
             if args[0].val is None or not isinstance(args[0].val, int):
                 raise Exception("First argument to syscall must be constant")
+
+            self.place = f"__syscall_{args[0].val}"
+            for arg in args[1:]:
+                self.code.append(f"params {arg.place}")
+            code.append(f'call #syscall_{args[0].val}')
             
             if args[0].val == 11:
-                self.place = "__syscall"
-                # code.append('params')
-            
+                if len(args) != 2:
+                    raise Exception("Incorrect number of arguments")
             else:
                 raise Exception("Syscall not implemented for the given number")
 
