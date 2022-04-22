@@ -4,6 +4,6 @@ package builtin
 
 // }
 
-func typecast_float32_to_int(x float32) (int) {
+// func typecast_float32_to_int(x float32) (int) {
 
-}
+// }
