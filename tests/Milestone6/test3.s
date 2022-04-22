@@ -10,32 +10,18 @@ _inc:
 	addi $sp, $sp, -4
 	sw $fp, 0($sp)
 	addi $sp, $sp, -4
-	sw	$t9,-4($fp)
-
 	li $t9, 6
-	sw	$t8,-8($fp)
-
-	sw $t8 8($fp)
+	sw $t8, 8($fp)
 	add $t8, $t8, $t9
-	sw	$t7,-12($fp)
-
 	add $t7, $t8, $0
-	sw	$t6,-16($fp)
-
 	sw $t6, 8($fp)
-	sw	$t5,-20($fp)
-
 	li $t5, 5
-	sw	$t4,-24($fp)
-
-	sw $t4, 0($fp)($fp)
-	sw	$t3,-28($fp)
-
+	# Swapping out reg $t4 for variable 2_z
+	lw	$t4,$t4($fp)
+	add $t5, $t4, $0
 	li $t3, 3
-	sw $t8 8($fp)
+	sw $t8, 8($fp)
 	add $t8, $t8, $t3
-	sw	$t2,-32($fp)
-
 	add $t2, $t8, $0
 	li $a0 8
 	li $v0 9
@@ -55,108 +41,104 @@ main:
 	addi $sp, $sp, -4
 	sw $fp, 0($sp)
 	addi $sp, $sp, -44
-	sw	$t1,-36($fp)
-
 	li $t1, 5
-	addi $sp, $sp, -4
-	sw $t1 ($sp)
+	add $a0, $t1, $0
+	jal _inc
 	lw $t8, 0($v0)
-//: 0($fp)
-	lw $t8, 0($fp)($fp)
+	add {ret_reg}, {loc}, $0
 	lw $t8, 4($v0)
-//: 4($fp)
-	lw $t8, 4($fp)($fp)
-	sw	$t0,-40($fp)
+	add {ret_reg}, {loc}, $0
+	sw	$t7,0($sp)
 
-	li $t0, 6
-	sw	$t9,-44($fp)
+	li $t7, 6
+	sw	$t6,0($sp)
 
-	sw $t9, 8($fp)($fp)
-	sw	$t7,-48($fp)
+	# Swapping out reg $t6 for variable 4_y
+	lw	$t6,$t6($fp)
+	add $t7, $t6, $0
+	sw	$t5,0($sp)
 
-	la $t7, $t9
-	sw	$t6,-52($fp)
+	add $t5, $t6, $0
+	sw	$t3,0($sp)
 
-	sw $t6, 12($fp)($fp)
-	sw	$t5,-56($fp)
+	# Swapping out reg $t3 for variable 4_x
+	lw	$t3,$t3($fp)
+	add $t5, $t3, $0
+	sw	$t2,0($sp)
 
-	li $t5, 2
-	sw $t9, []($fp)
-	sw	$t3,-60($fp)
+	li $t2, 2
+	add $t2, $t6, $0
+	sw	$t4,0($sp)
 
-	la $t3, $t9
-	sw	$t2,-64($fp)
+	add $t4, $t6, $0
+	sw	$t1,0($sp)
 
-	lw $t2 $t3
-	sw	$t4,-68($fp)
+	lw $t1, 0($t4)
+	sw	$t0,0($sp)
 
-	li $t4, 4
-	sw	$t1,-72($fp)
+	li $t0, 4
+	add $t8, $t6, $0
+	# Swapping out reg $s7 for variable 4_g
+	lw	$s7,$s7($fp)
+	add $t8, $s7, $0
+	lw $s6, 0($s7)
+	add $s5, $s6, $0
+	lw $s4, 0($s5)
+	li $s3, 7
+	li $s2, 2
+	# Swapping out reg $s1 for variable 4_p
+	lw	$s1,$s1($fp)
+	add $s2, $s1, $0
+	li $s0, 5
+	sw	$t9,0($sp)
 
-	la $t1, $t9
-	sw	$t8,-76($fp)
+	# Swapping out reg $t9 for variable 4_a1
+	lw	$t9,$t9($fp)
+	add $s0, $t9, $0
+	sw	$t7,0($sp)
 
-	sw $t8, 16($fp)($fp)
-	sw	$s7,-80($fp)
+	add $t7, $t9, $0
+	sw	$t3,0($sp)
 
-	lw $s7 $t8
-	sw	$s6,-84($fp)
+	# Swapping out reg $t3 for variable 4_a2
+	lw	$t3,$t3($fp)
+	add $t7, $t3, $0
+	sw	$t5,0($sp)
 
-	la $s6, $s7
-	sw	$s5,-88($fp)
+	add $t5, $t3, $0
+	sw	$t2,0($sp)
 
-	lw $s5 $s6
-	sw	$s4,-92($fp)
+	# Swapping out reg $t2 for variable 4_a3
+	lw	$t2,$t2($fp)
+	add $t5, $t2, $0
+	sw	$t1,0($sp)
 
-	li $s4, 7
-	sw	$s3,-96($fp)
+	add $t1, $t2, $0
+	sw	$t4,0($sp)
 
-	li $s3, 2
-	sw	$s2,-100($fp)
+	# Swapping out reg $t4 for variable 4_a4
+	lw	$t4,$t4($fp)
+	add $t1, $t4, $0
+	sw	$t0,0($sp)
 
-	sw $s2, 20($fp)($fp)
-	sw	$s1,-104($fp)
+	add $t0, $t4, $0
+	sw	$t6,0($sp)
 
-	li $s1, 5
-	sw	$s0,-108($fp)
+	# Swapping out reg $t6 for variable 4_r
+	lw	$t6,$t6($fp)
+	add $t0, $t6, $0
+	sw	$t8,0($sp)
 
-	sw $s0, 24($fp)($fp)
-	sw	$t0,-112($fp)
+	lw $t8, 0($t6)
+	sw	$s7,0($sp)
 
-	la $t0, $s0
-	sw	$t7,-116($fp)
+	lw $s7, 0($t8)
+	sw	$s6,0($sp)
 
-	sw $t7, 28($fp)($fp)
-	sw	$t6,-120($fp)
+	lw $s6, 0($s7)
+	sw	$s4,0($sp)
 
-	la $t6, $t7
-	sw	$t5,-124($fp)
-
-	sw $t5, 32($fp)($fp)
-	sw	$t2,-128($fp)
-
-	la $t2, $t5
-	sw	$t3,-132($fp)
-
-	sw $t3, 36($fp)($fp)
-	sw	$t4,-136($fp)
-
-	la $t4, $t3
-	sw	$t1,-140($fp)
-
-	sw $t1, 40($fp)($fp)
-	sw	$t9,-144($fp)
-
-	lw $t9 $t1
-	sw	$t8,-148($fp)
-
-	lw $t8 $t9
-	sw	$s7,-152($fp)
-
-	lw $s7 $t8
-	sw	$s5,-156($fp)
-
-	la $s5, $s2
+	add $s4, $s1, $0
 	_return_main:
 	lw $ra, 4($sp)
 	lw $fp, 0($fp)
