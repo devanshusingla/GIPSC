@@ -7,6 +7,8 @@ basicNumericTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32'
 basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 
+builtinFunctions = ["__syscall"]
+
 curr_temp = 0
 curr_var_temp = 0
     
@@ -241,6 +243,7 @@ class Node:
         return self.label 
 
 ## AST Node Classes
+
 class FileNode(Node):
     def __init__(self, pkgName, importDecl, globalDecl):
         super().__init__()
@@ -653,6 +656,43 @@ class FuncCallNode(Node):
     
     def __str__(self):
         return f'func()'
+
+class BuiltinFuncNode(FuncCallNode):
+    # INFO: If you add other builtins remember to add dataType which is return type, code and place fields.
+    
+    def __init__(self, name, args):
+        temp = []
+        for expr in args:
+            if isinstance(expr, list):
+                temp.extend(expr)
+            else:
+                temp.append(expr)
+
+        args = temp
+        super().__init__(name, args)
+        self.isAddressable = False
+
+        self.dataType = {}
+        self.place = "builtin"
+        code = []
+        if name.label == "__syscall":
+            print(args[0].__dict__)
+            if args[0].val is None or not isinstance(args[0].val, int):
+                raise Exception("First argument to syscall must be constant")
+            
+            if args[0].val == 11:
+                self.place = "__syscall"
+                # code.append('params')
+            
+            else:
+                raise Exception("Syscall not implemented for the given number")
+
+        self.code.extend(code)
+    
+    
+    def __str__(self):
+        return f'BUILTIN'
+        
 
 class LabelNode(Node):
     def __init__(self, labelNode, statementNode):

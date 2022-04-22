@@ -784,6 +784,9 @@ def p_PrimaryExpr(p):
 
     ## PrimaryExpr -> Ident
     elif (len(p) == 2):
+        if p[1] in builtinFunctions:
+            p[0] = ExprNode(label=p[1], dataType={})
+            return
         identType = getBaseType(stm, p[1])
         place = None
             
@@ -806,6 +809,7 @@ def p_PrimaryExpr(p):
             return
 
         # If typecast function
+        print(p[1])
         if p[1] in utils.basicTypes and isBasicNumeric(stm, {'baseType': p[1], 'level': 0}):
             p[0] = ExprNode(dataType = {'baseType': 'typeCastFunc'}, label = p[1], isAddressable = True, isConst = False)
             pass
@@ -1036,7 +1040,11 @@ def p_PrimaryExpr(p):
                 return
             else:
         
-                if p[1].label not in new_stm.functions:
+                if p[1].label in builtinFunctions:
+                    p[0] = BuiltinFuncNode(p[1],p[2])
+                    return
+
+                elif p[1].label not in new_stm.functions:
                     raise NameError(f"{p.lexer.lineno}: No such function declared ")
 
                 info = new_stm.functions[p[1].label]
