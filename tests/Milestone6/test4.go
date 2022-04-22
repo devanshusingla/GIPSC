@@ -1,6 +1,6 @@
 package main
 
-import "fmt"
+// import "fmt"
 
 func ar(v *int) {
 	*v = 40

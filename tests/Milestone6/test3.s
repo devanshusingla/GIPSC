@@ -28,7 +28,7 @@ _inc:
 	li $t5, 5
 	sw	$t4,-24($fp)
 
-	sw $t4, 0($fp)($fp)
+	sw $t4, 0($fp)
 	sw	$t3,-28($fp)
 
 	li $t3, 3
@@ -60,28 +60,27 @@ main:
 	li $t1, 5
 	addi $sp, $sp, -4
 	sw $t1 ($sp)
+	jal _inc
 	lw $t8, 0($v0)
-//: 0($fp)
-	lw $t8, 0($fp)($fp)
+	lw $t8, 0($fp)
 	lw $t8, 4($v0)
-//: 4($fp)
-	lw $t8, 4($fp)($fp)
+	lw $t8, 4($fp)
 	sw	$t0,-40($fp)
 
 	li $t0, 6
 	sw	$t9,-44($fp)
 
-	sw $t9, 8($fp)($fp)
+	sw $t9, 8($fp)
 	sw	$t7,-48($fp)
 
 	la $t7, $t9
 	sw	$t6,-52($fp)
 
-	sw $t6, 12($fp)($fp)
+	sw $t6, 12($fp)
 	sw	$t5,-56($fp)
 
 	li $t5, 2
-	sw $t9, []($fp)
+	sw $t9, []
 	sw	$t3,-60($fp)
 
 	la $t3, $t9
@@ -96,7 +95,7 @@ main:
 	la $t1, $t9
 	sw	$t8,-76($fp)
 
-	sw $t8, 16($fp)($fp)
+	sw $t8, 16($fp)
 	sw	$s7,-80($fp)
 
 	lw $s7 $t8
@@ -114,37 +113,37 @@ main:
 	li $s3, 2
 	sw	$s2,-100($fp)
 
-	sw $s2, 20($fp)($fp)
+	sw $s2, 20($fp)
 	sw	$s1,-104($fp)
 
 	li $s1, 5
 	sw	$s0,-108($fp)
 
-	sw $s0, 24($fp)($fp)
+	sw $s0, 24($fp)
 	sw	$t0,-112($fp)
 
 	la $t0, $s0
 	sw	$t7,-116($fp)
 
-	sw $t7, 28($fp)($fp)
+	sw $t7, 28($fp)
 	sw	$t6,-120($fp)
 
 	la $t6, $t7
 	sw	$t5,-124($fp)
 
-	sw $t5, 32($fp)($fp)
+	sw $t5, 32($fp)
 	sw	$t2,-128($fp)
 
 	la $t2, $t5
 	sw	$t3,-132($fp)
 
-	sw $t3, 36($fp)($fp)
+	sw $t3, 36($fp)
 	sw	$t4,-136($fp)
 
 	la $t4, $t3
 	sw	$t1,-140($fp)
 
-	sw $t1, 40($fp)($fp)
+	sw $t1, 40($fp)
 	sw	$t9,-144($fp)
 
 	lw $t9 $t1
