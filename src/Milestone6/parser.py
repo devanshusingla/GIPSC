@@ -16,7 +16,7 @@ tokens.remove('COMMENT')
 precedence = (
     ('left', 'LBRACE'),
     ('right', 'ASSIGN', 'DEFINE'),
-    ('left','IDENT'),
+    ('left', 'IDENT'),
     ('left','SEMICOLON'),
     ('left','COLON'),
     ('left','INT', 'FLOAT', 'IMAG', 'RUNE', 'STRING'),
@@ -1902,6 +1902,7 @@ def p_Assignment(p):
             p[0].code.append(f"{key.place} = {val.place}")
         else:
             p[0].code.append(f"{key.place} = {key.place} {p[2][0]}({expression_dt[i]['name']}) {val.place}")
+
 def p_assign_op(p):
     """
     assign_op : add_op_assign 
@@ -2200,6 +2201,7 @@ def p_IfStmt(p):
             p[5].code.append(f"goto end_{p.lexer.lineno}")
             p[5].code.append(f"else_{p.lexer.lineno}:")
             p[3].code.append(f"if not {p[3].place} then goto else_{p.lexer.lineno}")
+            print("Hello: ", p[7].code)
             p[0] = IfNode(None, p[3], ThenNode(p[5]), p[7])
             p[0].code.append(f"end_{p.lexer.lineno}:")
     else:
@@ -2233,8 +2235,10 @@ def p_else_stmt(p):
                 | ELSE BlockStart Block BlockEnd
                 |
     """
-    if len(p) > 1:
+    if len(p) == 3:
         p[0] = ElseNode(p[2])
+    elif len(p) > 1:
+        p[0] = ElseNode(p[3])
 
 ###################################################################################
 ### Switch Statements

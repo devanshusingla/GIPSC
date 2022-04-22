@@ -8,4 +8,10 @@ func f(x int) int {
 
 func main() {
 	y := f(2)
+
+	if y < 5 {
+		y = 6 
+	} else {
+		y = 4
+	}
 }

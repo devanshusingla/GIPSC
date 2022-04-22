@@ -99,6 +99,7 @@ class Register:
 
             # Only look in saved registers if temps are not available
             if not foundEmpty:
+                minn = 1e9
                 for reg in self.regsSaved:
                     if self.regsSaved[reg][1] <= minn:
                         minn = self.regsSaved[reg][1]
@@ -118,7 +119,7 @@ class Register:
             if not foundEmpty:
                 for reg in self.regsSavedF:
                     if self.regsSavedF[reg][1] <= minn:
-                        minn = self.regsSaved[reg][1]
+                        minn = self.regsSavedF[reg][1]
                         final_reg = reg
 
             return final_reg
@@ -283,7 +284,7 @@ class Register:
     # for a variable var. This function also has to be used while
     # fetching location for a variable for execution of LRU policy
     def get_register(self, var=None, size=None, isFloat=False, isUnsigned=False):
-        print(self.locations)
+
         if var in self.locations and self.locations[var][0] == 0:
             self.count += 1
 
@@ -331,7 +332,7 @@ class Register:
                 # print("ASD: ", self.locations[var], var)
                 mips.append("\tl" + suffix + "\t" +
                           str(new_reg) + "," +  str(temp) + "($fp)")
-            else:
+            elif var is not None:
                 self.locations[var] = [0, new_reg]
 
             return (new_reg, mips)
@@ -372,14 +373,14 @@ class MIPS:
             pass
 
     def _location(self, label):
-        if label in self.regs.locations:
-            reg, mips = self.regs.get_register(label)
-            return (reg, mips, 0)
-        elif label in self.act_records[self.curr_func].local_var:
+        if label in self.act_records[self.curr_func].local_var:
             return (f'{self.act_records[self.curr_func].local_var[label]["offset"]}($fp)', [], 1)
 
         elif label in self.global_var:
             return (f'{self.global_var[label]["offset"]}($gp)', [], 1)
+        elif label in self.regs.locations:
+            reg, mips = self.regs.get_register(label)
+            return (reg, mips, 0)
 
 
     def tac2mips(self):
@@ -457,6 +458,7 @@ class MIPS:
         self.act_records[funcname] = ActivationRecord()
 
         local_var_size = 0
+        
         if self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
             for local_var, lv_info in self.stm.symTable[self.stm.functions[funcname]['scope']+1].localsymTable.items():
                 local_var_size += lv_info['dataType']['size']
@@ -571,7 +573,6 @@ class MIPS:
             elif self.tac_code[i].endswith(':'):  # label
                 code.extend(self.handle_label(self.tac_code[i][:-1]))
             elif self.tac_code[i].startswith('arg'):
-                print(self.tac_code[i])
                 ## TODO : Handle composite literal
                 code.extend(self.handle_args(items)) 
                 pass
@@ -598,7 +599,7 @@ class MIPS:
                     offset += 4 
                 else:
                     offset += 8
-            code.append(f'\tsw {reg}, {offset}($fp)')
+            code.append(f'\tlw {reg}, {offset}($fp)')
             return reg, code
         else:
             loc, _mips, type_loc = self._location(label.split('.')[0])
@@ -633,8 +634,11 @@ class MIPS:
 
             return reg, code
 
-    def handle_newvartemp(self):
-        ## TODO
+    def handle_newvartemp(self, items):
+        code = []
+        var_temp = items[1]
+        var_temp_sz = int(items[2])
+        code.extend(self.malloc(var_temp_sz))
         pass
 
     def handle_varTempPointers(self):
@@ -876,7 +880,6 @@ class MIPS:
                         # integer
                         reg, mips = self.regs.get_register(items[0])
                         code.extend(mips)
-                        print(code)
                         code.append(f'\tli {reg}, {items[2]}')
                         pass
                     else:
@@ -946,7 +949,6 @@ class MIPS:
 
     def handle_args(self, items): 
         code = []
-        print(items)
         if len(items) == 3:
             # a = b
             if items[2].startswith('temp'):
@@ -1032,7 +1034,6 @@ class MIPS:
                 code.extend(mips)
                 code.append(f'\tsw {old_reg}, {offset}($fp)')
             else:
-                print(items[0])
                 offset = -int(items[0].split('_')[-1].split('.')[0][:-1])
                 reg, mips = self.regs.get_register()
                 code.extend(mips)
@@ -1156,7 +1157,6 @@ class MIPS:
                     code.append(f'\tlw {reg}, {int(loc.split("(")[0]) + 8}($fp)')
                     code.append(f'addi $sp, $sp, -4')
                     code.append(f'\tsw {reg} 0($sp)')
-        print("M: ", code)
         return code
 
     def handle_returns(self, returnval):
@@ -1239,6 +1239,7 @@ class MIPS:
         code = []
         reg1 = operand1
         reg2 = operand2
+        print("MARK : ", reg1, reg2)
         if not isreg1:
             reg1, mips = self._get_label(operand1)
             code.extend(mips)
