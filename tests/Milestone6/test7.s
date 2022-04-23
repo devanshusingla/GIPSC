@@ -21,7 +21,7 @@ _f:
 	_return_f:
 	lw $ra, 4($sp)
 	lw $fp, 0($fp)
-	addi $sp, $sp, 0
+	addi $sp, $sp, 8
 	jr $ra
 main:
 	addi $sp, $sp, -4
@@ -83,5 +83,5 @@ end_for_20:
 	_return_main:
 	lw $ra, 4($sp)
 	lw $fp, 0($fp)
-	addi $sp, $sp, 0
+	addi $sp, $sp, 28
 	jr $ra

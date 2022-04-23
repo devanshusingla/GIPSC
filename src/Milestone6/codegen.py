@@ -324,8 +324,7 @@ class Register:
                 self.locations[var][0] = 0
                 temp = self.locations[var][1]
                 self.locations[var][1] = new_reg
-                mips.append(
-                    f'\t# Swapping out reg {new_reg} for variable {var}')
+                mips.append(f'\t# Swapping out reg {new_reg} for variable {var}')
                 suffix = getsizeSuffix(size, isFloat, isUnsigned)
                 # print("ASD: ", self.locations[var], var)
                 mips.append("\tl" + suffix + "\t" +
@@ -335,6 +334,18 @@ class Register:
 
             return (new_reg, mips)
 
+    def _func_arg_size_on_stack(self, stm, funcname, local_var_size):
+        tot_size = 0
+        tot_size -= self._sp
+        tot_size += local_var_size 
+        tot_size += 8
+        param_size = 0 
+        params = stm.get(funcname)['params']
+        if len(params) > 4: 
+            for i in range(4, len(params)):
+                param_size += params[i]['size']
+        tot_size += param_size
+        return tot_size
 
 class ActivationRecord:
     def __init__(self, local_var_space = None):
@@ -349,8 +360,6 @@ class ActivationRecord:
         self.args = {}
 
 # Class to implement code generation from 3AC and symtable to MIPS
-
-
 class MIPS:
 
     def __init__(self, code, stm):
@@ -441,10 +450,6 @@ class MIPS:
                 continue
         return code
 
-    def _func_arg_size_on_stack(self, funcname):
-        # TODO calculate correct size
-        return 0
-
     def addFunction(self, lineno):
         code = []
         funcname = self.tac_code[lineno].split(' ')[1]
@@ -453,8 +458,6 @@ class MIPS:
             code.extend(self.handle_label('_'+funcname))
         else:
             code.extend(self.handle_label(funcname))
-
-        stack_return_size = self._func_arg_size_on_stack(funcname)
 
         self.act_records[funcname] = ActivationRecord()
 
@@ -465,6 +468,9 @@ class MIPS:
                 local_var_size += lv_info['dataType']['size']
                 self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': -local_var_size}
                 self.regs.locations[lv_info['tmp']] = [1, -local_var_size]
+
+        stack_return_size = self.regs._func_arg_size_on_stack(self.stm, funcname, local_var_size)
+        
         code.append(f'\taddi $sp, $sp, -4')
         code.append(f'\tsw $ra, 0($sp)')
         code.append(f'\taddi $sp, $sp, -4')
