@@ -687,7 +687,14 @@ class BuiltinFuncNode(FuncCallNode):
             if args[0].val == 11:
                 if len(args) != 2:
                     raise Exception("Incorrect number of arguments")
+            elif args[0].val == 1:
+                if len(args) != 2:
+                    raise Exception("Incorrect number of arguments")
             elif args[0].val == 12:
+                if len(args) != 1:
+                    raise Exception("Incorrect number of arguments")
+                self.dataType = [{'baseType': 'int', 'name': 'int', 'level': 0, 'size': 4}]
+            elif args[0].val == 5:
                 if len(args) != 1:
                     raise Exception("Incorrect number of arguments")
                 self.dataType = [{'baseType': 'int', 'name': 'int', 'level': 0, 'size': 4}]

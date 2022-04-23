@@ -49,11 +49,14 @@ def getPath(filename, target_folder):
 
 def getBaseType(stm, dt):
     curr = dt
+
+    if isinstance(curr, list) and len(curr) == 1:
+        curr = curr[0] 
     
     if isinstance(curr, str) and curr in stm.symTable[stm.id].typeDefs:
         return stm.symTable[stm.id].typeDefs[curr]
     else:
-        return dt
+        return curr
 
 def isBasicNumeric(stm, dt):
 
@@ -104,7 +107,7 @@ def isOrdered(stm, dt):
     return False
     
 def checkBinOp(stm, dt1, dt2, binop, firstchar):
-    
+
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
 
@@ -169,6 +172,12 @@ def getFinalType(stm, dt1, dt2, binop):
     dt1_copy = dt1.copy()
     dt2_copy = dt2.copy()
     
+    if isinstance(dt1_copy, list) and len(dt1_copy) == 1:
+        dt1_copy = dt1_copy[0]
+    
+    if isinstance(dt2_copy, list) and len(dt2_copy) == 1:
+        dt2_copy = dt2_copy[0]
+
     dt1 = getBaseType(stm, dt1)
     dt2 = getBaseType(stm, dt2)
 

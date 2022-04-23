@@ -151,6 +151,7 @@ class Register:
 
                     if (reg.startswith('$s') and self.regsSaved[reg][0]) or (reg in self.regs and self.regs[reg][0]):
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)
+                        mips.append("\tadd $sp, $sp, -4")
                         mips.append("\ts" + suffix + "\t" + reg +
                                 "," + str(self._sp-new_loc_i) + "($sp)\n")
 
@@ -195,6 +196,7 @@ class Register:
 
                     if (reg.startswith('$s') and self.regsSavedF[reg][0]) or (self.regsF[reg][0]):
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)
+                        mips.append('\taddi $sp, $sp, -4')
                         mips.append("\ts" + suffix + "\t" + reg +
                                 "," + str(self._sp-new_loc_i) + "($sp)\n")
 
@@ -214,75 +216,11 @@ class Register:
             print("Instruction generated: ", mips)
             return mips
 
-    # Function to be called to copy contents of register to memory, additionally
-    # location of variables to be shifted has to be given while calling this function
-    # NOTE: Flushes everything if regs is None
-    def copy_reg_to_memory(self, regList=None, new_loc=None, size=None, isFloat=False, isUnsigned=False):
-        if not isFloat:
-            if regList:
-                print("Requested to shift: ", regList)
-            if regList in None:
-                regList = self.regs.keys()
-
-            mips = []
-            for i, reg in enumerate(regList):
-                # If someone occupied the register previously
-                if self.regs[reg][0]:
-                    mips.append('\t#Going to free register ', reg)
-                    if new_loc != None:  # To be stored in memory
-                        suffix = getsizeSuffix(size, isFloat, isUnsigned)
-                        mips.append("\ts" + suffix + "\t" + reg +
-                                    "," + str(new_loc) + "($fp)\n")
-                    else:
-                        print("Please provide a valid memory location")
-
-                elif self.regsSaved[reg][0]:
-                    mips.append('\t#Going to free register ', reg)
-                    if new_loc != None:  # To be stored in memory
-                        suffix = getsizeSuffix(size, isFloat, isUnsigned)
-                        mips.append("\ts" + suffix + "\t" + reg +
-                                    "," + str(new_loc) + "($fp)\n")
-                    else:
-                        print("Please provide a valid memory location")
-
-            print("Instruction generated: ", mips)
-            return mips
-
-        else:
-            if regList:
-                mips.append("\t# Requested to shift: ", regList)
-            if regList in None:
-                regList = self.regsF.keys()
-
-            mips = []
-            for i, reg in enumerate(regList):
-                # If someone occupied the register previously
-                if self.regsF[reg][0]:
-                    mips.append('\t# Going to free register ', reg)
-                    if new_loc != None:  # To be stored in memory
-                        suffix = getsizeSuffix(size, isFloat, isUnsigned)
-                        mips.append("\ts" + suffix + "\t" + reg +
-                                    "," + str(new_loc) + "($fp)\n")
-                    else:
-                        print("Please provide a valid memory location")
-
-                elif self.regsSavedF[reg][0]:
-                    mips.append('\t# Going to free register ', reg)
-                    if new_loc != None:  # To be stored in memory
-                        suffix = getsizeSuffix(size, isFloat, isUnsigned)
-                        mips.append("\ts" + suffix + "\t" + reg +
-                                    "," + str(new_loc) + "($fp)\n")
-                    else:
-                        print("Please provide a valid memory location")
-
-            print("Instruction generated: ", mips)
-            return mips
-
     # Function that returns a tuple of register and instructions
     # for a variable var. This function also has to be used while
     # fetching location for a variable for execution of LRU policy
     def get_register(self, var=None, size=None, isFloat=False, isUnsigned=False):
-
+        mips = []   
         if var in self.locations and self.locations[var][0] == 0:
             self.count += 1
 
@@ -335,16 +273,12 @@ class Register:
             return (new_reg, mips)
 
     def _func_arg_size_on_stack(self, stm, funcname, local_var_size):
-        tot_size = 0
-        tot_size -= self._sp
-        tot_size += local_var_size 
-        tot_size += 8
         param_size = 0 
         params = stm.get(funcname)['params']
         if len(params) > 4: 
             for i in range(4, len(params)):
                 param_size += params[i]['size']
-        tot_size += param_size
+        tot_size = param_size
         return tot_size
 
 class ActivationRecord:
@@ -387,6 +321,7 @@ class MIPS:
             return (f'{self.global_var[label]["offset"]}($gp)', [], 1)
         elif label in self.regs.locations:
             reg, mips = self.regs.get_register(label)
+            mips.append(f"\t### {reg}, {label}")
             return (reg, mips, 0)
         else:
             reg, mips = self.regs.get_register(label)
@@ -477,15 +412,16 @@ class MIPS:
         code.append(f'\tsw $ra, 0($sp)')
         code.append(f'\taddi $sp, $sp, -4')
         code.append(f'\tsw $fp, 0($sp)')
+        code.append(f'\tadd $fp, $sp, $0')
         code.append(f'\taddi $sp, $sp, -{local_var_size}')
 
         for i in range(lineno+1, len(self.tac_code)):
             items = self.tac_code[i].split(' ')
             if self.tac_code[i].startswith('Func END'):
                 code.append(f'\t_return_{funcname}:')
-                code.append(f'\tlw $ra, 4($sp)')
+                code.append(f'\tlw $ra, 4($fp)')
+                code.append(f'\taddi $sp, $fp, {stack_return_size + 8}')
                 code.append(f'\tlw $fp, 0($fp)')
-                code.append(f'\taddi $sp, $sp, {stack_return_size}')
                 
                 if funcname != 'main':
                     code.append(f'\tjr $ra')
@@ -503,7 +439,7 @@ class MIPS:
                 retReg, _code = self._get_label(retValues[0])
                 code.extend(_code)
                 if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
-                    code.append(f"\taddi $v0, {retReg}, $0")
+                    code.append(f"\taddi $v0, {retReg}, 0")
                 else:
                     retSize = 0
                     for retVal in self.stm.functions[funcname]['return']:
@@ -562,14 +498,35 @@ class MIPS:
             elif self.tac_code[i].startswith('call'):
                 ## TODO 
                 items = self.tac_code[i].split(' ')
+                if i >= 1 and not self.tac_code[i-1].startswith('params'):
+                    code.append("\t#### Saving temporary registers")
+                    for reg in self.regs.regs:
+                        code.append(f"\tadd $sp, $sp, -4")
+                        code.append(f"\tsw {reg}, 0($sp)")
+                    code.append("\t#### Done saving temporary registers")
+                    code.append("\t#### Saving argument registers")
+                    for reg in self.regs.arg_regs:
+                        code.append(f"\tadd $sp, $sp, -4")
+                        code.append(f"\tsw {reg}, 0($sp)")
+                    code.append("\t#### Done saving argument registers")
                 if items[1].startswith('#syscall'):
                     param_count = 0
                     while self.tac_code[i-param_count-1].startswith('params'):
                         param_count -= 1
                     code.insert(len(code)-param_count, f"\tli $v0, {items[1].split('_')[1]}")
-                    code.append('\tsyscall')
+                    code.append('\tsyscall') 
                 else:
                     code.append(f'\tjal _{items[1]}')
+                for i in range(4):
+                    self.regs.arg_regs[f"$a{i}"][0] = None
+                code.append(f"\t### Restoring argument registers")
+                for i in range(3, -1, -1):
+                    code.append(f"\tlw $a{i}, 0($sp)")
+                    code.append(f"\tadd $sp, $sp, 4")
+                code.append(f"\t### Done restoring argument registers")
+                for i in range(9, -1, -1):
+                    code.append(f"\tlw $t{i}, 0($sp)")
+                    code.append(f"\tadd $sp, $sp, 4")
                 pass
             elif self.tac_code[i].startswith('new'):
                 ## TODO 
@@ -580,6 +537,7 @@ class MIPS:
                 code.append(f'\tsw $v0, ($sp)')
                 code.append(f'\tsw {space}, 4($sp)')
                 code.append(f'\tsw {space}, 8($sp)')
+                code.append(f'\tadd $sp, $sp, -12')
             elif self.tac_code[i].startswith('params'):
                 code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
             elif self.tac_code[i].startswith('retparams'):
@@ -604,15 +562,12 @@ class MIPS:
                 code.extend(self.handle_localvars(items))  
                 pass
             elif self.tac_code[i].startswith('return'):
-                if funcname != 'main':
-                    code.append(f'\tjr $ra')
-                else:
-                    code.extend(self.exit())
+                code.append(f'\tj _return_{self.curr_func}')
         return code
 
     def _get_label(self, label, isFloat = False):
         code = []
-        if label.startswith("temp") or label[0].isdigit():
+        if label.startswith("temp") or (label[0].isdigit() and ('_' in label)):
             return self.regs.get_register(label, isFloat = isFloat)
         elif label.startswith("arg"):
             stm_entry = self.stm.get(self.curr_func)
@@ -635,7 +590,7 @@ class MIPS:
                     offset += 8
             code.append(f'\tlw {reg}, {offset}($fp)')
             return reg, code
-        else:
+        elif label.startswith("vartemp"):
             loc, _mips, type_loc = self._location(label.split('.')[0])
             code.extend(_mips)
             reg = None
@@ -665,8 +620,14 @@ class MIPS:
             #     code.extend(mips)
             #     code.append(f'\tlw {reg3}, {offset + 8}')
             #     return [reg1, reg2, reg3], code
+        elif label.startswith('retval'):
+            return self.handle_returns(label)
+        else:
+            reg, mips = self.regs.get_register()
+            code.extend(mips)
+            code.append(f'\tli {reg}, {label}')
 
-            return reg, code
+        return reg, code
 
     def handle_newvartemp(self, items):
         code = []
@@ -689,7 +650,6 @@ class MIPS:
         if len(items) == 3:
             # a = b
             if items[2].startswith('temp'):
-                print(items[0])
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
                 find_new_reg, mips, type_new_reg = self._location(items[2])
@@ -697,7 +657,7 @@ class MIPS:
                 if type_loc == 1:
                     code.append(f'\tsw {find_new_reg}, {loc}')
                 else:
-                    code.append(f'\tadd {find_new_reg}, {loc}, $0')
+                    code.append(f'\tadd {loc}, {find_new_reg}, $0')
             elif items[2].startswith('args'):
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
@@ -713,7 +673,7 @@ class MIPS:
                 if type_loc == 1:
                     code.append(f'\tsw {helper_reg}, {loc}')
                 else:
-                    code.append('\tadd {helper_reg}, {loc}, $0')
+                    code.append('\tadd {loc}, {helper_reg}, $0')
 
             elif items[2].startswith('var_temp'):
                 retReg, mips = self._get_label(items[2])
@@ -723,7 +683,7 @@ class MIPS:
                 if type_loc == 1:  
                     code.append(f'\tsw {retReg}, {loc}')
                 else:
-                    code.append('\tadd {retReg}, {loc}, $0')
+                    code.append('\tadd {loc}, {retReg}, $0')
 
             elif items[2].startswith('retval'):
                 funcName = items[2].split('_')[1]
@@ -731,7 +691,7 @@ class MIPS:
                     self.stm.functions[funcName]['return'])
                 if num_returns == 1:
                     reg, mips = self.regs.get_register(items[0])
-                    code.append(f'\taddi {reg}, $v0, $0')
+                    code.append(f'\taddi {reg}, $v0, 0')
                 else:
                     ret_reg, mips = self.handle_returns(items[2])
                     code.extend(mips)
@@ -739,7 +699,7 @@ class MIPS:
                     if type_loc == 1:
                         code.append(f'\tlw {ret_reg}, {loc}')
                     else:
-                        code.append('\tadd {ret_reg}, {loc}, $0')
+                        code.append('\tadd {loc}, {ret_reg}, $0')
 
             elif items[2].startswith('__syscall'):
                 loc, _mips, type_loc = self._location(items[0])
@@ -747,7 +707,7 @@ class MIPS:
                 if type_loc == 1:
                     code.append(f'\tsw $v0, {loc}')
                 else:
-                    code.append(f'\tadd $v0, {loc}, $0')
+                    code.append(f'\tadd {loc}, $v0, $0')
 
             else:
                 if items[2][0] == '"':
@@ -764,7 +724,7 @@ class MIPS:
                         if type_loc == 1:
                             code.append(f'\tsw {helper_reg}, {loc}')
                         else:
-                            code.append(f'\tadd {helper_reg}, {loc}, $0')
+                            code.append(f'\tadd {loc}, {helper_reg}, $0')
                         pass
                     else:
                         # float
@@ -776,7 +736,7 @@ class MIPS:
                         if type_loc == 1:
                             code.append(f'\tsw {helper_reg}, {loc}')
                         else:
-                            code.append(f'\tadd {helper_reg}, {loc}, $0')
+                            code.append(f'\tadd {loc}, {helper_reg}, $0')
                         pass
                 elif items[2][0] == "'":
                     # rune
@@ -788,7 +748,7 @@ class MIPS:
                     if type_loc == 1:
                         code.append(f'\tsw {helper_reg}, {loc}')
                     else:
-                        code.append(f'\tadd {helper_reg}, {loc}, $0')                    
+                        code.append(f'\tadd {loc}, {helper_reg}, $0')                    
                     pass
                 else:
                     raise NotImplementedError
@@ -802,7 +762,7 @@ class MIPS:
             if type_loc == 1:
                 code.append(f'\tsw {reg}, {loc}')
             else:
-                code.append(f'\tadd {reg}, {loc}, $0')
+                code.append(f'\tadd {loc}, {reg}, $0')
 
         elif len(items) == 5:
             # a = b binop c
@@ -816,7 +776,7 @@ class MIPS:
                 if type_loc == 1:
                     code.append(f'\tsw {old_reg}, {loc}')
                 else:
-                    code.append(f'\tadd {old_reg}, {loc}, $0')
+                    code.append(f'\tadd {loc}, {old_reg}, $0')
             else:
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
@@ -830,7 +790,7 @@ class MIPS:
                 if type_loc == 1:
                     code.append(f'\tsw {reg2}, {loc}')
                 else:
-                    code.append(f'\tadd {reg2}, {loc}, $0')
+                    code.append(f'\tadd {loc}, {reg2}, $0')
         elif len(items) == 6:
             # a = * b binop c
             # a = b binop * c
@@ -850,7 +810,7 @@ class MIPS:
                 if type_loc == 1:
                     code.append(f'\tsw {binop_reg}, {loc}')
                 else:
-                    code.append(f'\tadd {binop_reg}, {loc}, $0')
+                    code.append(f'\tadd {loc}, {bin_op}, $0')
             elif items[4] == '*':
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
@@ -865,7 +825,7 @@ class MIPS:
                 code.append(f"\tadd {reg}, {binop_reg}, $0")
                 
                 if type_loc == 0:
-                    code.append(f'\tadd {reg}, {loc}, $0')
+                    code.append(f'\tadd {loc}, {reg}, $0')
                 else:
                     code.append(f'\tsw {reg}, {loc}')
         else:
@@ -907,13 +867,13 @@ class MIPS:
                     self.stm.functions[funcName]['return'])
                 if num_returns == 1:
                     reg, mips = self.regs.get_register(items[0])
-                    code.append(f'\taddi {reg}, $v0, $0')
+                    code.append(f'\taddi {reg}, $v0, 0')
                 else:
                     ret_reg, mips = self.handle_returns(items[2])
                     code.extend(mips)
                     reg, mips = self.regs.get_register(items[0])
                     code.extend(mips)
-                    code.append(f'\taddi {reg}, {ret_reg}, $0')
+                    code.append(f'\taddi {reg}, {ret_reg}, 0')
             else:
                 if items[2][0] == '"':
                     # string: TODO
@@ -1053,7 +1013,7 @@ class MIPS:
                     self.stm.functions[funcName]['return'])
                 if num_returns == 1:
                     reg, mips = self._get_label(items[0])
-                    code.append(f'\taddi {reg}, $v0, $0')
+                    code.append(f'\taddi {reg}, $v0, 0')
                 else:
                     ret_reg, mips = self.handle_returns(items[2])
                     code.extend(mips)
@@ -1177,14 +1137,26 @@ class MIPS:
         # TODO : Handle vartemp and sizes
         found = 0            
         code = []
+        
         for i in range(4):
             if self.regs.arg_regs[f'$a{i}'][0] == None:
+                if i == 0:
+                    code.append("\t#### Saving temporary registers")
+                    for reg in self.regs.regs:
+                        code.append(f"\tadd $sp, $sp, -4")
+                        code.append(f"\tsw {reg}, 0($sp)")
+                    code.append("\t#### Done saving temporary registers")
+                    code.append("\t#### Saving argument registers")
+                    for reg in self.regs.arg_regs:
+                        code.append(f"\tadd $sp, $sp, -4")
+                        code.append(f"\tsw {reg}, 0($sp)")
+                    code.append("\t#### Done saving argument registers")
                 found = 1 
                 if not param.startswith('var_temp'):
                     self.regs.arg_regs[f'$a{i}'][0] = param
                     self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
                     self.regs.count += 1
-                    reg, mips = self.regs.get_register(param)
+                    reg, mips = self._get_label(param)
                     code.extend(mips)
                     code.append(f'\tadd $a{i}, {reg}, $0')
                     break
@@ -1264,6 +1236,12 @@ class MIPS:
         num = int(returnval.split('_')[2])
 
         code = []
+        if len(self.stm.functions[funcName]['return']) <= 2:
+            reg, mips = self.regs.get_register() 
+            code.extend(mips)
+            code.append(f'\tadd {reg}, $v{num}, $0')
+            return reg, mips
+
         offset = 0
         for idx, retVal in enumerate(self.stm.functions[funcName]['return']):
             if idx == num:

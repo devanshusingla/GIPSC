@@ -4,6 +4,7 @@
 
 .text
 .globl main
+
 _f:
 	addi $sp, $sp, -4
 	sw $ra, 0($sp)
@@ -16,7 +17,7 @@ _f:
 	add $a1, $t8, $0
 	add $t7, $a0, $a1
 	add $t6, $t7, $0
-	addi $v0, $t6, $0
+	addi $v0, $t6, 0
 	jr $ra
 	_return_f:
 	lw $ra, 4($sp)
@@ -24,15 +25,8 @@ _f:
 	addi $sp, $sp, 8
 	jr $ra
 main:
-	li.s $f1, 7.3243245
-	cvt.w.s $f2, $f1
-	mfc1 $a0, $f2
-	li $v0, 1
-	syscall
-	mtc1 $a0, $f3
-	cvt.s.w $f12, $f3
-	li $v0, 2
-	syscall
+	addi $sp, $sp, -128
+	add $fp, $sp, $0
 	addi $sp, $sp, -4
 	sw $ra, 0($sp)
 	addi $sp, $sp, -4
@@ -40,10 +34,72 @@ main:
 	addi $sp, $sp, -4
 	li $t5, 2
 	li $t4, 4
+	#### Saving temporary registers
+	add $sp, $sp, -4
+	sw $t0, 0($sp)
+	add $sp, $sp, -4
+	sw $t1, 0($sp)
+	add $sp, $sp, -4
+	sw $t2, 0($sp)
+	add $sp, $sp, -4
+	sw $t3, 0($sp)
+	add $sp, $sp, -4
+	sw $t4, 0($sp)
+	add $sp, $sp, -4
+	sw $t5, 0($sp)
+	add $sp, $sp, -4
+	sw $t6, 0($sp)
+	add $sp, $sp, -4
+	sw $t7, 0($sp)
+	add $sp, $sp, -4
+	sw $t8, 0($sp)
+	add $sp, $sp, -4
+	sw $t9, 0($sp)
+	#### Done saving temporary registers
+	#### Saving argument registers
+	add $sp, $sp, -4
+	sw $a0, 0($sp)
+	add $sp, $sp, -4
+	sw $a1, 0($sp)
+	add $sp, $sp, -4
+	sw $a2, 0($sp)
+	add $sp, $sp, -4
+	sw $a3, 0($sp)
+	#### Done saving argument registers
 	add $a0, $t5, $0
 	add $a1, $t4, $0
 	jal _f
-	addi $t3, $v0, $0
+	### Restoring argument registers
+	lw $a3, 0($sp)
+	add $sp, $sp, 4
+	lw $a2, 0($sp)
+	add $sp, $sp, 4
+	lw $a1, 0($sp)
+	add $sp, $sp, 4
+	lw $a0, 0($sp)
+	add $sp, $sp, 4
+	### Done restoring argument registers
+	lw $t9, 0($sp)
+	add $sp, $sp, 4
+	lw $t8, 0($sp)
+	add $sp, $sp, 4
+	lw $t7, 0($sp)
+	add $sp, $sp, 4
+	lw $t6, 0($sp)
+	add $sp, $sp, 4
+	lw $t5, 0($sp)
+	add $sp, $sp, 4
+	lw $t4, 0($sp)
+	add $sp, $sp, 4
+	lw $t3, 0($sp)
+	add $sp, $sp, 4
+	lw $t2, 0($sp)
+	add $sp, $sp, 4
+	lw $t1, 0($sp)
+	add $sp, $sp, 4
+	lw $t0, 0($sp)
+	add $sp, $sp, 4
+	addi $t3, $v0, 0
 	li $t2, 5
 	slt $t1, $t3, $t2
 	add $t0, $t1, $0
@@ -62,7 +118,7 @@ end_18:
 	li $t7, 0
 	sw	$t6,0($sp)
 
-	add $t7, $t6, $0
+	add $t6, $t7, $0
 begin_for_20:
 	sw	$t5,0($sp)
 
@@ -77,20 +133,22 @@ begin_for_20:
 	li $t3, 1
 	sw	$t2,0($sp)
 
-	add $t3, $t2, $0
+	add $t2, $t3, $0
 	sw	$t0,0($sp)
 
 	sw	$t9,0($sp)
 
+	li $t9, 1
 	add $t0, $t6, $t9
 	sw	$t8,0($sp)
 
 	add $t8, $t0, $0
-	add $t8, $t6, $0
+	add $t6, $t8, $0
 	j begin_for_20
 end_for_20:
 	_return_main:
 	lw $ra, 4($sp)
 	lw $fp, 0($fp)
 	addi $sp, $sp, 28
-	jr $ra
+	li $v0 10
+	syscall

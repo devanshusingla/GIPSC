@@ -432,7 +432,7 @@ def p_VarSpec(p):
                 p[2] = stm.findType(p[2])
 
             if isinstance(p[2], str):
-                dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+                dt = {'baseType' : p[2], 'name': p[2], 'level': 0, 'size': 12}
                 dt['size'] = basicTypeSizes[p[2]]
             else:
                 dt = p[2].dataType
@@ -1078,9 +1078,15 @@ def p_PrimaryExpr(p):
                 code.append(f"call {p[1].label}")
                 p[2] = FuncCallNode(p[1], p[2])
                 if len(info['return']) > 1:
-                    place = [f"retval_{p[1].label}_{i}" for i in range(len(info['return']))]
+                    place = [] 
+                    for i in range (len(info['return'])): 
+                        temp = new_temp()
+                        place.append(temp)
+                        code.append(f"{temp} = retval_{p[1].label}_{i}")
                 else:
-                    place = f"retval_{p[1].label}_0"
+                    temp = new_temp() 
+                    place = temp
+                    code.append(f"{temp} = retval_{p[1].label}_0")
         p[0] = p[2]                       
 
         p[0].isAddressable = True
@@ -2144,14 +2150,14 @@ def p_ContinueStmt(p):
         raise LogicalError(f"{p.lexer.lineno}: Continue can only be called inside a for loop.")
     if len(p) == 2:
         p[0] = ContinueNode()
-        p[0].append.code(f"goto start_for_{stm.forStack[-1]}")
+        p[0].code.append(f"goto poststmt_for_{stm.forStack[-1]}")
     else:
         if p[2] not in stm.labels:
             raise LogicalError(f"{p.lexer.lineno}: Label for the continue statement must have been declared beforehand.")
         if not stm.labels[p[2]]['statementType'] or stm.labels[p[2]]['statementType'] not in ['FOR']:
             raise LogicalError(f"{p.lexer.lineno}: Label used with continue statement must be used on a for loop statement.")
         p[0] = ContinueNode(p[2])
-        p[0].code.append(f"goto begin_for_{stm.labels[p[2]]['lineno']}")
+        p[0].code.append(f"goto poststmt_for_{stm.labels[p[2]]['lineno']}")
 
 ###################################################################################
 ### Fallthrough Statements
@@ -2212,7 +2218,6 @@ def p_IfStmt(p):
             p[5].code.append(f"goto end_{p.lexer.lineno}")
             p[5].code.append(f"else_{p.lexer.lineno}:")
             p[3].code.append(f"if not {p[3].place} then goto else_{p.lexer.lineno}")
-            print("Hello: ", p[7].code)
             p[0] = IfNode(None, p[3], ThenNode(p[5]), p[7])
             p[0].code.append(f"end_{p.lexer.lineno}:")
     else:
@@ -2435,10 +2440,10 @@ def p_ForStmt(p):
     """
     if len(p) == 7:
         p[0] = ForNode(None, p[4])
-        p[0].code = [f"begin_for_{stm.forStack[-1]}:"] + p[0].code + [f"goto begin_for_{stm.forStack[-1]}", f"end_for_{stm.forStack[-1]}:"]
+        p[0].code = [f"begin_for_{stm.forStack[-1]}:"] + [f"poststmt_for_{stm.forStack[-1]}:"] + p[0].code + [f"goto begin_for_{stm.forStack[-1]}", f"end_for_{stm.forStack[-1]}:"]
     else:
         if isinstance(p[3], ForClauseNode) and p[3].children[0] is None and p[3].children[2] is None:
-            p[3].code = [f"begin_for_{stm.forStack[-1]}:"] + p[3].children[1].code + [f"if not {p[3].children[1].place} then goto end_for_{stm.forStack[-1]}"]
+            p[3].code = [f"begin_for_{stm.forStack[-1]}:"] + [f"poststmt_for_{stm.forStack[-1]}:"] + p[3].children[1].code + [f"if not {p[3].children[1].place} then goto end_for_{stm.forStack[-1]}"]
             p[5].code.append(f"goto begin_for_{stm.forStack[-1]}")
             p[5].code.append(f"end_for_{stm.forStack[-1]}:")
         elif isinstance(p[3], ForClauseNode):
@@ -2536,7 +2541,10 @@ def p_PostStmt(p):
     """
     if isinstance(p[1], ExprNode) and p[1].label == 'DEFINE':
         raise LogicalError("Short Variable Declaration not allowed in post statement of for loop.")
+    temp = [f"poststmt_for_{stm.forStack[-1]}:"]
     p[0] = p[1]
+    temp.extend(p[0].code)
+    p[0].code = temp
 
 ###################################################################################
 ### Range Clause
