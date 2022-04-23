@@ -318,18 +318,18 @@ class MIPS:
         for st, st_info in self.stm.symTable.items():
             pass
 
-    def _location(self, label):
+    def _location(self, label, isFloat = False):
         if label in self.act_records[self.curr_func].local_var:
-            return (f'{self.act_records[self.curr_func].local_var[label]["offset"]}($fp)', [f"\t### GLOBAL VAR {label}"], 1)
+            return (f'{self.act_records[self.curr_func].local_var[label]["offset"]}($fp)', [], 1)
 
         elif label in self.global_var:
             return (f'{self.global_var[label]["offset"]}($gp)', [], 1)
         elif label in self.regs.locations:
-            reg, mips = self.regs.get_register(label)
+            reg, mips = self.regs.get_register(label, isFloat = isFloat)
             mips.append(f"\t### {reg}, {label}")
             return (reg, mips, 0)
         else:
-            reg, mips = self.regs.get_register(label)
+            reg, mips = self.regs.get_register(label, isFloat = isFloat)
             return (reg, mips, 0)
 
 
@@ -588,7 +588,14 @@ class MIPS:
     def _get_label(self, label, isFloat = False):
         code = []
         if label.startswith("temp") or (label[0].isdigit() and ('_' in label)):
-            return self.regs.get_register(label, isFloat = isFloat)
+            _type, offset, type_loc =self._location(label, isFloat = isFloat)
+            if type_loc == 1:
+                reg, mips = self.regs.get_register()
+                code.extend(mips)
+                code.append(f'\tlw {reg}, {_type}')
+                return reg, code
+            else:
+                return _type, offset
         elif label.startswith("arg"):
             stm_entry = self.stm.get(self.curr_func)
             offset = -int(label.split('_')[-1].split('.')[0][:-1])
@@ -1354,6 +1361,8 @@ class MIPS:
         if not isreg2:
             reg2, mips = self._get_label(operand2)
             code.extend(mips)
+
+        print("MARK : ", reg1, reg2)
         if operator.startswith('+'):
             code.append(f'\tadd {finalreg}, {reg1}, {reg2}')
 
