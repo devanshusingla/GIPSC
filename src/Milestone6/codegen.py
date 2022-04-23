@@ -561,7 +561,13 @@ class MIPS:
                 pass
             elif self.tac_code[i].startswith('new'):
                 ## TODO 
-                pass
+                items = self.tac_code[i].split(' ')
+                code.append(f"\taddi $sp, $sp, -12")
+                space = int(items[2])
+                code.extend(self.malloc(space))
+                code.append(f'\tsw $v0, ($sp)')
+                code.append(f'\tsw {space}, 4($sp)')
+                code.append(f'\tsw {space}, 8($sp)')
             elif self.tac_code[i].startswith('params'):
                 code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
             elif self.tac_code[i].startswith('retparams'):
@@ -948,7 +954,7 @@ class MIPS:
                 code.extend(mips)
                 code.extend(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
                 code.append("\tadd {reg}, {binop_reg}, $0")
-            elif p[4] == '*':
+            elif items[4] == '*':
                 reg, mips = self.regs.get_register(items[0])
                 code.extend(mips)
                 new_reg, mips = self.regs.get_register()

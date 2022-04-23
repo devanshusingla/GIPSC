@@ -1,3 +1,11 @@
+Builtin functions append, len, cap for slice/array
+Fallthrough
+Map implementation
+Typecasting functions
+scanf, printf implementation
+string library
+documentation
+test cases
 TypeT rules not done in p_Arguments 
 negative indices in array
 Add definitions of builtin functions 

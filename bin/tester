@@ -1,9 +1,9 @@
 #!/bin/bash
 
-export MILESTONE=5
+export MILESTONE=6
 
 path_to_root=$( dirname $( dirname $( realpath $0) ) )
-abs_path_to_parser="${path_to_root}/src/Milestone5/parser.py"
+abs_path_to_compiler="${path_to_root}/src/Milestone${MILESTONE}/compiler.py"
 abs_path_to_tests="${path_to_root}/tests/Milestone${MILESTONE}/"
 export PATH_TO_ROOT=$path_to_root
 for test_case in "${abs_path_to_tests}"*
@@ -13,7 +13,7 @@ do
         continue
     fi
     echo -e "Testing source code at ${test_case}:"
-    python3 $abs_path_to_parser $test_case 2&> /dev/null
+    python3 $abs_path_to_compiler $test_case 2&> /dev/null
     if [ $? != 0 ];
     then
         echo -e "Compilation and AST generation Failed for ${test_case}!"

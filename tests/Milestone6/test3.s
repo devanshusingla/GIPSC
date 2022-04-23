@@ -11,12 +11,25 @@ _inc:
 	sw $fp, 0($sp)
 	addi $sp, $sp, -4
 	li $t9, 6
+<<<<<<< HEAD
+	sw $t8, 8($fp)
+	add $t8, $t8, $t9
+	add $t7, $t8, $0
+	sw $t6, 8($fp)
+	li $t5, 5
+<<<<<<< HEAD
+	sw	$t4,-24($fp)
+
+	sw $t4, 0($fp)
+	sw	$t3,-28($fp)
+
 	lw $t7, 8($fp)
 	add $t8, $t7, $t9
 	add $t6, $t8, $0
 	sw $t5, 8($fp)
 	li $t4, 5
 	sw $t4, -4($fp)
+
 	li $t3, 3
 	lw $t1, 8($fp)
 	add $t2, $t1, $t3
