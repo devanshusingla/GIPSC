@@ -8,6 +8,6 @@ func f(a int)(int){
 }
 
 func main() {
-	x := f(5)
+	x := f(8)
 	__syscall(1, x)
 }

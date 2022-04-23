@@ -14,9 +14,9 @@ func main() {
 			continue 
 		}
 		
-		// if x == 7 {
-		// 	continue
-		// }
+		if x == 7 {
+			continue
+		}
 
 		__syscall(1, x)
 	}
