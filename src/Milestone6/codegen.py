@@ -436,7 +436,7 @@ class MIPS:
             return ''
 
     def addTextHeader(self):
-        code = ['.text', '.globl main']
+        code = ['.text', '.globl main\n']
         return code
 
     def addTextSection(self):
@@ -458,6 +458,8 @@ class MIPS:
             code.extend(self.handle_label('_'+funcname))
         else:
             code.extend(self.handle_label(funcname))
+            code.append('\taddi $sp, $sp, -128')
+            code.append('\tadd $fp, $sp, $0')
 
         self.act_records[funcname] = ActivationRecord()
 
@@ -484,8 +486,11 @@ class MIPS:
                 code.append(f'\tlw $ra, 4($sp)')
                 code.append(f'\tlw $fp, 0($fp)')
                 code.append(f'\taddi $sp, $sp, {stack_return_size}')
-                code.append(f'\tjr $ra')
-
+                
+                if funcname != 'main':
+                    code.append(f'\tjr $ra')
+                else:
+                    code.extend(self.exit())
                 return code
 
             elif self.tac_code[i].startswith('return'):
@@ -557,7 +562,14 @@ class MIPS:
             elif self.tac_code[i].startswith('call'):
                 ## TODO 
                 items = self.tac_code[i].split(' ')
-                code.append(f'\tjal _{items[1]}')
+                if items[1].startswith('#syscall'):
+                    param_count = 0
+                    while self.tac_code[i-param_count-1].startswith('params'):
+                        param_count -= 1
+                    code.insert(len(code)-param_count, f"\tli $v0, {items[1].split('_')[1]}")
+                    code.append('\tsyscall')
+                else:
+                    code.append(f'\tjal _{items[1]}')
                 pass
             elif self.tac_code[i].startswith('new'):
                 ## TODO 
@@ -728,6 +740,14 @@ class MIPS:
                         code.append(f'\tlw {ret_reg}, {loc}')
                     else:
                         code.append('\tadd {ret_reg}, {loc}, $0')
+
+            elif items[2].startswith('__syscall'):
+                loc, _mips, type_loc = self._location(items[0])
+                code.extend(_mips)
+                if type_loc == 1:
+                    code.append(f'\tsw $v0, {loc}')
+                else:
+                    code.append(f'\tadd $v0, {loc}, $0')
 
             else:
                 if items[2][0] == '"':

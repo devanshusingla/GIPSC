@@ -13,10 +13,13 @@ main:
 	addi $sp, $sp, -4
 	sw $fp, 0($sp)
 	addi $sp, $sp, -4
-	li $t9, 6
-	sw $t9, -4($fp)
+	li $t9, 12
+	li $v0, 12
+	syscall
+	sw $v0, -4($fp)
 	li $t8, 11
-	li $t7, 97
+	# Swapping out reg $t7 for variable 2_a
+	lw	$t7,-4($fp)
 	add $a0, $t7, $0
 	li $v0, 11
 	syscall
