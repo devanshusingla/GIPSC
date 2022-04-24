@@ -19,6 +19,7 @@ _f:
 	### Need new register for $t8
 	### Going to free register $t8
 	###STACK: 0
+	### $t9, temp_0
 	### Need new register for $t7
 	### Going to free register $t7
 	###STACK: 0
@@ -38,6 +39,7 @@ _f:
 	### Need new register for $t4
 	### Going to free register $t4
 	###STACK: 0
+	### $t5, temp_2
 	### Need new register for $t3
 	### Going to free register $t3
 	###STACK: 0
@@ -53,6 +55,8 @@ _f:
 	### Need new register for $t1
 	### Going to free register $t1
 	###STACK: 0
+	### $t6, temp_1
+	### $t2, temp_3
 	or $t1, $t6, $t2
 	### Need new register for $t0
 	### Going to free register $t0
@@ -63,6 +67,7 @@ _f:
 	### Going to free register $t8
 	###STACK: 0
 	li $t8, 1
+	### $t8, temp_5
 	addi $v0, $t8, 0
 	j _return_f
 	j end_6
@@ -71,13 +76,14 @@ end_6:
 	### Need new register for $t9
 	### Going to free register $t9
 	add $sp, $sp, -4
-	sw	$t9,-4($sp)
+	sw	$t9,0($sp)
 
 	###STACK: -4
 	li $t9, 2
 	### Need new register for $t7
 	### Going to free register $t7
 	###STACK: -4
+	### $t9, temp_6
 	sub $t7, $a0, $t9
 	### Need new register for $t4
 	### Going to free register $t4
@@ -153,7 +159,7 @@ end_6:
 	### Need new register for $t5
 	### Going to free register $t5
 	add $sp, $sp, -4
-	sw	$t5,-4($sp)
+	sw	$t5,0($sp)
 
 	###STACK: -8
 	### STACK2: -8
@@ -165,11 +171,12 @@ end_6:
 	### Need new register for $t1
 	### Going to free register $t1
 	###STACK: -8
+	### $t3, temp_9
 	sub $t1, $a0, $t3
 	### Need new register for $t6
 	### Going to free register $t6
 	add $sp, $sp, -4
-	sw	$t6,-4($sp)
+	sw	$t6,0($sp)
 
 	###STACK: -12
 	add $t6, $t1, $0
@@ -243,7 +250,7 @@ end_6:
 	### Need new register for $t2
 	### Going to free register $t2
 	add $sp, $sp, -4
-	sw	$t2,-4($sp)
+	sw	$t2,0($sp)
 
 	###STACK: -16
 	### STACK2: -16
@@ -251,17 +258,20 @@ end_6:
 	### Need new register for $t0
 	### Going to free register $t0
 	add $sp, $sp, -4
-	sw	$t0,-4($sp)
+	sw	$t0,0($sp)
 
 	###STACK: -20
+	### $t5, temp_8
+	### $t2, temp_11
 	add $t0, $t5, $t2
 	### Need new register for $t8
 	### Going to free register $t8
 	add $sp, $sp, -4
-	sw	$t8,-4($sp)
+	sw	$t8,0($sp)
 
 	###STACK: -24
 	add $t8, $t0, $0
+	### $t8, temp_12
 	addi $v0, $t8, 0
 	j _return_f
 	_return_f:
@@ -352,18 +362,17 @@ main:
 	### Need new register for $t9
 	### Going to free register $t9
 	add $sp, $sp, -4
-	sw	$t9,-4($sp)
+	sw	$t9,0($sp)
 
 	###STACK: -4
 	### STACK2: -4
 	addi $t9, $v0, 0
-	### GLOBAL VAR 6_x
 	### $t9, temp_14
 	sw $t9, -4($fp)
 	### Need new register for $t4
 	### Going to free register $t4
 	add $sp, $sp, -4
-	sw	$t4,-4($sp)
+	sw	$t4,0($sp)
 
 	###STACK: -8
 	li $t4, 1
@@ -399,7 +408,7 @@ main:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
-	lw $a0, 64($sp)
+	lw $a0, 4($fp)
 	### STACK: -64
 	li $v0, 1
 	syscall

@@ -135,7 +135,7 @@ end_8:
 	### Need new register for $t9
 	### Going to free register $t9
 	add $sp, $sp, -4
-	sw	$t9,-4($sp)
+	sw	$t9,0($sp)
 
 	###STACK: -4
 	### Need new register for $t7
@@ -154,7 +154,7 @@ end_8:
 	### Need new register for $t8
 	### Going to free register $t8
 	add $sp, $sp, -4
-	sw	$t8,-4($sp)
+	sw	$t8,0($sp)
 
 	###STACK: -8
 	add $t8, $t9, $0
@@ -166,7 +166,7 @@ end_8:
 	### Need new register for $t4
 	### Going to free register $t4
 	add $sp, $sp, -4
-	sw	$t4,-4($sp)
+	sw	$t4,0($sp)
 
 	###STACK: -12
 	li $t4, 14
@@ -239,7 +239,7 @@ end_8:
 	### Need new register for $t3
 	### Going to free register $t3
 	add $sp, $sp, -4
-	sw	$t3,-4($sp)
+	sw	$t3,0($sp)
 
 	###STACK: -16
 	li $t3, 9
@@ -251,14 +251,14 @@ end_13:
 	### Need new register for $t2
 	### Going to free register $t2
 	add $sp, $sp, -4
-	sw	$t2,-4($sp)
+	sw	$t2,0($sp)
 
 	###STACK: -20
 	li $t2, 3
 	### Need new register for $t1
 	### Going to free register $t1
 	add $sp, $sp, -4
-	sw	$t1,-4($sp)
+	sw	$t1,0($sp)
 
 	###STACK: -24
 	### Need new register for $t9
@@ -277,7 +277,7 @@ end_13:
 	### Need new register for $t0
 	### Going to free register $t0
 	add $sp, $sp, -4
-	sw	$t0,-4($sp)
+	sw	$t0,0($sp)
 
 	###STACK: -28
 	add $t0, $t1, $0
@@ -288,14 +288,14 @@ end_13:
 	### Need new register for $t8
 	### Going to free register $t8
 	add $sp, $sp, -4
-	sw	$t8,-4($sp)
+	sw	$t8,0($sp)
 
 	###STACK: -32
 	li $t8, 3
 	### Need new register for $t5
 	### Going to free register $t5
 	add $sp, $sp, -4
-	sw	$t5,-4($sp)
+	sw	$t5,0($sp)
 
 	###STACK: -36
 	### $t6, temp_13
@@ -305,14 +305,14 @@ end_13:
 	### Need new register for $t4
 	### Going to free register $t4
 	add $sp, $sp, -4
-	sw	$t4,-4($sp)
+	sw	$t4,0($sp)
 
 	###STACK: -40
 	add $t4, $t5, $0
 	### Need new register for $t3
 	### Going to free register $t3
 	add $sp, $sp, -4
-	sw	$t3,-4($sp)
+	sw	$t3,0($sp)
 
 	###STACK: -44
 	### Need new register for $t1
@@ -331,7 +331,7 @@ end_13:
 	### Need new register for $t2
 	### Going to free register $t2
 	add $sp, $sp, -4
-	sw	$t2,-4($sp)
+	sw	$t2,0($sp)
 
 	###STACK: -48
 	add $t2, $t3, $0
@@ -349,14 +349,14 @@ end_13:
 	### Need new register for $t6
 	### Going to free register $t6
 	add $sp, $sp, -4
-	sw	$t6,-4($sp)
+	sw	$t6,0($sp)
 
 	###STACK: -52
 	li $t6, 1
 	### Need new register for $t8
 	### Going to free register $t8
 	add $sp, $sp, -4
-	sw	$t8,-4($sp)
+	sw	$t8,0($sp)
 
 	###STACK: -56
 	li $t8, 90
@@ -442,7 +442,7 @@ end_18:
 	### Need new register for $t4
 	### Going to free register $t4
 	add $sp, $sp, -4
-	sw	$t4,-4($sp)
+	sw	$t4,0($sp)
 
 	###STACK: -60
 	### Need new register for $t9
@@ -461,27 +461,27 @@ end_18:
 	### Need new register for $t0
 	### Going to free register $t0
 	add $sp, $sp, -4
-	sw	$t0,-4($sp)
+	sw	$t0,0($sp)
 
 	###STACK: -64
 	add $t0, $t4, $0
 	### Need new register for $t2
 	### Going to free register $t2
 	add $sp, $sp, -4
-	sw	$t2,-4($sp)
+	sw	$t2,0($sp)
 
 	###STACK: -68
 	li $t2, 90
 	### Need new register for $t5
 	### Going to free register $t5
 	add $sp, $sp, -4
-	sw	$t5,-4($sp)
+	sw	$t5,0($sp)
 
 	###STACK: -72
 	### Need new register for $t6
 	### Going to free register $t6
 	add $sp, $sp, -4
-	sw	$t6,-4($sp)
+	sw	$t6,0($sp)
 
 	###STACK: -76
 	lw $t6, -4($fp)
@@ -489,7 +489,7 @@ end_18:
 	### Need new register for $t8
 	### Going to free register $t8
 	add $sp, $sp, -4
-	sw	$t8,-4($sp)
+	sw	$t8,0($sp)
 
 	###STACK: -80
 	slt $t5, $t6, $t2
@@ -500,7 +500,7 @@ end_18:
 	### Need new register for $t3
 	### Going to free register $t3
 	add $sp, $sp, -4
-	sw	$t3,-4($sp)
+	sw	$t3,0($sp)
 
 	###STACK: -84
 	add $t3, $t5, $0
@@ -518,7 +518,7 @@ end_18:
 	### Need new register for $t1
 	### Going to free register $t1
 	add $sp, $sp, -4
-	sw	$t1,-4($sp)
+	sw	$t1,0($sp)
 
 	###STACK: -88
 	li $t1, 1

@@ -7,8 +7,8 @@ func f(i int) (int) {
 
 func main() {
 	var a int = __syscall(5)
-	var c int = a + 1
-	for i := 0; i <= c; i++ {
+	// var c int = a + 1
+	for i := 0; i <= a; i++ {
 		x := f(i)
 		if x == 5 {
 			continue 

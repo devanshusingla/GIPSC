@@ -139,9 +139,9 @@ class Register:
                     if new_loc is None:
                         print("MYLOG: ", self._sp)
                         if reg in self.regs and self.regs[reg][0]:
-                            self.locations[self.regs[reg][0]] = [1, self._sp]
+                            self.locations[self.regs[reg][0]] = [1, -self._sp]
                         elif reg in self.regsSaved and self.regsSaved[reg][0]:
-                            self.locations[self.regsSaved[reg][0]] = [1, self._sp]
+                            self.locations[self.regsSaved[reg][0]] = [1, -self._sp]
 
                         new_loc_i = self._sp
                     elif new_loc[i] != None:  # To be stored in memory
@@ -152,6 +152,7 @@ class Register:
                     if (reg.startswith('$s') and self.regsSaved[reg][0] != None) or (reg in self.regs and self.regs[reg][0] != None):
                         suffix = getsizeSuffix(size, isFloat, isUnsigned)
                         self._sp -= 4
+                        new_loc_i -= 4
                         mips.append("\tadd $sp, $sp, -4")
                         mips.append("\ts" + suffix + "\t" + reg +
                                 "," + str(self._sp-new_loc_i) + "($sp)\n")
@@ -160,12 +161,12 @@ class Register:
                     
                     if reg in self.regs and self.regs[reg][0] != None:
                         self.locations[self.regs[reg][0]][0] = 1
-                        self.locations[self.regs[reg][0]][1] = new_loc_i
+                        self.locations[self.regs[reg][0]][1] = -new_loc_i
                         self.regs[reg][0] = None
                         self.regs[reg][1] = 0
                     elif reg in self.regsSaved and self.regsSaved[reg][0] != None:
                         self.locations[self.regsSaved[reg][0]][0] = 1
-                        self.locations[self.regsSaved[reg][0]][1] = new_loc_i
+                        self.locations[self.regsSaved[reg][0]][1] = -new_loc_i
                         self.regsSaved[reg][0] = None
                         self.regsSaved[reg][1] = 0
 
@@ -185,9 +186,9 @@ class Register:
                     mips.append('\t### Going to free register {reg}')
                     if new_loc is None:
                         if reg in self.regsF and self.regsF[reg][0]:
-                            self.locations[self.regsF[reg][0]] = [1, self._sp]
+                            self.locations[self.regsF[reg][0]] = [1, -self._sp]
                         elif reg in self.regsSavedF and self.regsSavedF[reg][0]:
-                            self.locations[self.regsSavedF[reg][0]] = [1, self._sp]
+                            self.locations[self.regsSavedF[reg][0]] = [1, -self._sp]
 
                         new_loc_i = self._sp
                     elif new_loc[i] != None:  # To be stored in memory
@@ -207,12 +208,12 @@ class Register:
                     
                     if reg in self.regsF and self.regsF[reg][0]:
                         self.locations[self.regsF[reg][0]][0] = 1
-                        self.locations[self.regsF[reg][0]][1] = new_loc_i
+                        self.locations[self.regsF[reg][0]][1] = -new_loc_i
                         self.regsF[reg][0] = None
                         self.regsF[reg][1] = 0
                     elif reg in self.regsSavedF and self.regsSavedF[reg][0]:
                         self.locations[self.regsSavedF[reg][0]][0] = 1
-                        self.locations[self.regsSavedF[reg][0]][1] = new_loc_i
+                        self.locations[self.regsSavedF[reg][0]][1] = -new_loc_i
                         self.regsSavedF[reg][0] = None
                         self.regsSavedF[reg][1] = 0
 
@@ -324,13 +325,15 @@ class MIPS:
 
         elif label in self.global_var:
             return (f'{self.global_var[label]["offset"]}($gp)', [], 1)
+        elif label[0].isnumeric() and '_' in label:
+            offset = self.regs.locations[label][1] + self.act_records[self.curr_func].localvar_space
+            return (f"{offset}($fp)", [f"\t### LOCATION {label} : {offset}"], 1)
         elif label in self.regs.locations:
             reg, mips = self.regs.get_register(label, isFloat = isFloat)
             mips.append(f"\t### {reg}, {label}")
             return (reg, mips, 0)
         else:
-            reg, mips = self.regs.get_register(label, isFloat = isFloat)
-            return (reg, mips, 0)
+            raise NotImplementedError
 
 
     def tac2mips(self):
@@ -416,6 +419,7 @@ class MIPS:
                 self.regs.locations[lv_info['tmp']][1] += local_var_size
                 print("LOCATION: ", self.regs.locations[lv_info['tmp']][1], lv_info['tmp'])
 
+        self.act_records[self.curr_func].localvar_space = local_var_size
         stack_return_size = self.regs._func_arg_size_on_stack(self.stm, funcname, local_var_size)
         
         code.append(f'\taddi $sp, $sp, -4')
@@ -674,6 +678,12 @@ class MIPS:
 
     def handle_localvars(self, items):
         code = []
+
+        if items[0] not in self.regs.locations:
+            self.regs._sp -= 4
+            code.append("\tadd $sp, $sp, -4")
+            self.regs.locations[items[0]] = [1, -self.regs._sp]
+
         if len(items) == 3:
             # a = b
             if items[2].startswith('temp'):
@@ -704,6 +714,7 @@ class MIPS:
 
             elif items[2].startswith('var_temp'):
                 retReg, mips = self._get_label(items[2])
+                code.extend(mips)
                 retReg = retReg[0] ## Both point to same location
                 loc, _mips, type_loc = self._location(items[0])[1]
                 code.extend(_mips)
@@ -718,6 +729,7 @@ class MIPS:
                     self.stm.functions[funcName]['return'])
                 if num_returns == 1:
                     reg, mips = self.regs.get_register(items[0])
+                    code.extend(mips)
                     code.append(f'\taddi {reg}, $v0, 0')
                 else:
                     ret_reg, mips = self.handle_returns(items[2])
@@ -805,15 +817,14 @@ class MIPS:
                 else:
                     code.append(f'\tadd {loc}, {old_reg}, $0')
             else:
-                loc, _mips, type_loc = self._location(items[0])
-                code.extend(_mips)
                 reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], items[4], items[3], reg))
                 reg2, mips2 = self.regs.get_register()
                 code.extend(mips2)
                 code.append(f'\tadd {reg2}, {reg}, $0')
-                
+                loc, _mips, type_loc = self._location(items[0])
+                code.extend(_mips)
                 if type_loc == 1:
                     code.append(f'\tsw {reg2}, {loc}')
                 else:
@@ -883,6 +894,7 @@ class MIPS:
                 code.append(f'\tlw {find_new_reg}, {offset}($fp)')
             elif items[2].startswith('var_temp'):
                 retReg, mips = self._get_label(items[2])
+                code.extend(mips)
                 retReg = retReg[0] ## Both point to same location
                 find_new_reg, mips = self.regs.get_register(items[0])
                 code.extend(mips)
@@ -1031,6 +1043,7 @@ class MIPS:
  
             elif items[2].startswith('var_temp'):
                 retReg, mips = self._get_label(items[2])
+                code.extend(mips)
                 retReg = retReg[0] ## Both point to same location
                 _type, offset = self.get_args(items[0]) 
                 if _type == 1:
@@ -1044,6 +1057,7 @@ class MIPS:
                     self.stm.functions[funcName]['return'])
                 if num_returns == 1:
                     reg, mips = self._get_label(items[0])
+                    code.extend(mips)
                     code.append(f'\taddi {reg}, $v0, 0')
                 else:
                     ret_reg, mips = self.handle_returns(items[2])
@@ -1192,7 +1206,7 @@ class MIPS:
                     self.regs.count += 1
                     offset = self.regs.locations[param]
                     if offset[0] == 1:
-                        code.append(f"\tlw $a{i}, {offset[1] - self.regs._sp}($sp)")
+                        code.append(f"\tlw $a{i}, {offset[1]+ self.act_records[self.curr_func].localvar_space}($fp)")
                     else:
                         code.append(f"\tadd $a{i}, {offset[1]}, $0")
                     code.append(f"\t### STACK: {self.regs._sp}")
