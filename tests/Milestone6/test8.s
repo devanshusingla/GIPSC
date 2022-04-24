@@ -16,7 +16,7 @@ _f:
 	### Going to free register $t9
 	###STACK: 0
 	li $t9, 4
-	### $t9, temp_0
+	# $t9, temp_0
 	sw $t9, -4($fp)
 	### Need new register for $t8
 	### Going to free register $t8
@@ -25,13 +25,13 @@ _f:
 	### Need new register for $t7
 	### Going to free register $t7
 	###STACK: 0
-	### $t8, temp_1
+	# $t8, temp_1
 	add $t7, $a0, $t8
 	### Need new register for $t6
 	### Going to free register $t6
 	###STACK: 0
 	add $t6, $t7, $0
-	### $t6, temp_2
+	# $t6, temp_2
 	addi $v0, $t6, 0
 	j _return_f
 	_return_f:
@@ -122,9 +122,9 @@ main:
 	###STACK: 0
 	li $t4, 0
 	add $sp, $sp, -4
-	### LOCATION 5_i : 8
-	### $t4, temp_4
-	sw $t4, -8($fp)
+	### LOCATION 5_i : 0
+	# $t4, temp_4
+	sw $t4, 0($fp)
 begin_for_11:
 	### Need new register for $t3
 	### Going to free register $t3
@@ -132,7 +132,7 @@ begin_for_11:
 	### Need new register for $t2
 	### Going to free register $t2
 	###STACK: -4
-	lw $t2, -8($fp)
+	lw $t2, 0($fp)
 	### Need new register for $t1
 	### Going to free register $t1
 	###STACK: -4
@@ -176,7 +176,8 @@ begin_for_11:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
-	lw $a0, -8($fp)
+	### offset: [1, 4], 5_i
+	lw $a0, 0($fp)
 	### STACK: -60
 	jal _f
 	### Restoring argument registers
@@ -220,9 +221,9 @@ begin_for_11:
 	### STACK2: -8
 	addi $t9, $v0, 0
 	add $sp, $sp, -4
-	### LOCATION 6_x : 16
-	### $t9, temp_6
-	sw $t9, -16($fp)
+	### LOCATION 6_x : 8
+	# $t9, temp_6
+	sw $t9, 8($fp)
 	### Need new register for $t7
 	### Going to free register $t7
 	###STACK: -12
@@ -239,8 +240,8 @@ begin_for_11:
 	sw	$t6,0($sp)
 
 	###STACK: -20
-	lw $t6, -16($fp)
-	### $t7, temp_7
+	lw $t6, 8($fp)
+	# $t7, temp_7
 	### Need new register for $t5
 	### Going to free register $t5
 	add $sp, $sp, -4
@@ -274,8 +275,8 @@ end_15:
 	### Need new register for $t1
 	### Going to free register $t1
 	###STACK: -28
-	lw $t1, -16($fp)
-	### $t3, temp_9
+	lw $t1, 8($fp)
+	# $t3, temp_9
 	### Need new register for $t0
 	### Going to free register $t0
 	add $sp, $sp, -4
@@ -295,7 +296,7 @@ end_15:
 	###STACK: -36
 	add $t9, $t2, $0
 	beqz $t9, else_19
-	j poststmt_for_11
+	j end_for_11
 	j end_19
 else_19:
 end_19:
@@ -335,7 +336,8 @@ end_19:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
-	lw $a0, -16($fp)
+	### offset: [1, 12], 6_x
+	lw $a0, 8($fp)
 	### STACK: -92
 	li $v0, 1
 	syscall
@@ -379,7 +381,7 @@ poststmt_for_11:
 	sw	$t7,0($sp)
 
 	###STACK: -40
-	lw $t7, -8($fp)
+	lw $t7, 0($fp)
 	### Need new register for $t5
 	### Going to free register $t5
 	###STACK: -40
@@ -392,8 +394,8 @@ poststmt_for_11:
 
 	###STACK: -44
 	add $t4, $t6, $0
-	### LOCATION 5_i : 8
-	sw $t4, -8($fp)
+	### LOCATION 5_i : 0
+	sw $t4, 0($fp)
 	j begin_for_11
 end_for_11:
 	_return_main:

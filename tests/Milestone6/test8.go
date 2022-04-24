@@ -15,7 +15,7 @@ func main() {
 		}
 		
 		if x == 7 {
-			continue
+			break
 		}
 
 		__syscall(1, x)

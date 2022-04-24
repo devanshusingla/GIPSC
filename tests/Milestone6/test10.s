@@ -19,7 +19,7 @@ _f:
 	### Need new register for $t8
 	### Going to free register $t8
 	###STACK: 0
-	### $t9, temp_0
+	# $t9, temp_0
 	### Need new register for $t7
 	### Going to free register $t7
 	###STACK: 0
@@ -39,7 +39,7 @@ _f:
 	### Need new register for $t4
 	### Going to free register $t4
 	###STACK: 0
-	### $t5, temp_2
+	# $t5, temp_2
 	### Need new register for $t3
 	### Going to free register $t3
 	###STACK: 0
@@ -55,8 +55,8 @@ _f:
 	### Need new register for $t1
 	### Going to free register $t1
 	###STACK: 0
-	### $t6, temp_1
-	### $t2, temp_3
+	# $t6, temp_1
+	# $t2, temp_3
 	or $t1, $t6, $t2
 	### Need new register for $t0
 	### Going to free register $t0
@@ -67,7 +67,7 @@ _f:
 	### Going to free register $t8
 	###STACK: 0
 	li $t8, 1
-	### $t8, temp_5
+	# $t8, temp_5
 	addi $v0, $t8, 0
 	j _return_f
 	j end_6
@@ -83,7 +83,7 @@ end_6:
 	### Need new register for $t7
 	### Going to free register $t7
 	###STACK: -4
-	### $t9, temp_6
+	# $t9, temp_6
 	sub $t7, $a0, $t9
 	### Need new register for $t4
 	### Going to free register $t4
@@ -121,6 +121,7 @@ end_6:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
+	### offset: [0, '$t4'], temp_7
 	add $a0, $t4, $0
 	### STACK: -60
 	jal _f
@@ -171,7 +172,7 @@ end_6:
 	### Need new register for $t1
 	### Going to free register $t1
 	###STACK: -8
-	### $t3, temp_9
+	# $t3, temp_9
 	sub $t1, $a0, $t3
 	### Need new register for $t6
 	### Going to free register $t6
@@ -212,6 +213,7 @@ end_6:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
+	### offset: [0, '$t6'], temp_10
 	add $a0, $t6, $0
 	### STACK: -68
 	jal _f
@@ -261,8 +263,8 @@ end_6:
 	sw	$t0,0($sp)
 
 	###STACK: -20
-	### $t5, temp_8
-	### $t2, temp_11
+	# $t5, temp_8
+	# $t2, temp_11
 	add $t0, $t5, $t2
 	### Need new register for $t8
 	### Going to free register $t8
@@ -271,7 +273,7 @@ end_6:
 
 	###STACK: -24
 	add $t8, $t0, $0
-	### $t8, temp_12
+	# $t8, temp_12
 	addi $v0, $t8, 0
 	j _return_f
 	_return_f:
@@ -324,6 +326,7 @@ main:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
+	### offset: [0, '$t7'], temp_13
 	add $a0, $t7, $0
 	### STACK: -56
 	jal _f
@@ -367,7 +370,7 @@ main:
 	###STACK: -4
 	### STACK2: -4
 	addi $t9, $v0, 0
-	### $t9, temp_14
+	# $t9, temp_14
 	sw $t9, -4($fp)
 	### Need new register for $t4
 	### Going to free register $t4
@@ -408,6 +411,7 @@ main:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
+	### offset: [1, 0], 6_x
 	lw $a0, -4($fp)
 	### STACK: -64
 	li $v0, 1

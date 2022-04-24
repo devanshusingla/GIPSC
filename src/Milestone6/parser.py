@@ -1910,7 +1910,7 @@ def p_Assignment(p):
             if key.isDeRef == True:
                 if key.dataType['level'] < 0:
                     raise LogicalError(f"{p.lexer.lineno}: LHS expression can't be derefenced further")
-                key.place = f'*{key.lvalue}'
+                key.place = f'* {key.lvalue}'
         exprNode = ExprNode(None, operator=p[2])
         exprNode.addChild(key, val)
         p[0].append(exprNode)
