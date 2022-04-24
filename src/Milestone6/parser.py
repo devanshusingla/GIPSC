@@ -913,8 +913,8 @@ def p_PrimaryExpr(p):
                 temp2 = new_temp()
                 code.append(f"{temp2} = {p[1].place}.addr + {temp1}")
                 # temp3 = new_temp()        
-                # code.append(f"{temp3} = *{temp2}")
-                place = f"* {temp2}"       
+                # code.append(f"{temp3} = * {temp2}")
+                place = f"* {temp2}"
 
             ## TODO : Discuss Layout for MapType
             if p[1].dataType['name'] == 'map':

@@ -323,7 +323,8 @@ class MIPS:
             label = label.split('.')
 
             if len(label) > 1:
-                temp_reg, code = self.regs.get_register(label[0])
+                temp_reg, code = self.regs.get_register()
+                code.append(f'\tlw {temp_reg}, {self.act_records[self.curr_func].local_var[label[0]]["offset"]}($fp)')
                 if label[1] == 'addr':
                     code.append(f"\tlw {temp_reg}, 0({temp_reg})")
                 elif label[1] == 'len':
@@ -419,6 +420,12 @@ class MIPS:
                     code.append(f"\tli $a0, {lv_info['dataType']['baseType']['size']*lv_info['dataType']['length']}")
                     code.append(f"\tsw $a0, 4($v0)")
                     code.append(f"\tsw $a0, 8($v0)")
+                    new_reg , _code = self.regs.get_register(local_var)
+                    code.extend(_code)
+                    code.append('\tli $v0, 9')
+                    code.append('\tsyscall')
+                    code.append(f'\tsw $v0, 0({new_reg})')
+                    
             
                 if lv_info['dataType']['name'] == 'slice':
                     code.append(f"\tli $a0, {lv_info['dataType']['baseType']['size']*lv_info['dataType']['length']}")
@@ -523,7 +530,7 @@ class MIPS:
                 code.extend(mips)
             elif self.tac_code[i].startswith('vartemp'):
                 pass
-            elif self.tac_code[i].startswith('*'):
+            elif self.tac_code[i].startswith('*') or self.tac_code[i].startswith('[]'):
                 # * a = b
                 # * a = unop b
                 # * a = b binop c
@@ -643,7 +650,16 @@ class MIPS:
                 code.append(f'\tsw {space}, 8($sp)')
                 code.append(f'\tadd $sp, $sp, -12')
             elif self.tac_code[i].startswith('params'):
-                code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
+                items = self.tac_code[i].split(' ')
+                if len(items) == 3 and items[1] == '*':
+                    items[1] = f"{items[2]}#point"
+                    new_reg, _code = self.regs.get_register(items[1])
+                    code.extend(_code)
+                    param_reg, _code = self.regs.get_register(items[2])
+                    code.extend(_code)
+                    code.append(f"\tlw {new_reg}, 0({param_reg})")
+
+                code.extend(self.handle_param(items[1]))
             elif self.tac_code[i].startswith('retparams'):
                 pass ## Done inside addFunction
             elif self.tac_code[i].startswith('retval'):
