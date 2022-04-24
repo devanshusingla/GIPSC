@@ -78,27 +78,6 @@ main:
 	### Going to free register $s5
 	###STACK: 0
 	add $s5, $s7, $0
-	### Need new register for $s4
-	### Going to free register $s4
-	###STACK: 0
-	### Need new register for $s3
-	### Going to free register $s3
-	###STACK: 0
-	# Swapping out reg $s3 for variable 2_y
-	# Changed 2_y
-	lw	$s3,-8($fp)
-	lw $s4, 0($s3)
-	### Need new register for $s2
-	### Going to free register $s2
-	###STACK: 0
-	# $s5, temp_9
-	# $s4, temp_10
-	mult $s5, $s4
-	mflo $s2
-	### Need new register for $s1
-	### Going to free register $s1
-	###STACK: 0
-	add $s1, $s2, $0
 	#### Saving temporary registers
 	add $sp, $sp, -4
 	sw $t0, 0($sp)
@@ -131,8 +110,8 @@ main:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
-	### offset: [0, '$s1'], temp_11
-	add $a0, $s1, $0
+	### offset: [0, '$s5'], temp_9
+	add $a0, $s5, $0
 	### STACK: -56
 	li $v0, 1
 	syscall

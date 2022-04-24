@@ -159,7 +159,7 @@ main:
 	###STACK: -8
 	# $t6, temp_7
 	# $t8, temp_8
-	slt $t5, $t8, $t6
+	slt $t5, $t6, $t8
 	### Need new register for $t4
 	### Going to free register $t4
 	add $sp, $sp, -4
