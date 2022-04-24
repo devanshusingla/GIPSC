@@ -408,7 +408,7 @@ main:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
-	lw $a0, 4($fp)
+	lw $a0, -4($fp)
 	### STACK: -64
 	li $v0, 1
 	syscall
