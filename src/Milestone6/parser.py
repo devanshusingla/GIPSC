@@ -1096,7 +1096,7 @@ def p_PrimaryExpr(p):
                         temp = new_temp()
                         place.append(temp)
                         code.append(f"{temp} = retval_{p[1].label}_{i}")
-                else:
+                elif len(info['return']) == 1:
                     temp = new_temp() 
                     place = temp
                     code.append(f"{temp} = retval_{p[1].label}_0")
@@ -1435,7 +1435,7 @@ def p_FloatLit(p):
     """
     FloatLit : FLOAT
     """
-    p[0] = LitNode(dataType = {'name': 'float64', 'baseType': 'float64', 'level': 0, 'size': 8}, label = p[1], isConst=True, val=float(p[1]))
+    p[0] = LitNode(dataType = {'name': 'float32', 'baseType': 'float32', 'level': 0, 'size': 4}, label = p[1], isConst=True, val=float(p[1]))
     temp = new_temp()
     p[0].code.append(f"{temp} = {p[1]}")
     p[0].place = temp 
@@ -1453,7 +1453,7 @@ def p_RuneLit(p):
     """
     RuneLit : RUNE
     """
-    p[0] = LitNode(dataType = {'name': 'rune', 'baseType': 'rune', 'level': 0, 'size': 2}, label = p[1], isConst=True, val=p[1])
+    p[0] = LitNode(dataType = {'name': 'rune', 'baseType': 'rune', 'level': 0, 'size': 4}, label = p[1], isConst=True, val=p[1])
     temp = new_temp()
     p[0].code.append(f"{temp} = {p[1]}")
     p[0].place = temp 
@@ -1471,7 +1471,7 @@ def p_BoolLit(p):
     """
     BoolLit : BOOL
     """
-    p[0] = LitNode(dataType = {'name': 'bool', 'baseType': 'bool', 'level': 0, 'size': 1}, label = p[1], isConst=True, val = p[1])
+    p[0] = LitNode(dataType = {'name': 'bool', 'baseType': 'bool', 'level': 0, 'size': 4}, label = p[1], isConst=True, val = p[1])
     temp = new_temp()
     p[0].code.append(f"{temp} = {p[1]}")
     p[0].place = temp 
@@ -2570,7 +2570,7 @@ def p_ForClause(p):
             'name' : 'bool',
             'baseType': 'bool',
             'level' : 0,
-            'size' : 1
+            'size' : 4
         }
         trueNode = ExprNode(dt, label='true', operator=None, isConst=True, isAddressable=False, val='true')
         trueNode.place = new_temp()
