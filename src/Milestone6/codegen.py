@@ -63,7 +63,7 @@ class Register:
 
         self.regsSavedF = {}
         for i in range(24, 32):
-            self.regsF[f'$f{i}'] = [None, 0]
+            self.regsSavedF[f'$f{i}'] = [None, 0]
 
         self.args_regsF = {}
         for i in range(12, 20):
@@ -449,15 +449,25 @@ class MIPS:
             elif self.tac_code[i].startswith('return'):
                 j = 1
                 retValues = []
+                retTypes = []
                 while self.tac_code[i-j].startswith('retparams'):
-                    retValues.append(self.tac_code[i-j].split()[1])
+                    if 'float' in self.tac_code[i-j]:
+                        retTypes.append('float')
+                    else:
+                        retTypes.append('int')
+                    ret_items = self.tac_code[i-j].split()
+                    retValues.append(ret_items[1])
                     j += 1
 
                 retValues.reverse()
-                retReg, _code = self._get_label(retValues[0])
+                retTypes.reverse()
+                retReg, _code = self._get_label(retValues[0], isFloat=(retTypes[0] == 'float'))
                 code.extend(_code)
                 if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
-                    code.append(f"\taddi $v0, {retReg}, 0")
+                    if retTypes[0] == 'float':
+                        code.append(f"\mov.s $f0, {retReg}")  # Check later if it doesn't work
+                    else:
+                        code.append(f"\taddi $v0, {retReg}, 0") 
                 else:
                     retSize = 0
                     for retVal in self.stm.functions[funcname]['return']:
@@ -466,9 +476,12 @@ class MIPS:
 
                     offset = 0
                     for idx, retVal in enumerate(self.stm.functions[funcname]['return']):
-                        retReg, _code = self._get_label(retValues[idx])
+                        retReg, _code = self._get_label(retValues[idx], isFloat=(retTypes[idx]=='float'))
                         code.extend(_code)
-                        code.append(f"\tsw {retReg}, {offset}($v0)")
+                        var = ''
+                        if((retTypes[idx]=='float')):
+                            var='c1'
+                        code.append(f"\tsw{var} {retReg}, {offset}($v0)")
                         offset += retVal['size']
                     code.append(f"\taddi $v1, $0, {retSize}")
 
@@ -482,21 +495,23 @@ class MIPS:
                 # * a = unop b
                 # * a = b binop c
                 items = self.tac_code[i].split(' ')
+                isFloat = 'float' in items[2]
+                var = 'c1' if isFloat else ''
                 if items[1].startswith('temp'):
                     if len(items) == 4:
                         loc, _mips, type_loc = self._location(items[1])
-                        reg, mips = self.regs.get_register(items[3])
+                        reg, mips = self.regs.get_register(items[3], isFloat=isFloat)
                         code.extend(_mips)
                         code.extend(mips)
                         if type_loc == 1:
-                            empty_reg, mips = self.regs.get_register()
+                            empty_reg, mips = self.regs.get_register(isFloat=False)
                             code.extend(mips)
                             code.append(f'\tlw {empty_reg} {loc}')
-                            code.append(f'\tsw {reg}, 0({empty_reg})')
+                            code.append(f'\tsw{var} {reg}, 0({empty_reg})')
                         else:
-                            code.append(f'\tsw {reg}, 0({loc})')
+                            code.append(f'\tsw{var} {reg}, 0({loc})')
                     elif len(items) == 5: 
-                        reg, mips = self.regs.get_register()
+                        reg, mips = self.regs.get_register(isFloat=isFloat)
                         code.extend(mips)
                         code.extend(self.handle_unOp(items[3], items[4], reg))
                         loc, _mips, type_loc = self._location(items[1])
@@ -505,11 +520,11 @@ class MIPS:
                             empty_reg, mips = self.regs.get_register()
                             code.extend(mips)
                             code.append(f'\tlw {empty_reg} {loc}')
-                            code.append(f'\tsw {reg}, 0({empty_reg})')
+                            code.append(f'\tsw{var} {reg}, 0({empty_reg})')
                         else:
-                            code.append(f'\tsw {reg}, 0({loc})')
+                            code.append(f'\tsw{var} {reg}, 0({loc})')
                     elif len(items) == 6:
-                        reg, mips = self.regs.get_register()
+                        reg, mips = self.regs.get_register(isFloat=isFloat)
                         code.extend(mips)
                         code.extend(self.handle_binOp(items[3], items[5], items[4], reg))
                         loc, _mips, type_loc = self._location(items[1])
@@ -518,23 +533,24 @@ class MIPS:
                             empty_reg, mips = self.regs.get_register()
                             code.extend(mips)
                             code.append(f'\tlw {empty_reg} {loc}')
-                            code.append(f'\tsw {reg}, 0({empty_reg})')
+                            code.append(f'\tsw{var} {reg}, 0({empty_reg})')
                         else:
-                            code.append(f'\tsw {reg}, 0({loc})')
+                            code.append(f'\tsw{var} {reg}, 0({loc})')
                 elif items[1][0].isnumeric() and '_' in items[1]:
                     loc, _mips, type_loc = self._location(items[1])
                     new_items = items[1:] 
                     new_items[0] = "temp_{fixxx}" 
-                    reg, mips = self.handle_temp(new_items)
+                    reg, mips = self.handle_temp(new_items, isFloat=isFloat)
                     code.extend(mips)
                     if type_loc == 1:
                         empty_reg, mips = self.regs.get_register()
                         code.extend(mips)
                         code.append(f'\tlw {empty_reg} {loc}')
-                        code.append(f'\tsw {reg}, 0({empty_reg})')
+                        code.append(f'\tsw{var} {reg}, 0({empty_reg})')
                     else:
-                        code.append(f'\tsw {reg}, 0({loc})')
+                        code.append(f'\tsw{var} {reg}, 0({loc})')
                 elif items[1].startswith('arg'):
+                    # TODO
                     pass
                 elif items[1].startswith('vartemp'):
                     # TODO
@@ -555,6 +571,18 @@ class MIPS:
                         code.append(f"\tsw {reg}, 0($sp)")
                         self.regs._sp -= 4
                     code.append("\t#### Done saving argument registers")
+                    code.append("\t#### Saving Floating Point registers")
+                    for reg in self.regs.regsF:
+                        code.append(f"\tadd $sp, $sp, -4")
+                        code.append(f"\tswc1 {reg}, 0($sp)")
+                        self.regs._sp -= 4
+                    code.append("\t#### Done saving Floating Point registers")
+                    code.append("\t#### Saving Floating Point Argument registers")
+                    for reg in self.regs.regsSavedF:
+                        code.append(f"\tadd $sp, $sp, -4")
+                        code.append(f"\tswc1 {reg}, 0($sp)")
+                        self.regs._sp -= 4
+                    code.append("\t#### Done saving Floating Point Argument registers")
                     print("MYLOG: ", funcname, self.regs._sp)
 
                 if items[1].startswith('#syscall'):
@@ -591,7 +619,8 @@ class MIPS:
                 code.append(f'\tsw {space}, 8($sp)')
                 code.append(f'\tadd $sp, $sp, -12')
             elif self.tac_code[i].startswith('params'):
-                code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
+                param_items = self.tac_code[i].split(' ')
+                code.extend(self.handle_param(param_items[1]), isFloat=param_items[0].endswith('float'))
             elif self.tac_code[i].startswith('retparams'):
                 pass ## Done inside addFunction
             elif self.tac_code[i].startswith('retval'):
@@ -1213,7 +1242,7 @@ class MIPS:
 
         return code
 
-    def handle_param(self, param):
+    def handle_param(self, param, isFloat=False):
         # TODO : Handle vartemp and sizes
         found = 0            
         code = []
