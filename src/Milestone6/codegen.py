@@ -453,6 +453,7 @@ class MIPS:
                     retValues.append(self.tac_code[i-j].split()[1])
                     j += 1
 
+                retValues.reverse()
                 retReg, _code = self._get_label(retValues[0])
                 code.extend(_code)
                 if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
@@ -1318,16 +1319,11 @@ class MIPS:
         return code
 
     def handle_returns(self, returnval):
+        
         funcName = returnval.split('_')[1]
         num = int(returnval.split('_')[2])
 
         code = []
-        if len(self.stm.functions[funcName]['return']) <= 2:
-            reg, mips = self.regs.get_register() 
-            code.extend(mips)
-            code.append(f'\tadd {reg}, $v{num}, $0')
-            return reg, mips
-
         offset = 0
         for idx, retVal in enumerate(self.stm.functions[funcName]['return']):
             if idx == num:
