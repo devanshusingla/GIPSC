@@ -684,10 +684,9 @@ class BuiltinFuncNode(FuncCallNode):
                 raise Exception("First argument to syscall must be constant")
 
             self.place = f"__syscall"
-            for arg in args[1:]:
-                self.code.append(f"params {arg.place}")
-            code.append(f'call #syscall_{args[0].val}')
             
+            isFloat = False
+
             if args[0].val == 11:
                 if len(args) != 2:
                     raise Exception("Incorrect number of arguments")
@@ -702,8 +701,19 @@ class BuiltinFuncNode(FuncCallNode):
                 if len(args) != 1:
                     raise Exception("Incorrect number of arguments")
                 self.dataType = [{'baseType': 'int', 'name': 'int', 'level': 0, 'size': 4}]
+            elif args[0].val == 2:
+                if len(args) != 2:
+                    raise Exception("Incorrect number of arguments")
+                isFloat = True
             else:
                 raise Exception("Syscall not implemented for the given number")
+            
+            for arg in args[1:]:
+                if isFloat:
+                    self.code.append(f"params_float {arg.place}")
+                else:
+                    self.code.append(f"params {arg.place}")
+            code.append(f'call #syscall_{args[0].val}')
 
         self.code.extend(code)
     

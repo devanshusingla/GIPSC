@@ -16,7 +16,7 @@ with open(f"{path_name[:-3]}_3ac.txt", 'w') as f:
 codegen = MIPS(parsed_output.code, sym_table)
 mips = codegen.tac2mips()
 
-print(mips)
+# print(mips)
 with open(path_name[:-3]+'.s', 'w') as f:
     for ins in mips:
         f.write(ins)

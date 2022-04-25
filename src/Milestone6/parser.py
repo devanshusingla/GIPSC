@@ -730,7 +730,7 @@ def p_Expr(p):
             p[1].place = point
         temp_var = new_temp()
 
-        p[0].code.append(f"{temp_var} = {p[1].place} {p[2]}({dt['name']}) {p[3].place}")
+        p[0].code.append(f"{temp_var} = {p[1].place} {p[2]}({dt1['name']}) {p[3].place}")
         p[0].place = temp_var
 
 
@@ -2180,8 +2180,8 @@ def p_ReturnStmt(p):
             if returnDataType != ExprNodedt:
                 raise LogicalError(f"{p.lexer.lineno}: Return type of current function :{returnDataType} and the return statement {ExprNodedt} doesn't match.")
         p[0] = ReturnNode(p[2])
-        var = ""
         for expr in p[2]:
+            var = ""
             if(expr.dataType['name'].startswith('float')):
                 var = 'float'
             p[0].code.append(f"retparams_{var} {expr.place}")
