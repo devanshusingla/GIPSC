@@ -103,21 +103,21 @@ _Print_int:
 	add $sp, $sp, 4
 	_return_Print_int:
 	### Restoring $s registers
-	lw $s0, 0($sp)
-	add $sp, $sp, 4
-	lw $s1, 0($sp)
-	add $sp, $sp, 4
-	lw $s2, 0($sp)
-	add $sp, $sp, 4
-	lw $s3, 0($sp)
-	add $sp, $sp, 4
-	lw $s4, 0($sp)
-	add $sp, $sp, 4
-	lw $s5, 0($sp)
+	lw $s7, 0($sp)
 	add $sp, $sp, 4
 	lw $s6, 0($sp)
 	add $sp, $sp, 4
-	lw $s7, 0($sp)
+	lw $s5, 0($sp)
+	add $sp, $sp, 4
+	lw $s4, 0($sp)
+	add $sp, $sp, 4
+	lw $s3, 0($sp)
+	add $sp, $sp, 4
+	lw $s2, 0($sp)
+	add $sp, $sp, 4
+	lw $s1, 0($sp)
+	add $sp, $sp, 4
+	lw $s0, 0($sp)
 	add $sp, $sp, 4
 	lw $ra, 4($fp)
 	addi $sp, $fp, 8
@@ -219,21 +219,21 @@ _Print_char:
 	add $sp, $sp, 4
 	_return_Print_char:
 	### Restoring $s registers
-	lw $s0, 0($sp)
-	add $sp, $sp, 4
-	lw $s1, 0($sp)
-	add $sp, $sp, 4
-	lw $s2, 0($sp)
-	add $sp, $sp, 4
-	lw $s3, 0($sp)
-	add $sp, $sp, 4
-	lw $s4, 0($sp)
-	add $sp, $sp, 4
-	lw $s5, 0($sp)
+	lw $s7, 0($sp)
 	add $sp, $sp, 4
 	lw $s6, 0($sp)
 	add $sp, $sp, 4
-	lw $s7, 0($sp)
+	lw $s5, 0($sp)
+	add $sp, $sp, 4
+	lw $s4, 0($sp)
+	add $sp, $sp, 4
+	lw $s3, 0($sp)
+	add $sp, $sp, 4
+	lw $s2, 0($sp)
+	add $sp, $sp, 4
+	lw $s1, 0($sp)
+	add $sp, $sp, 4
+	lw $s0, 0($sp)
 	add $sp, $sp, 4
 	lw $ra, 4($fp)
 	addi $sp, $fp, 8
@@ -335,21 +335,21 @@ _Print_string:
 	add $sp, $sp, 4
 	_return_Print_string:
 	### Restoring $s registers
-	lw $s0, 0($sp)
-	add $sp, $sp, 4
-	lw $s1, 0($sp)
-	add $sp, $sp, 4
-	lw $s2, 0($sp)
-	add $sp, $sp, 4
-	lw $s3, 0($sp)
-	add $sp, $sp, 4
-	lw $s4, 0($sp)
-	add $sp, $sp, 4
-	lw $s5, 0($sp)
+	lw $s7, 0($sp)
 	add $sp, $sp, 4
 	lw $s6, 0($sp)
 	add $sp, $sp, 4
-	lw $s7, 0($sp)
+	lw $s5, 0($sp)
+	add $sp, $sp, 4
+	lw $s4, 0($sp)
+	add $sp, $sp, 4
+	lw $s3, 0($sp)
+	add $sp, $sp, 4
+	lw $s2, 0($sp)
+	add $sp, $sp, 4
+	lw $s1, 0($sp)
+	add $sp, $sp, 4
+	lw $s0, 0($sp)
 	add $sp, $sp, 4
 	lw $ra, 4($fp)
 	addi $sp, $fp, 8
@@ -454,21 +454,21 @@ _Scan_int:
 	sw $v0, 0($a0)
 	_return_Scan_int:
 	### Restoring $s registers
-	lw $s0, 0($sp)
-	add $sp, $sp, 4
-	lw $s1, 0($sp)
-	add $sp, $sp, 4
-	lw $s2, 0($sp)
-	add $sp, $sp, 4
-	lw $s3, 0($sp)
-	add $sp, $sp, 4
-	lw $s4, 0($sp)
-	add $sp, $sp, 4
-	lw $s5, 0($sp)
+	lw $s7, 0($sp)
 	add $sp, $sp, 4
 	lw $s6, 0($sp)
 	add $sp, $sp, 4
-	lw $s7, 0($sp)
+	lw $s5, 0($sp)
+	add $sp, $sp, 4
+	lw $s4, 0($sp)
+	add $sp, $sp, 4
+	lw $s3, 0($sp)
+	add $sp, $sp, 4
+	lw $s2, 0($sp)
+	add $sp, $sp, 4
+	lw $s1, 0($sp)
+	add $sp, $sp, 4
+	lw $s0, 0($sp)
 	add $sp, $sp, 4
 	lw $ra, 4($fp)
 	addi $sp, $fp, 8
@@ -573,21 +573,21 @@ _Scan_char:
 	sw $v0, 0($a0)
 	_return_Scan_char:
 	### Restoring $s registers
-	lw $s0, 0($sp)
-	add $sp, $sp, 4
-	lw $s1, 0($sp)
-	add $sp, $sp, 4
-	lw $s2, 0($sp)
-	add $sp, $sp, 4
-	lw $s3, 0($sp)
-	add $sp, $sp, 4
-	lw $s4, 0($sp)
-	add $sp, $sp, 4
-	lw $s5, 0($sp)
+	lw $s7, 0($sp)
 	add $sp, $sp, 4
 	lw $s6, 0($sp)
 	add $sp, $sp, 4
-	lw $s7, 0($sp)
+	lw $s5, 0($sp)
+	add $sp, $sp, 4
+	lw $s4, 0($sp)
+	add $sp, $sp, 4
+	lw $s3, 0($sp)
+	add $sp, $sp, 4
+	lw $s2, 0($sp)
+	add $sp, $sp, 4
+	lw $s1, 0($sp)
+	add $sp, $sp, 4
+	lw $s0, 0($sp)
 	add $sp, $sp, 4
 	lw $ra, 4($fp)
 	addi $sp, $fp, 8
@@ -692,21 +692,21 @@ _Scan_string:
 	sw $v0, 0($a0)
 	_return_Scan_string:
 	### Restoring $s registers
-	lw $s0, 0($sp)
-	add $sp, $sp, 4
-	lw $s1, 0($sp)
-	add $sp, $sp, 4
-	lw $s2, 0($sp)
-	add $sp, $sp, 4
-	lw $s3, 0($sp)
-	add $sp, $sp, 4
-	lw $s4, 0($sp)
-	add $sp, $sp, 4
-	lw $s5, 0($sp)
+	lw $s7, 0($sp)
 	add $sp, $sp, 4
 	lw $s6, 0($sp)
 	add $sp, $sp, 4
-	lw $s7, 0($sp)
+	lw $s5, 0($sp)
+	add $sp, $sp, 4
+	lw $s4, 0($sp)
+	add $sp, $sp, 4
+	lw $s3, 0($sp)
+	add $sp, $sp, 4
+	lw $s2, 0($sp)
+	add $sp, $sp, 4
+	lw $s1, 0($sp)
+	add $sp, $sp, 4
+	lw $s0, 0($sp)
 	add $sp, $sp, 4
 	lw $ra, 4($fp)
 	addi $sp, $fp, 8
@@ -1029,7 +1029,7 @@ _arglist:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY arg_[arglist_-24]
-	lw $a0, 8($fp)
+	lw $a0, -20($fp)
 	jal _Print_int
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1094,7 +1094,7 @@ _arglist:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY arg_[arglist_-28]
-	lw $a0, 12($fp)
+	lw $a0, -16($fp)
 	jal _Print_int
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1159,7 +1159,7 @@ _arglist:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY arg_[arglist_-32]
-	lw $a0, 16($fp)
+	lw $a0, -12($fp)
 	jal _Print_int
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1224,7 +1224,7 @@ _arglist:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY arg_[arglist_-36]
-	lw $a0, 20($fp)
+	lw $a0, -8($fp)
 	jal _Print_int
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1258,21 +1258,21 @@ _arglist:
 	add $sp, $sp, 4
 	_return_arglist:
 	### Restoring $s registers
-	lw $s0, 0($sp)
-	add $sp, $sp, 4
-	lw $s1, 0($sp)
-	add $sp, $sp, 4
-	lw $s2, 0($sp)
-	add $sp, $sp, 4
-	lw $s3, 0($sp)
-	add $sp, $sp, 4
-	lw $s4, 0($sp)
-	add $sp, $sp, 4
-	lw $s5, 0($sp)
+	lw $s7, 0($sp)
 	add $sp, $sp, 4
 	lw $s6, 0($sp)
 	add $sp, $sp, 4
-	lw $s7, 0($sp)
+	lw $s5, 0($sp)
+	add $sp, $sp, 4
+	lw $s4, 0($sp)
+	add $sp, $sp, 4
+	lw $s3, 0($sp)
+	add $sp, $sp, 4
+	lw $s2, 0($sp)
+	add $sp, $sp, 4
+	lw $s1, 0($sp)
+	add $sp, $sp, 4
+	lw $s0, 0($sp)
 	add $sp, $sp, 4
 	lw $ra, 4($fp)
 	addi $sp, $fp, 24
@@ -1425,21 +1425,21 @@ main:
 	add $sp, $sp, 4
 	_return_main:
 	### Restoring $s registers
-	lw $s0, 0($sp)
-	add $sp, $sp, 4
-	lw $s1, 0($sp)
-	add $sp, $sp, 4
-	lw $s2, 0($sp)
-	add $sp, $sp, 4
-	lw $s3, 0($sp)
-	add $sp, $sp, 4
-	lw $s4, 0($sp)
-	add $sp, $sp, 4
-	lw $s5, 0($sp)
+	lw $s7, 0($sp)
 	add $sp, $sp, 4
 	lw $s6, 0($sp)
 	add $sp, $sp, 4
-	lw $s7, 0($sp)
+	lw $s5, 0($sp)
+	add $sp, $sp, 4
+	lw $s4, 0($sp)
+	add $sp, $sp, 4
+	lw $s3, 0($sp)
+	add $sp, $sp, 4
+	lw $s2, 0($sp)
+	add $sp, $sp, 4
+	lw $s1, 0($sp)
+	add $sp, $sp, 4
+	lw $s0, 0($sp)
 	add $sp, $sp, 4
 	lw $ra, 4($fp)
 	addi $sp, $fp, 8

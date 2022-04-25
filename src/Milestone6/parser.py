@@ -525,7 +525,7 @@ def p_VarSpec(p):
                 raise NameError(f'{p.lexer.lineno}: Redeclaration of identifier: ' + ident)
 
             if not not_base_type:
-                dt = {'baseType' : p[2], 'name': p[2], 'level': 0}
+                dt = {'baseType' : p[2], 'name': p[2], 'level': 0, 'size': 4}
                 dt['size'] = basicTypeSizes[p[2]]
             else:
                 dt = p[2].dataType
@@ -632,7 +632,6 @@ def p_IdentifierList(p):
     IdentifierList : IDENT
                    | IDENT COMMA IdentifierList
     """
-    
     p[0] = NodeList([IdentNode(label = p[1], scope = stm.id)])
 
     if len(p) > 2:
@@ -1923,10 +1922,10 @@ def p_IncDecStmt(p):
 
 def p_Assignment(p):
     """
-    Assignment : ExpressionList assign_op ExpressionList
+    Assignment : ASSIGNMENT ExpressionList assign_op ExpressionList
     """
-    if len(p[1]) != len(p[3]):
-        if len(p[3]) == 1 and isinstance(p[3][0], FuncCallNode):
+    if len(p[2]) != len(p[4]):
+        if len(p[4]) == 1 and isinstance(p[4][0], FuncCallNode):
             pass
         else:
             raise LogicalError(f"{p.lexer.lineno}: Imbalanced assignment with {len(p[1])} identifiers and {len(p[3])} expressions.")
@@ -1957,10 +1956,10 @@ def p_Assignment(p):
         if len(p[length]) > 1:
             raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
 
-    if len(p[1]) != len(expression_dt):
+    if len(p[2]) != len(expression_dt):
         raise NameError(f"{p.lexer.lineno}: Assignment is not balanced")
-
-    for i, (key, val) in enumerate(zip(p[1], p[3])):
+    
+    for i, (key, val) in enumerate(zip(p[2], p[4])):
         if key.label != _symbol:
             if hasattr(key, 'isConst') and key.isConst == True:
                 raise TypeError(f"{p.lexer.lineno}: LHS contains constant! Cannot assign")
@@ -1974,23 +1973,23 @@ def p_Assignment(p):
                 key.place = f'* {key.lvalue}'
 
     p[0] = NodeList([])
-    for key, val in zip(p[1], p[3]):
+    for key, val in zip(p[2], p[4]):
         exprNode = ExprNode(None, operator="=")
         exprNode.addChild(key, val)
         p[0].append(exprNode)
 
     if count_1 == 0:
-        for i in range(len(p[1])):
-            if p[2] == '=':
-                p[0].code.append(f"{p[1][i].place} = {p[length][i].place}")
+        for i in range(len(p[2])):
+            if p[3] == '=':
+                p[0].code.append(f"{p[2][i].place} = {p[length][i].place}")
             else:
-                p[0].code.append(f"{p[1][i].place} = {p[1][i].place} {p[2][0]}({expression_dt[i]['name']}) {p[length][i].place}")
+                p[0].code.append(f"{p[2][i].place} = {p[2][i].place} {p[3][0]}({expression_dt[i]['name']}) {p[length][i].place}")
     else:
-        for i in range(len(p[1])):
-            if p[2] == '=': 
-                p[0].code.append(f"{p[1][i].place} = {p[length][0].place[i]}")
+        for i in range(len(p[2])):
+            if p[3] == '=': 
+                p[0].code.append(f"{p[2][i].place} = {p[length][0].place[i]}")
             else:
-                p[0].code.append(f"{p[1][i].place} = {p[1][i].place} {p[2][0]}({expression_dt[i]['name']}) {p[length][0].place[i]}")
+                p[0].code.append(f"{p[2][i].place} = {p[2][i].place} {p[3][0]}({expression_dt[i]['name']}) {p[length][0].place[i]}")
 
     # for i, (key, val) in enumerate(zip(p[1], p[3])):
     #     if p[2] == '=':

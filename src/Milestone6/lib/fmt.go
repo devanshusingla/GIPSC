@@ -15,14 +15,14 @@ func Print_string(a string) {
 }
 
 func Scan_int(a *int) {
-	*a = __syscall(5)
+	assign *a = __syscall(5)
 }
 
 func Scan_char(a *rune) {
-	*a = __syscall(12)
+	assign *a = __syscall(12)
 }
 
 func Scan_string(a *string) {
-	*a = __syscall(8)
+	assign *a = __syscall(8)
 }
 

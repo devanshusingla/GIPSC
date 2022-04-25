@@ -98,7 +98,6 @@ class Register:
 
             # Only look in saved registers if temps are not available
             if not foundEmpty:
-                minn = 1e9
                 for reg in self.regsSaved:
                     if self.regsSaved[reg][1] <= minn:
                         minn = self.regsSaved[reg][1]
@@ -138,7 +137,6 @@ class Register:
                 # If someone occupied the register previously
                     mips.append(f'\t### Going to free register {reg}')
                     if new_loc is None:
-                        print("MYLOG: ", self._sp)
                         if reg in self.regs and self.regs[reg][0]:
                             self.locations[self.regs[reg][0]] = [1, self._sp]
                         elif reg in self.regsSaved and self.regsSaved[reg][0]:
@@ -452,7 +450,6 @@ class MIPS:
             code.append(f'\tsw {reg}, 0($sp)')
             self.regs.regsSaved[reg][0] = None
 
-        print("MYLOG: ", funcname, self.regs._sp)
 
         for i in range(lineno+1, len(self.tac_code)):
             items = self.tac_code[i].split(' ')
@@ -609,7 +606,6 @@ class MIPS:
                         code.append(f"\tsw {reg}, 0($sp)")
                         self.regs._sp -= 4
                     code.append("\t#### Done saving argument registers")
-                    print("MYLOG: ", funcname, self.regs._sp)
 
                 if items[1].startswith('#syscall'):
                     param_count = 0
@@ -631,7 +627,6 @@ class MIPS:
                     code.append(f"\tlw $t{i}, 0($sp)")
                     code.append(f"\tadd $sp, $sp, 4")
                     self.regs._sp += 4
-                print("MYLOG: ", funcname, self.regs._sp)
 
                 pass
             elif self.tac_code[i].startswith('new'):
@@ -1109,7 +1104,7 @@ class MIPS:
                     offset += 4 
                 else:
                     offset += 8
-            return 1, -offset-16
+            return 1, -offset-12
 
     def handle_args(self, items): 
         print(items)
@@ -1299,7 +1294,6 @@ class MIPS:
                         code.append(f"\tsw {reg}, 0($sp)")
                         self.regs._sp -= 4
                     code.append("\t#### Done saving argument registers")
-                    print("MYLOG: ", self.curr_func, self.regs._sp)
                 found = 1 
                 code.append(f"\t#### YAYYY {param}")
                 if param.startswith('temp'):
@@ -1443,7 +1437,6 @@ class MIPS:
         code = []
         reg1 = operand1
         reg2 = operand2
-        print("MARK : ", reg1, reg2)
         if not isreg1:
             reg1, mips = self._get_label(operand1)
             code.extend(mips)
@@ -1451,7 +1444,6 @@ class MIPS:
             reg2, mips = self._get_label(operand2)
             code.extend(mips)
 
-        print("MARK : ", reg1, reg2)
         if operator.startswith('+'):
             code.append(f'\tadd {finalreg}, {reg1}, {reg2}')
 

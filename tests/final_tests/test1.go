@@ -1,6 +1,6 @@
 package main
 
-// import "fmt"
+import "fmt"
 
 func ackermann(m int, n int) (int) {
 	if m == 0 {
@@ -16,6 +16,5 @@ func ackermann(m int, n int) (int) {
 
 func main() {
 	var b int = ackermann(3, 4)
-	__syscall(1, b)
-    // fmt.Print_int(b)
+    fmt.Print_int(b)
 }
