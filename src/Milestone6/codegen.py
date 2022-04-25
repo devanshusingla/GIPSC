@@ -746,7 +746,7 @@ class MIPS:
                     offset += 4 
                 else:
                     offset += 8
-            code.append(f'\tlw {reg}, {offset-32}($fp)')
+            code.append(f'\tlw {reg}, {offset}($fp)')
             return reg, code
         elif label.startswith("vartemp"):
             loc, _mips, type_loc = self._location(label.split('.')[0])
@@ -833,7 +833,7 @@ class MIPS:
                         offset2 += 8
                 helper_reg, mips = self.regs.get_register()
                 code.extend(mips)  
-                code.append(f'\tlw {helper_reg}, {offset2-32}($fp)')
+                code.append(f'\tlw {helper_reg}, {offset2}($fp)')
                 if type_loc == 1:
                     code.append(f'\tsw {helper_reg}, {loc}')
                 else:
@@ -1023,7 +1023,7 @@ class MIPS:
                         offset += 4 
                     else:
                         offset += 8
-                code.append(f'\tlw {find_new_reg}, {offset-32}($fp)')
+                code.append(f'\tlw {find_new_reg}, {offset}($fp)')
                 return find_new_reg, code
             elif items[2].startswith('var_temp'):
                 retReg, mips = self._get_label(items[2])
@@ -1115,7 +1115,7 @@ class MIPS:
                 new_reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[2], items[3], new_reg))
-                binop_reg, mips = self.regs.get_register
+                binop_reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
                 code.append("\tadd {reg}, {binop_reg}, $0")
@@ -1126,9 +1126,9 @@ class MIPS:
                 new_reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[4], items[5], new_reg))
-                binop_reg, mips = self.regs.get_register
+                binop_reg, mips = self.regs.get_register()
                 code.extend(mips)
-                code.extend(self.handle_binOp(items[2], new_reg, binop_reg, isreg2 = True))
+                code.extend(self.handle_binOp(items[2], new_reg, items[4], binop_reg, isreg2 = True))
                 code.append("\tadd {reg}, {binop_reg}, $0")
                 return reg, code
 
@@ -1149,12 +1149,13 @@ class MIPS:
             return 0, f"$a{j-1}"
         else:
             offset = int(label.split('_')[-1].split('.')[0][:-1])
+
             if len(label.split('_')[-1].split('.')) > 1:
                 if label.split('_')[-1].split('.')[1] == 'length':
                     offset += 4 
                 else:
                     offset += 8
-            return 1, -offset-12
+            return 1, -offset-16
 
     def handle_args(self, items): 
         print(items)
@@ -1168,18 +1169,18 @@ class MIPS:
                 if _type == 0:
                     code.append(f'\tadd {offset}, {find_new_reg}, $0')
                     return code
-                code.append(f'\tsw {find_new_reg}, {offset-32}($fp)')
+                code.append(f'\tsw {find_new_reg}, {offset}($fp)')
             elif items[2].startswith('args'):
                 _type1, offset1 = self.get_args(items[0])
                 _type2, offset2 = self.get_args(items[2])
                 helper_reg, mips = self.regs.get_register()
                 code.extend(mips)  
                 if _type1 == 1:
-                    code.append(f'\tlw {helper_reg}, {offset2-32}($fp)')
+                    code.append(f'\tlw {helper_reg}, {offset2}($fp)')
                 else:
                     code.append(f'\tlw {offset1}, {helper_reg}, $0')
                 if _type2 == 1:
-                    code.append(f'\tsw {helper_reg}, {offset1-32}($fp)')
+                    code.append(f'\tsw {helper_reg}, {offset1}($fp)')
                 else:
                     code.append(f'\tlw {offset2}, {helper_reg}, $0')
  
@@ -1189,7 +1190,7 @@ class MIPS:
                 retReg = retReg[0] ## Both point to same location
                 _type, offset = self.get_args(items[0]) 
                 if _type == 1:
-                    code.append(f'\tsw {retReg}, {offset-32}($fp)')
+                    code.append(f'\tsw {retReg}, {offset}($fp)')
                 else:
                     code.append(f'\tadd {offset}, {retReg}, $0')
 
@@ -1210,7 +1211,7 @@ class MIPS:
                     code.extend(mips)
                     _type, offset = self.get_args(items[0])
                     if _type == 1:
-                        code.append(f'\tlw {ret_reg}, {offset-32}($fp)')
+                        code.append(f'\tlw {ret_reg}, {offset}($fp)')
                     else:
                         code.append(f'\tadd {offset}, {ret_reg}, $0')
             else:
@@ -1225,7 +1226,7 @@ class MIPS:
                         code.extend(mips) 
                         code.append(f'\tli {helper_reg}, {items[2]}')
                         if _type == 1:
-                            code.append(f'\tsw {helper_reg}, {offset-32}($fp)')
+                            code.append(f'\tsw {helper_reg}, {offset}($fp)')
                         else:
                             code.append(f'\tadd {offset}, {helper_reg}, $0')
                         pass
@@ -1236,7 +1237,7 @@ class MIPS:
                         code.extend(mips)
                         code.append(f'\tli.s {helper_reg}, {items[2]}')
                         if _type == 1:
-                            code.append(f'\tsw {helper_reg}, {offset-32}($fp)')
+                            code.append(f'\tsw {helper_reg}, {offset}($fp)')
                         else:
                             code.append(f'\tadd {offset}, {helper_reg}, $0')                        
                             pass
@@ -1247,7 +1248,7 @@ class MIPS:
                     code.extend(mips)
                     code.append(f'\tli {helper_reg}, {items[2]}')
                     if _type == 1:
-                        code.append(f'\tsw {helper_reg}, {offset-32}($fp)')
+                        code.append(f'\tsw {helper_reg}, {offset}($fp)')
                     else:
                         code.append(f'\tadd {offset}, {helper_reg}, $0')                    
                         pass
@@ -1260,7 +1261,7 @@ class MIPS:
             code.extend(mips)
             code.extend(self.handle_unOp(items[2], items[3], reg))
             if _type == 1:
-                code.append(f'\tsw {reg}, {offset-32}($fp)')
+                code.append(f'\tsw {reg}, {offset}($fp)')
             else:
                 code.append(f'\tadd {offset}, {reg}, $0')
         elif len(items) == 5:
@@ -1271,7 +1272,7 @@ class MIPS:
                 old_reg, mips = self.regs.get_register(items[2])
                 code.extend(mips)
                 if _type == 1:
-                    code.append(f'\tsw {old_reg}, {offset-32}($fp)')
+                    code.append(f'\tsw {old_reg}, {offset}($fp)')
                 else:
                     code.append(f'\tadd {offset}, {old_reg}, $0')              
             else:
@@ -1283,7 +1284,7 @@ class MIPS:
                 code.extend(mips2)
                 code.append(f'\tadd {reg2}, {reg}, $0')
                 if _type == 1:
-                    code.append(f'\tsw {reg2}, {offset-32}($fp)')
+                    code.append(f'\tsw {reg2}, {offset}($fp)')
                 else:
                     code.append(f'\tadd {offset}, {reg2}, $0')        
         elif len(items) == 6:
@@ -1301,7 +1302,7 @@ class MIPS:
                 code.extend(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
                 code.append("\tadd {reg}, {binop_reg}, $0")
                 if _type == 1:
-                    code.append(f'\tsw {binop_reg}, {offset-32}($fp)')
+                    code.append(f'\tsw {binop_reg}, {offset}($fp)')
                 else:
                     code.append(f'\tadd {offset}, {binop_reg}, $0')            
         elif items[4] == '*':
@@ -1316,7 +1317,7 @@ class MIPS:
                 code.extend(self.handle_binOp(items[2], new_reg, binop_reg, isreg2 = True))
                 code.append("\tadd {reg}, {binop_reg}, $0")
                 if _type == 1:
-                    code.append(f'\tsw {reg}, {offset-32}($fp)')
+                    code.append(f'\tsw {reg}, {offset}($fp)')
                 else:
                     code.append(f'\tadd {offset}, {reg}, $0')        
         else:
@@ -1362,7 +1363,7 @@ class MIPS:
                     self.regs.arg_regs[f"$a{i}"] = [self.regs.count, param]
                     self.regs.count += 1
                     if _type == 1:
-                        code.append(f"\tlw $a{i}, {offset-32}($fp)")
+                        code.append(f"\tlw $a{i}, {offset}($fp)")
                     else:
                         code.append(f"\tadd $a{i}, {offset}, $0")
                     break
