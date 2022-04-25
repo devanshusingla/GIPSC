@@ -352,15 +352,20 @@ def p_ConstSpec(p):
  
     # for expr in p[length]:
     #     p[0].code.extend(expr.code)
-
     if count_1 == 0:
         for i in range(len(p[1])):
-            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+            var = ''
+            if(expression_datatypes[i]['name'].startswith('float')):
+                var = 'float'
+            p[0].code.append(f"{stm.id}_{p[1][i].label} ={var} {p[length][i].place}")
             stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
     else:
         for i in range(len(p[1])):
-            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
+            var = ''
+            if(expression_datatypes[i]['name'].startswith('float')):
+                var = 'float'
+            p[0].code.append(f"{stm.id}_{p[1][i].label} ={var} {p[length][0].place[i]}")
             stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
 
@@ -504,12 +509,18 @@ def p_VarSpec(p):
         #     p[0].code.extend(expr.code)
         if count_1 == 0:
             for i in range(len(p[1])):
-                p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+                var = ''
+                if(expression_datatypes[i]['name'].startswith('float')):
+                    var = 'float'
+                p[0].code.append(f"{stm.id}_{p[1][i].label} ={var} {p[length][i].place}")
                 stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
         else:
             for i in range(len(p[1])):
-                p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
+                var = ''
+                if(expression_datatypes[i]['name'].startswith('float')):
+                    var = 'float'
+                p[0].code.append(f"{stm.id}_{p[1][i].label} ={var} {p[length][0].place[i]}")
                 stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
     else:
         not_base_type = False
@@ -720,7 +731,7 @@ def p_Expr(p):
             p[1].place = point
         temp_var = new_temp()
 
-        p[0].code.append(f"{temp_var} = {p[1].place} {p[2]}({dt['name']}) {p[3].place}")
+        p[0].code.append(f"{temp_var} = {p[1].place} {p[2]}({dt1['name']}) {p[3].place}")
         p[0].place = temp_var
 
 
@@ -1037,7 +1048,10 @@ def p_PrimaryExpr(p):
                         p[0].isAddressable = False
                         p[0].isConst = p[2][0].isConst
                         place = f"retval_typecast_{dt['baseType']}_to_{p[1].label}_0"
-                        code.append(f"params {p[2][0].place}")
+                        var = ""
+                        if isinstance(p[2][0], str) and p[2][0].dataType['baseType'].startswith('float'):
+                            var = 'float'
+                        code.append(f"params_{var} {p[2][0].place}")
                         code.append(f"call typecast_{dt['baseType']}_to_{p[1].label}")
                     p[0].dataType = {'baseType': p[1].label, 'name': p[1].label, 'level': 0, 'size': utils.basicTypeSizes[p[1].label]}
                     p[0].code.extend(code)
@@ -1111,8 +1125,10 @@ def p_PrimaryExpr(p):
 
                     if not isTypeCastable(new_stm, dt1, dt2):
                         raise TypeError(f"{p.lexer.lineno}: Type mismatch on argument number: {i} - {argument}")
-
-                    code.append(f"params {argument.place}")
+                    var = ''
+                    if(argument.dataType['name'].startswith('float')):
+                        var = 'float'
+                    code.append(f"params_{var} {argument.place}")
                 code.append(f"call {p[1].label}")
                 p[2] = FuncCallNode(p[1], p[2])
                 if len(info['return']) > 1:
@@ -1120,11 +1136,17 @@ def p_PrimaryExpr(p):
                     for i in range (len(info['return'])): 
                         temp = new_temp()
                         place.append(temp)
-                        code.append(f"{temp} = retval_{p[1].label}_{i}")
+                        var = ''
+                        if(info['return'][i]['name'].startswith('float')):
+                            var = 'float'
+                        code.append(f"{temp} ={var} retval_{p[1].label}_{i}")
                 elif len(info['return']) == 1:
                     temp = new_temp() 
                     place = temp
-                    code.append(f"{temp} = retval_{p[1].label}_0")
+                    var = ''
+                    if(info['return'][0]['name'].startswith('float')):
+                        var = 'float'
+                    code.append(f"{temp} ={var} retval_{p[1].label}_0")
         p[0] = p[2]                       
 
         p[0].isAddressable = True
@@ -1462,7 +1484,7 @@ def p_FloatLit(p):
     """
     p[0] = LitNode(dataType = {'name': 'float32', 'baseType': 'float32', 'level': 0, 'size': 4}, label = p[1], isConst=True, val=float(p[1]))
     temp = new_temp()
-    p[0].code.append(f"{temp} = {p[1]}")
+    p[0].code.append(f"{temp} =float {p[1]}")
     p[0].place = temp 
     
 def p_ImagLit(p):
@@ -1977,19 +1999,25 @@ def p_Assignment(p):
         exprNode = ExprNode(None, operator="=")
         exprNode.addChild(key, val)
         p[0].append(exprNode)
-
     if count_1 == 0:
         for i in range(len(p[2])):
+            var = ''
+            if(p[2][i].dataType['name']).startswith('float'):
+                var = 'float'
             if p[3] == '=':
-                p[0].code.append(f"{p[2][i].place} = {p[length][i].place}")
+                p[0].code.append(f"{p[2][i].place} ={var} {p[length][i].place}")
             else:
-                p[0].code.append(f"{p[2][i].place} = {p[2][i].place} {p[3][0]}({expression_dt[i]['name']}) {p[length][i].place}")
+                p[0].code.append(f"{p[2][i].place} ={var} {p[2][i].place} {p[3][0]}({expression_dt[i]['name']}) {p[length][i].place}")
     else:
         for i in range(len(p[2])):
+            var = ''
+            if(p[2][i].dataType['name']).startswith('float'):
+                var = 'float'
             if p[3] == '=': 
-                p[0].code.append(f"{p[2][i].place} = {p[length][0].place[i]}")
+                p[0].code.append(f"{p[2][i].place} ={var} {p[length][0].place[i]}")
             else:
-                p[0].code.append(f"{p[2][i].place} = {p[2][i].place} {p[3][0]}({expression_dt[i]['name']}) {p[length][0].place[i]}")
+                p[0].code.append(f"{p[2][i].place} ={var} {p[2][i].place} {p[3][0]}({expression_dt[i]['name']}) {p[length][0].place[i]}")
+    
 
     # for i, (key, val) in enumerate(zip(p[1], p[3])):
     #     if p[2] == '=':
@@ -2093,15 +2121,20 @@ def p_ShortVarDecl(p):
         stm.add(ident.label, {'dataType': dt, 'isConst' : False})
         p[1][i].dataType = dt
 
-
     if count_1 == 0:
         for i in range(len(p[1])):
-            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][i].place}")
+            var = ""
+            if (expression_datatypes[i]['name'].startswith('float')):
+                var = 'float'
+            p[0].code.append(f"{stm.id}_{p[1][i].label} ={var} {p[length][i].place}")
             stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
     else:
         for i in range(len(p[1])):
-            p[0].code.append(f"{stm.id}_{p[1][i].label} = {p[length][0].place[i]}")
+            var = ""
+            if (expression_datatypes[i]['name'].startswith('float')):
+                var = 'float'
+            p[0].code.append(f"{stm.id}_{p[1][i].label} ={var} {p[length][0].place[i]}")
             stm.symTable[stm.id].updateAttr(p[1][i].label, {'tmp': f"{stm.id}_{p[1][i].label}"})
 
 ###################################################################################
@@ -2180,7 +2213,10 @@ def p_ReturnStmt(p):
                 raise LogicalError(f"{p.lexer.lineno}: Return type of current function :{returnDataType} and the return statement {ExprNodedt} doesn't match.")
         p[0] = ReturnNode(p[2])
         for expr in p[2]:
-            p[0].code.append(f"retparams {expr.place}")
+            var = ""
+            if(expr.dataType['name'].startswith('float')):
+                var = 'float'
+            p[0].code.append(f"retparams_{var} {expr.place}")
         p[0].code.append("return")
     stm.symTable[stm.id].okReturn = True
 
@@ -2693,9 +2729,13 @@ def p_RangeClause(p):
     p[1][1].place = elem
     scopeid = stm.getScope(p[1][1].label)
     stm.symTable[scopeid].localsymTable[p[1][1].label]['tmp'] = elem
+    # No code for map
     code.append(f"{idx} = 0")
-    code.append(f"{elemptr}.pointer = {p[3].place}.pointer")
-    code.append(f"{elem} = *{elemptr}.pointer")
+    var = ''
+    if(p[3].dataType['name'].startswith('float')):
+        var='float'
+    code.append(f"{elemptr} = {p[3].place}.addr")
+    code.append(f"{elem} ={var} *{elemptr}")
     code.append(f"begin_for_{stm.forStack[-1]}:")
     cond_res = new_temp()
     code.append(f"{cond_res} = {idx} <(int) {elemptr}.length")
