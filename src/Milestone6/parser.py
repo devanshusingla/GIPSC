@@ -1126,7 +1126,7 @@ def p_PrimaryExpr(p):
                     if not isTypeCastable(new_stm, dt1, dt2):
                         raise TypeError(f"{p.lexer.lineno}: Type mismatch on argument number: {i} - {argument}")
                     var = ''
-                    if(argument.dataType['name'].startswith('float')):
+                    if(paramList[i]['name'].startswith('float')):
                         var = 'float'
                     code.append(f"params_{var} {argument.place}")
                 code.append(f"call {p[1].label}")
@@ -2212,9 +2212,9 @@ def p_ReturnStmt(p):
             if returnDataType != ExprNodedt:
                 raise LogicalError(f"{p.lexer.lineno}: Return type of current function :{returnDataType} and the return statement {ExprNodedt} doesn't match.")
         p[0] = ReturnNode(p[2])
-        for expr in p[2]:
+        for i, expr in enumerate(p[2]):
             var = ""
-            if(expr.dataType['name'].startswith('float')):
+            if(returnvalues[i]['name'].startswith('float')):
                 var = 'float'
             p[0].code.append(f"retparams_{var} {expr.place}")
         p[0].code.append("return")

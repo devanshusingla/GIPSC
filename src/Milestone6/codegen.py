@@ -644,6 +644,7 @@ class MIPS:
 
                 if len(paramValues) > 4:
                     paramValues = paramValues[:-4] 
+                    paramValues.reverse()
                     for param in paramValues:
                         reg, mips = self._get_label(param)
                         code.extend(mips)
@@ -721,7 +722,7 @@ class MIPS:
                     code.extend(_code)
                     code.append(f"\tlw {new_reg}, 0({param_reg})")
 
-                code.extend(self.handle_param(items[1], isFloat=param_items[0].endswith('float')))
+                code.extend(self.handle_param(items[1], isFloat=items[0].endswith('float')))
                 
             elif self.tac_code[i].startswith('retparams'):
                 pass ## Done inside addFunction
@@ -1980,7 +1981,7 @@ class MIPS:
 
         # To convert int to string
 
-        # To convert string to int
+        # To convert string to in
         pass
 
     def dosyscall(self, number):

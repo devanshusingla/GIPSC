@@ -249,6 +249,7 @@ _Print_int:
 	#### YAYYY temp_4
 	### offset: [0, '$t6'], temp_4
 	add $a0, $t6, $0
+	### STACK: -88
 	jal _Print_char
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -431,6 +432,7 @@ _Print_string:
 	#### YAYYY temp_7
 	### offset: [0, '$t3'], temp_7
 	add $a0, $t3, $0
+	### STACK: -88
 	jal _Print_char
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -542,6 +544,54 @@ _Scan_int:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
+	#### Saving Floating Point registers
+	add $sp, $sp, -4
+	swc1 $f1, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f3, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f4, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f5, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f6, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f7, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f8, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f9, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f10, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f11, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f20, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f21, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f22, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f23, 0($sp)
+	#### Done saving Floating Point registers
+	#### Saving Floating Point Argument registers
+	add $sp, $sp, -4
+	swc1 $f12, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f13, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f14, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f15, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f16, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f17, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f18, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f19, 0($sp)
+	#### Done saving Floating Point Argument registers
 	li $v0, 5
 	syscall
 	### Restoring argument registers
@@ -655,6 +705,54 @@ _Scan_char:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
+	#### Saving Floating Point registers
+	add $sp, $sp, -4
+	swc1 $f1, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f3, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f4, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f5, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f6, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f7, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f8, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f9, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f10, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f11, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f20, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f21, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f22, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f23, 0($sp)
+	#### Done saving Floating Point registers
+	#### Saving Floating Point Argument registers
+	add $sp, $sp, -4
+	swc1 $f12, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f13, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f14, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f15, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f16, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f17, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f18, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f19, 0($sp)
+	#### Done saving Floating Point Argument registers
 	li $v0, 12
 	syscall
 	### Restoring argument registers
@@ -768,6 +866,54 @@ _Scan_string:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
+	#### Saving Floating Point registers
+	add $sp, $sp, -4
+	swc1 $f1, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f3, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f4, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f5, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f6, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f7, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f8, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f9, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f10, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f11, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f20, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f21, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f22, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f23, 0($sp)
+	#### Done saving Floating Point registers
+	#### Saving Floating Point Argument registers
+	add $sp, $sp, -4
+	swc1 $f12, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f13, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f14, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f15, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f16, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f17, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f18, 0($sp)
+	add $sp, $sp, -4
+	swc1 $f19, 0($sp)
+	#### Done saving Floating Point Argument registers
 	li $v0, 8
 	syscall
 	### Restoring argument registers
@@ -1140,7 +1286,8 @@ _arglist:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY arg_[arglist_-24]
-	lw $a0, 8($fp)
+	lw $s4, 24($fp)
+	add $a0, $s4, $0
 	jal _Print_int
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1205,7 +1352,8 @@ _arglist:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY arg_[arglist_-28]
-	lw $a0, 12($fp)
+	lw $s3, 28($fp)
+	add $a0, $s3, $0
 	jal _Print_int
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1270,7 +1418,8 @@ _arglist:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY arg_[arglist_-32]
-	lw $a0, 16($fp)
+	lw $s2, 32($fp)
+	add $a0, $s2, $0
 	jal _Print_int
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1335,7 +1484,8 @@ _arglist:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY arg_[arglist_-36]
-	lw $a0, 20($fp)
+	lw $s1, 36($fp)
+	add $a0, $s1, $0
 	jal _Print_int
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1415,23 +1565,35 @@ main:
 	sw $s6, 0($sp)
 	add $sp, $sp, -4
 	sw $s7, 0($sp)
-	li $s4, 1
-	li $s3, 2
-	li $s2, 3
-	li $s1, 4
-	li $s0, 5
+	li $s0, 1
 	add $sp, $sp, -4
 	sw	$t9,-68($fp)
 
-	li $t9, 6
+	li $t9, 2
 	add $sp, $sp, -4
 	sw	$t8,-72($fp)
 
-	li $t8, 7
+	li $t8, 3
 	add $sp, $sp, -4
 	sw	$t7,-76($fp)
 
-	li $t7, 8
+	li $t7, 4
+	add $sp, $sp, -4
+	sw	$t6,-80($fp)
+
+	li $t6, 5
+	add $sp, $sp, -4
+	sw	$t5,-84($fp)
+
+	li $t5, 6
+	add $sp, $sp, -4
+	sw	$t4,-88($fp)
+
+	li $t4, 7
+	add $sp, $sp, -4
+	sw	$t3,-92($fp)
+
+	li $t3, 8
 	#### Saving temporary registers
 	add $sp, $sp, -4
 	sw $t0, 0($sp)
@@ -1465,29 +1627,41 @@ main:
 	sw $a3, 0($sp)
 	#### Done saving argument registers
 	#### YAYYY temp_14
-	### offset: [0, '$s4'], temp_14
-	add $a0, $s4, $0
+	### offset: [0, '$s0'], temp_14
+	add $a0, $s0, $0
+	### STACK: -116
 	#### YAYYY temp_15
-	### offset: [0, '$s3'], temp_15
-	add $a1, $s3, $0
+	### offset: [0, '$t9'], temp_15
+	add $a1, $t9, $0
+	### STACK: -116
 	#### YAYYY temp_16
-	### offset: [0, '$s2'], temp_16
-	add $a2, $s2, $0
+	### offset: [0, '$t8'], temp_16
+	add $a2, $t8, $0
+	### STACK: -116
 	#### YAYYY temp_17
-	### offset: [0, '$s1'], temp_17
-	add $a3, $s1, $0
-	# $t7, temp_21
+	### offset: [0, '$t7'], temp_17
+	add $a3, $t7, $0
+	### STACK: -116
+	addi $sp, $sp, -4
+	sw $t6 0($sp)
+	addi $sp, $sp, -4
+	sw $t5 0($sp)
+	addi $sp, $sp, -4
+	sw $t4 0($sp)
+	addi $sp, $sp, -4
+	sw $t3 0($sp)
+	# $t6, temp_18
 	add $sp, $sp, -4
-	sw $t7, 0($sp)
-	# $t8, temp_20
+	sw $t6, 0($sp)
+	# $t5, temp_19
 	add $sp, $sp, -4
-	sw $t8, 0($sp)
-	# $t9, temp_19
+	sw $t5, 0($sp)
+	# $t4, temp_20
 	add $sp, $sp, -4
-	sw $t9, 0($sp)
-	# $s0, temp_18
+	sw $t4, 0($sp)
+	# $t3, temp_21
 	add $sp, $sp, -4
-	sw $s0, 0($sp)
+	sw $t3, 0($sp)
 	jal _arglist
 	### Restoring argument registers
 	lw $a3, 0($sp)
