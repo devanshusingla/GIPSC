@@ -672,6 +672,7 @@ class BuiltinFuncNode(FuncCallNode):
             else:
                 temp.append(expr)
 
+        print(args)
         args = temp
         super().__init__(name, args)
         self.isAddressable = False
@@ -688,7 +689,17 @@ class BuiltinFuncNode(FuncCallNode):
                 self.code.append(f"params {arg.place}")
             code.append(f'call #syscall_{args[0].val}')
             
+            print(args[0].val)
             if args[0].val == 11:
+                if len(args) != 2:
+                    raise Exception("Incorrect number of arguments")
+            elif args[0].val == 1:
+                if len(args) != 2:
+                    raise Exception("Incorrect number of arguments")
+            elif args[0].val == 2:
+                if len(args) != 2:
+                    raise Exception("Incorrect number of arguments")
+            elif args[0].val == 4:
                 if len(args) != 2:
                     raise Exception("Incorrect number of arguments")
             elif args[0].val == 1:
@@ -697,11 +708,15 @@ class BuiltinFuncNode(FuncCallNode):
             elif args[0].val == 12:
                 if len(args) != 1:
                     raise Exception("Incorrect number of arguments")
-                self.dataType = [{'baseType': 'int', 'name': 'int', 'level': 0, 'size': 4}]
+                self.dataType = [{'baseType': 'rune', 'name': 'rune', 'level': 0, 'size': 4}]
             elif args[0].val == 5:
                 if len(args) != 1:
                     raise Exception("Incorrect number of arguments")
                 self.dataType = [{'baseType': 'int', 'name': 'int', 'level': 0, 'size': 4}]
+            elif args[0].val == 8:
+                if len(args) != 1:
+                    raise Exception("Incorrect number of arguments")
+                self.dataType = [{'baseType': 'string', 'name': 'string', 'level': 0, 'size': 12}]
             else:
                 raise Exception("Syscall not implemented for the given number")
 

@@ -524,7 +524,7 @@ def typecast(val, dt):
     if dt.startswith('float'):
         return float(val)
     if dt in ['byte', 'rune']:
-        return ord(val)
+        return f'\'{chr(val)}\''
     if dt == 'string': 
         if type(val) == 'string' and val[0] in ['\'', '\"'] and val[-1] in ['\'', '\"']:
             return f"\"{str(val[1:-1])}\""

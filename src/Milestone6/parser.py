@@ -243,8 +243,11 @@ def p_ConstSpec(p):
 
     for i in range(len(p[length])):
         if isinstance(p[length][i], FuncCallNode):
-            func_name = p[length][i].children[0].label
-            dt_return = stm.functions[func_name]["return"]
+            if isinstance(p[length][i], BuiltinFuncNode):
+                dt_return = p[length][i].dataType
+            else:
+                func_name = p[length][i].children[0].label
+                dt_return = stm.functions[func_name]["return"]
             expression_datatypes.extend(dt_return)
             if len(dt_return) == 0:
                 raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")
@@ -646,7 +649,6 @@ def p_ExpressionList(p):
     """
     ExpressionList : Expr
                    | ExpressionList COMMA Expr
-                   | IdentifierList
     """
     if len(p) == 2 and not isinstance(p[1], NodeList):
         p[0] = NodeList([])
@@ -1080,8 +1082,32 @@ def p_PrimaryExpr(p):
                 if len(paramList) != len(p[2]):
                     raise NameError(f"{p.lexer.lineno}: Different number of arguments in function call: " + p[1].label + "\n Expected " + str(len(paramList)) + " number of arguments but got " + str(len(p[2])))
 
+                expression_datatypes = []
+                count_0 = 0
+                count_1 = 0
+
+                for i in range(len(p[2])):
+                    if isinstance(p[2][i], FuncCallNode):
+                        if isinstance(p[2][i], BuiltinFuncNode):
+                            dt_return = p[2][i].dataType
+                        else:
+                            func_name = p[2][i].children[0].label
+                            dt_return = stm.functions[func_name]["return"]
+                        expression_datatypes.extend(dt_return)
+                        if len(dt_return) == 0:
+                            raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")
+                        elif len(dt_return) == 1:
+                            count_0+=1
+                        else:
+                            count_1+=1
+                    else:
+                        expression_datatypes.append(p[2][i].dataType)
+
+                if count_1 > 0:
+                    raise TypeError(f"{p.lexer.lineno}: Multiple returning functions not allowed as parameters")
+
                 for i, argument in enumerate(p[2]):
-                    dt1 = argument.dataType
+                    dt1 = expression_datatypes[i]
                     dt2 = paramList[i]
 
                     if not isTypeCastable(new_stm, dt1, dt2):
@@ -1912,8 +1938,11 @@ def p_Assignment(p):
     expression_dt = []
     for i in range(len(p[length])):
         if isinstance(p[length][i], FuncCallNode):
-            func_name = p[length][i].children[0].label
-            dt_return = stm.functions[func_name]["return"]
+            if isinstance(p[length][i], BuiltinFuncNode):
+                dt_return = p[length][i].dataType
+            else: 
+                func_name = p[length][i].children[0].label
+                dt_return = stm.functions[func_name]["return"]
             expression_dt.extend(dt_return)
             if len(dt_return) == 0:
                 raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")
@@ -2014,8 +2043,11 @@ def p_ShortVarDecl(p):
 
     for i in range(len(p[length])):
         if isinstance(p[length][i], FuncCallNode):
-            func_name = p[length][i].children[0].label
-            dt_return = stm.functions[func_name]["return"]
+            if isinstance(p[length][i], BuiltinFuncNode):
+                dt_return = p[length][i].dataType
+            else:
+                func_name = p[length][i].children[0].label
+                dt_return = stm.functions[func_name]["return"]
             expression_datatypes.extend(dt_return)
             if len(dt_return) == 0:
                 raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")

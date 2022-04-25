@@ -7,13 +7,11 @@ func f(b *int){
 }
 
 func main() {
-	// var a int = 2
-	// fmt.Print_int(a)
-	// var b rune = 'a'
-	// fmt.Print_char(b)
 	var a int = 2;
 	f(&a);
 	fmt.Print_int(a);
-
-
+	fmt.Print_char(rune(97))
+	var b int
+	fmt.Scan_int(&b) 
+	fmt.Print_int(b)
 }
