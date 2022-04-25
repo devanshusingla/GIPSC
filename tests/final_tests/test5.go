@@ -11,7 +11,7 @@ func main() {
 	var a int
 	fmt.Scan_int(&a)
 	var b *int = &a
-	pointer_check(a)
+	pointer_check(&a)
 	fmt.Print_int(a)
 	var c **int = &b
 	/*Square*/ 
