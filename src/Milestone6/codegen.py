@@ -135,7 +135,6 @@ class Register:
             mips = []
             for i, reg in enumerate(regList):
                 # If someone occupied the register previously
-                    mips.append(f'\t### Going to free register {reg}')
                     if new_loc is None:
                         if reg in self.regs and self.regs[reg][0]:
                             self.locations[self.regs[reg][0]] = [1, self._sp]
@@ -169,7 +168,6 @@ class Register:
                         self.regsSaved[reg][0] = None
                         self.regsSaved[reg][1] = 0
 
-            mips.append(f"\t###STACK: {self._sp}")
             print("Instruction generated: ", mips)
             return mips
 
@@ -182,7 +180,6 @@ class Register:
             mips = []
             for i, reg in enumerate(regList):
                 # If someone occupied the register previously
-                    mips.append('\t### Going to free register {reg}')
                     if new_loc is None:
                         if reg in self.regsF and self.regsF[reg][0]:
                             self.locations[self.regsF[reg][0]] = [1, self._sp]
@@ -242,7 +239,6 @@ class Register:
 
         else:  # Need a new register
             new_reg = self.find_new_reg(isFloat=isFloat)
-            mips.append(f"\t### Need new register for {new_reg}")
             mips.extend(self.move_reg([new_reg]))
 
             self.count += 1
@@ -317,16 +313,30 @@ class MIPS:
         self.curr_func = ""
         self.curr_pkg = None
 
-        for st, st_info in self.stm.symTable.items():
-            pass
-
     def _location(self, label, isFloat = False):
         if label in self.act_records[self.curr_func].local_var:
             return (f'{self.act_records[self.curr_func].local_var[label]["offset"]-32}($fp)', [], 1)
         elif label in self.global_var:
             return (f'{self.global_var[label]["offset"]}($gp)', [], 1)
         elif label[0].isnumeric() and '_' in label:
-            offset = self.regs.locations[label][1] - self.act_records[self.curr_func].localvar_space
+            label = label.split('.')
+
+            if len(label) > 1:
+                temp_reg, code = self.regs.get_register()
+                code.append(f'\tlw {temp_reg}, {self.act_records[self.curr_func].local_var[label[0]]["offset"]}($fp)')
+                if label[1] == 'addr':
+                    code.append(f"\tlw {temp_reg}, 0({temp_reg})")
+                elif label[1] == 'len':
+                    code.append(f"\tlw {temp_reg}, 4({temp_reg})")
+                elif label[1] == 'cap':
+                    code.append(f"\tlw {temp_reg}, 8({temp_reg})")
+                else:
+                    raise Exception("Some syntax error in 3ac code")
+
+                return (temp_reg, code, 0)
+
+            offset = self.regs.locations[label[0]][1] - self.act_records[self.curr_func].localvar_space
+
             return (f"{offset-32}($fp)", [f"\t### LOCATION {label} : {offset}"], 1)
         elif label in self.regs.locations:
             reg, mips = self.regs.get_register(label, isFloat = isFloat)
@@ -393,6 +403,36 @@ class MIPS:
                 code.extend(self.addFunction(i))
             else:
                 continue
+
+        return code
+
+    def _addLocalCompositeVars(self):
+        code = []
+        for local_var, lv_info in self.act_records[self.curr_func].local_var.items():
+            if lv_info['dataType']['name'] in compositeTypes:
+                # code.append('COMPOSITE')
+                
+                code.append('\tli $a0, 12')
+                code.append('\tli $v0, 9')
+                code.append('\tsyscall')
+                code.append(f'\tsw $v0, {lv_info["offset"]}($fp)')
+            
+                if lv_info['dataType']['name'] == 'array':
+                    code.append(f"\tli $a0, {lv_info['dataType']['baseType']['size']*lv_info['dataType']['length']}")
+                    code.append(f"\tsw $a0, 4($v0)")
+                    code.append(f"\tsw $a0, 8($v0)")
+                    new_reg , _code = self.regs.get_register(local_var)
+                    code.extend(_code)
+                    code.append('\tli $v0, 9')
+                    code.append('\tsyscall')
+                    code.append(f'\tsw $v0, 0({new_reg})')
+                    
+            
+                if lv_info['dataType']['name'] == 'slice':
+                    code.append(f"\tli $a0, {lv_info['dataType']['baseType']['size']*lv_info['dataType']['length']}")
+                    code.append(f"\tsw $a0, 4($v0)")
+                    code.append(f"\tsw $a0, 8($v0)")
+
         return code
 
     def addFunction(self, lineno):
@@ -413,7 +453,7 @@ class MIPS:
         if funcname in self.stm.functions and self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
             for local_var, lv_info in self.stm.symTable[self.stm.functions[funcname]['scope']+1].localsymTable.items():
                 local_var_size += lv_info['dataType']['size']
-                self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': -local_var_size}
+                self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': -local_var_size, 'dataType': lv_info['dataType']}
                 self.regs.locations[lv_info['tmp']] = [1, -local_var_size]
 
         if funcname in self.stm.functions and self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
@@ -450,6 +490,7 @@ class MIPS:
             code.append(f'\tsw {reg}, 0($sp)')
             self.regs.regsSaved[reg][0] = None
 
+        code.extend(self._addLocalCompositeVars())
 
         for i in range(lineno+1, len(self.tac_code)):
             items = self.tac_code[i].split(' ')
@@ -505,7 +546,7 @@ class MIPS:
                 code.extend(mips)
             elif self.tac_code[i].startswith('vartemp'):
                 pass
-            elif self.tac_code[i].startswith('*'):
+            elif self.tac_code[i].startswith('*') or self.tac_code[i].startswith('[]'):
                 # * a = b
                 # * a = unop b
                 # * a = b binop c
@@ -640,7 +681,16 @@ class MIPS:
                 code.append(f'\tsw {space}, 8($sp)')
                 code.append(f'\tadd $sp, $sp, -12')
             elif self.tac_code[i].startswith('params'):
-                code.extend(self.handle_param(self.tac_code[i].split(' ')[1]))
+                items = self.tac_code[i].split(' ')
+                if len(items) == 3 and items[1] == '*':
+                    items[1] = f"{items[2]}#point"
+                    new_reg, _code = self.regs.get_register(items[1])
+                    code.extend(_code)
+                    param_reg, _code = self.regs.get_register(items[2])
+                    code.extend(_code)
+                    code.append(f"\tlw {new_reg}, 0({param_reg})")
+
+                code.extend(self.handle_param(items[1]))
             elif self.tac_code[i].startswith('retparams'):
                 pass ## Done inside addFunction
             elif self.tac_code[i].startswith('retval'):
