@@ -30,7 +30,8 @@ reserved = {
     'map' : 'MAP',
     'const' : 'CONST',
     'for' : 'FOR',
-    'package': 'PACKAGE'
+    'package': 'PACKAGE',
+    'assign': 'ASSIGNMENT'
 }
 
 ## Tokens other than reserved
