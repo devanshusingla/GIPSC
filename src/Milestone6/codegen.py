@@ -324,7 +324,6 @@ class MIPS:
     def _location(self, label, isFloat = False):
         if label in self.act_records[self.curr_func].local_var:
             return (f'{self.act_records[self.curr_func].local_var[label]["offset"]}($fp)', [], 1)
-
         elif label in self.global_var:
             return (f'{self.global_var[label]["offset"]}($gp)', [], 1)
         elif label[0].isnumeric() and '_' in label:
@@ -352,14 +351,14 @@ class MIPS:
             for var, detail in scope.symTable[0].localsymTable.items():
                 if var == '_':
                     continue
-                code.extend(self._getDataCode(detail))
+                code.append(self._getDataCode(detail))
                 self.global_var[detail['tmp']] = {'size': detail['dataType']['size'], 'offset': self.global_var_size}
                 self.global_var_size += detail['dataType']['size']
 
         for var, detail in self.stm.symTable[0].localsymTable.items():
             if var == '_':
                 continue
-            code.extend(self._getDataCode(detail))
+            code.append(self._getDataCode(detail))
             self.global_var[detail['tmp']] = {'size': detail['dataType']['size'], 'offset': self.global_var_size}
             self.global_var_size += detail['dataType']['size']
 
@@ -410,15 +409,28 @@ class MIPS:
 
         local_var_size = 0
 
-        if self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
+        if funcname in self.stm.functions and self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
             for local_var, lv_info in self.stm.symTable[self.stm.functions[funcname]['scope']+1].localsymTable.items():
                 local_var_size += lv_info['dataType']['size']
                 self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': -local_var_size}
                 self.regs.locations[lv_info['tmp']] = [1, -local_var_size]
 
-        if self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
+        if funcname in self.stm.functions and self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
             for local_var, lv_info in self.stm.symTable[self.stm.functions[funcname]['scope']+1].localsymTable.items():
                 self.regs.locations[lv_info['tmp']][1] += local_var_size
+
+        for key in self.stm.pkgs:
+            if funcname in self.stm.pkgs[key].functions:
+                self.curr_pkg = key
+                for local_var, lv_info in self.stm.pkgs[key].symTable[self.stm.pkgs[key].functions[funcname]['scope']+1].localsymTable.items():
+                    local_var_size += lv_info['dataType']['size']
+                    self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': -local_var_size}
+                    self.regs.locations[lv_info['tmp']] = [1, -local_var_size]
+
+            if funcname in self.stm.pkgs[key].functions:
+                self.curr_pkg = key
+                for local_var, lv_info in self.stm.pkgs[key].symTable[self.stm.pkgs[key].functions[funcname]['scope']+1].localsymTable.items():
+                    self.regs.locations[lv_info['tmp']][1] += local_var_size
 
         self.act_records[self.curr_func].localvar_space = local_var_size
         stack_return_size = self.regs._func_arg_size_on_stack(self.stm, funcname, local_var_size)
@@ -550,8 +562,13 @@ class MIPS:
                     else:
                         code.append(f'\tsw{var} {reg}, 0({loc})')
                 elif items[1].startswith('arg'):
-                    # TODO
-                    pass
+                    reg, mips = self._get_label(items[1])
+                    code.extend(mips)
+                    # empty_reg, mips = self.regs.get_register()
+                    # code.extend(mips)
+                    reg2, mips = self.regs.get_register(items[3])
+                    code.extend(mips)
+                    code.append(f'\tsw {reg2} 0({reg})')
                 elif items[1].startswith('vartemp'):
                     # TODO
                     pass
@@ -589,7 +606,7 @@ class MIPS:
                     param_count = 0
                     while self.tac_code[i-param_count-1].startswith('params'):
                         param_count -= 1
-                    code.insert(len(code)-param_count, f"\tli $v0, {items[1].split('_')[1]}")
+                    code.insert(len(code)-param_count, f"\tli $v0, {items[1].split('_')[-1]}")
                     code.append('\tsyscall') 
                 else:
                     code.append(f'\tjal _{items[1]}')
@@ -784,9 +801,13 @@ class MIPS:
                     code.append('\tadd {loc}, {retReg}, $0')
 
             elif items[2].startswith('retval'):
-                funcName = items[2].split('_')[1]
+                funcName = '_'.join(items[2].split('_')[1:-1])
+                if self.curr_pkg != None:
+                    new_stm = self.stm.pkgs[self.curr_pkg]
+                else:
+                    new_stm = self.stm
                 num_returns = len(
-                    self.stm.functions[funcName]['return'])
+                    new_stm.functions[funcName]['return'])
                 if num_returns == 1:
                     reg, mips = self.regs.get_register(items[0])
                     code.extend(mips)
@@ -964,9 +985,13 @@ class MIPS:
                 return find_new_reg, code
 
             elif items[2].startswith('retval'):
-                funcName = items[2].split('_')[1]
-                num_returns = len(
-                    self.stm.functions[funcName]['return'])
+                funcName = '_'.join(items[2].split('_')[1:-1])
+                print(funcName)
+                if self.curr_pkg != None:
+                    new_stm = self.stm.pkgs[self.curr_pkg]
+                else:
+                    new_stm = self.stm
+                num_returns = len(new_stm.functions[funcName]['return'])
                 if num_returns == 1:
                     code.append(f"\t### STACK1: {self.regs._sp}, {items[0]}")
                     code.append(f"\t### {items[0] in self.regs.locations}")
@@ -1119,9 +1144,13 @@ class MIPS:
                     code.append(f'\tadd {offset}, {retReg}, $0')
 
             elif items[2].startswith('retval'):
-                funcName = items[2].split('_')[1]
+                funcName = '_'.join(items[2].split('_')[1:-1])
+                if self.curr_pkg != None:
+                    new_stm = self.stm.pkgs[self.curr_pkg]
+                else:
+                    new_stm = self.stm
                 num_returns = len(
-                    self.stm.functions[funcName]['return'])
+                    new_stm.functions[funcName]['return'])
                 if num_returns == 1:
                     reg, mips = self._get_label(items[0])
                     code.extend(mips)
@@ -1267,7 +1296,8 @@ class MIPS:
                     code.append("\t#### Done saving argument registers")
                     print("MYLOG: ", self.curr_func, self.regs._sp)
                 found = 1 
-                if not param.startswith('var_temp'):
+                code.append(f"\t#### YAYYY {param}")
+                if param.startswith('temp'):
                     self.regs.arg_regs[f'$a{i}'][0] = param
                     self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
                     self.regs.count += 1
@@ -1278,6 +1308,22 @@ class MIPS:
                     else:
                         code.append(f"\tadd $a{i}, {offset[1]}, $0")
                     code.append(f"\t### STACK: {self.regs._sp}")
+                    break
+                elif param.startswith('arg'):
+                    self.regs.arg_regs[f'$a{i}'][0] = param
+                    self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                    self.regs.count += 1
+                    regs, mips = self._get_label(param)
+                    code.extend(mips)
+                    code.append(f"\tadd $a{i}, {regs}, $0")
+                    break
+                elif param[0].isnumeric() and '_' in param:
+                    self.regs.arg_regs[f'$a{i}'][0] = param
+                    self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                    self.regs.count += 1
+                    regs, mips = self._get_label(param)
+                    code.extend(mips)
+                    code.append(f"\tadd $a{i}, {regs}, $0")
                     break
                 else:
                     loc, _mips, type_loc = self._location(param.split('.')[0])
@@ -1352,12 +1398,16 @@ class MIPS:
 
     def handle_returns(self, returnval, isFloat=False):
         
-        funcName = returnval.split('_')[1]
-        num = int(returnval.split('_')[2])
+        funcName = '_'.join(returnval.split('_')[1:-1])
+        num = int(returnval.split('_')[-1])
 
         code = []
         offset = 0
-        for idx, retVal in enumerate(self.stm.functions[funcName]['return']):
+        if self.curr_pkg != None:
+            new_stm = self.stm.pkgs[self.curr_pkg]
+        else:
+            new_stm = self.stm
+        for idx, retVal in enumerate(new_stm.functions[funcName]['return']):
             if idx == num:
                 break
             offset += retVal['size']
@@ -1520,13 +1570,13 @@ class MIPS:
         elif opr[0] == '-':
             if 'float' in opr:
                 isFloat = True 
-            reg, mips = self.regs.get_register(operand, isFloat = isFloat)
+            reg, mips = self._get_label(operand, isFloat = isFloat)
             code.extend(mips)
             code.append(f'\tsubi {finalreg}, 0, {reg}')
             return code
 
         elif opr[0] == '*':
-            reg, mips = self.regs.get_register(operand)
+            reg, mips = self._get_label(operand)
             code.extend(mips)
 
             code.append(f"\tlw {finalreg}, 0({reg})")
@@ -1544,12 +1594,12 @@ class MIPS:
             return code
 
         elif opr[0] == '!':
-            reg, mips = self.regs.get_register(operand)
+            reg, mips = self._get_label(operand)
             code.extend(mips)
             code.append(f'\tnor {finalreg}, {reg}, $0')
 
         elif opr[0] == '^':
-            reg, mips = self.regs.get_register(operand)
+            reg, mips = self._get_label(operand)
             code.extend(mips)
             reg_helper, mips = self.regs.get_register()
             code.extend(mips)

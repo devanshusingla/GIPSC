@@ -4,7 +4,7 @@ from typing import List
 
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
 basicNumericTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'rune']
-basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 2, 'byte': 1, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 1}
+basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 4, 'byte': 4, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 4}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 
 builtinFunctions = ["__syscall"]
@@ -162,6 +162,10 @@ class SymTableMaker:
         if scope is None:
             if ident in self.functions:
                 return deepcopy(self.functions[ident])
+            else:
+                for key in self.pkgs:
+                    if ident in self.pkgs[key].functions:
+                        return deepcopy(self.pkgs[key].functions[ident]) 
             scope = self.getScope(ident)
             if scope == -1:
                 raise Exception("Ident not found in symbol table")
