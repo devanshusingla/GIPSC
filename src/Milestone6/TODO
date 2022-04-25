@@ -1,8 +1,20 @@
+Struct Array,
+Floating Point - (Us)
+Imports - (Yatharth)
+Vartemp implementation (Devanshu)
+Forward Declaration
+Make/New malloc builtin call (Dynamic Memory Allocation)
+Optimization
+- If function is not being called then remove its code
+- Dead code elimination - return statement if(true) if(false)
+- Short Circuit Evaluation
+- Constant folding
+Make input output testcases
 Builtin functions append, len, cap for slice/array
 Fallthrough
 Map implementation
 Typecasting functions
-scanf, printf implementation
+scanf, printf implementation -> Done
 string library
 documentation
 test cases
@@ -10,7 +22,6 @@ TypeT rules not done in p_Arguments
 negative indices in array
 Add definitions of builtin functions 
 MapType 3AC code in PrimaryExpr
-Short Circuit Evaluation
 Constant folding inside p_Expr -> Done
 Handling of unary expressions corresponding to addressing and dereferencing -> Done
 Correct ParameterDecl grammar -> Done

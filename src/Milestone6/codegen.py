@@ -578,7 +578,7 @@ class MIPS:
                         self.regs._sp -= 4
                     code.append("\t#### Done saving Floating Point registers")
                     code.append("\t#### Saving Floating Point Argument registers")
-                    for reg in self.regs.regsSavedF:
+                    for reg in self.regs.args_regsF:
                         code.append(f"\tadd $sp, $sp, -4")
                         code.append(f"\tswc1 {reg}, 0($sp)")
                         self.regs._sp -= 4
@@ -624,7 +624,8 @@ class MIPS:
             elif self.tac_code[i].startswith('retparams'):
                 pass ## Done inside addFunction
             elif self.tac_code[i].startswith('retval'):
-                reg, mips = self.handle_returns(self.tac_code[i].split(' ')[0])
+                retval_items = self.tac_code[i].split(' ')
+                reg, mips = self.handle_returns(retval_items[0], isFloat=retval_items[0].endswith('float'))
                 code.extend(mips)
                 return code
             elif self.tac_code[i].startswith('if'):
@@ -637,9 +638,11 @@ class MIPS:
                 code.extend(self.handle_label(self.tac_code[i][:-1]))
             elif self.tac_code[i].startswith('arg'):
                 ## TODO : Handle composite literal
+                items = self.tac_code[i].split(' ')
                 code.extend(self.handle_args(items)) 
                 pass
             elif len(self.tac_code[i]) > 0 and self.tac_code[i][0].isnumeric():
+                items = self.tac_code[i].split(' ')
                 code.extend(self.handle_localvars(items))  
                 pass
             elif self.tac_code[i].startswith('return'):
@@ -1347,7 +1350,7 @@ class MIPS:
                     code.append(f'\tsw {reg} 0($sp)')
         return code
 
-    def handle_returns(self, returnval):
+    def handle_returns(self, returnval, isFloat=False):
         
         funcName = returnval.split('_')[1]
         num = int(returnval.split('_')[2])
