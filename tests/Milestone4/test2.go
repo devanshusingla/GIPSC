@@ -8,5 +8,8 @@ var b, c, d int = a[0], a[1], a[2]
 func Print(x, y, z int) {}
 
 func main() {
-	Print(b, c, d)
+	for i := 0; i < 3; i++ {
+		fmt.Scan_int(&a[i])
+	}
+	fmt.Print_int(b, c, d)
 }
