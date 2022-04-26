@@ -1081,6 +1081,7 @@ class MIPS:
                     code.append(f'\tli {reg}, {items[2]}')
                     return reg, code
                 else:
+                    print(items)
                     raise NotImplementedError
         elif len(items) == 4:
             # a = unop b
@@ -1424,6 +1425,8 @@ class MIPS:
         return reg, code
 
     def handle_label(self, label):
+        if len(label.split(' ')) > 1:
+            return [f"{label.split(' ')[1]}:"]
         return [f"{label}:"]
 
     def handle_goto(self, label):
@@ -1566,7 +1569,7 @@ class MIPS:
         else:
             return self.handle_intBinOp(operand1, operand2, operator, finalreg, isreg1, isreg2)
 
-    def handle_unOp(self, opr, operand, finalreg):
+    def handle_unOp(self, opr, operand, finalreg, isFloat = False):
         code = []
         if opr == '+':
             return []
@@ -1576,7 +1579,7 @@ class MIPS:
                 isFloat = True 
             reg, mips = self._get_label(operand, isFloat = isFloat)
             code.extend(mips)
-            code.append(f'\tsubi {finalreg}, 0, {reg}')
+            code.append(f'\tsub {finalreg}, $0, {reg}')
             return code
 
         elif opr[0] == '*':
