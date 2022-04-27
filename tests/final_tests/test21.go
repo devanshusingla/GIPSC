@@ -10,7 +10,7 @@ func main() {
 	d := 2*a + 2
 	e := 2*a + 3
 	f := 2*a + 4
-	switch b + 1 {
+	switch b {
 		case c:
 			fmt.Print_char('a')
 		case d:

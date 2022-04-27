@@ -23,6 +23,6 @@ func main() {
 	fmt.Scan_int(&a)
 	fmt.Scan_int(&b)
 	fmt.Scan_int(&c)
-	minimum := f(1, g(1, 2))
-	fmt.Print_int(a)
+	minimum := f(a, g(b, c))
+	fmt.Print_int(minimum)
 }

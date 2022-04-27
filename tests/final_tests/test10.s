@@ -1168,18 +1168,6 @@ main:
 	add $sp, $sp, 4
 	lw $t0, 0($sp)
 	add $sp, $sp, 4
-	add $sp, $sp, -4
-	sw	$t7,-92($fp)
-
-	li $t7, 1
-	add $sp, $sp, -4
-	sw	$t6,-96($fp)
-
-	li $t6, 1
-	add $sp, $sp, -4
-	sw	$t5,-100($fp)
-
-	li $t5, 2
 	#### Saving temporary registers
 	add $sp, $sp, -4
 	sw $t0, 0($sp)
@@ -1212,12 +1200,18 @@ main:
 	add $sp, $sp, -4
 	sw $a3, 0($sp)
 	#### Done saving argument registers
-	#### YAYYY temp_20
-	### offset: [0, '$t6'], temp_20
-	add $a0, $t6, $0
-	#### YAYYY temp_21
-	### offset: [0, '$t5'], temp_21
-	add $a1, $t5, $0
+	#### YAYYY 12_b
+	add $sp, $sp, -4
+	sw	$t7,-148($fp)
+
+	lw $t7, -40($fp)
+	add $a0, $t7, $0
+	#### YAYYY 12_c
+	add $sp, $sp, -4
+	sw	$t6,-152($fp)
+
+	lw $t6, -44($fp)
+	add $a1, $t6, $0
 	jal _g
 	### Restoring argument registers
 	lw $a3, 0($sp)
@@ -1249,91 +1243,13 @@ main:
 	add $sp, $sp, 4
 	lw $t0, 0($sp)
 	add $sp, $sp, 4
-	### STACK1: -52, temp_22
+	### STACK1: -48, temp_19
 	### False
 	add $sp, $sp, -4
-	sw	$t4,-104($fp)
+	sw	$t5,-100($fp)
 
-	### STACK2: -56
-	addi $t4, $v0, 0
-	#### Saving temporary registers
-	add $sp, $sp, -4
-	sw $t0, 0($sp)
-	add $sp, $sp, -4
-	sw $t1, 0($sp)
-	add $sp, $sp, -4
-	sw $t2, 0($sp)
-	add $sp, $sp, -4
-	sw $t3, 0($sp)
-	add $sp, $sp, -4
-	sw $t4, 0($sp)
-	add $sp, $sp, -4
-	sw $t5, 0($sp)
-	add $sp, $sp, -4
-	sw $t6, 0($sp)
-	add $sp, $sp, -4
-	sw $t7, 0($sp)
-	add $sp, $sp, -4
-	sw $t8, 0($sp)
-	add $sp, $sp, -4
-	sw $t9, 0($sp)
-	#### Done saving temporary registers
-	#### Saving argument registers
-	add $sp, $sp, -4
-	sw $a0, 0($sp)
-	add $sp, $sp, -4
-	sw $a1, 0($sp)
-	add $sp, $sp, -4
-	sw $a2, 0($sp)
-	add $sp, $sp, -4
-	sw $a3, 0($sp)
-	#### Done saving argument registers
-	#### YAYYY temp_19
-	### offset: [0, '$t7'], temp_19
-	add $a0, $t7, $0
-	#### YAYYY temp_22
-	### offset: [0, '$t4'], temp_22
-	add $a1, $t4, $0
-	jal _f
-	### Restoring argument registers
-	lw $a3, 0($sp)
-	add $sp, $sp, 4
-	lw $a2, 0($sp)
-	add $sp, $sp, 4
-	lw $a1, 0($sp)
-	add $sp, $sp, 4
-	lw $a0, 0($sp)
-	add $sp, $sp, 4
-	### Done restoring argument registers
-	lw $t9, 0($sp)
-	add $sp, $sp, 4
-	lw $t8, 0($sp)
-	add $sp, $sp, 4
-	lw $t7, 0($sp)
-	add $sp, $sp, 4
-	lw $t6, 0($sp)
-	add $sp, $sp, 4
-	lw $t5, 0($sp)
-	add $sp, $sp, 4
-	lw $t4, 0($sp)
-	add $sp, $sp, 4
-	lw $t3, 0($sp)
-	add $sp, $sp, 4
-	lw $t2, 0($sp)
-	add $sp, $sp, 4
-	lw $t1, 0($sp)
-	add $sp, $sp, 4
-	lw $t0, 0($sp)
-	add $sp, $sp, 4
-	### STACK1: -56, temp_23
-	### False
-	add $sp, $sp, -4
-	sw	$t3,-108($fp)
-
-	### STACK2: -60
-	addi $t3, $v0, 0
-	# $t3, temp_23
-	sw $t3, -48($fp)
+	### STACK2: -52
+	addi $t5, $v0, 0
 	#### Saving temporary registers
 	add $sp, $sp, -4
 	sw $t0, 0($sp)
@@ -1368,9 +1284,89 @@ main:
 	#### Done saving argument registers
 	#### YAYYY 12_a
 	add $sp, $sp, -4
+	sw	$t4,-160($fp)
+
+	lw $t4, -36($fp)
+	add $a0, $t4, $0
+	#### YAYYY temp_19
+	### offset: [0, '$t5'], temp_19
+	add $a1, $t5, $0
+	jal _f
+	### Restoring argument registers
+	lw $a3, 0($sp)
+	add $sp, $sp, 4
+	lw $a2, 0($sp)
+	add $sp, $sp, 4
+	lw $a1, 0($sp)
+	add $sp, $sp, 4
+	lw $a0, 0($sp)
+	add $sp, $sp, 4
+	### Done restoring argument registers
+	lw $t9, 0($sp)
+	add $sp, $sp, 4
+	lw $t8, 0($sp)
+	add $sp, $sp, 4
+	lw $t7, 0($sp)
+	add $sp, $sp, 4
+	lw $t6, 0($sp)
+	add $sp, $sp, 4
+	lw $t5, 0($sp)
+	add $sp, $sp, 4
+	lw $t4, 0($sp)
+	add $sp, $sp, 4
+	lw $t3, 0($sp)
+	add $sp, $sp, 4
+	lw $t2, 0($sp)
+	add $sp, $sp, 4
+	lw $t1, 0($sp)
+	add $sp, $sp, 4
+	lw $t0, 0($sp)
+	add $sp, $sp, 4
+	### STACK1: -56, temp_20
+	### False
+	add $sp, $sp, -4
+	sw	$t3,-108($fp)
+
+	### STACK2: -60
+	addi $t3, $v0, 0
+	sw $t3, -48($fp)
+	#### Saving temporary registers
+	add $sp, $sp, -4
+	sw $t0, 0($sp)
+	add $sp, $sp, -4
+	sw $t1, 0($sp)
+	add $sp, $sp, -4
+	sw $t2, 0($sp)
+	add $sp, $sp, -4
+	sw $t3, 0($sp)
+	add $sp, $sp, -4
+	sw $t4, 0($sp)
+	add $sp, $sp, -4
+	sw $t5, 0($sp)
+	add $sp, $sp, -4
+	sw $t6, 0($sp)
+	add $sp, $sp, -4
+	sw $t7, 0($sp)
+	add $sp, $sp, -4
+	sw $t8, 0($sp)
+	add $sp, $sp, -4
+	sw $t9, 0($sp)
+	#### Done saving temporary registers
+	#### Saving argument registers
+	add $sp, $sp, -4
+	sw $a0, 0($sp)
+	add $sp, $sp, -4
+	sw $a1, 0($sp)
+	add $sp, $sp, -4
+	sw $a2, 0($sp)
+	add $sp, $sp, -4
+	sw $a3, 0($sp)
+	#### Done saving argument registers
+	#### YAYYY 12_minimum
+	add $sp, $sp, -4
 	sw	$t2,-168($fp)
 
-	lw $t2, -36($fp)
+	lw $t2, -48($fp)
 	add $a0, $t2, $0
 	jal _Print_int
 	### Restoring argument registers

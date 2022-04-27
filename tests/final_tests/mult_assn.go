@@ -9,7 +9,6 @@ func main() {
 	fmt.Print_int(a)
 	fmt.Print_int(b)
 
-	// Swapping
 	c := 5
 	d := 9
 	assign c, d = d+2, c+2*d

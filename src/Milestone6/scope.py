@@ -841,7 +841,9 @@ class CasesNode(Node):
     def __init__(self, caseValsNode, instrNode):
         super().__init__()
         self.instrNode = instrNode
+        # print("DF: ", caseValsNode.code, instrNode.code)
         self.addChild(caseValsNode, instrNode)
+        # print("DF: ", self.code)
     
     def __str__(self):
         return "CASES"

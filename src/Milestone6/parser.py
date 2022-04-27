@@ -2479,7 +2479,7 @@ def p_ExprCaseClause(p):
     """
     ExprCaseClause : ExprSwitchCase COLON StatementList
     """
-    if isinstance(p[1][0], CasesNode):
+    if isinstance(p[1][0], CaseNode):
         cond_res = new_temp()
         code = []
         code.append(f"{cond_res} = {stm.currentSwitchExpPlace} ==({p[1][0].dataType['name']}) {p[1][0].place}")
@@ -2490,6 +2490,7 @@ def p_ExprCaseClause(p):
         pass
     p[3].code.append(f"goto end_switch_{stm.switchStack[-1]}")
     p[3].code.append(f"label case_{stm.nextCase}_{stm.switchStack[-1]}:")
+    # print("DF: -", p[1].code)
     p[0] = CasesNode(p[1], p[3])
     # print(p[0].code)
     
