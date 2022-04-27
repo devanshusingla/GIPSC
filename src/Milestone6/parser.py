@@ -1091,7 +1091,7 @@ def p_PrimaryExpr(p):
                             dt_return = p[2][i].dataType
                         else:
                             func_name = p[2][i].children[0].label
-                            dt_return = stm.functions[func_name]["return"]
+                            dt_return = new_stm.functions[func_name]["return"]
                         expression_datatypes.extend(dt_return)
                         if len(dt_return) == 0:
                             raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")
@@ -1941,7 +1941,12 @@ def p_Assignment(p):
                 dt_return = p[length][i].dataType
             else: 
                 func_name = p[length][i].children[0].label
-                dt_return = stm.functions[func_name]["return"]
+                if hasattr(p[length][i].children[0], "pkg") and p[length][i].children[0].pkg is not None and func_name in stm.pkgs[p[length][i].children[0].pkg].functions:
+                    dt_return = stm.pkgs[p[length][i].children[0].pkg].functions[func_name]["return"]
+                elif func_name in stm.functions:
+                    dt_return = stm.functions[func_name]["return"]
+                else:
+                    raise NameError(f"{p.lexer.lineno:} Function {p[length][i].children[0].label} not found")
             expression_dt.extend(dt_return)
             if len(dt_return) == 0:
                 raise TypeError(f"{p.lexer.lineno}: Function does not return anything!")

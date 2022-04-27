@@ -918,15 +918,12 @@ main:
 	add $sp, $sp, 4
 	li $s3, 5
 	li $s2, 3
-	# $s3, temp_15
 	sw $s3, -40($fp)
-	# $s2, temp_16
 	sw $s2, -44($fp)
 label_0:
 	li $s1, 0
 	add $sp, $sp, -4
 	### LOCATION ['3_i'] : 24
-	# $s1, temp_17
 	sw $s1, -8($fp)
 begin_for_11:
 	add $sp, $sp, -4
@@ -949,7 +946,6 @@ begin_for_11:
 	li $t6, 0
 	add $sp, $sp, -4
 	### LOCATION ['5_j'] : 44
-	# $t6, temp_19
 	sw $t6, 12($fp)
 begin_for_12:
 	add $sp, $sp, -4
@@ -994,7 +990,6 @@ begin_for_12:
 	li $t6, 0
 	add $sp, $sp, -4
 	### LOCATION ['8_state'] : 80
-	# $t6, temp_23
 	sw $t6, 48($fp)
 	#### Saving temporary registers
 	add $sp, $sp, -4
@@ -1084,7 +1079,6 @@ else_27:
 	li $t1, 1
 	add $sp, $sp, -4
 	### LOCATION ['11_state'] : 92
-	# $t1, temp_26
 	sw $t1, 60($fp)
 	#### Saving temporary registers
 	add $sp, $sp, -4
@@ -1161,7 +1155,6 @@ else_26:
 	li $t7, 2
 	add $sp, $sp, -4
 	### LOCATION ['12_state'] : 100
-	# $t7, temp_27
 	sw $t7, 68($fp)
 	#### Saving temporary registers
 	add $sp, $sp, -4

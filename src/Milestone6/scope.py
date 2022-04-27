@@ -159,11 +159,13 @@ class SymTableMaker:
         self.symTable[self.id].insert(ident, deepcopy(info), isarg)
 
     def get(self, ident, scope=None):
+        print("Looking for ", ident)
         if scope is None:
             if ident in self.functions:
                 return deepcopy(self.functions[ident])
             else:
                 for key in self.pkgs:
+                    print(self.pkgs[key].functions)
                     if ident in self.pkgs[key].functions:
                         return deepcopy(self.pkgs[key].functions[ident]) 
             scope = self.getScope(ident)

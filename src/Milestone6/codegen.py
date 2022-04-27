@@ -311,14 +311,20 @@ class MIPS:
         self.global_var_size=0
         self.act_records = {}
         self.curr_func = ""
-        self.curr_pkg = None
+
+    def isInt(self, x):
+        try:
+            y = int(x)
+        except Exception as e:
+            return False
+        return True
 
     def _location(self, label, isFloat = False):
         if label in self.act_records[self.curr_func].local_var:
             return (f'{self.act_records[self.curr_func].local_var[label]["offset"]-32}($fp)', [], 1)
         elif label in self.global_var:
             return (f'{self.global_var[label]["offset"]}($gp)', [], 1)
-        elif label[0].isnumeric() and '_' in label:
+        elif self.isInt(label[0]) and '_' in label:
             label = label.split('.')
 
             if len(label) > 1:
@@ -409,7 +415,7 @@ class MIPS:
     def _addLocalCompositeVars(self):
         code = []
         for local_var, lv_info in self.act_records[self.curr_func].local_var.items():
-            if lv_info['dataType']['name'] in compositeTypes:
+            if 'dataType' in lv_info and lv_info['dataType']['name'] in compositeTypes:
                 # code.append('COMPOSITE')
                 
                 code.append('\tli $a0, 12')
@@ -516,6 +522,7 @@ class MIPS:
                 return code
 
             elif self.tac_code[i].startswith('return'):
+
                 j = 1
                 retValues = []
                 while self.tac_code[i-j].startswith('retparams'):
@@ -525,16 +532,16 @@ class MIPS:
                 retValues.reverse()
                 retReg, _code = self._get_label(retValues[0])
                 code.extend(_code)
-                if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
+                if len(self.stm.get(funcname)['return']) == 1 and not retValues[0].startswith("vartemp"):
                     code.append(f"\taddi $v0, {retReg}, 0")
                 else:
                     retSize = 0
-                    for retVal in self.stm.functions[funcname]['return']:
+                    for retVal in self.stm.get(funcname)['return']:
                         retSize += retVal['size']
                     code.extend(self.malloc(retSize))
 
                     offset = 0
-                    for idx, retVal in enumerate(self.stm.functions[funcname]['return']):
+                    for idx, retVal in enumerate(self.stm.get(funcname)['return']):
                         retReg, _code = self._get_label(retValues[idx])
                         code.extend(_code)
                         code.append(f"\tsw {retReg}, {offset}($v0)")
@@ -590,7 +597,7 @@ class MIPS:
                             code.append(f'\tsw {reg}, 0({empty_reg})')
                         else:
                             code.append(f'\tsw {reg}, 0({loc})')
-                elif items[1][0].isnumeric() and '_' in items[1]:
+                elif self.isInt(items[1][0]) and '_' in items[1]:
                     loc, _mips, type_loc = self._location(items[1])
                     new_items = items[1:] 
                     new_items[0] = "temp_{fixxx}" 
@@ -709,7 +716,7 @@ class MIPS:
                 ## TODO : Handle composite literal
                 code.extend(self.handle_args(items)) 
                 pass
-            elif len(self.tac_code[i]) > 0 and self.tac_code[i][0].isnumeric():
+            elif len(self.tac_code[i]) > 0 and self.isInt(self.tac_code[i][0]):
                 code.extend(self.handle_localvars(items))  
                 pass
             elif self.tac_code[i].startswith('return'):
@@ -813,10 +820,10 @@ class MIPS:
 
         if len(items) == 3:
             # a = b
-            if items[2].startswith('temp'):
+            if items[2].startswith('temp') or (self.isInt(items[2][0]) and '_' in items[2]):
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
-                find_new_reg, mips, type_new_reg = self._location(items[2])
+                find_new_reg, mips = self.regs.get_register(items[2])
                 code.extend(mips)
                 if type_loc == 1:
                     code.append(f'\tsw {find_new_reg}, {loc}')
@@ -852,12 +859,8 @@ class MIPS:
 
             elif items[2].startswith('retval'):
                 funcName = '_'.join(items[2].split('_')[1:-1])
-                if self.curr_pkg != None and funcName in self.stm.pkgs[self.curr_pkg].functions:
-                    new_stm = self.stm.pkgs[self.curr_pkg]
-                else:
-                    new_stm = self.stm
                 num_returns = len(
-                    new_stm.functions[funcName]['return'])
+                    self.stm.get(funcName)['return'])
                 if num_returns == 1:
                     reg, mips = self.regs.get_register(items[0])
                     code.extend(mips)
@@ -883,7 +886,7 @@ class MIPS:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif items[2].isnumeric():
+                elif self.isInt(items[2]):
                     if str(int(items[2])) == items[2]:
                         # integer
                         loc, _mips, type_loc = self._location(items[0])
@@ -1007,7 +1010,7 @@ class MIPS:
         code = []
         if len(items) == 3:
             # a = b
-            if items[2].startswith('temp'):
+            if items[2].startswith('temp') or (self.isInt(items[2][0]) and '_' in items[2]):
                 old_reg, mips = self.regs.get_register(items[2])
                 code.extend(mips)
                 find_new_reg, mips = self.regs.get_register(items[0])
@@ -1018,7 +1021,7 @@ class MIPS:
                 find_new_reg, mips = self.regs.get_register(items[0])
                 code.extend(mips)
                 offset = -int(items[2].split('_')[-1].split('.')[0][:-1])
-                if len(items[2].split('_')[-1].split('.')) > 1: 
+                if len(items[2].split('_')[-1].splithandle_temp('.')) > 1: 
                     if items[2].split('_')[-1].split('.')[1] == 'length':
                         offset += 4 
                     else:
@@ -1036,12 +1039,7 @@ class MIPS:
 
             elif items[2].startswith('retval'):
                 funcName = '_'.join(items[2].split('_')[1:-1])
-                print(funcName)
-                if self.curr_pkg != None and funcName in self.stm.pkgs[self.curr_pkg].functions:
-                    new_stm = self.stm.pkgs[self.curr_pkg]
-                else:
-                    new_stm = self.stm
-                num_returns = len(new_stm.functions[funcName]['return'])
+                num_returns = len(self.stm.get(funcName)['return'])
                 if num_returns == 1:
                     code.append(f"\t### STACK1: {self.regs._sp}, {items[0]}")
                     code.append(f"\t### {items[0] in self.regs.locations}")
@@ -1061,7 +1059,7 @@ class MIPS:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif items[2].isnumeric():
+                elif self.isInt(items[2]):
                     if str(int(items[2])) == items[2]:
                         # integer
                         reg, mips = self.regs.get_register(items[0])
@@ -1162,7 +1160,7 @@ class MIPS:
         code = []
         if len(items) == 3:
             # a = b
-            if items[2].startswith('temp'):
+            if items[2].startswith('temp') or (self.isInt(items[2][0]) and '_' in items[2]):
                 _type, offset = self.get_args(items[0])
                 find_new_reg, mips = self._get_label(items[2])
                 code.extend(mips)
@@ -1196,12 +1194,8 @@ class MIPS:
 
             elif items[2].startswith('retval'):
                 funcName = '_'.join(items[2].split('_')[1:-1])
-                if self.curr_pkg != None and funcName in self.stm.pkgs[self.curr_pkg].functions:
-                    new_stm = self.stm.pkgs[self.curr_pkg]
-                else:
-                    new_stm = self.stm
                 num_returns = len(
-                    new_stm.functions[funcName]['return'])
+                    self.stm.get(funcName)['return'])
                 if num_returns == 1:
                     reg, mips = self._get_label(items[0])
                     code.extend(mips)
@@ -1218,7 +1212,7 @@ class MIPS:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif items[2].isnumeric():
+                elif self.isInt(items[2]):
                     if str(int(items[2])) == items[2]:
                         # integer
                         _type, offset = self.get_args(items[0])
@@ -1367,7 +1361,7 @@ class MIPS:
                     else:
                         code.append(f"\tadd $a{i}, {offset}, $0")
                     break
-                elif param[0].isnumeric() and '_' in param:
+                elif self.isInt(param[0]) and '_' in param:
                     self.regs.arg_regs[f'$a{i}'][0] = param
                     self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
                     self.regs.count += 1
@@ -1410,11 +1404,7 @@ class MIPS:
 
         code = []
         offset = 0
-        if self.curr_pkg != None and funcName in self.stm.pkgs[self.curr_pkg].functions:
-            new_stm = self.stm.pkgs[self.curr_pkg]
-        else:
-            new_stm = self.stm
-        for idx, retVal in enumerate(new_stm.functions[funcName]['return']):
+        for idx, retVal in enumerate(self.stm.get(funcName)['return']):
             if idx == num:
                 break
             offset += retVal['size']
