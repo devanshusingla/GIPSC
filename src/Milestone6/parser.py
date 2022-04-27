@@ -654,7 +654,6 @@ def p_ExpressionList(p):
         p[0].append(p[1])
     elif len(p) == 2:
         p[0] = NodeList([])
-        print(p[1].__dict__) 
         for ident in p[1]:      
             stm_entry = stm.get(ident.label)
             dt = stm_entry['dataType']
@@ -826,7 +825,6 @@ def p_PrimaryExpr(p):
             return
 
         # If typecast function
-        print(p[1])
         if p[1] in utils.basicTypes and isBasicNumeric(stm, {'baseType': p[1], 'level': 0}):
             p[0] = ExprNode(dataType = {'baseType': 'typeCastFunc'}, label = p[1], isAddressable = True, isConst = False)
             pass
@@ -1218,7 +1216,6 @@ def p_Type(p):
     """
     Type : TypeT
          | PointerType
-         | LPAREN PointerType RPAREN
     """
     if len(p) == 2:
         p[0] = p[1]
@@ -1231,7 +1228,6 @@ def p_TypeT(p):
           | StructType
           | SliceType
           | MapType
-          | LPAREN TypeT RPAREN
           | LPAREN IDENT RPAREN
     """
     if len(p) == 2:
@@ -1920,19 +1916,77 @@ def p_IncDecStmt(p):
 ###################################################################################
 ### Assignment Statements
 
+def makeExpr(ident):
+    result = None
+    if ident in builtinFunctions:
+        result = ExprNode(label=ident, dataType={})
+        return
+    identType = getBaseType(stm, ident)
+    place = None
+        
+    if ident in stm.pkgs and stm.pkgs[ident] != None:
+        result = IdentNode(0, ident, dataType={'name': 'package'})
+        # The name of package doesn't have any place value
+        result.place = None
+        return
+
+    ## TODO : What is the need for this?        
+    if ident in stm.symTable[0].typeDefs:
+        # Type Declaration Found
+        # Assuming Constructor Initialisation
+        dt = stm.symTable[0].typeDefs[ident]
+        result = ExprNode(dataType=dt, label=ident, isAddressable=False, isConst=False, val=None)
+        # Types need not have place values; they only has role in semantics
+        # may consider writing type conversion functions if supporting type conversion. 
+        # result.place = stm.get(ident).get('tmp', None)
+        result.place = None
+        return
+
+    # If typecast function
+    if ident in utils.basicTypes and isBasicNumeric(stm, {'baseType': ident, 'level': 0}):
+        result = ExprNode(dataType = {'baseType': 'typeCastFunc'}, label = ident, isAddressable = True, isConst = False)
+        pass
+
+    # Check declaration
+    latest_scope = ((stm.getScope(ident) != -1) or (ident in stm.functions)) 
+
+    if latest_scope == 0:
+        ## To be checked for global declarations (TODO)
+        print("Expecting global declaration for ",ident)
+    stm_entry = stm.get(ident)
+    dt = stm_entry['dataType']
+    result = ExprNode(dataType=dt, label = ident, isAddressable=True, isConst=stm_entry.get('isConst', False), val=stm_entry.get('val', None))
+    if stm_entry.get('isArg', None):
+        result.place = f'arg_[{stm_entry["paramOf"]}_{stm_entry["offset"]}]'
+    else:
+        result.place = stm_entry.get('tmp', None)
+    return result
+
 def p_Assignment(p):
     """
-    Assignment : ASSIGNMENT ExpressionList assign_op ExpressionList
+    Assignment : ExpressionList assign_op ExpressionList
+               | IDENT COMMA IdentifierList assign_op ExpressionList
     """
-    if len(p[2]) != len(p[4]):
-        if len(p[4]) == 1 and isinstance(p[4][0], FuncCallNode):
+    if(len(p) == 6):
+        # Make p[1] into ExpressionList
+        ExprList = NodeList([])
+        ExprList.append(makeExpr(p[1]))
+        for ident in p[3]:
+            print(ident, ident.__dict__)
+            ExprList.append(makeExpr(ident.label))
+        p[1] = ExprList
+        p[2] = p[4]
+        p[3] = p[5]
+        
+    if len(p[1]) != len(p[3]):
+        if len(p[3]) == 1 and isinstance(p[3][0], FuncCallNode):
             pass
         else:
             raise LogicalError(f"{p.lexer.lineno}: Imbalanced assignment with {len(p[1])} identifiers and {len(p[3])} expressions.")
     
     count_0 = 0
     count_1 = 0
-    length = len(p) - 1
+    length = 3
     p[0] = NodeList([])
     expression_dt = []
     for i in range(len(p[length])):
@@ -1956,10 +2010,10 @@ def p_Assignment(p):
         if len(p[length]) > 1:
             raise TypeError(f"{p.lexer.lineno}: Function with more than one return values should be assigned alone!")
 
-    if len(p[2]) != len(expression_dt):
+    if len(p[1]) != len(expression_dt):
         raise NameError(f"{p.lexer.lineno}: Assignment is not balanced")
     
-    for i, (key, val) in enumerate(zip(p[2], p[4])):
+    for i, (key, val) in enumerate(zip(p[1], p[3])):
         if key.label != _symbol:
             if hasattr(key, 'isConst') and key.isConst == True:
                 raise TypeError(f"{p.lexer.lineno}: LHS contains constant! Cannot assign")
@@ -1973,24 +2027,27 @@ def p_Assignment(p):
                 key.place = f'* {key.lvalue}'
 
     p[0] = NodeList([])
-    for key, val in zip(p[2], p[4]):
+    for key, val in zip(p[1], p[3]):
         exprNode = ExprNode(None, operator="=")
         exprNode.addChild(key, val)
         p[0].append(exprNode)
 
+    for i in range(len(p[1])):
+        ntemp = new_temp()
+        p[0].code.append(f'{ntemp} = {p[length][i].place}')
+        p[length][i].place = ntemp
     if count_1 == 0:
-        for i in range(len(p[2])):
-            if p[3] == '=':
-                p[0].code.append(f"{p[2][i].place} = {p[length][i].place}")
+        for i in range(len(p[1])):
+            if p[2] == '=':
+                p[0].code.append(f"{p[1][i].place} = {p[length][i].place}")
             else:
-                p[0].code.append(f"{p[2][i].place} = {p[2][i].place} {p[3][0]}({expression_dt[i]['name']}) {p[length][i].place}")
+                p[0].code.append(f"{p[1][i].place} = {p[1][i].place} {p[2][0]}({expression_dt[i]['name']}) {p[length][i].place}")
     else:
-        for i in range(len(p[2])):
-            if p[3] == '=': 
-                p[0].code.append(f"{p[2][i].place} = {p[length][0].place[i]}")
+        for i in range(len(p[1])):
+            if p[2] == '=': 
+                p[0].code.append(f"{p[1][i].place} = {p[length][0].place[i]}")
             else:
-                p[0].code.append(f"{p[2][i].place} = {p[2][i].place} {p[3][0]}({expression_dt[i]['name']}) {p[length][0].place[i]}")
-
+                p[0].code.append(f"{p[1][i].place} = {p[1][i].place} {p[2][0]}({expression_dt[i]['name']}) {p[length][0].place[i]}")
     # for i, (key, val) in enumerate(zip(p[1], p[3])):
     #     if p[2] == '=':
     #         p[0].code.append(f"{key.place} = {val.place}")
@@ -2352,9 +2409,9 @@ def p_SwitchStmt(p):
 def p_ExprSwitchStmt(p):
     """
     ExprSwitchStmt : SWITCH BeginSwitch SimpleStmt SEMICOLON Expr LBRACE ExprCaseClauseMult EndSwitch RBRACE
-                     | SWITCH Expr LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+                     | SWITCH BeginSwitch Expr LBRACE ExprCaseClauseMult EndSwitch RBRACE
                      | SWITCH BeginSwitch SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult EndSwitch RBRACE
-                     | SWITCH LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+                     | SWITCH BeginSwitch LBRACE ExprCaseClauseMult EndSwitch RBRACE
     """
     smtNode = None
     varNode = None
@@ -2376,7 +2433,7 @@ def p_ExprSwitchStmt(p):
     elif len(p) == 8:
         
         ## Check if dataType is supported
-        if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
+        if p[3].dataType['level'] != 0 or not isOrdered(stm, p[3].dataType['name']):
             raise TypeError(f"{p.lexer.lineno}: Unsupported type in switch condition!")
 
         ## Check if a case has been repeated
@@ -2387,7 +2444,7 @@ def p_ExprSwitchStmt(p):
                     raise DuplicateKeyError("Case statement for " + case.children[0][0].children[0].label + " has been already written!")
                 else:
                     lst.append(case.children[0][0].children[0].label) 
-        varNode = p[2]
+        varNode = p[3]
         casesNode = p[5]
         for statement in casesNode[-1].instrNode:
             if isinstance(statement, FallthroughNode):
@@ -2748,9 +2805,9 @@ def genAutomaton(parser):
             for key, val in parser.goto.items():
                 f.writelines(f'{key} : {val}\n')
 
-def parse(parser, lexer, source_code):
+def parse(parser: yacc.LRParser, lexer, source_code):
     # Trying to handle input
-    return parser.parse(source_code, lexer = lexer)
+    return parser.parse(source_code, lexer = lexer, debug=False)
 
 def writeOutput(parser_out, output_file):
     if parser_out is None:
@@ -2789,7 +2846,8 @@ def create_sym_tables(path_to_folder):
             writer.writeheader()
 
             writer.writerows(dict)
-    
+
+
 def buildAndCompile(input_file):
     global target_folder
 

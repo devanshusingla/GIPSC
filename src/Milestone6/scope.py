@@ -197,7 +197,6 @@ class SymTableMaker:
                 break
             else:
                 i -= 1
-
         if i == -1:
             return i
         else:
@@ -684,7 +683,7 @@ class BuiltinFuncNode(FuncCallNode):
             if args[0].val is None or not isinstance(args[0].val, int):
                 raise Exception("First argument to syscall must be constant")
 
-            self.place = f"__syscall"
+            self.place = f"__syscall_{args[0].val}"
             for arg in args[1:]:
                 self.code.append(f"params {arg.place}")
             code.append(f'call #syscall_{args[0].val}')

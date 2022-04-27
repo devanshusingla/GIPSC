@@ -1,4 +1,3 @@
-from calendar import c
 from scope import *
 from utils import *
 
@@ -318,7 +317,7 @@ class MIPS:
             return (f'{self.act_records[self.curr_func].local_var[label]["offset"]-32}($fp)', [], 1)
         elif label in self.global_var:
             return (f'{self.global_var[label]["offset"]}($gp)', [], 1)
-        elif label[0].isnumeric() and '_' in label:
+        elif self.isNumeric(label[0]) and '_' in label:
             label = label.split('.')
 
             if len(label) > 1:
@@ -590,7 +589,7 @@ class MIPS:
                             code.append(f'\tsw {reg}, 0({empty_reg})')
                         else:
                             code.append(f'\tsw {reg}, 0({loc})')
-                elif items[1][0].isnumeric() and '_' in items[1]:
+                elif self.isNumeric(items[1][0]) and '_' in items[1]:
                     loc, _mips, type_loc = self._location(items[1])
                     new_items = items[1:] 
                     new_items[0] = "temp_{fixxx}" 
@@ -709,7 +708,7 @@ class MIPS:
                 ## TODO : Handle composite literal
                 code.extend(self.handle_args(items)) 
                 pass
-            elif len(self.tac_code[i]) > 0 and self.tac_code[i][0].isnumeric():
+            elif len(self.tac_code[i]) > 0 and self.isNumeric(self.tac_code[i][0]):
                 code.extend(self.handle_localvars(items))  
                 pass
             elif self.tac_code[i].startswith('return'):
@@ -822,6 +821,7 @@ class MIPS:
                     code.append(f'\tsw {find_new_reg}, {loc}')
                 else:
                     code.append(f'\tadd {loc}, {find_new_reg}, $0')
+                print(items[2], code)
             elif items[2].startswith('args'):
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
@@ -883,8 +883,8 @@ class MIPS:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif items[2].isnumeric():
-                    if str(int(items[2])) == items[2]:
+                elif self.isNumeric(items[2]):
+                    if self.isInt(items[2]):
                         # integer
                         loc, _mips, type_loc = self._location(items[0])
                         code.extend(_mips)
@@ -1002,11 +1002,30 @@ class MIPS:
 
         return code
 
+    def isNumeric(self, x):
+        return self.isInt(x) | self.isFloat(x)
+
+    def isInt(self, x):
+        try:
+            y = int(x)
+        except Exception as e:
+            return False
+        return True
+    
+    def isFloat(self, x):
+        try:
+            y = float(x)
+        except Exception as e:
+            return False
+        return True
 
     def handle_temp(self, items):
         code = []
         if len(items) == 3:
             # a = b
+            isFloat = False
+            if 'float' in items[2]:
+                isFloat = True
             if items[2].startswith('temp'):
                 old_reg, mips = self.regs.get_register(items[2])
                 code.extend(mips)
@@ -1061,8 +1080,8 @@ class MIPS:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif items[2].isnumeric():
-                    if str(int(items[2])) == items[2]:
+                elif self.isNumeric(items[2]):
+                    if self.isInt(items[2]):
                         # integer
                         reg, mips = self.regs.get_register(items[0])
                         code.extend(mips)
@@ -1080,7 +1099,24 @@ class MIPS:
                     code.extend(mips)
                     code.append(f'\tli {reg}, {items[2]}')
                     return reg, code
+                elif self.isNumeric(items[2][0]) and '_' in items[2]:
+                    reg, mips = self._get_label(items[2], isFloat=isFloat)
+                    code.extend(mips)
+                    oreg, mips = self.regs.get_register(items[0], isFloat=isFloat)
+                    code.extend(mips)
+                    code.append(f'\taddi {oreg}, {reg}, 0')
+                    print(items, code)
+                    return reg, code
+                elif items[2].startswith('__syscall'):
+                    reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
+                    code.extend(mips)
+                    if items[2][-1] != '6':
+                        code.append(f'\taddi {reg}, $v0, 0')
+                    else:
+                        code.append(f'\tmov.s {reg}, $f0')
+                    return reg, code
                 else:
+                    
                     raise NotImplementedError
         elif len(items) == 4:
             # a = unop b
@@ -1217,8 +1253,8 @@ class MIPS:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif items[2].isnumeric():
-                    if str(int(items[2])) == items[2]:
+                elif self.isNumeric(items[2]):
+                    if self.isInt(items[2]):
                         # integer
                         _type, offset = self.get_args(items[0])
                         helper_reg, mips = self.regs.get_register()
@@ -1366,7 +1402,7 @@ class MIPS:
                     else:
                         code.append(f"\tadd $a{i}, {offset}, $0")
                     break
-                elif param[0].isnumeric() and '_' in param:
+                elif self.isNumeric(param[0]) and '_' in param:
                     self.regs.arg_regs[f'$a{i}'][0] = param
                     self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
                     self.regs.count += 1

@@ -829,6 +829,7 @@ def p_PrimaryExpr(p):
         if isinstance(p[2], DotNode):
             if isinstance(p[1], IdentNode) and 'name' in p[1].dataType and p[1].dataType['name'] == 'package':
                 pkg_stm = stm.pkgs[p[1].label]
+                print(p.lexer.lineno)
                 stm_entry = pkg_stm.get(p[2].children[0])
                 if stm_entry is None:
                     raise NameError(f"{p.lexer.lineno}: No such variable or function in package {p[1].label}")
@@ -1158,7 +1159,6 @@ def p_Type(p):
     """
     Type : TypeT
          | PointerType
-         | LPAREN PointerType RPAREN
     """
     if len(p) == 2:
         p[0] = p[1]
@@ -1171,7 +1171,6 @@ def p_TypeT(p):
           | StructType
           | SliceType
           | MapType
-          | LPAREN TypeT RPAREN
           | LPAREN IDENT RPAREN
     """
     if len(p) == 2:
@@ -2241,9 +2240,9 @@ def p_SwitchStmt(p):
 def p_ExprSwitchStmt(p):
     """
     ExprSwitchStmt : SWITCH BeginSwitch SimpleStmt SEMICOLON Expr LBRACE ExprCaseClauseMult EndSwitch RBRACE
-                     | SWITCH Expr LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+                     | SWITCH BeginSwitch Expr LBRACE ExprCaseClauseMult EndSwitch RBRACE
                      | SWITCH BeginSwitch SimpleStmt SEMICOLON LBRACE ExprCaseClauseMult EndSwitch RBRACE
-                     | SWITCH LBRACE BeginSwitch ExprCaseClauseMult EndSwitch RBRACE
+                     | SWITCH BeginSwitch LBRACE ExprCaseClauseMult EndSwitch RBRACE
     """
     smtNode = None
     varNode = None
@@ -2265,7 +2264,7 @@ def p_ExprSwitchStmt(p):
     elif len(p) == 8:
         
         ## Check if dataType is supported
-        if p[2].dataType['level'] != 0 or not isOrdered(stm, p[2].dataType['name']):
+        if p[3].dataType['level'] != 0 or not isOrdered(stm, p[3].dataType['name']):
             raise TypeError(f"{p.lexer.lineno}: Unsupported type in switch condition!")
 
         ## Check if a case has been repeated
@@ -2276,7 +2275,7 @@ def p_ExprSwitchStmt(p):
                     raise DuplicateKeyError("Case statement for " + case.children[0][0].children[0].label + " has been already written!")
                 else:
                     lst.append(case.children[0][0].children[0].label) 
-        varNode = p[2]
+        varNode = p[3]
         casesNode = p[5]
         for statement in casesNode[-1].instrNode:
             if isinstance(statement, FallthroughNode):
@@ -2686,7 +2685,7 @@ def buildAndCompile(input_file):
     with open(path_to_source_code, 'r') as f:
         source_code = f.read()
     lexer = lex.lex()
-    parser, _ = yacc.yacc()
+    parser, _ = yacc.yacc(debug=True)
     genAutomaton(parser)
     parser_out = parse(parser, lexer, source_code)
     # df(parser_out, 0)

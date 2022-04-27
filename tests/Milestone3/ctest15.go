@@ -1,12 +1,12 @@
 package main
 
-import "fmt"
+// import "fmt"
 
 func main() {
 	n := 5
 	var a [5]int
 	for i := 0; i < n; i++ {
-		fmt.Scanln(a[i])
+		// fmt.Scan_int(&a[i])
 	}
 
 	start := 0
@@ -16,15 +16,14 @@ func main() {
     for start <= end {
 		m := start + ((end-start)/2)
 		if a[m] == key {
-			fmt.Println("found at index ",m)
-            return
+			// fmt.Print_int(m)
+            
 		}
 
 		if a[m] < key {
-			start = m + 1
+			start = m
 		} else {
 			end = m - 1
 		}
 	}
-    print("not found")
 }

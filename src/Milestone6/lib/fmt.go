@@ -1,7 +1,5 @@
 package fmt
 
-var pre int = 3
-
 func Print_char(a rune) {
 	__syscall(11, a)
 }
@@ -17,14 +15,14 @@ func Print_string(a string) {
 }
 
 func Scan_int(a *int) {
-	assign *a = __syscall(5)
+	*a = __syscall(5)
 }
 
 func Scan_char(a *rune) {
-	assign *a = __syscall(12)
+	*a = __syscall(12)
 }
 
 func Scan_string(a *string) {
-	assign *a = __syscall(8)
+	*a = __syscall(8)
 }
 
