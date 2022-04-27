@@ -511,8 +511,9 @@ def p_VarSpec(p):
     else:
         not_base_type = False
 
-        if not isinstance(p[2], str):
-            not_base_type = True
+        p[2] = stm.findType(p[2])
+        if not isinstance(p[2], str): 
+            not_base_type = True 
 
         for i, ident in enumerate(p[1]):
 
