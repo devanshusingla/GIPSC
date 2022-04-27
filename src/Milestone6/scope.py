@@ -4,7 +4,7 @@ from typing import List
 
 basicTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'string', 'rune', 'bool']
 basicNumericTypes = ['int', 'byte', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64', 'uint8', 'uint16', 'uint32', 'uint64', 'rune']
-basicTypeSizes = {'int':4, 'float': 4, 'string': 12, 'rune': 4, 'byte': 4, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 4}
+basicTypeSizes = {'int':4, 'float': 4, 'string': 4, 'rune': 4, 'byte': 4, 'int8': 1, 'int16': 2, 'int32': 4, 'int64': 8, 'uint8': 1, 'uint16': 2, 'uint32': 4, 'uint64': 8, 'float32': 4, 'float64': 8, 'bool': 4}
 compositeTypes = ['struct', 'array', 'slice', 'map']
 
 builtinFunctions = ["__syscall"]
@@ -165,7 +165,6 @@ class SymTableMaker:
                 return deepcopy(self.functions[ident])
             else:
                 for key in self.pkgs:
-                    print(self.pkgs[key].functions)
                     if ident in self.pkgs[key].functions:
                         return deepcopy(self.pkgs[key].functions[ident]) 
             scope = self.getScope(ident)
@@ -674,7 +673,6 @@ class BuiltinFuncNode(FuncCallNode):
             else:
                 temp.append(expr)
 
-        print(args)
         args = temp
         super().__init__(name, args)
         self.isAddressable = False
@@ -691,7 +689,6 @@ class BuiltinFuncNode(FuncCallNode):
                 self.code.append(f"params {arg.place}")
             code.append(f'call #syscall_{args[0].val}')
             
-            print(args[0].val)
             if args[0].val == 11:
                 if len(args) != 2:
                     raise Exception("Incorrect number of arguments")
@@ -718,7 +715,7 @@ class BuiltinFuncNode(FuncCallNode):
             elif args[0].val == 8:
                 if len(args) != 1:
                     raise Exception("Incorrect number of arguments")
-                self.dataType = [{'baseType': 'string', 'name': 'string', 'level': 0, 'size': 12}]
+                self.dataType = [{'baseType': 'string', 'name': 'string', 'level': 0, 'size': 4}]
             else:
                 raise Exception("Syscall not implemented for the given number")
 
@@ -937,7 +934,7 @@ class BrackType(Type):
         self.length = None
         self.dataType = {
             'baseType' : elementType,
-            'size' : 12,
+            'size' : 4,
             'level': elementType['level']+1,
             'name' : 'slice' if length is None else 'array'
         }
@@ -956,7 +953,7 @@ class MapType(Type):
             'name': 'map',
             'KeyType': keyType.dataType,
             'ValueType': valueType.dataType,
-            'size': 12
+            'size': 4
         }
 
         self.children = [keyType, valueType]

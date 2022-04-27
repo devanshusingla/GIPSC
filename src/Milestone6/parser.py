@@ -435,7 +435,7 @@ def p_VarSpec(p):
                 p[2] = stm.findType(p[2])
 
             if isinstance(p[2], str):
-                dt = {'baseType' : p[2], 'name': p[2], 'level': 0, 'size': 12}
+                dt = {'baseType' : p[2], 'name': p[2], 'level': 0, 'size': 4}
                 dt['size'] = basicTypeSizes[p[2]]
             else:
                 dt = p[2].dataType
@@ -514,6 +514,7 @@ def p_VarSpec(p):
     else:
         not_base_type = False
 
+        p[2] = stm.findType(p[2])
         if not isinstance(p[2], str):
             not_base_type = True
 
@@ -654,7 +655,6 @@ def p_ExpressionList(p):
         p[0].append(p[1])
     elif len(p) == 2:
         p[0] = NodeList([])
-        print(p[1].__dict__) 
         for ident in p[1]:      
             stm_entry = stm.get(ident.label)
             dt = stm_entry['dataType']
@@ -760,11 +760,19 @@ def p_UnaryExpr(p):
         temp_var = new_temp()
         if p[1] == '*':
             p[0].isDeRef = True
-            p[0].lvalue = p[2].place
+            if p[2].place.split(' ')[0] == '*':
+                tmp = new_temp()
+                p[0].code.append(f"{tmp} = {p[2].place}")
+                p[0].code.append(f"{temp_var} = {p[1]} {tmp}")
+            else:
+                p[0].code.append(f"{temp_var} = {p[1]} {p[2].place}")
+            p[0].lvalue = temp_var
         elif p[1] == '&':
             p[0].isRef = True
-        if p[1] == '-':
+        elif p[1] == '-':
             p[0].code.append(f"{temp_var} = {p[1]}({p[2].dataType['name']}) {p[2].place}")
+        elif p[1] == '*':
+            pass
         else:
             p[0].code.append(f"{temp_var} = {p[1]} {p[2].place}")
         p[0].place = temp_var
@@ -826,7 +834,6 @@ def p_PrimaryExpr(p):
             return
 
         # If typecast function
-        print(p[1])
         if p[1] in utils.basicTypes and isBasicNumeric(stm, {'baseType': p[1], 'level': 0}):
             p[0] = ExprNode(dataType = {'baseType': 'typeCastFunc'}, label = p[1], isAddressable = True, isConst = False)
             pass
@@ -1110,6 +1117,7 @@ def p_PrimaryExpr(p):
                     dt2 = paramList[i]
 
                     if not isTypeCastable(new_stm, dt1, dt2):
+                        print(dt1, dt2)
                         raise TypeError(f"{p.lexer.lineno}: Type mismatch on argument number: {i} - {argument}")
 
                     code.append(f"params {argument.place}")
@@ -1451,7 +1459,6 @@ def p_IntLit(p):
         p[0] = LitNode(dataType = {'name': 'int', 'baseType': 'int', 'level': 0, 'size': 4}, label = p[1], isConst=True, val=int(p[1]))
     else:
         raise (f"{p.lexer.lineno}: Integer Overflow detected")
-    # print(p[1])
     temp = new_temp()
     p[0].code.append(f"{temp} = {p[1]}")
     p[0].place = temp 
@@ -1487,7 +1494,7 @@ def p_StringLit(p):
     """
     StringLit : STRING
     """
-    p[0] = LitNode(dataType = {'name': 'string', 'baseType': 'string', 'level': 0, 'size': 12}, label = p[1], isConst=True, val=p[1])
+    p[0] = LitNode(dataType = {'name': 'string', 'baseType': 'string', 'level': 0, 'size': 4}, label = p[1], isConst=True, val=p[1])
     temp = new_temp()
     p[0].code.append(f"{temp} = {p[1]}")
     p[0].place = temp 
@@ -1631,7 +1638,6 @@ def p_FuncSig(p):
                 stm.add(param.label, {"dataType": param.dataType, "val": param.val, "isConst": param.isConst, "isArg": True, 'paramOf': p[2].label}, True)
                 p[3][0].children[i].scope = stm.id
     stm.currentReturnType = deepcopy(p[3][1])
-    # print("M: ", len(stm.currentReturnType.dataType), p.lexer.lineno)
 
     curr_func_id = p[2].label
     info_tables[curr_func_id] = {}
@@ -1727,7 +1733,6 @@ def p_Result(p):
             p[2] = stm.findType(p[2])
         if isinstance(p[2], Type):
             p[2] = [p[2]]
-            # print("K: ", p[2])
         p[0] = FuncReturnNode(p[2])
     elif len(p) == 3:
         p[0] = FuncReturnNode([])
@@ -1736,7 +1741,6 @@ def p_Result(p):
             p[1] = stm.findType(p[1])
         if isinstance(p[1], Type):
             p[1] = [p[1]]
-        # print("G: ", p[1])
         p[0] = FuncReturnNode(p[1])
 
 def p_ParametersType(p):
@@ -1749,11 +1753,9 @@ def p_ParametersType(p):
     if len(p) == 2:
         if isinstance(p[1], str):
             p[0] = FuncParamType()
-            # print("F: ", p[0].__dict__)
             p[0].addChild(stm.findType(p[1]))
         else:
             p[0] = FuncParamType()
-            # print("G: ", p[0].__dict__)
             p[0].addChild(p[1])
     else:
         if isinstance(p[3], str):
@@ -1761,7 +1763,6 @@ def p_ParametersType(p):
         else:
             p[1].addChild(p[3])
         p[0] = p[1]
-    # print("R: ",len(p[0].dataType))
 
 ###################################################################################
 #####################                                        ######################
@@ -2177,7 +2178,6 @@ def p_ReturnStmt(p):
                 returnvalues.extend(expr.dataType)
             else:
                 returnvalues.append(expr.dataType)
-        # print(len(stm.currentReturnType.dataType), len(returnvalues))
         if len(stm.currentReturnType.dataType) != len(returnvalues):
             raise LogicalError(f"{p.lexer.lineno}: Different number of return values.")
         for returnDataType, ExprNodedt in zip(stm.currentReturnType.dataType, returnvalues):
@@ -2491,7 +2491,6 @@ def p_ExprCaseClause(p):
     p[3].code.append(f"goto end_switch_{stm.switchStack[-1]}")
     p[3].code.append(f"label case_{stm.nextCase}_{stm.switchStack[-1]}:")
     p[0] = CasesNode(p[1], p[3])
-    # print(p[0].code)
     
 def p_ExprSwitchCase(p):
     """
@@ -2765,7 +2764,7 @@ def writeOutput(parser_out, output_file):
 
 
 def df(root, level):
-    print('    '*level + str(root) +  " - " +  str(type(root)))
+    # print('    '*level + str(root) +  " - " +  str(type(root)))
     if hasattr(root, 'children') and root.children:
         for child in root.children:
             df(child, level+1)

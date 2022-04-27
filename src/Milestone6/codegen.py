@@ -392,7 +392,7 @@ class MIPS:
         elif detail['dataType']['name'] in ['int64', 'uint64', 'float64']:
             return f'\t_{detail["tmp"]}: .? 0'
         elif detail['dataType']['name'] in ['struct', 'array', 'slice', 'map', 'string']:
-            return f'\t_{detail["tmp"]}: .word 0, 0, 0'
+            return f'\t_{detail["tmp"]}: .word 0'
         else:
             return ''
 
@@ -418,11 +418,17 @@ class MIPS:
             if 'dataType' in lv_info and lv_info['dataType']['name'] in compositeTypes:
                 # code.append('COMPOSITE')
                 
-                code.append('\tli $a0, 12')
+                if lv_info['dataType']['name'] == 'struct':
+                    code.append(f'\tli $a0, {lv_info["dataType"]["size"]}')
+                else:
+                    code.append('\tli $a0, 12')
                 code.append('\tli $v0, 9')
                 code.append('\tsyscall')
-                code.append(f'\tsw $v0, {lv_info["offset"]}($fp)')
+                code.append(f'\tsw $v0, {lv_info["offset"]-32}($fp)')
             
+                if lv_info['dataType']['name'] == 'struct':
+                    pass
+
                 if lv_info['dataType']['name'] == 'array':
                     code.append(f"\tli $a0, {lv_info['dataType']['baseType']['size']*lv_info['dataType']['length']}")
                     code.append(f"\tsw $a0, 4($v0)")
@@ -458,8 +464,12 @@ class MIPS:
 
         if funcname in self.stm.functions and self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
             for local_var, lv_info in self.stm.symTable[self.stm.functions[funcname]['scope']+1].localsymTable.items():
-                local_var_size += lv_info['dataType']['size']
-                self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': -local_var_size, 'dataType': lv_info['dataType']}
+                if lv_info['dataType']['name'] == 'struct':
+                    var_size = 4
+                else:
+                    var_size = lv_info['dataType']['size']
+                local_var_size += var_size
+                self.act_records[funcname].local_var[lv_info['tmp']] = {'size': var_size, 'offset': -local_var_size, 'dataType': lv_info['dataType']}
                 self.regs.locations[lv_info['tmp']] = [1, -local_var_size]
 
         if funcname in self.stm.functions and self.stm.symTable[self.stm.functions[funcname]['scope']+1].parentScope == self.stm.functions[funcname]['scope']:
@@ -1079,7 +1089,6 @@ class MIPS:
                     code.append(f'\tli {reg}, {items[2]}')
                     return reg, code
                 else:
-                    print(items)
                     raise NotImplementedError
         elif len(items) == 4:
             # a = unop b
@@ -1090,7 +1099,7 @@ class MIPS:
         elif len(items) == 5:
             # a = b binop c
             # a = & * b
-            if items[2] == '&' and items[3] == '*': 
+            if items[2] == '&' and items[3] == '*':
                 old_reg, mips = self.regs.get_register(items[2])
                 code.extend(mips)
                 find_new_reg, mips = self.regs.get_register(items[0])
@@ -1155,8 +1164,7 @@ class MIPS:
                     offset += 8
             return 1, -offset-16
 
-    def handle_args(self, items): 
-        print(items)
+    def handle_args(self, items):
         code = []
         if len(items) == 3:
             # a = b
