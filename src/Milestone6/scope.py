@@ -175,6 +175,8 @@ class SymTableMaker:
             return deepcopy(self.symTable[scope].getinfo(ident))
 
     def findType(self, type):
+        if isinstance(type, Type):
+            return type
         if isinstance(type, dict):
             type = type['name']
         i = len(self.stack) - 1

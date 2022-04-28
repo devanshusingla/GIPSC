@@ -153,7 +153,7 @@ class Register:
                         new_loc_i -= 4
                         mips.append("\tadd $sp, $sp, -4")
                         mips.append("\ts" + suffix + "\t" + reg +
-                                "," + str(self._sp - self.cur_func_size - 32) + "($fp)\n")
+                                "," + str(-(self.cur_func_size + 32)-self._sp) + "($sp)\n")
 
                     # Reset after shifting
                     
@@ -198,7 +198,7 @@ class Register:
                         mips.append("\tStoring {var}")
                         mips.append('\taddi $sp, $sp, -4')
                         mips.append("\ts" + suffix + "\t" + reg +
-                                "," + str(self._sp-self.cur_func_size-32) + "($fp)\n")
+                                "," + str(-self._sp-self.cur_func_size-32) + "($fp)\n")
 
                     # Reset after shifting
                     
@@ -329,7 +329,7 @@ class MIPS:
 
             if len(label) > 1:
                 temp_reg, code = self.regs.get_register()
-                code.append(f'\tlw {temp_reg}, {self.act_records[self.curr_func].local_var[label[0]]["offset"]}($fp)')
+                code.append(f'\tlw {temp_reg}, {self.act_records[self.curr_func].local_var[label[0]]["offset"]-32}($fp)')
                 if label[1] == 'addr':
                     code.append(f"\tlw {temp_reg}, 0({temp_reg})")
                 elif label[1] == 'len':
@@ -341,9 +341,15 @@ class MIPS:
 
                 return (temp_reg, code, 0)
 
-            offset = self.regs.locations[label[0]][1] - self.act_records[self.curr_func].localvar_space
-
-            return (f"{offset-32}($fp)", [f"\t### LOCATION {label} : {offset}"], 1)
+            if self.regs.locations[label[0]][0] == 1:
+                if label[0] in self.act_records[self.curr_func].local_var:
+                    offset = self.regs.locations[label[0]][1] - self.act_records[self.curr_func].localvar_space
+                    return (f"{offset-32}($fp)", [f"\t### LOCATION {label} : {offset-32}"], 1)
+                else:
+                    offset = self.regs._sp + self.regs.locations[label[0]][1]
+                    return (f"{offset}($sp)", [f"\t### LOCATION {label} : {offset}($sp)"], 1)
+            else:
+                return (self.regs.locations[label[0]][1], [], 0)
         elif label in self.regs.locations:
             reg, mips = self.regs.get_register(label, isFloat = isFloat)
             mips.append(f"\t# {reg}, {label}")
@@ -509,6 +515,7 @@ class MIPS:
         code.extend(self._addLocalCompositeVars())
 
         for i in range(lineno+1, len(self.tac_code)):
+            # code.append(f"###  {self.tac_code[i]!r}")
             items = self.tac_code[i].split(' ')
             if self.tac_code[i].startswith('Func END'):
                 code.append(f'\t_return_{funcname}:')
@@ -736,14 +743,14 @@ class MIPS:
     def _get_label(self, label, isFloat = False):
         code = []
         if label.startswith("temp") or (label[0].isdigit() and ('_' in label)):
-            _type, offset, type_loc =self._location(label, isFloat = isFloat)
+            _label, _mips, type_loc =self._location(label, isFloat = isFloat)
+
             if type_loc == 1:
-                reg, mips = self.regs.get_register()
-                code.extend(mips)
-                code.append(f'\tlw {reg}, {_type}')
+                reg, mips = self.regs.get_register(label)
+                # code.append(f'\tlw {reg}, {_type}')
                 return reg, code
             else:
-                return _type, offset
+                return _label, _mips
         elif label.startswith("arg"):
             stm_entry = self.stm.get(self.curr_func)
             offset = -int(label.split('_')[-1].split('.')[0][:-1])
@@ -1123,7 +1130,7 @@ class MIPS:
                 new_reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[2], items[3], new_reg))
-                binop_reg, mips = self.regs.get_register
+                binop_reg, mips = self.regs.get_register()
                 code.extend(mips)
                 code.extend(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
                 code.append("\tadd {reg}, {binop_reg}, $0")

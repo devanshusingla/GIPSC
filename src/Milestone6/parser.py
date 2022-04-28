@@ -1911,12 +1911,15 @@ def p_IncDecStmt(p):
         raise LogicalError(f"{p.lexer.lineno}: Expression is not addressable.")
     if not isBasicNumeric(stm, p[1].dataType):
         raise LogicalError(f"{p.lexer.lineno}: Non-numeric type can't be incremented or decremented.")
+    tmp = new_temp()
     if p[2] == '++':
         p[0] = IncNode(p[1])
-        p[0].code.append(f"{p[1].place} = {p[1].place} + 1")
+        p[0].code.append(f"{tmp} = {p[1].place} + 1")
+        p[0].code.append(f"{p[1].place} = {tmp}")
     else:
         p[0] = DecNode(p[1])
-        p[0].code.append(f"{p[1].place} = {p[1].place} - 1")
+        p[0].code.append(f"{tmp} = {p[1].place} - 1")
+        p[0].code.append(f"{p[1].place} = {tmp}")
 
 ###################################################################################
 ### Assignment Statements
