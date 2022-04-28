@@ -9,6 +9,11 @@ func Print_int(a int) {
 	Print_char(rune(10))
 }
 
+func Print_float(a float32){
+	__syscall(2, a)
+	Print_char(rune(10))
+}
+
 func Print_string(a string) {
 	__syscall(4, a)
 	Print_char(rune(10))

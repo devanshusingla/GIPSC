@@ -5,6 +5,9 @@ from utils import *
 class Register:
     def __init__(self):
 
+        # Counter for the used for spilling of registers
+        # while using LRU strategy
+        # Used for both GPR and FPR
         self.count = 0
 
         # Store an array for registers, first value denotes var it stores,
@@ -51,21 +54,26 @@ class Register:
         self.ra = {'$r31': None}  # Return Address
 
         # Similar variables for floats
+        self.regsFList = ['$f1', '$f3']
         self.regsF = {'$f1': [None, 0],
                       '$f3': [None, 0],
                       }
 
         for i in range(4, 12):
             self.regsF[f'$f{i}'] = [None, 0]
+            self.regsFList.append(f'$f{i}')
         for i in range(20, 24):
             self.regsF[f'$f{i}'] = [None, 0]
+            self.regsFList.append(f'$f{i}')
 
         self.regsSavedF = {}
         for i in range(24, 32):
-            self.regsF[f'$f{i}'] = [None, 0]
+            self.regsSavedF[f'$f{i}'] = [None, 0]
 
+        self.argsFList = []
         self.args_regsF = {}
         for i in range(12, 20):
+            self.argsFList.append(f'$f{i}')
             self.args_regsF[f'$f{i}'] = [None, 0]
 
         # Registers for storing results
@@ -222,7 +230,6 @@ class Register:
         mips = []   
         if var in self.locations and self.locations[var][0] == 0:
             self.count += 1
-            
             if not isFloat:
                 if self.locations[var][1].startswith('$s'):
                     self.regsSaved[self.locations[var][1]][1] = self.count    
@@ -230,7 +237,7 @@ class Register:
                     self.regs[self.locations[var][1]][1] = self.count
                 return (self.locations[var][1], [])
             else:
-                if self.locations[var][1].startswith('$s'):
+                if self.locations[var][1] in self.regsSavedF:
                     self.regsSavedF[self.locations[var][1]][1] = self.count    
                 else:
                     self.regsF[self.locations[var][1]][1] = self.count
@@ -301,14 +308,14 @@ class MIPS:
         self.regs = Register()
         self.instr = []
         self.INDENT = " " * 4
-        self.tac_code = code
+        self.tac_code  = code
         self.stm: SymTableMaker = stm
         self.builtins = ['Print', 'Scan', 'Typecast']
         self.fpOffset = 0  # Offset from frame pointer
 
         self.global_var = {}
         self.global_var_size=0
-        self.act_records = {}
+        self.act_records: dict[str, ActivationRecord] = {}
         self.curr_func = ""
         self.curr_pkg = None
 
@@ -338,12 +345,12 @@ class MIPS:
 
             return (f"{offset-32}($fp)", [f"\t### LOCATION {label} : {offset}"], 1)
         elif label in self.regs.locations:
+            print(label, isFloat)
             reg, mips = self.regs.get_register(label, isFloat = isFloat)
             mips.append(f"\t# {reg}, {label}")
             return (reg, mips, 0)
         else:
             raise NotImplementedError
-
 
     def tac2mips(self):
         code = self.addDataSection()
@@ -408,6 +415,7 @@ class MIPS:
     def _addLocalCompositeVars(self):
         code = []
         for local_var, lv_info in self.act_records[self.curr_func].local_var.items():
+            print(local_var)
             if lv_info['dataType']['name'] in compositeTypes:
                 # code.append('COMPOSITE')
                 
@@ -464,7 +472,7 @@ class MIPS:
                 self.curr_pkg = key
                 for local_var, lv_info in self.stm.pkgs[key].symTable[self.stm.pkgs[key].functions[funcname]['scope']+1].localsymTable.items():
                     local_var_size += lv_info['dataType']['size']
-                    self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': -local_var_size}
+                    self.act_records[funcname].local_var[lv_info['tmp']] = {'size': lv_info['dataType']['size'], 'offset': -local_var_size, 'dataType': lv_info['dataType']}
                     self.regs.locations[lv_info['tmp']] = [1, -local_var_size]
 
             if funcname in self.stm.pkgs[key].functions:
@@ -492,6 +500,7 @@ class MIPS:
         code.extend(self._addLocalCompositeVars())
 
         for i in range(lineno+1, len(self.tac_code)):
+            print(f"Handling TAC line: {self.tac_code[i]}")
             items = self.tac_code[i].split(' ')
             if self.tac_code[i].startswith('Func END'):
                 code.append(f'\t_return_{funcname}:')
@@ -517,15 +526,26 @@ class MIPS:
             elif self.tac_code[i].startswith('return'):
                 j = 1
                 retValues = []
+                retTypes = []
                 while self.tac_code[i-j].startswith('retparams'):
-                    retValues.append(self.tac_code[i-j].split()[1])
+                    if 'float' in self.tac_code[i-j]:
+                        retTypes.append('float')
+                    else:
+                        retTypes.append('int')
+                    ret_items = self.tac_code[i-j].split()
+                    retValues.append(ret_items[1])
                     j += 1
 
                 retValues.reverse()
-                retReg, _code = self._get_label(retValues[0])
+                retTypes.reverse()
+                retReg, _code = self._get_label(retValues[0], isFloat=(retTypes[0] == 'float'))
                 code.extend(_code)
-                if len(self.stm.functions[funcname]['return']) == 1 and not retValues[0].startswith("vartemp"):
-                    code.append(f"\taddi $v0, {retReg}, 0")
+                # print(self.stm.pkgs[self.curr_pkg].functions)
+                if ((funcname in self.stm.functions and len(self.stm.functions[funcname]["return"]) == 1) or (funcname in self.stm.pkgs[self.curr_pkg].functions and len(self.stm.pkgs[self.curr_pkg].functions[funcname]['return']) == 1)) and not retValues[0].startswith("vartemp"):
+                    if retTypes[0] == 'float':
+                        code.append(f"\tmov.s $f0, {retReg}")  # Check later if it doesn't work
+                    else:
+                        code.append(f"\taddi $v0, {retReg}, 0") 
                 else:
                     retSize = 0
                     for retVal in self.stm.functions[funcname]['return']:
@@ -534,9 +554,12 @@ class MIPS:
 
                     offset = 0
                     for idx, retVal in enumerate(self.stm.functions[funcname]['return']):
-                        retReg, _code = self._get_label(retValues[idx])
+                        retReg, _code = self._get_label(retValues[idx], isFloat=(retTypes[idx]=='float'))
                         code.extend(_code)
-                        code.append(f"\tsw {retReg}, {offset}($v0)")
+                        var = ''
+                        if((retTypes[idx]=='float')):
+                            var='c1'
+                        code.append(f"\tsw{var} {retReg}, {offset}($v0)")
                         offset += retVal['size']
                     code.append(f"\taddi $v1, $0, {retSize}")
 
@@ -550,21 +573,23 @@ class MIPS:
                 # * a = unop b
                 # * a = b binop c
                 items = self.tac_code[i].split(' ')
+                isFloat = 'float' in items[2]
+                var = 'c1' if isFloat else ''
                 if items[1].startswith('temp'):
                     if len(items) == 4:
                         loc, _mips, type_loc = self._location(items[1])
-                        reg, mips = self.regs.get_register(items[3])
+                        reg, mips = self.regs.get_register(items[3], isFloat=isFloat)
                         code.extend(_mips)
                         code.extend(mips)
                         if type_loc == 1:
-                            empty_reg, mips = self.regs.get_register()
+                            empty_reg, mips = self.regs.get_register(isFloat=False)
                             code.extend(mips)
                             code.append(f'\tlw {empty_reg} {loc}')
-                            code.append(f'\tsw {reg}, 0({empty_reg})')
+                            code.append(f'\tsw{var} {reg}, 0({empty_reg})')
                         else:
-                            code.append(f'\tsw {reg}, 0({loc})')
+                            code.append(f'\tsw{var} {reg}, 0({loc})')
                     elif len(items) == 5: 
-                        reg, mips = self.regs.get_register()
+                        reg, mips = self.regs.get_register(isFloat=isFloat)
                         code.extend(mips)
                         code.extend(self.handle_unOp(items[3], items[4], reg))
                         loc, _mips, type_loc = self._location(items[1])
@@ -573,11 +598,11 @@ class MIPS:
                             empty_reg, mips = self.regs.get_register()
                             code.extend(mips)
                             code.append(f'\tlw {empty_reg} {loc}')
-                            code.append(f'\tsw {reg}, 0({empty_reg})')
+                            code.append(f'\tsw{var} {reg}, 0({empty_reg})')
                         else:
-                            code.append(f'\tsw {reg}, 0({loc})')
+                            code.append(f'\tsw{var} {reg}, 0({loc})')
                     elif len(items) == 6:
-                        reg, mips = self.regs.get_register()
+                        reg, mips = self.regs.get_register(isFloat=isFloat)
                         code.extend(mips)
                         code.extend(self.handle_binOp(items[3], items[5], items[4], reg))
                         loc, _mips, type_loc = self._location(items[1])
@@ -586,22 +611,22 @@ class MIPS:
                             empty_reg, mips = self.regs.get_register()
                             code.extend(mips)
                             code.append(f'\tlw {empty_reg} {loc}')
-                            code.append(f'\tsw {reg}, 0({empty_reg})')
+                            code.append(f'\tsw{var} {reg}, 0({empty_reg})')
                         else:
-                            code.append(f'\tsw {reg}, 0({loc})')
+                            code.append(f'\tsw{var} {reg}, 0({loc})')
                 elif self.isNumeric(items[1][0]) and '_' in items[1]:
                     loc, _mips, type_loc = self._location(items[1])
                     new_items = items[1:] 
                     new_items[0] = "temp_{fixxx}" 
-                    reg, mips = self.handle_temp(new_items)
+                    reg, mips = self.handle_temp(new_items, isFloat=isFloat)
                     code.extend(mips)
                     if type_loc == 1:
                         empty_reg, mips = self.regs.get_register()
                         code.extend(mips)
                         code.append(f'\tlw {empty_reg} {loc}')
-                        code.append(f'\tsw {reg}, 0({empty_reg})')
+                        code.append(f'\tsw{var} {reg}, 0({empty_reg})')
                     else:
-                        code.append(f'\tsw {reg}, 0({loc})')
+                        code.append(f'\tsw{var} {reg}, 0({loc})')
                 elif items[1].startswith('arg'):
                     reg, mips = self._get_label(items[1])
                     code.extend(mips)
@@ -646,6 +671,19 @@ class MIPS:
                         code.append(f"\tsw {reg}, 0($sp)")
                         self.regs._sp -= 4
                     code.append("\t#### Done saving argument registers")
+                    code.append("\t#### Saving Floating Point registers")
+                    for reg in self.regs.regsF:
+                        code.append(f"\tadd $sp, $sp, -4")
+                        code.append(f"\tswc1 {reg}, 0($sp)")
+                        self.regs._sp -= 4
+                    code.append("\t#### Done saving Floating Point registers")
+                    code.append("\t#### Saving Floating Point Argument registers")
+                    for reg in self.regs.args_regsF:
+                        code.append(f"\tadd $sp, $sp, -4")
+                        code.append(f"\tswc1 {reg}, 0($sp)")
+                        self.regs._sp -= 4
+                    code.append("\t#### Done saving Floating Point Argument registers")
+                    print("MYLOG: ", funcname, self.regs._sp)
 
                 if items[1].startswith('#syscall'):
                     param_count = 0
@@ -655,6 +693,22 @@ class MIPS:
                     code.append('\tsyscall') 
                 else:
                     code.append(f'\tjal _{items[1]}')
+                for reg in self.regs.args_regsF:
+                    self.regs.args_regsF[reg][0] = None
+                code.append("\t#### Restoring Floating Point Argument registers")
+                lregs = list(self.regs.args_regsF.keys())[::-1]
+                for reg in lregs:
+                    code.append(f"\tlwc1 {reg}, 0($sp)")
+                    code.append(f"\tadd $sp, $sp, 4")
+                    self.regs._sp += 4
+                code.append("\t#### Done restoring Floating Point Argument registers")
+                code.append("\t#### Saving restoring Point registers")
+                lregs = list(self.regs.regsF.keys())[::-1]
+                for reg in lregs:
+                    code.append(f"\tlwc1 {reg}, 0($sp)")
+                    code.append(f"\tadd $sp, $sp, 4")
+                    self.regs._sp += 4
+                code.append("\t#### Done restoring Floating Point registers")
                 for i in range(4):
                     self.regs.arg_regs[f"$a{i}"][0] = None
                 code.append(f"\t### Restoring argument registers")
@@ -688,12 +742,12 @@ class MIPS:
                     param_reg, _code = self.regs.get_register(items[2])
                     code.extend(_code)
                     code.append(f"\tlw {new_reg}, 0({param_reg})")
-
-                code.extend(self.handle_param(items[1]))
+                code.extend(self.handle_param(items[1], isFloat=items[0].endswith('float')))
             elif self.tac_code[i].startswith('retparams'):
                 pass ## Done inside addFunction
             elif self.tac_code[i].startswith('retval'):
-                reg, mips = self.handle_returns(self.tac_code[i].split(' ')[0])
+                retval_items = self.tac_code[i].split(' ')
+                reg, mips = self.handle_returns(retval_items[0], isFloat=retval_items[0].endswith('float'))
                 code.extend(mips)
                 return code
             elif self.tac_code[i].startswith('if'):
@@ -706,9 +760,11 @@ class MIPS:
                 code.extend(self.handle_label(self.tac_code[i][:-1]))
             elif self.tac_code[i].startswith('arg'):
                 ## TODO : Handle composite literal
+                items = self.tac_code[i].split(' ')
                 code.extend(self.handle_args(items)) 
                 pass
             elif len(self.tac_code[i]) > 0 and self.isNumeric(self.tac_code[i][0]):
+                items = self.tac_code[i].split(' ')
                 code.extend(self.handle_localvars(items))  
                 pass
             elif self.tac_code[i].startswith('return'):
@@ -720,9 +776,12 @@ class MIPS:
         if label.startswith("temp") or (label[0].isdigit() and ('_' in label)):
             _type, offset, type_loc =self._location(label, isFloat = isFloat)
             if type_loc == 1:
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
-                code.append(f'\tlw {reg}, {_type}')
+                if isFloat:
+                    code.append(f'\tlwc1 {reg}, {_type}')
+                else:
+                    code.append(f'\tlw {reg}, {_type}')
                 return reg, code
             else:
                 return _type, offset
@@ -778,11 +837,14 @@ class MIPS:
             #     code.append(f'\tlw {reg3}, {offset + 8}')
             #     return [reg1, reg2, reg3], code
         elif label.startswith('retval'):
-            return self.handle_returns(label)
+            return self.handle_returns(label, isFloat=isFloat)
         else:
-            reg, mips = self.regs.get_register()
+            reg, mips = self.regs.get_register(isFloat=isFloat)
             code.extend(mips)
-            code.append(f'\tli {reg}, {label}')
+            if isFloat:
+                code.append(f'\tli.s {reg}, {label}')
+            else:
+                code.append(f'\tli {reg}, {label}')
 
         return reg, code
 
@@ -797,11 +859,6 @@ class MIPS:
         ## TODO
         pass
 
-    def handle_funcCall(self):
-        ## TODO
-        code = []
-        pass
-
     def handle_localvars(self, items):
         code = []
 
@@ -812,18 +869,26 @@ class MIPS:
 
         if len(items) == 3:
             # a = b
+            isFloat = False
+            if 'float' in items[1]:
+                isFloat = True
             if items[2].startswith('temp'):
-                loc, _mips, type_loc = self._location(items[0])
+                loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
                 code.extend(_mips)
-                find_new_reg, mips, type_new_reg = self._location(items[2])
+                find_new_reg, mips, type_new_reg = self._location(items[2], isFloat=isFloat)
                 code.extend(mips)
+                var = ''
+                if isFloat:
+                    var = 'c1'
                 if type_loc == 1:
-                    code.append(f'\tsw {find_new_reg}, {loc}')
+                    code.append(f'\tsw{var} {find_new_reg}, {loc}')
                 else:
-                    code.append(f'\tadd {loc}, {find_new_reg}, $0')
-                print(items[2], code)
-            elif items[2].startswith('args'):
-                loc, _mips, type_loc = self._location(items[0])
+                    if isFloat:
+                        code.append(f'\tmov.s {loc}, {find_new_reg}')
+                    else:
+                        code.append(f'\tadd {loc}, {find_new_reg}, $0')
+            elif items[2].startswith('arg'):
+                loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
                 code.extend(_mips)
                 offset2 = -int(items[2].split('_')[-1].split('.')[0][:-1])
                 if len(items[2].split('_')[-1].split('.')) > 1: 
@@ -831,25 +896,36 @@ class MIPS:
                         offset2 += 4 
                     else:
                         offset2 += 8
-                helper_reg, mips = self.regs.get_register()
+                helper_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)  
-                code.append(f'\tlw {helper_reg}, {offset2}($fp)')
+                var = ''
+                if isFloat:
+                    var = 'c1'
+                code.append(f'\tlw{var} {helper_reg}, {offset2}($fp)')
                 if type_loc == 1:
-                    code.append(f'\tsw {helper_reg}, {loc}')
+                    code.append(f'\tsw{var} {helper_reg}, {loc}')
                 else:
-                    code.append('\tadd {loc}, {helper_reg}, $0')
+                    if isFloat:
+                        code.append(f'\tmov.s {loc}, {helper_reg}')
+                    else:
+                        code.append(f'\tadd {loc}, {helper_reg}, $0')
 
             elif items[2].startswith('var_temp'):
-                retReg, mips = self._get_label(items[2])
+                retReg, mips = self._get_label(items[2], isFloat=isFloat)
                 code.extend(mips)
                 retReg = retReg[0] ## Both point to same location
-                loc, _mips, type_loc = self._location(items[0])[1]
+                loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)[1]
                 code.extend(_mips)
+                var = ''
+                if isFloat:
+                    var = 'c1'
                 if type_loc == 1:  
-                    code.append(f'\tsw {retReg}, {loc}')
+                    code.append(f'\tsw{var} {retReg}, {loc}')
                 else:
-                    code.append('\tadd {loc}, {retReg}, $0')
-
+                    if isFloat:
+                        code.append(f'\tmov.s {loc}, {retReg}')
+                    else:
+                        code.append(f'\tadd {loc}, {retReg}, $0')
             elif items[2].startswith('retval'):
                 funcName = '_'.join(items[2].split('_')[1:-1])
                 if self.curr_pkg != None and funcName in self.stm.pkgs[self.curr_pkg].functions:
@@ -859,55 +935,72 @@ class MIPS:
                 num_returns = len(
                     new_stm.functions[funcName]['return'])
                 if num_returns == 1:
-                    reg, mips = self.regs.get_register(items[0])
+                    reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
                     code.extend(mips)
-                    code.append(f'\taddi {reg}, $v0, 0')
-                else:
-                    ret_reg, mips = self.handle_returns(items[2])
-                    code.extend(mips)
-                    loc, _mips, type_loc = self._location(items[0])
-                    if type_loc == 1:
-                        code.append(f'\tlw {ret_reg}, {loc}')
+                    if isFloat:
+                        code.append(f'\t mov.s {reg}, $f0')
                     else:
-                        code.append('\tadd {loc}, {ret_reg}, $0')
+                        code.append(f'\taddi {reg}, $v0, 0')
+                else:
+                    ret_reg, mips = self.handle_returns(items[2], isFloat=isFloat)
+                    code.extend(mips)
+                    loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
+                    var = ''
+                    if isFloat:
+                        var = 'c1'
+                    if type_loc == 1:
+                        code.append(f'\tlw{var} {ret_reg}, {loc}')
+                    else:
+                        if isFloat:
+                            code.append(f'\tmov.s {loc}, {ret_reg}')
+                        else:
+                            code.append(f'\tadd {loc}, {ret_reg}, $0')
 
             elif items[2].startswith('__syscall'):
+                raise Exception("Bypassed. Shouldn't be called")
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
                 if type_loc == 1:
+                    # if isFloat:
+                        # code.append(f'\tswc1 $v0, {loc}')
                     code.append(f'\tsw $v0, {loc}')
                 else:
                     code.append(f'\tadd {loc}, $v0, $0')
-
             else:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif self.isNumeric(items[2]):
-                    if self.isInt(items[2]):
-                        # integer
-                        loc, _mips, type_loc = self._location(items[0])
-                        code.extend(_mips)
-                        helper_reg, mips = self.regs.get_register()
-                        code.extend(mips) 
-                        code.append(f'\tli {helper_reg}, {items[2]}')
-                        if type_loc == 1:
-                            code.append(f'\tsw {helper_reg}, {loc}')
-                        else:
-                            code.append(f'\tadd {loc}, {helper_reg}, $0')
-                        pass
+                elif self.isInt(items[2]):
+                    # integer
+                    loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
+                    code.extend(_mips)
+                    helper_reg, mips = self.regs.get_register(isFloat=isFloat)
+                    code.extend(mips) 
+                    if isFloat:
+                        code.append(f'\tli.s {helper_reg}, {float(items[2])}')
                     else:
-                        # float
-                        loc, _mips, type_loc = self._location(items[0])
-                        code.extend(_mips)
-                        helper_reg, mips = self.regs.get_register(items[0], isFloat = True)
-                        code.extend(mips)
-                        code.append(f'\tli.s {helper_reg}, {items[2]}')
-                        if type_loc == 1:
-                            code.append(f'\tsw {helper_reg}, {loc}')
+                        code.append(f'\tli {helper_reg}, {items[2]}')
+                    var = '' if not isFloat else 'c1'
+                    if type_loc == 1:
+                        code.append(f'\tsw{var} {helper_reg}, {loc}')
+                    else:
+                        if isFloat:
+                            code.append(f'\tmov.s {loc}, {helper_reg}')
                         else:
                             code.append(f'\tadd {loc}, {helper_reg}, $0')
-                        pass
+                    pass
+                elif self.isFloat(items[2]):
+                    # float
+                    loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
+                    code.extend(_mips)
+                    helper_reg, mips = self.regs.get_register(items[0], isFloat = True)
+                    code.extend(mips)
+                    code.append(f'\tli.s {helper_reg}, {items[2]}')
+                    if type_loc == 1:
+                        code.append(f'\tswc1 {helper_reg}, {loc}')
+                    else:
+                        code.append(f'\tmov.s {loc}, {helper_reg}')
+                    pass                        
                 elif items[2][0] == "'":
                     # rune
                     loc, _mips, type_loc = self._location(items[0])
@@ -921,23 +1014,39 @@ class MIPS:
                         code.append(f'\tadd {loc}, {helper_reg}, $0')                    
                     pass
                 else:
+                    print(items)
                     raise NotImplementedError
         elif len(items) == 4:
+            isFloat = False
+            if 'float' in items[1]:
+                isFloat = True
             # a = unop b
-            loc, _mips, type_loc = self._location(items[0])
+            loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
             code.extend(_mips)
-            reg, mips = self.regs.get_register()
+            reg, mips = self.regs.get_register(isFloat=isFloat)
             code.extend(mips)
             code.extend(self.handle_unOp(items[2], items[3], reg))
             if type_loc == 1:
-                code.append(f'\tsw {reg}, {loc}')
+                if isFloat:
+                    code.append(f'\tswc1 {reg} {loc}')
+                else:
+                    code.append(f'\tsw {reg}, {loc}')
             else:
-                code.append(f'\tadd {loc}, {reg}, $0')
+                if isFloat:
+                    code.append(f'\tmov.s {loc}, {reg}')
+                else:
+                    code.append(f'\tadd {loc}, {reg}, $0')
 
         elif len(items) == 5:
             # a = b binop c
             # a = & * b
+            isFloat = False
+            if 'float' in items[1]:
+                isFloat = True
+            print("MK: ", items)
             if items[2] == '&' and items[3] == '*': 
+                if isFloat:
+                    raise Exception("Can store address in FPR")
                 loc, _mips, type_loc = self._location(items[0])
                 code.extend(_mips)
                 old_reg, mips = self.regs.get_register(items[2])
@@ -948,55 +1057,87 @@ class MIPS:
                 else:
                     code.append(f'\tadd {loc}, {old_reg}, $0')
             else:
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], items[4], items[3], reg))
-                reg2, mips2 = self.regs.get_register()
+                reg2, mips2 = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips2)
-                code.append(f'\tadd {reg2}, {reg}, $0')
-                loc, _mips, type_loc = self._location(items[0])
+                if isFloat:
+                    code.append(f'\tmov.s {reg2}, {reg}')
+                else:
+                    code.append(f'\tadd {reg2}, {reg}, $0')
+                loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
                 code.extend(_mips)
                 if type_loc == 1:
-                    code.append(f'\tsw {reg2}, {loc}')
+                    if isFloat:
+                        code.append(f'\tswc1 {reg2}, {loc}')
+                    else:
+                        code.append(f'\tsw {reg2}, {loc}')
                 else:
-                    code.append(f'\tadd {loc}, {reg2}, $0')
+                    if isFloat:
+                        code.append(f'\tmov.s {loc}, {reg2}')
+                    else:
+                        code.append(f'\tadd {loc}, {reg2}, $0')
         elif len(items) == 6:
             # a = * b binop c
             # a = b binop * c
+            isFloat = False
+            if 'float' in items[1]:
+                isFloat = True
             if items[2] == '*': 
-                loc, _mips, type_loc = self._location(items[0])
+                loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
                 code.extend(_mips)
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
-                new_reg, mips = self.regs.get_register()
+                new_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[2], items[3], new_reg))
-                binop_reg, mips = self.regs.get_register()
+                binop_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
-                code.append(f"\tadd {reg}, {binop_reg}, $0")
+                if isFloat:
+                    code.append(f'\tmov.s {reg}, {binop_reg}')
+                else:
+                    code.append(f"\tadd {reg}, {binop_reg}, $0")
                 
                 if type_loc == 1:
-                    code.append(f'\tsw {binop_reg}, {loc}')
+                    if isFloat:
+                        code.append(f'\tswc1 {reg}, {loc}')
+                    else:
+                        code.append(f'\tsw {reg}, {loc}')
                 else:
-                    code.append(f'\tadd {loc}, {binop_reg}, $0')
+                    if isFloat:
+                        code.append(f'\tmov.s {loc}, {reg}')
+                    else:
+                        code.append(f'\tadd {loc}, {reg}, $0')
             elif items[4] == '*':
-                loc, _mips, type_loc = self._location(items[0])
+                loc, _mips, type_loc = self._location(items[0], isFloat=isFloat)
                 code.extend(_mips)
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
-                new_reg, mips = self.regs.get_register()
+                new_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[4], items[5], new_reg))
-                binop_reg, mips = self.regs.get_register
+                binop_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], new_reg, binop_reg, isreg2 = True))
                 code.append(f"\tadd {reg}, {binop_reg}, $0")
-                
-                if type_loc == 0:
-                    code.append(f'\tadd {loc}, {reg}, $0')
+
+                if isFloat:
+                    code.append(f'\tmov.s {reg}, {binop_reg}')
                 else:
-                    code.append(f'\tsw {reg}, {loc}')
+                    code.append(f"\tadd {reg}, {binop_reg}, $0")
+                
+                if type_loc == 1:
+                    if isFloat:
+                        code.append(f'\tswc1 {reg}, {loc}')
+                    else:
+                        code.append(f'\tsw {reg}, {loc}')
+                else:
+                    if isFloat:
+                        code.append(f'\tmov.s {loc}, {reg}')
+                    else:
+                        code.append(f'\tadd {loc}, {reg}, $0')
         else:
             raise NotImplementedError
 
@@ -1024,17 +1165,20 @@ class MIPS:
         if len(items) == 3:
             # a = b
             isFloat = False
-            if 'float' in items[2]:
+            if 'float' in items[1]:
                 isFloat = True
             if items[2].startswith('temp'):
-                old_reg, mips = self.regs.get_register(items[2])
+                old_reg, mips = self.regs.get_register(items[2], isFloat=isFloat)
                 code.extend(mips)
-                find_new_reg, mips = self.regs.get_register(items[0])
+                find_new_reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
                 code.extend(mips)
-                code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
+                if isFloat:
+                    code.append(f'\tmov.s {find_new_reg}, {old_reg}')
+                else:
+                    code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
                 return find_new_reg, code
-            elif items[2].startswith('args'):
-                find_new_reg, mips = self.regs.get_register(items[0])
+            elif items[2].startswith('arg'):
+                find_new_reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
                 code.extend(mips)
                 offset = -int(items[2].split('_')[-1].split('.')[0][:-1])
                 if len(items[2].split('_')[-1].split('.')) > 1: 
@@ -1042,20 +1186,25 @@ class MIPS:
                         offset += 4 
                     else:
                         offset += 8
-                code.append(f'\tlw {find_new_reg}, {offset}($fp)')
+                var = ''
+                if isFloat:
+                    var = 'c1'
+                code.append(f'\tlw{var} {find_new_reg}, {offset}($fp)')
                 return find_new_reg, code
             elif items[2].startswith('var_temp'):
-                retReg, mips = self._get_label(items[2])
+                retReg, mips = self._get_label(items[2], isFloat=isFloat)
                 code.extend(mips)
                 retReg = retReg[0] ## Both point to same location
-                find_new_reg, mips = self.regs.get_register(items[0])
+                find_new_reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
                 code.extend(mips)
-                code.append(f'\tadd {find_new_reg}, {retReg}, $0')
+                if isFloat:
+                    code.append(f'\tmov.s {find_new_reg}, {retReg}')
+                else:
+                    code.append(f'\tadd {find_new_reg}, {retReg}, $0')
                 return find_new_reg, code
 
             elif items[2].startswith('retval'):
                 funcName = '_'.join(items[2].split('_')[1:-1])
-                print(funcName)
                 if self.curr_pkg != None and funcName in self.stm.pkgs[self.curr_pkg].functions:
                     new_stm = self.stm.pkgs[self.curr_pkg]
                 else:
@@ -1064,37 +1213,47 @@ class MIPS:
                 if num_returns == 1:
                     code.append(f"\t### STACK1: {self.regs._sp}, {items[0]}")
                     code.append(f"\t### {items[0] in self.regs.locations}")
-                    reg, mips = self.regs.get_register(items[0])
+                    reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
                     code.extend(mips)
                     code.append(f"\t### STACK2: {self.regs._sp}")
-                    code.append(f'\taddi {reg}, $v0, 0')
+                    if isFloat:
+                        code.append(f'\tmov.s {reg}, $f0')
+                    else:
+                        code.append(f'\taddi {reg}, $v0, 0')
                     return reg, code
                 else:
-                    ret_reg, mips = self.handle_returns(items[2])
+                    ret_reg, mips = self.handle_returns(items[2], isFloat=isFloat)
                     code.extend(mips)
-                    reg, mips = self.regs.get_register(items[0])
+                    reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
                     code.extend(mips)
-                    code.append(f'\taddi {reg}, {ret_reg}, 0')
+                    if isFloat:
+                        code.append(f'\tmov.s {reg}, {ret_reg}')
+                    else:
+                        code.append(f'\taddi {reg}, {ret_reg}, 0')
                     return reg, code
             else:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif self.isNumeric(items[2]):
-                    if self.isInt(items[2]):
-                        # integer
-                        reg, mips = self.regs.get_register(items[0])
-                        code.extend(mips)
-                        code.append(f'\tli {reg}, {items[2]}')
-                        return reg, code
+                elif self.isInt(items[2]):
+                    # integer
+                    reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
+                    code.extend(mips)
+                    if isFloat:
+                        code.append(f'\tli.s {reg}, {float(items[2])}')
                     else:
-                        # float
-                        reg, mips = self.regs.get_register(items[0], isFloat = True)
-                        code.extend(mips)
-                        code.append(f'\tli.s {reg}, {items[2]}')
-                        return reg, code
+                        code.append(f'\tli {reg}, {items[2]}')
+                    return reg, code
+                elif self.isFloat(items[2]):
+                    # float
+                    reg, mips = self.regs.get_register(items[0], isFloat = True)
+                    code.extend(mips)
+                    code.append(f'\tli.s {reg}, {items[2]}')
+                    return reg, code
                 elif items[2][0] == "'":
                     # rune
+                    if isFloat:
+                        raise Exception("Rune can't be typecast into float.")
                     reg, mips = self.regs.get_register(items[0])
                     code.extend(mips)
                     code.append(f'\tli {reg}, {items[2]}')
@@ -1120,54 +1279,96 @@ class MIPS:
                     raise NotImplementedError
         elif len(items) == 4:
             # a = unop b
-            reg, mips = self.regs.get_register(items[0])
+            reg, mips = self.regs.get_register(items[0], isFloat=('float' in items[1]))
             code.extend(mips)
+            # Float case handled from items[2]
             code.extend(self.handle_unOp(items[2], items[3], reg))
             return reg, code
         elif len(items) == 5:
             # a = b binop c
             # a = & * b
-            if items[2] == '&' and items[3] == '*': 
+            isFloat = False
+            if 'float' in items[1]:
+                isFloat = True
+            if items[2] == '&' and items[3] == '*':
+                if isFloat:
+                    raise Exception("Pointer can't be stored in FPR") 
                 old_reg, mips = self.regs.get_register(items[2])
                 code.extend(mips)
                 find_new_reg, mips = self.regs.get_register(items[0])
                 code.extend(mips)
                 code.append(f'\tadd {find_new_reg}, {old_reg}, $0')
                 return find_new_reg, code
+            elif items[2].startswith('arg'):
+                reg, mips = self.regs.get_register(isFloat=isFloat)
+                code.extend(mips)
+                find_new_reg, mips = self.regs.get_register(items[2], isFloat=('float' in items[3]))
+                code.extend(mips)
+                offset = -int(items[2].split('_')[-1].split('.')[0][:-1])
+                if len(items[2].split('_')[-1].split('.')) > 1: 
+                    if items[2].split('_')[-1].split('.')[1] == 'length':
+                        offset += 4 
+                    else:
+                        offset += 8
+                var = ''
+                if ('float' in items[3]):
+                    var = 'c1'
+                code.append(f'\tlw{var} {find_new_reg}, {offset}($fp)')
+                code.extend(self.handle_binOp(find_new_reg, items[4], items[3], reg, isreg1=True))
+                reg2, mips2 = self.regs.get_register(items[0], isFloat=isFloat)
+                print(reg, reg2, isFloat)
+                code.extend(mips2)
+                if isFloat:
+                    code.append(f'\tmov.s {reg2}, {reg}')
+                else:
+                    code.append(f'\tadd {reg2}, {reg}, $0')
+                return reg2, code
             else:
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], items[4], items[3], reg))
-                reg2, mips2 = self.regs.get_register(items[0])
+                reg2, mips2 = self.regs.get_register(items[0], isFloat=isFloat)
+                print(reg, reg2, isFloat)
                 code.extend(mips2)
-                code.append(f'\tadd {reg2}, {reg}, $0')
+                if isFloat:
+                    code.append(f'\tmov.s {reg2}, {reg}')
+                else:
+                    code.append(f'\tadd {reg2}, {reg}, $0')
                 return reg2, code
         elif len(items) == 6:
             # a = * b binop c
             # a = b binop * c
+            isFloat = False
+            if 'float' in items[1]:
+                isFloat = True
             if items[2] == '*': 
-                reg, mips = self.regs.get_register(items[0])
+                reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
                 code.extend(mips)
-                new_reg, mips = self.regs.get_register()
+                new_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[2], items[3], new_reg))
-                binop_reg, mips = self.regs.get_register
+                binop_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
-                code.append("\tadd {reg}, {binop_reg}, $0")
+                if isFloat:
+                    code.append(f'\tmov.s {reg}, {binop_reg}')
+                else:
+                    code.append(f"\tadd {reg}, {binop_reg}, $0")
                 return reg, code
             elif items[4] == '*':
-                reg, mips = self.regs.get_register(items[0])
+                reg, mips = self.regs.get_register(items[0], isFloat=isFloat)
                 code.extend(mips)
-                new_reg, mips = self.regs.get_register()
+                new_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[4], items[5], new_reg))
-                binop_reg, mips = self.regs.get_register()
+                binop_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], new_reg, items[4], binop_reg, isreg2 = True))
-                code.append(f"\tadd {reg}, {binop_reg}, $0")
+                if isFloat:
+                    code.append(f'\tmov.s {reg}, {binop_reg}')
+                else:
+                    code.append(f"\tadd {reg}, {binop_reg}, $0")
                 return reg, code
-
         else:
             raise NotImplementedError
 
@@ -1193,41 +1394,50 @@ class MIPS:
             return 1, -offset-16
 
     def handle_args(self, items): 
-        print(items)
         code = []
+        isFloat = False
+        var = ''
+        if 'float' in items[1]:
+            isFloat = True
+            var = 'c1'
         if len(items) == 3:
             # a = b
             if items[2].startswith('temp'):
                 _type, offset = self.get_args(items[0])
-                find_new_reg, mips = self._get_label(items[2])
+                find_new_reg, mips = self._get_label(items[2], isFloat=isFloat)
                 code.extend(mips)
                 if _type == 0:
                     code.append(f'\tadd {offset}, {find_new_reg}, $0')
                     return code
                 code.append(f'\tsw {find_new_reg}, {offset}($fp)')
-            elif items[2].startswith('args'):
+            elif items[2].startswith('arg'):
                 _type1, offset1 = self.get_args(items[0])
                 _type2, offset2 = self.get_args(items[2])
-                helper_reg, mips = self.regs.get_register()
+                helper_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)  
+                
                 if _type1 == 1:
-                    code.append(f'\tlw {helper_reg}, {offset2}($fp)')
+                    code.append(f'\tlw{var} {helper_reg}, {offset2}($fp)')
                 else:
-                    code.append(f'\tlw {offset1}, {helper_reg}, $0')
+                    code.append(f'\tlw{var} {offset1}, {helper_reg}, $0')
                 if _type2 == 1:
-                    code.append(f'\tsw {helper_reg}, {offset1}($fp)')
+                    code.append(f'\tsw{var} {helper_reg}, {offset1}($fp)')
                 else:
-                    code.append(f'\tlw {offset2}, {helper_reg}, $0')
+                    code.append(f'\tlw{var} {offset2}, {helper_reg}, $0')
  
             elif items[2].startswith('var_temp'):
-                retReg, mips = self._get_label(items[2])
+                retReg, mips = self._get_label(items[2], isFloat=isFloat)
                 code.extend(mips)
                 retReg = retReg[0] ## Both point to same location
                 _type, offset = self.get_args(items[0]) 
                 if _type == 1:
-                    code.append(f'\tsw {retReg}, {offset}($fp)')
+
+                    code.append(f'\tsw{var} {retReg}, {offset}($fp)')
                 else:
-                    code.append(f'\tadd {offset}, {retReg}, $0')
+                    if isFloat:
+                        code.append(f'\tmov.s {offset}, {retReg}')
+                    else:
+                        code.append(f'\tadd {offset}, {retReg}, $0')
 
             elif items[2].startswith('retval'):
                 funcName = '_'.join(items[2].split('_')[1:-1])
@@ -1238,44 +1448,59 @@ class MIPS:
                 num_returns = len(
                     new_stm.functions[funcName]['return'])
                 if num_returns == 1:
-                    reg, mips = self._get_label(items[0])
+                    reg, mips = self._get_label(items[0], isFloat=isFloat)
                     code.extend(mips)
-                    code.append(f'\taddi {reg}, $v0, 0')
+                    if isFloat:
+                        code.append(f'\tmov.s {reg}, $f0')
+                    else:
+                        code.append(f'\taddi {reg}, $v0, 0')
                 else:
-                    ret_reg, mips = self.handle_returns(items[2])
+                    ret_reg, mips = self.handle_returns(items[2], isFloat=isFloat)
                     code.extend(mips)
                     _type, offset = self.get_args(items[0])
                     if _type == 1:
-                        code.append(f'\tlw {ret_reg}, {offset}($fp)')
+                        code.append(f'\tlw{var} {ret_reg}, {offset}($fp)')
                     else:
-                        code.append(f'\tadd {offset}, {ret_reg}, $0')
+                        if isFloat:
+                            code.append(f'\tmov.s {offset}, {ret_reg}')
+                        else:
+                            code.append(f'\tadd {offset}, {ret_reg}, $0')
             else:
                 if items[2][0] == '"':
                     # string: TODO
                     pass
-                elif self.isNumeric(items[2]):
-                    if self.isInt(items[2]):
-                        # integer
-                        _type, offset = self.get_args(items[0])
-                        helper_reg, mips = self.regs.get_register()
-                        code.extend(mips) 
+                elif self.isInt(items[2]):
+                    # integer
+                    _type, offset = self.get_args(items[0])
+                    helper_reg, mips = self.regs.get_register(isFloat=isFloat)
+                    code.extend(mips) 
+                    if isFloat:
+                        code.append(f'\tli.s {helper_reg}, {float(items[2])}')
+                    else:
                         code.append(f'\tli {helper_reg}, {items[2]}')
-                        if _type == 1:
-                            code.append(f'\tsw {helper_reg}, {offset}($fp)')
+
+                    if _type == 1:
+                        code.append(f'\tsw{var} {helper_reg}, {offset}($fp)')
+                    else:
+                        if isFloat:
+                            code.append(f'\tmov.s {offset}, {helper_reg}')
+                        else:
+                            code.append(f'\tadd {offset}, {helper_reg}, $0')
+                    pass
+                elif self.isFloat(items[2]):
+                    # float
+                    _type, offset = self.get_args(items[0])
+                    helper_reg, mips = self._get_label(items[0], isFloat = True)
+                    code.extend(mips)
+                    code.append(f'\tli.s {helper_reg}, {items[2]}')
+                    if _type == 1:
+                        code.append(f'\tswc1 {helper_reg}, {offset}($fp)')
+                    else:
+                        if isFloat:
+                            code.append(f'\tmov.s {offset}, {helper_reg}')
                         else:
                             code.append(f'\tadd {offset}, {helper_reg}, $0')
                         pass
-                    else:
-                        # float
-                        _type, offset = self.get_args(items[0])
-                        helper_reg, mips = self._get_label(items[0], isFloat = True)
-                        code.extend(mips)
-                        code.append(f'\tli.s {helper_reg}, {items[2]}')
-                        if _type == 1:
-                            code.append(f'\tsw {helper_reg}, {offset}($fp)')
-                        else:
-                            code.append(f'\tadd {offset}, {helper_reg}, $0')                        
-                            pass
                 elif items[2][0] == "'":
                     # rune
                     _type, offset = self.get_args(items[0])
@@ -1292,154 +1517,339 @@ class MIPS:
         elif len(items) == 4:
             # a = unop b
             _type, offset = self.get_args(items[0])
-            reg, mips = self.regs.get_register()
+            reg, mips = self.regs.get_register(isFloat=isFloat)
             code.extend(mips)
             code.extend(self.handle_unOp(items[2], items[3], reg))
             if _type == 1:
-                code.append(f'\tsw {reg}, {offset}($fp)')
+                code.append(f'\tsw{var} {reg}, {offset}($fp)')
             else:
-                code.append(f'\tadd {offset}, {reg}, $0')
+                if isFloat:
+                    code.append(f'\tmov.s {offset}, {reg}')
+                else:
+                    code.append(f'\tadd {offset}, {reg}, $0')
         elif len(items) == 5:
             # a = b binop c
             # a = & * b
             if items[2] == '&' and items[3] == '*': 
                 _type, offset = self.get_args(items[0])
-                old_reg, mips = self.regs.get_register(items[2])
+                old_reg, mips = self.regs.get_register(items[2], isFloat=isFloat)
                 code.extend(mips)
                 if _type == 1:
-                    code.append(f'\tsw {old_reg}, {offset}($fp)')
+                    code.append(f'\tsw{var} {old_reg}, {offset}($fp)')
                 else:
-                    code.append(f'\tadd {offset}, {old_reg}, $0')              
+                    if isFloat:
+                        code.append(f'\tmov.s {offset}, {old_reg}')
+                    else:
+                        code.append(f'\tadd {offset}, {old_reg}, $0')
+            elif items[2].startswith('arg'):
+                _type, offset = self.get_args(items[0])
+                reg, mips = self.regs.get_register(isFloat=isFloat)
+                code.extend(mips)
+                find_new_reg, mips = self.regs.get_register(items[2], isFloat=('float' in items[3]))
+                code.extend(mips)
+                offset = -int(items[2].split('_')[-1].split('.')[0][:-1])
+                if len(items[2].split('_')[-1].split('.')) > 1: 
+                    if items[2].split('_')[-1].split('.')[1] == 'length':
+                        offset += 4 
+                    else:
+                        offset += 8
+                var = ''
+                if ('float' in items[3]):
+                    var = 'c1'
+                code.append(f'\tlw{var} {find_new_reg}, {offset}($fp)')
+                code.extend(self.handle_binOp(find_new_reg, items[4], items[3], reg, isreg1=True))
+                reg2, mips2 = self.regs.get_register(isFloat=isFloat)
+                code.extend(mips2)
+                if isFloat:
+                    code.append(f'\tmov.s {reg2}, {reg}')
+                else:
+                    code.append(f'\tadd {reg2}, {reg}, $0')
+                if _type == 1:
+                    code.append(f'\tsw{var} {reg2}, {offset}($fp)')
+                else:
+                    if isFloat:
+                        code.append(f'\tmov.s {offset}, {reg2}')
+                    else:
+                        code.append(f'\tadd {offset}, {reg2}, $0')
             else:
                 _type, offset = self.get_args(items[0])
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], items[4], items[3], reg))
-                reg2, mips2 = self.regs.get_register()
+                reg2, mips2 = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips2)
-                code.append(f'\tadd {reg2}, {reg}, $0')
-                if _type == 1:
-                    code.append(f'\tsw {reg2}, {offset}($fp)')
+                if isFloat:
+                    code.append(f'\tmov.s {reg2}, {reg}')
                 else:
-                    code.append(f'\tadd {offset}, {reg2}, $0')        
+                    code.append(f'\tadd {reg2}, {reg}, $0')
+                if _type == 1:
+                    code.append(f'\tsw{var} {reg2}, {offset}($fp)')
+                else:
+                    if isFloat:
+                        code.append(f'\tmov.s {offset}, {reg2}')
+                    else:
+                        code.append(f'\tadd {offset}, {reg2}, $0')
         elif len(items) == 6:
             # a = * b binop c
             # a = b binop * c
             if items[2] == '*': 
                 _type, offset = self.get_args(items[0])
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
-                new_reg, mips = self.regs.get_register()
+                new_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[2], items[3], new_reg))
-                binop_reg, mips = self.regs.get_register()
+                binop_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(new_reg, items[4], binop_reg, isreg1 = True))
-                code.append("\tadd {reg}, {binop_reg}, $0")
-                if _type == 1:
-                    code.append(f'\tsw {binop_reg}, {offset}($fp)')
+                if isFloat:
+                    code.append(f'\tmov.s {reg}, {binop_reg}')
                 else:
-                    code.append(f'\tadd {offset}, {binop_reg}, $0')            
+                    code.append(f'\tadd {reg}, {binop_reg}, $0')
+                if _type == 1:
+                    code.append(f'\tsw{var} {binop_reg}, {offset}($fp)')
+                else:
+                    if isFloat:
+                        code.append(f'\tmov.s {offset}, {binop_reg}')
+                    else:
+                        code.append(f'\tadd {offset}, {binop_reg}, $0')
         elif items[4] == '*':
                 _type, offset = self.get_args(items[0])  
-                reg, mips = self.regs.get_register()
+                reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
-                new_reg, mips = self.regs.get_register()
+                new_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_unOp(items[4], items[5], new_reg))
-                binop_reg, mips = self.regs.get_register()
+                binop_reg, mips = self.regs.get_register(isFloat=isFloat)
                 code.extend(mips)
                 code.extend(self.handle_binOp(items[2], new_reg, binop_reg, isreg2 = True))
-                code.append("\tadd {reg}, {binop_reg}, $0")
-                if _type == 1:
-                    code.append(f'\tsw {reg}, {offset}($fp)')
+                if isFloat:
+                    code.append(f'\tmov.s {reg}, {binop_reg}')
                 else:
-                    code.append(f'\tadd {offset}, {reg}, $0')        
+                    code.append(f'\tadd {reg}, {binop_reg}, $0')
+                if _type == 1:
+                    code.append(f'\tsw{var} {reg}, {offset}($fp)')
+                else:
+                    if isFloat:
+                        code.append(f'\tmov.s {offset}, {reg}')
+                    else:
+                        code.append(f'\tadd {offset}, {reg}, $0')
         else:
             raise NotImplementedError
 
         return code
 
-    def handle_param(self, param):
-        # TODO : Handle vartemp and sizes
-        found = 0            
+    def handle_floatparam(self, param, isFloat=False):
         code = []
-        
-        for i in range(4):
-            if self.regs.arg_regs[f'$a{i}'][0] == None:
-                if i == 0:
-                    code.append("\t#### Saving temporary registers")
-                    for reg in self.regs.regs:
-                        code.append(f"\tadd $sp, $sp, -4")
-                        code.append(f"\tsw {reg}, 0($sp)")
-                        self.regs._sp -= 4 
-                    code.append("\t#### Done saving temporary registers")
-                    code.append("\t#### Saving argument registers")
-                    for reg in self.regs.arg_regs:
-                        code.append(f"\tadd $sp, $sp, -4")
-                        code.append(f"\tsw {reg}, 0($sp)")
-                        self.regs._sp -= 4
-                    code.append("\t#### Done saving argument registers")
-                found = 1 
-                code.append(f"\t#### YAYYY {param}")
+        # If the parameter is a float
+        for i in range(12, 20):
+            # Floating point registers can take $f12 ... $f19 as such
+            if self.regs.args_regsF [f"$f{i}"][0] == None:
+                # No need to save registers; we should be saving in handle call?
+                # Assuming saving happens there correctly
+                found = 1
                 if param.startswith('temp'):
-                    self.regs.arg_regs[f'$a{i}'][0] = param
-                    self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                    # Floating point value in temp
+                    self.regs.args_regsF[f'$f{i}'][0] = param
+                    self.regs.args_regsF[f'$f{i}'][1] = self.regs.count
                     self.regs.count += 1
                     offset = self.regs.locations[param]
-                    code.append(f"\t### offset: {offset}, {param}")
                     if offset[0] == 1:
-                        code.append(f"\tlw $a{i}, {offset[1] - self.act_records[self.curr_func].localvar_space - 32}($fp)")
+                        # Value in memory(spilled before?)
+                        code.append(f'\tlwc1 $f{i}, {offset[1] - self.act_records[self.curr_func].localvar_space}($fp)')
                     else:
-                        code.append(f"\tadd $a{i}, {offset[1]}, $0")
+                        # Value in some register
+                        code.append(f'\tmov.s $f{i}, {offset[1]}')
                     break
                 elif param.startswith('arg'):
-                    _type, offset = self.get_args(param)
-                    self.regs.arg_regs[f"$a{i}"] = [self.regs.count, param]
+                    # Floating point value in the current stack
+                    self.regs.args_regsF[f'$f{i}'][0] = param
+                    self.regs.args_regsF[f'$f{i}'][1] = self.regs.count
                     self.regs.count += 1
-                    if _type == 1:
-                        code.append(f"\tlw $a{i}, {offset}($fp)")
-                    else:
-                        code.append(f"\tadd $a{i}, {offset}, $0")
-                    break
-                elif self.isNumeric(param[0]) and '_' in param:
-                    self.regs.arg_regs[f'$a{i}'][0] = param
-                    self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
-                    self.regs.count += 1
-                    regs, mips = self._get_label(param)
+                    # Hoping that _get_label does its job
+                    regs, mips = self._get_label(param, isFloat=isFloat)
                     code.extend(mips)
-                    code.append(f"\tadd $a{i}, {regs}, $0")
+                    code.append(f'\tmov.s $f{i}, {regs}')
                     break
+                elif param[0].isnumeric() and '_' in param:
+                    # Floating point value is a scope variable
+                    self.regs.args_regsF[f'$f{i}'][0] = param
+                    self.regs.args_regsF[f'$f{i}'][1] = self.regs.count
+                    self.regs.count += 1
+                    regs, mips = self._get_label(param, isFloat=isFloat)
+                    code.extend(mips)
+                    code.append(f'\tmov.s $f{i}, {regs}')
+                    break
+                elif param.startswith('var_temp'):
+                    raise Exception('None of var temp attributes are to be stored on floating point register')
+                else:
+                    raise NotImplementedError(param)
+
+        if not found:
+            # Store on stack
+            if not param.startswith('var_temp'):
+                # not a var_temp
+                reg, mips = self.regs.get_register(param, isFloat=isFloat)
+                code.extend(mips)
+                code.append(f'\taddi $sp, $sp, -4')
+                code.append(f'\tswc1 {reg} 0($sp)') # Storing float point register value on stack
+            else:
+                raise Exception('None of var temp attributes are to be stored on floating point register')
+            pass
+        return code
+    
+    def handle_param(self, param: str, isFloat=False):
+        """
+        This function puts the function call 
+        parameters on stack and argument registers
+        before jal is executed.
+        """
+        # TODO : Handle vartemp and sizes
+        print("M: ", param, isFloat)
+        code = []
+        if isFloat:
+            code.extend(self.handle_floatparam(param, isFloat=isFloat))
+        else:   
+            # If the parameter is not a float; say int or vartemp(maybe implemented later)
+            found = 0            
+            
+            for i in range(4):
+                if self.regs.arg_regs[f'$a{i}'][0] == None:
+                    if i == 0:
+                        # Shouldn't call handle the register saving part?
+                        code.append("\t#### Saving temporary registers")
+                        for reg in self.regs.regs:
+                            code.append(f"\tadd $sp, $sp, -4")
+                            code.append(f"\tsw {reg}, 0($sp)")
+                            self.regs._sp -= 4 
+                        code.append("\t#### Done saving temporary registers")
+                        code.append("\t#### Saving argument registers")
+                        for reg in self.regs.arg_regs:
+                            code.append(f"\tadd $sp, $sp, -4")
+                            code.append(f"\tsw {reg}, 0($sp)")
+                            self.regs._sp -= 4
+                        code.append("\t#### Done saving argument registers")
+                        code.append("\t#### Saving Floating Point registers")
+                        for reg in self.regs.regsF:
+                            code.append(f"\tadd $sp, $sp, -4")
+                            code.append(f"\tswc1 {reg}, 0($sp)")
+                            self.regs._sp -= 4
+                        code.append("\t#### Done saving Floating Point registers")
+                        code.append("\t#### Saving Floating Point Argument registers")
+                        for reg in self.regs.args_regsF:
+                            code.append(f"\tadd $sp, $sp, -4")
+                            code.append(f"\tswc1 {reg}, 0($sp)")
+                            self.regs._sp -= 4
+                        code.append("\t#### Done saving Floating Point Argument registers")
+                        # print("MYLOG: ", self.curr_func, self.regs._sp)
+                    found = 1 
+                    code.append(f"\t#### YAYYY {param}")
+                    if param.startswith('temp'):
+                        self.regs.arg_regs[f'$a{i}'][0] = param
+                        self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                        self.regs.count += 1
+                        offset = self.regs.locations[param]
+                        code.append(f"\t### offset: {offset}, {param}")
+                        if offset[0] == 1:
+                            code.append(f"\tlw $a{i}, {offset[1] - self.act_records[self.curr_func].localvar_space}($fp)")
+                        else:
+                            code.append(f"\tadd $a{i}, {offset[1]}, $0")
+                        code.append(f"\t### STACK: {self.regs._sp}")
+                        break
+                    elif param.startswith('arg'):
+                        self.regs.arg_regs[f'$a{i}'][0] = param
+                        self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                        self.regs.count += 1
+                        regs, mips = self._get_label(param)
+                        code.extend(mips)
+                        code.append(f"\tadd $a{i}, {regs}, $0")
+                        break
+                    elif param[0].isnumeric() and '_' in param:
+                        self.regs.arg_regs[f'$a{i}'][0] = param
+                        self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                        self.regs.count += 1
+                        regs, mips = self._get_label(param)
+                        code.extend(mips)
+                        code.append(f"\tadd $a{i}, {regs}, $0")
+                        break
+                    else:
+                        loc, _mips, type_loc = self._location(param.split('.')[0])
+                        code.extend(_mips)
+                        if param.endswith('.addr'):
+                            # params var_temp#x.addr
+                            self.regs.arg_regs[f'$a{i}'][0] = param
+                            self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                            self.regs.count += 1
+                            if type_loc:
+                                code.append(f'\tlw $a{i}, {loc}')
+                            else:
+                                code.append(f'\tadd $a{i}, {loc}, $0')
+                        elif param.endswith('.length'):
+                            # params var_temp#x.length
+                            self.regs.arg_regs[f'$a{i}'][0] = param
+                            self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                            self.regs.count += 1
+                            code.append(f'\tlw $a{i}, {int(loc.split("(")[0]) + 4}($fp)')
+                        elif param.endswith('.capacity'):
+                            self.regs.arg_regs[f'$a{i}'][0] = param
+                            self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
+                            self.regs.count += 1
+                            code.append(f'\tlw $a{i}, {int(loc.split("(")[0]) + 8}($fp)')
+                        else:
+                            ## TODO
+                            # which case is this? only var temp?
+                            raise NotImplementedError(param)
+
+            if not found:
+                if not param.startswith('var_temp'):
+                    reg, mips = self.regs.get_register(param)
+                    code.extend(mips)
+                    code.append(f'\taddi $sp, $sp, -4')
+                    code.append(f'\tsw {reg} 0($sp)')
                 else:
                     loc, _mips, type_loc = self._location(param.split('.')[0])
-                    code.extend(_mips)
+                    code.extend(mips)
                     if param.endswith('.addr'):
-                        # params var_temp#x.addr
-                        self.regs.arg_regs[f'$a{i}'][0] = param
-                        self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
-                        self.regs.count += 1
-                        if type_loc:
-                            code.append(f'\tlw $a{i}, {loc}')
+                        reg, mips = self.regs.get_register()
+                        code.extend(mips)
+                        if type_loc == 1:
+                            code.append(f'\tlw {reg}, {loc}')
                         else:
-                            code.append(f'\tadd $a{i}, {loc}, $0')
+                            code.append(f'\tadd {reg}, {loc}, $0')
+                        code.append(f'addi $sp, $sp, -4')
+                        code.append(f'\tsw {reg} 0($sp)')
                     elif param.endswith('.length'):
-                        # params var_temp#x.length
-                        self.regs.arg_regs[f'$a{i}'][0] = param
-                        self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
-                        self.regs.count += 1
-                        code.append(f'\tlw $a{i}, {int(loc.split("(")[0]) + 4}($fp)')
+                        reg, mips = self.regs.get_register()
+                        code.extend(mips)
+                        code.append(f'\tlw {reg}, {int(loc.split("(")[0]) + 4}($fp)')
+                        code.append(f'addi $sp, $sp, -4')
+                        code.append(f'\tsw {reg} 0($sp)')
                     elif param.endswith('.capacity'):
-                        self.regs.arg_regs[f'$a{i}'][0] = param
-                        self.regs.arg_regs[f'$a{i}'][1] = self.regs.count
-                        self.regs.count += 1
-                        code.append(f'\tlw $a{i}, {int(loc.split("(")[0]) + 8}($fp)')
+                        reg, mips = self.regs.get_register()
+                        code.extend(mips)
+                        code.append(f'\tlw {reg}, {int(loc.split("(")[0]) + 8}($fp)')
+                        code.append(f'addi $sp, $sp, -4')
+                        code.append(f'\tsw {reg} 0($sp)')
                     else:
-                        ## TODO
-                        pass
+                        reg, mips = self.regs.get_register()
+                        code.extend(mips)
+                        code.append(f'\tlw {reg}, {loc}')
+                        code.append(f'addi $sp, $sp, -4')
+                        code.append(f'\tsw {reg} 0($sp)')
+                        code.append(f'\tlw {reg}, {int(loc.split("(")[0]) + 4}($fp)')
+                        code.append(f'addi $sp, $sp, -4')
+                        code.append(f'\tsw {reg} 0($sp)')
+                        code.append(f'\tlw {reg}, {int(loc.split("(")[0]) + 8}($fp)')
+                        code.append(f'addi $sp, $sp, -4')
+                        code.append(f'\tsw {reg} 0($sp)')
+        # print(param, code)
         return code
 
-    def handle_returns(self, returnval):
-        
+    def handle_returns(self, returnval, isFloat=False):
+        """
+        Handles return value from functions
+        Stores the return value in registers that can be used later
+        """
         funcName = '_'.join(returnval.split('_')[1:-1])
         num = int(returnval.split('_')[-1])
 
@@ -1454,9 +1864,13 @@ class MIPS:
                 break
             offset += retVal['size']
 
-        reg, mips = self.regs.get_register()
+        reg, mips = self.regs.get_register(isFloat=isFloat) 
+        # The stack can contain a floating point value to be put into a register
         code.extend(mips)
-        code.append(f'\tlw {reg}, {offset}($v0)')
+        if isFloat:
+            code.append(f'\tlwc1 {reg} {offset}($v0)')
+        else:
+            code.append(f'\tlw {reg}, {offset}($v0)')
         return reg, code
 
     def handle_label(self, label):
@@ -1484,39 +1898,54 @@ class MIPS:
         if not isreg2:
             reg2, mips = self._get_label(operand2, isFloat=True)
             code.extend(mips)
-        reg3, mips = self.get_register(isFloat=True)
+        reg3, mips = self.regs.get_register(isFloat=True)
         code.extend(mips)
 
         if operator.startswith('+'):
             code.append(f'\tadd.s {reg3}, {reg1}, {reg2}')
-            code.append(f'\tmfc1 {finalreg}, {reg3}')
+            if finalreg.startswith('$f'):
+                code.append(f'\tmov.s {finalreg}, {reg3}')
+            else:
+                code.append(f'\tmfc1 {finalreg}, {reg3}')
         elif operator.startswith('-'):
+            # print("MK: ", operand1, operand2, operator, finalreg)
             code.append(f'\tsub.s {reg3}, {reg1}, {reg2}')
-            code.append(f'\tmfc1 {finalreg}, {reg3}')
+            if finalreg.startswith('$f'):
+                code.append(f'\tmov.s {finalreg}, {reg3}')
+            else:
+                code.append(f'\tmfc1 {finalreg}, {reg3}')
         elif operator.startswith('*'):
             code.append(f'\tmul.s {reg3}, {reg1}, {reg2}')
-            code.append(f'\tmfc1 {finalreg}, {reg3}')
+            if finalreg.startswith('$f'):
+                code.append(f'\tmov.s {finalreg}, {reg3}')
+            else:
+                code.append(f'\tmfc1 {finalreg}, {reg3}')
         elif operator.startswith('/'):
             code.append(f'\tdiv.s {reg3}, {reg1}, {reg2}')
-            code.append(f'\tmfc1 {finalreg}, {reg3}')
+            if finalreg.startswith('$f'):
+                code.append(f'\tmov.s {finalreg}, {reg3}')
+            else:
+                code.append(f'\tmfc1 {finalreg}, {reg3}')
         elif operator.startswith('<='):
             code.append(f'\tc.le.s {reg1}, {reg2}')
-            code.append(f'cfc1 {finalreg}, {reg3}')
+            code.append(f'\tcfc1 {finalreg}, $f31')
         elif operator.startswith('>='):
-            code.append(f'\tc.ge.s {reg1}, {reg2}')
-            code.append(f'cfc1 {finalreg}, {reg3}')
+            code.append(f'\tc.lt.s {reg2}, {reg1}')
+            print(" MK : ", reg1, reg2)
+            code.append(f'\tcfc1 {finalreg},  $f31')
         elif operator.startswith('<'):
             code.append(f'\tc.lt.s {reg1}, {reg2}')
-            code.append(f'cfc1 {finalreg}, {reg3}')
+            print(" MK : ", reg1, reg2, '0')
+            code.append(f'\tcfc1 {finalreg},  $f31')
         elif operator.startswith('>'):
-            code.append(f'\tc.gt.s {reg1}, {reg2}')
-            code.append(f'cfc1 {finalreg}, {reg3}')
+            code.append(f'\tc.le.s {reg2}, {reg1}')
+            code.append(f'\tcfc1 {finalreg},  $f31')
         elif operator.startswith('=='):
             code.append(f'\tc.eq.s {reg1}, {reg2}')
-            code.append(f'cfc1 {finalreg}, {reg3}')
+            code.append(f'\tcfc1 {finalreg},  $f31')
         elif operator.startswith('!='):
             code.append(f'\tc.ne.s {reg1}, {reg2}')
-            code.append(f'cfc1 {finalreg}, {reg3}')
+            code.append(f'\tcfc1 {finalreg},  $f31')
         return code
 
     def handle_intBinOp(self, operand1, operand2, operator, finalreg, isreg1 = False, isreg2 = False):
@@ -1529,7 +1958,6 @@ class MIPS:
         if not isreg2:
             reg2, mips = self._get_label(operand2)
             code.extend(mips)
-
         if operator.startswith('+'):
             code.append(f'\tadd {finalreg}, {reg1}, {reg2}')
 
@@ -1598,6 +2026,7 @@ class MIPS:
     def handle_binOp(self, operand1, operand2, operator, finalreg, isreg1 = False, isreg2 = False):
 
         if 'float' in operator:
+            # Noice: Float handled
             return self.handle_floatBinOp(operand1, operand2, operator, finalreg, isreg1, isreg2)
         else:
             return self.handle_intBinOp(operand1, operand2, operator, finalreg, isreg1, isreg2)
@@ -1608,6 +2037,8 @@ class MIPS:
             return []
 
         elif opr[0] == '-':
+            isFloat = False
+            # Float case handled
             if 'float' in opr:
                 isFloat = True 
             reg, mips = self._get_label(operand, isFloat = isFloat)
@@ -1650,6 +2081,13 @@ class MIPS:
 
     def handle_typecast(self):
         ## TODO
+        # To convert int to float
+
+        # To convert float to int
+
+        # To convert int to string
+
+        # To convert string to int
         pass
 
     def dosyscall(self, number):

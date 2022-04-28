@@ -1,0 +1,7 @@
+- Import (Return Type) - Removed
+- Assignment to local variables (a = b ) doesn't  - Removed
+- ASSIGN Keyword - Removed
+- S/R - Removed
+- Array / Struct Not working
+- Float integration not done
+- 
