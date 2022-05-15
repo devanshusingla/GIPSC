@@ -1,4 +1,5 @@
-# CS335 Compilers Project - Group 20
+# GIPSC
+## CS335 Compilers Course Project - Group 20
 
 ## [Milestone4](src/Milestone4/)
 
